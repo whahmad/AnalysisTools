@@ -28,9 +28,9 @@ $UserID= POSIX::cuserid();
 
 # Define Defualt Parameters
 # Input and up and output directories for local
-$InputDir="/net/scratch_cms/institut_3b/nugent/Test";
-$OutputDir="/net/scratch_cms/institut_3b/nugent";
-$CodeDir="/home/home2/institut_3b/nugent/NtupleSoftware/Code";
+$InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
+$OutputDir="/net/scratch_cms/institut_3b/$UserID";
+$CodeDir="../Code";
 $set="V1";
 
 $InputFile=$ARGV[1];
