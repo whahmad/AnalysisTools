@@ -1,0 +1,5 @@
+Thin: False
+Skim: False
+HistoFile: InputData/Histo.txt
+Analysis: Example
+UncertType: default
