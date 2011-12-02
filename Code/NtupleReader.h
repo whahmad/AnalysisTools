@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Nov 21 13:28:08 2011 by ROOT version 5.26/00c
+// Fri Dec  2 09:37:16 2011 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -15,6 +15,7 @@
 #include <vector>
 #include <string>
 #include<iostream>
+
 
 class NtupleReader {
 public :
@@ -65,12 +66,21 @@ public :
    std::vector<std::vector<int> > *PFTau_Track_idx;
    std::vector<bool>    *KFTau_discriminatorByKFit;
    std::vector<bool>    *KFTau_discriminatorByQC;
-   std::vector<int>     *KFTau_nKinTaus;
+   Int_t           KFTau_nKinTaus;
    std::vector<std::vector<float> > *KFTau_TauVis_p4;
    std::vector<std::vector<float> > *KFTau_TauFit_p4;
    std::vector<std::vector<float> > *KFTau_Neutrino_p4;
    std::vector<unsigned int> *KFTau_MatchedHPS_idx;
    std::vector<std::vector<int> > *KFTau_Track_idx;
+   std::vector<int>     *KFTau_indexOfFitInfo;
+   std::vector<std::vector<float> > *KFTau_Fit_TauPrimVtx;
+   std::vector<int>     *KFTau_Fit_IndexToPrimVertexVector;
+   std::vector<float>   *KFTau_Fit_chi2;
+   std::vector<float>   *KFTau_Fit_ndf;
+   std::vector<int>     *KFTau_Fit_ambiguity;
+   std::vector<int>     *KFTau_Fit_charge;
+   std::vector<int>     *KFTau_Fit_csum;
+   std::vector<int>     *KFTau_Fit_iterations;
    std::vector<std::vector<float> > *PFJet_p4;
    std::vector<float>   *PFJet_chargedEmEnergy;
    std::vector<float>   *PFJet_chargedHadronEnergy;
@@ -177,6 +187,15 @@ public :
    TBranch        *b_KFTau_Neutrino_p4;   //!
    TBranch        *b_KFTau_MatchedHPS_idx;   //!
    TBranch        *b_KFTau_Track_idx;   //!
+   TBranch        *b_KFTau_indexOfFitInfo;   //!
+   TBranch        *b_KFTau_Fit_TauPrimVtx;   //!
+   TBranch        *b_KFTau_Fit_IndexToPrimVertexVector;   //!
+   TBranch        *b_KFTau_Fit_chi2;   //!
+   TBranch        *b_KFTau_Fit_ndf;   //!
+   TBranch        *b_KFTau_Fit_ambiguity;   //!
+   TBranch        *b_KFTau_Fit_charge;   //!
+   TBranch        *b_KFTau_Fit_csum;   //!
+   TBranch        *b_KFTau_Fit_iterations;   //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
    TBranch        *b_PFJet_chargedHadronEnergy;   //!
@@ -268,7 +287,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("~/Software/TauNtupleMaker/CMSSW_4_2_4/src/TauDataFormat/TauNtuple/output.root/t");
+      chain->Add("/net/scratch_cms/institut_3b/cherepanov/MC_DY_SkimmedTauNtuple.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -357,12 +376,20 @@ void NtupleReader::Init(TTree *tree)
    PFTau_Track_idx = 0;
    KFTau_discriminatorByKFit = 0;
    KFTau_discriminatorByQC = 0;
-   KFTau_nKinTaus = 0;
    KFTau_TauVis_p4 = 0;
    KFTau_TauFit_p4 = 0;
    KFTau_Neutrino_p4 = 0;
    KFTau_MatchedHPS_idx = 0;
    KFTau_Track_idx = 0;
+   KFTau_indexOfFitInfo = 0;
+   KFTau_Fit_TauPrimVtx = 0;
+   KFTau_Fit_IndexToPrimVertexVector = 0;
+   KFTau_Fit_chi2 = 0;
+   KFTau_Fit_ndf = 0;
+   KFTau_Fit_ambiguity = 0;
+   KFTau_Fit_charge = 0;
+   KFTau_Fit_csum = 0;
+   KFTau_Fit_iterations = 0;
    PFJet_p4 = 0;
    PFJet_chargedEmEnergy = 0;
    PFJet_chargedHadronEnergy = 0;
@@ -464,6 +491,15 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Neutrino_p4", &KFTau_Neutrino_p4, &b_KFTau_Neutrino_p4);
    fChain->SetBranchAddress("KFTau_MatchedHPS_idx", &KFTau_MatchedHPS_idx, &b_KFTau_MatchedHPS_idx);
    fChain->SetBranchAddress("KFTau_Track_idx", &KFTau_Track_idx, &b_KFTau_Track_idx);
+   fChain->SetBranchAddress("KFTau_indexOfFitInfo", &KFTau_indexOfFitInfo, &b_KFTau_indexOfFitInfo);
+   fChain->SetBranchAddress("KFTau_Fit_TauPrimVtx", &KFTau_Fit_TauPrimVtx, &b_KFTau_Fit_TauPrimVtx);
+   fChain->SetBranchAddress("KFTau_Fit_IndexToPrimVertexVector", &KFTau_Fit_IndexToPrimVertexVector, &b_KFTau_Fit_IndexToPrimVertexVector);
+   fChain->SetBranchAddress("KFTau_Fit_chi2", &KFTau_Fit_chi2, &b_KFTau_Fit_chi2);
+   fChain->SetBranchAddress("KFTau_Fit_ndf", &KFTau_Fit_ndf, &b_KFTau_Fit_ndf);
+   fChain->SetBranchAddress("KFTau_Fit_ambiguity", &KFTau_Fit_ambiguity, &b_KFTau_Fit_ambiguity);
+   fChain->SetBranchAddress("KFTau_Fit_charge", &KFTau_Fit_charge, &b_KFTau_Fit_charge);
+   fChain->SetBranchAddress("KFTau_Fit_csum", &KFTau_Fit_csum, &b_KFTau_Fit_csum);
+   fChain->SetBranchAddress("KFTau_Fit_iterations", &KFTau_Fit_iterations, &b_KFTau_Fit_iterations);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
    fChain->SetBranchAddress("PFJet_chargedEmEnergy", &PFJet_chargedEmEnergy, &b_PFJet_chargedEmEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronEnergy", &PFJet_chargedHadronEnergy, &b_PFJet_chargedHadronEnergy);

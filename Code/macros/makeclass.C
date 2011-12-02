@@ -1,5 +1,5 @@
 void makeclass(){
    TChain c("t");
-   c.Add("~/Software/TauNtupleMaker/CMSSW_4_2_4/src/TauDataFormat/TauNtuple/output.root");
+   c.Add("/net/scratch_cms/institut_3b/cherepanov/MC_DY_SkimmedTauNtuple.root");
    c.MakeClass("NtupleReader");
 }
