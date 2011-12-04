@@ -5,15 +5,30 @@ use POSIX;
 $numArgs = $#ARGV +1;
 $ARGV[$argnum];
 
+#Default vaules
+$InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
+$OutputDir="/net/scratch_cms/institut_3b/$UserID";
+$CodeDir="../Code";
+$set="V1";
+$CMSSWRel="4_2_8";
+
+
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
-    printf("\nPlease choose from the following options:");
-    printf("\n./todo.pl --help                                   Prints this message");
-    printf("\n./todo.pl --Local <InputPar.txt>                   INTENTED FOR SMALL SCALE TESTS ONLY");
+    printf("\nPlease choose from the following options:\n");
+    printf("\n./todo.pl --help                                   Prints this message\n");
+    printf("\n./todo.pl --TauNtuple <TauNtupleDir>               Setups up TauNtuple and gives instructions for submission");
+    printf("\n                                                   <TauNtupleDir> location of CMSSW for TauNtuple.");
+    printf("\n                                                   Optional Commmads: ");
+    printf("\n                                                     --CMSSWRel <CMSSW release #> The CMSSW release you want to use Default: $CMSSWRel\n");
+    printf("\n./todo.pl --Local <InputPar.txt>                   INTENTED FOR SMALL SCALE TESTS ONLY");  
     printf("\n                                                   Configure a directory to run locally. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
-    printf("\n                                                   Optional commands:   --InputDir <InputDir> --OutputDir <OutputDir> ");
-    printf("\n                                                                        --CodeDir  <CodeDir>  --SetName <SetName> \n\n");
+    printf("\n                                                   Optional commands:  ");
+    printf("\n                                                     --InputDir <InputDir>   Default value: $InputDir"); 
+    printf("\n                                                     --OutputDir <OutputDir> Default value: $OutputDir");
+    printf("\n                                                     --CodeDir  <CodeDir>    Default value: $CodeDir");
+    printf("\n                                                     --SetName <SetName>     Default value: $set \n");
     printf("\n./todo.pl --DCache <InputPar.txt> <ListofDS.txt>   INTENTED FOR REGULAR USE (DEFAULT)");
     printf("\n                                                   Configure a directory to run from. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
@@ -25,14 +40,6 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
 
 ######################################
 $UserID= POSIX::cuserid();
-
-# Define Defualt Parameters
-# Input and up and output directories for local
-$InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
-$OutputDir="/net/scratch_cms/institut_3b/$UserID";
-$CodeDir="../Code";
-$set="V1";
-
 $InputFile=$ARGV[1];
 
 for($l=2;$l<$numArgs; $l++){
@@ -52,6 +59,83 @@ for($l=2;$l<$numArgs; $l++){
 	$l++;
 	$set=$ARGV[l];
     }
+    if($ARGV[l] eq "--CMSSWRel"){
+        $l++;
+        $CMSSWRel=$ARGV[l];
+    }
+
+}
+
+if( $ARGV[0] eq "--TauNtuple"){
+    $currentdir=getcwd;
+    if($ARGV[1] ne ""){
+	$basedir=$ARGV[1];
+    }
+    else{
+	printf("\nWorkingDir for CMSSW is required. Please follow the syntax:./todo.pl --TauNtuple <TauNtupleDir> ");
+	printf("\nFor more details use: ./todo --help\n"); 
+	exit(0);
+    }
+    printf("\nHave you setup the CMSROOT, kinit and klog? (y/n)\n");
+    $answer=<STDIN>;
+    chomp($answer);
+    printf("\nYour answer was [$answer]\n");
+
+    printf("\nWorkingDir for CMSSW: $basedir");
+    printf("\nCurrentDir is: $currentdir");
+    printf("\nUsing CMSSW Release: $CMSSWRel\n");
+
+    # setup CMSSW
+    system(sprintf("rm Setup_TauNtuple"));
+    system(sprintf("echo \"rm $basedir/TauNtuple -rf; mkdir $basedir/TauNtuple\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cd $basedir/TauNtuple\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc434\\\"\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"source /net/software_cms/cmsset_default.sh\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cmsrel CMSSW_$CMSSWRel\" >> Setup_TauNtuple")); 
+    system(sprintf("echo \"cd CMSSW_$CMSSWRel/src\" >> Setup_TauNtuple")); 
+    system(sprintf("echo \"cmsenv\" >> Setup_TauNtuple")); 
+    system(sprintf("echo \"cvs co RecoVertex/KinematicFit\" >> Setup_TauNtuple")); 
+    system(sprintf("echo \"cvs co RecoVertex/KinematicFitPrimitives\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d DataFormats UserCode/RWTH3b/Tau/src/DataFormats\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d RecoTauTag  UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d CommonTools UserCode/RWTH3b/Tau/src/CommonTools\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/src/CombinedKinematicConstraint.cc\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/src/KinematicConstrainedVertexFitter.cc\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/src/MultiTrackPointingKinematicConstraint.cc\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/src/VertexKinematicConstraint.cc\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/interface/CombinedKinematicConstraint.h\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -r HEAD RecoVertex/KinematicFit/interface/MultiTrackPointingKinematicConstraint.h\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d TauDataFormat UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimmingTools UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimProduction UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
+    # add private hacks
+    system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cp ~/bin/TauNtuple/kinematictauAdvanced_cfi.py RecoTauTag/KinematicTau/python/\" >> Setup_TauNtuple")); 
+    # Setup CRAB
+    system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"source \$VO_CMS_SW_DIR/cmsset_default.sh\" >> Setup_TauNtuple "));
+    system(sprintf("echo \"source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh\" >> Setup_TauNtuple"));
+    #build
+    system(sprintf("echo \"scram build -c\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"scram b\" >> Setup_TauNtuple"));
+
+    # print Instructions
+    printf("\n\nInstructions");
+    if($answer ne "y"){
+	printf("Please setup CVSROOT, klog and kinit before proceeding...");
+        printf("\nexport CVSROOT=\":gserver:cmscvs.cern.ch:/cvs_server/repositories/CMSSW\"");
+        printf("\nkinit <UserID>@CERN.CH"); 
+        printf("\nklog <UserID>@CERN.CH"); 
+    }
+    printf("\nsource Setup_TauNtuple"); 
+    printf("\nYou can now go to the Production Directory and submit jobs.");
+    printf("\ncd  $basedir/SkimProduction/CRAB/");
+    printf("\n1) Read the instruction for todo.pl: ./todo.pl --help");
+    printf("\n2) Setup the jobs: ./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat ");
+    printf("\n3) Setup the jobs and submit 1 Test job: ./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n 1");
+    printf("\n4) Setup the jobs and start production:./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n -1");
 }
 
 
@@ -67,7 +151,7 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("mkdir $OutputDir/workdir$set "));
     printf("Cleaning complete \n");
     
-    # creat directory stucture
+    # create directory stucture
     system(sprintf("mkdir  $OutputDir/workdir$set/Code "));
     system(sprintf("mkdir  $OutputDir/workdir$set/Code/i386_linux "));
     system(sprintf("cp -r $CodeDir/* $OutputDir/workdir$set/Code/ "));
@@ -362,6 +446,10 @@ if( $ARGV[0] eq "--DCache" ){
 
     # print Instructions
     printf("\n\nInstructions");
+    printf("\nPlease make sure you have run:");
+    printf("\nvoms-proxy-init");
+    printf("\ngrid-proxy-init");
+    printf("\nNow you can run the analysis using dcache.");
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
     printf("\nTo compile the code in the workdir: source compile ");
     printf("\nTo submit jobs to the batch queue: source Submit ");
