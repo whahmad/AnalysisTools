@@ -169,7 +169,7 @@ class Ntuple_Controller{
 
 
   //Base Tau Information (PF)
-   unsigned int      NPFTaus(){return Ntp->Muon_p4->size();}
+   unsigned int      NPFTaus(){return Ntp->PFTau_p4->size();}
    TLorentzVector    PFTau_p4(unsigned int i){return TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));}
    bool              PFTau_isTightIsolation(unsigned int i){return Ntp->PFTau_isTightIsolation->at(i);}
    bool              PFTau_isMediumIsolation(unsigned int i){return Ntp->PFTau_isMediumIsolation->at(i);}
