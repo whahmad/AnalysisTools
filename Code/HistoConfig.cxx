@@ -154,6 +154,8 @@ std::vector<TH1D> HistoConfig::GetTH1D(TString name,TString title, int nbins, do
   std::vector<TH1D> histos;
   for(int i=0;i<HistoName.size();i++){
     histos.push_back(TH1D(name+HistoName.at(i),HistoLegend.at(i),nbins,min,max));
+    histos.at(i).SetXTitle(xaxis);
+    histos.at(i).SetYTitle(yaxis);
   }
   return histos;
 }
@@ -163,6 +165,8 @@ std::vector<TH2D> HistoConfig::GetTH2D(TString name,TString title,int nbinsx, do
   std::vector<TH2D> histos;
   for(int i=0;i<HistoName.size();i++){
     histos.push_back(TH2D(name+HistoName.at(i),HistoLegend.at(i),nbinsx,minx,maxx, nbinsy,miny,maxy));
+    histos.at(i).SetXTitle(xaxis);
+    histos.at(i).SetYTitle(yaxis);
   }
   return histos;
 }
