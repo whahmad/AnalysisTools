@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri Dec  2 09:37:16 2011 by ROOT version 5.26/00c
+// Sun Dec 11 15:47:58 2011 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -23,6 +23,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Declaration of leaf types
+   UInt_t          DataMC_Type;
    std::vector<float>   *Vtx_chi2;
    std::vector<float>   *Vtx_nTrk;
    std::vector<float>   *Vtx_ndof;
@@ -117,6 +118,10 @@ public :
    Int_t           Event_orbitNumber;
    UInt_t          Event_luminosityBlock;
    Bool_t          Event_isRealData;
+   Int_t           PileupInfo_NumInteractions_nm1;
+   Int_t           PileupInfo_NumInteractions_n0;
+   Int_t           PileupInfo_NumInteractions_np1;
+   Double_t        EvtWeight3D;
    std::vector<std::vector<float> > *Track_p4;
    std::vector<std::vector<double> > *Track_Poca;
    std::vector<int>     *Track_charge;
@@ -125,6 +130,12 @@ public :
    std::vector<unsigned short> *Track_numberOfLostHits;
    std::vector<unsigned short> *Track_numberOfValidHits;
    std::vector<unsigned int> *Track_qualityMask;
+   Float_t         GenEventInfoProduct_signalProcessID;
+   Float_t         GenEventInfoProduct_weight;
+   std::vector<double>  *GenEventInfoProduct_weights;
+   Float_t         GenEventInfoProduct_qScale;
+   Float_t         GenEventInfoProduct_alphaQED;
+   Float_t         GenEventInfoProduct_alphaQCD;
    std::vector<std::vector<float> > *MCSignalParticle_p4;
    std::vector<int>     *MCSignalParticle_pdgid;
    std::vector<int>     *MCSignalParticle_charge;
@@ -138,6 +149,7 @@ public :
    std::vector<unsigned int> *MCTau_DecayBitMask;
 
    // List of branches
+   TBranch        *b_DataMC_Type;   //!
    TBranch        *b_Vtx_chi2;   //!
    TBranch        *b_Vtx_nTrk;   //!
    TBranch        *b_Vtx_ndof;   //!
@@ -232,6 +244,10 @@ public :
    TBranch        *b_Event_orbitNumber;   //!
    TBranch        *b_Event_luminosityBlock;   //!
    TBranch        *b_Event_isRealData;   //!
+   TBranch        *b_PileupInfo_NumInteractions_nm1;   //!
+   TBranch        *b_PileupInfo_NumInteractions_n0;   //!
+   TBranch        *b_PileupInfo_NumInteractions_np1;   //!
+   TBranch        *b_EvtWeight3D;   //!
    TBranch        *b_Track_p4;   //!
    TBranch        *b_Track_Poca;   //!
    TBranch        *b_Track_charge;   //!
@@ -240,6 +256,12 @@ public :
    TBranch        *b_Track_numberOfLostHits;   //!
    TBranch        *b_Track_numberOfValidHits;   //!
    TBranch        *b_Track_qualityMask;   //!
+   TBranch        *b_GenEventInfoProduct_signalProcessID;   //!
+   TBranch        *b_GenEventInfoProduct_weight;   //!
+   TBranch        *b_GenEventInfoProduct_weights;   //!
+   TBranch        *b_GenEventInfoProduct_qScale;   //!
+   TBranch        *b_GenEventInfoProduct_alphaQED;   //!
+   TBranch        *b_GenEventInfoProduct_alphaQCD;   //!
    TBranch        *b_MCSignalParticle_p4;   //!
    TBranch        *b_MCSignalParticle_pdgid;   //!
    TBranch        *b_MCSignalParticle_charge;   //!
@@ -287,7 +309,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/net/scratch_cms/institut_3b/cherepanov/MC_DY_SkimmedTauNtuple.root/t");
+      chain->Add("/user/inugent/MC_DY_SkimmedTauNtuple_1_1_1Yh.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -425,6 +447,7 @@ void NtupleReader::Init(TTree *tree)
    Track_numberOfLostHits = 0;
    Track_numberOfValidHits = 0;
    Track_qualityMask = 0;
+   GenEventInfoProduct_weights = 0;
    MCSignalParticle_p4 = 0;
    MCSignalParticle_pdgid = 0;
    MCSignalParticle_charge = 0;
@@ -442,6 +465,7 @@ void NtupleReader::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   fChain->SetBranchAddress("DataMC_Type", &DataMC_Type, &b_DataMC_Type);
    fChain->SetBranchAddress("Vtx_chi2", &Vtx_chi2, &b_Vtx_chi2);
    fChain->SetBranchAddress("Vtx_nTrk", &Vtx_nTrk, &b_Vtx_nTrk);
    fChain->SetBranchAddress("Vtx_ndof", &Vtx_ndof, &b_Vtx_ndof);
@@ -536,6 +560,10 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Event_orbitNumber", &Event_orbitNumber, &b_Event_orbitNumber);
    fChain->SetBranchAddress("Event_luminosityBlock", &Event_luminosityBlock, &b_Event_luminosityBlock);
    fChain->SetBranchAddress("Event_isRealData", &Event_isRealData, &b_Event_isRealData);
+   fChain->SetBranchAddress("PileupInfo_NumInteractions_nm1", &PileupInfo_NumInteractions_nm1, &b_PileupInfo_NumInteractions_nm1);
+   fChain->SetBranchAddress("PileupInfo_NumInteractions_n0", &PileupInfo_NumInteractions_n0, &b_PileupInfo_NumInteractions_n0);
+   fChain->SetBranchAddress("PileupInfo_NumInteractions_np1", &PileupInfo_NumInteractions_np1, &b_PileupInfo_NumInteractions_np1);
+   fChain->SetBranchAddress("EvtWeight3D", &EvtWeight3D, &b_EvtWeight3D);
    fChain->SetBranchAddress("Track_p4", &Track_p4, &b_Track_p4);
    fChain->SetBranchAddress("Track_Poca", &Track_Poca, &b_Track_Poca);
    fChain->SetBranchAddress("Track_charge", &Track_charge, &b_Track_charge);
@@ -544,6 +572,12 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Track_numberOfLostHits", &Track_numberOfLostHits, &b_Track_numberOfLostHits);
    fChain->SetBranchAddress("Track_numberOfValidHits", &Track_numberOfValidHits, &b_Track_numberOfValidHits);
    fChain->SetBranchAddress("Track_qualityMask", &Track_qualityMask, &b_Track_qualityMask);
+   fChain->SetBranchAddress("GenEventInfoProduct_signalProcessID", &GenEventInfoProduct_signalProcessID, &b_GenEventInfoProduct_signalProcessID);
+   fChain->SetBranchAddress("GenEventInfoProduct_weight", &GenEventInfoProduct_weight, &b_GenEventInfoProduct_weight);
+   fChain->SetBranchAddress("GenEventInfoProduct_weights", &GenEventInfoProduct_weights, &b_GenEventInfoProduct_weights);
+   fChain->SetBranchAddress("GenEventInfoProduct_qScale", &GenEventInfoProduct_qScale, &b_GenEventInfoProduct_qScale);
+   fChain->SetBranchAddress("GenEventInfoProduct_alphaQED", &GenEventInfoProduct_alphaQED, &b_GenEventInfoProduct_alphaQED);
+   fChain->SetBranchAddress("GenEventInfoProduct_alphaQCD", &GenEventInfoProduct_alphaQCD, &b_GenEventInfoProduct_alphaQCD);
    fChain->SetBranchAddress("MCSignalParticle_p4", &MCSignalParticle_p4, &b_MCSignalParticle_p4);
    fChain->SetBranchAddress("MCSignalParticle_pdgid", &MCSignalParticle_pdgid, &b_MCSignalParticle_pdgid);
    fChain->SetBranchAddress("MCSignalParticle_charge", &MCSignalParticle_charge, &b_MCSignalParticle_charge);

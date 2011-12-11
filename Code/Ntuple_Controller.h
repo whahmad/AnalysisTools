@@ -127,6 +127,12 @@ class Ntuple_Controller{
   int BunchCrossing(){ return Ntp->Event_bunchCrossing;}
   int OrbitNumber(){ return Ntp->Event_orbitNumber;}
   unsigned int LuminosityBlock(){return Ntp->Event_luminosityBlock;}
+  int           PileupInfo_NumInteractions_nm1(){Ntp->PileupInfo_NumInteractions_nm1;}
+  int           PileupInfo_NumInteractions_n0(){Ntp->PileupInfo_NumInteractions_n0;}
+  int           PileupInfo_NumInteractions_np1(){Ntp->PileupInfo_NumInteractions_np1;}
+  double        EvtWeight3D(){return Ntp->EvtWeight3D;}
+
+
 
   // Vertex Information
   unsigned int NVtx(){return Ntp->Vtx_ndof->size();}

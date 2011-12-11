@@ -91,7 +91,7 @@ void  Example::doEvent(){
   pass.at(TriggerOk)=true;
   
   double wobs=1;
-  double w=1;
+  double w=Ntp->EvtWeight3D();
   bool status=AnalysisCuts(t,w,wobs);
  
   ///////////////////////////////////////////////////////////
