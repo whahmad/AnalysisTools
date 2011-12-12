@@ -109,7 +109,7 @@ class Ntuple_Controller{
 
   // Systematic controls
   enum    Systematic {Default=0,NSystematics};
-  enum    MCDataID {Data=0,MC=1};
+  enum    MCDataID {Data=0,MC_DY=1,MC_WJ=2,MC_QCD=3,Unknown=999};
   int     SetupSystematics(TString sys_);
   void    SetSysID(int sysid){theSys=sysid;}
   double  GetSystematicWeight();

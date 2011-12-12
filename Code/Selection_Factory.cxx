@@ -1,6 +1,7 @@
 #include "Selection_Factory.h"
 
 #include "Example.h"
+#include "Validation.h"
 
 Selection_Factory::Selection_Factory(){
 }
@@ -12,6 +13,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   Selection_Base* s;
   Analysis.ToLower();
   if(Analysis.Contains("example"))s=new Example(Analysis,UncertType);
+  else if(Analysis.Contains("validation"))s=new Validation(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);

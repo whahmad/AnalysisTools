@@ -178,7 +178,10 @@ void Ntuple_Controller::doMET(){
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
   if(isData())return Data;
-  return MC;
+  if(Get_File_Name().Contains("MC_DY")) return MC_DY;
+  if(Get_File_Name().Contains("MC_WJ")) return MC_WJ;
+  if(Get_File_Name().Contains("MC_QCD")) return MC_QCD;
+  return Unknown;
 }
 
 TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){

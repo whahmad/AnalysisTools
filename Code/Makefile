@@ -35,8 +35,9 @@ TARGETS       =	Ntuple_Controller \
 		DoubleEventRemoval \
 		SkimConfig \
 		HistoConfig \
-		Example
-  
+		Example \
+		Validation
+
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
 OBJS          = $(SRCS:.cxx=.o)
