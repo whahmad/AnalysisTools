@@ -100,14 +100,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cvs co -d RecoTauTag  -r V01-01-02 UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d CommonTools -r V01-01-02 UserCode/RWTH3b/Tau/src/CommonTools\" >> Setup_TauNtuple"));
     system(sprintf("echo \"addpkg PhysicsTools/Utilities V08-03-14\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V01-01-02 RecoVertex/KinematicFit/src/CombinedKinematicConstraint.cc\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/src/KinematicConstrainedVertexFitter.cc\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/src/MultiTrackPointingKinematicConstraint.cc\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/src/VertexKinematicConstraint.cc\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/interface/CombinedKinematicConstraint.h\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h\" >> Setup_TauNtuple"));
-    #system(sprintf("echo \"cvs co -r V02-00-06 RecoVertex/KinematicFit/interface/MultiTrackPointingKinematicConstraint.h\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d TauDataFormat UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d TauDataFormat -r V00-00-01 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d SkimmingTools UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d SkimProduction UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
