@@ -36,44 +36,14 @@ void Selection::ConfigureHistograms(){
     if(verbose) std::cout << "Selection::ConfigureHistograms() starting" << std::endl;
     isStored=true;
     Store_ExtraDist();
-    for(unsigned int i=0; i<Nminus1.size(); i++){
-      for(unsigned int j=0; j<Nminus1.at(i).size();j++){
-	if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point A j= " << j << std::endl;
-	Nminus1.at(i).at(j).Sumw2();
-	Nminus0.at(i).at(j).Sumw2();
-	if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point B j= " << j << std::endl;
-	if(distindx.at(i)){
-	  Nminus1dist.at(i).at(j).Sumw2();
-	  Accumdist.at(i).at(j).Sumw2();
-	}
-	if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point C j= " << j << std::endl;
-	if(i==0){
-	  if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point 1 j= " << j << std::endl;
-	  TString name=Npassed.at(j).GetName();
-	  name+="_noweight";
-	  Npassed_noweight.push_back((*((TH1D*)Npassed.at(j).Clone(name))));
-	  Npassed_noweight.at(j).Sumw2();
-	  Npassed.at(j).Sumw2();
-	  if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point 2 j= " << j << std::endl;
-	  for(unsigned int k=0; k<Extradist1d.size();k++){
-	    if(verbose) std::cout << "k 1d" << k <<  std::endl;
-	    if(verbose) std::cout << "k " << k <<  " " << j << " " << Extradist1d.at(k)->at(j).GetName() << std::endl;
-	    Extradist1d.at(k)->at(j).Sumw2();
-	  }
-	  if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point 3 j= " << j
-				<< " size= " << Extradist2d.size() << std::endl;
-	  for(unsigned int k=0; k<Extradist2d.size();k++){
-	    if(verbose) std::cout << "k 2d" << k <<  std::endl;
-	    if(verbose) std::cout << "k " << k <<  " " << j << " " << Extradist2d.at(k)->size() << " " 
-				  <<  Extradist2d.at(k)->at(j).GetName() << std::endl;
-	    Extradist2d.at(k)->at(j).Sumw2();
-	    if(verbose) std::cout << "OK " << std::endl;
-	  }
-	  if(verbose) std::cout << "Selection::ConfigureHistograms() i= " << i << "  Point 4 j= " << j << std::endl;
-	}
-      }
+    for(unsigned int j=0; j<Npassed.size();j++){
+      TString name=Npassed.at(j).GetName();
+      name+="_noweight";
+      Npassed_noweight.push_back((*((TH1D*)Npassed.at(j).Clone(name))));
+      Npassed_noweight.at(j).Sumw2();
+      Npassed.at(j).Sumw2();
     }
-    if(verbose) std::cout << "Selection::ConfigureHistograms() done" << std::endl;
+    if(verbose) std::cout << "Selection::ConfigureHistograms() Finished" << std::endl;
   }
 }
 

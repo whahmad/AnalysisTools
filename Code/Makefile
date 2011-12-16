@@ -36,7 +36,8 @@ TARGETS       =	Ntuple_Controller \
 		SkimConfig \
 		HistoConfig \
 		Example \
-		Validation
+		Validation \
+		Ztotautau_hadmu_ControlSample
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
