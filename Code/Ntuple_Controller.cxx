@@ -14,7 +14,6 @@
 Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
-  ,GeV(1000)
 {
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
@@ -237,7 +236,7 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
   //  muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() not applied
   //  numberOfMatchedStations() not applied                              
   if(Muon_isGlobalMuon(i) && Muon_isStandAloneMuon(i)){
-    if(Muons_p4(i).Pt()>17.0*GeV){
+    if(Muons_p4(i).Pt()>17.0){
       if(fabs(Muons_p4(i).Eta())<2.4){
 	if(Muon_normChi2(i)<10.0){
 	  if(Muon_innerTrack_numberofValidHits(i)>10){
@@ -287,7 +286,7 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   //  abs(eta) < 2.5 < 2.4                      
   //  jet ID applied applied                    
   if(isJetID(i)){
-    if(PFJet_p4(i).Pt()>15.0*GeV){
+    if(PFJet_p4(i).Pt()>15.0){
       if(fabs(PFJet_p4(i).Eta())<2.4){
 	return true;
       }

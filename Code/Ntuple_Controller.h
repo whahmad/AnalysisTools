@@ -96,8 +96,6 @@ class Ntuple_Controller{
   };
   enum TrackPar{i_qoverp = 0, i_lambda, i_phi, i_dxy,i_dsz};
 
-  double GeV;
-
   // Ntuple Access Functions 
   virtual Int_t Get_Entries();
   virtual void Get_Event(int _jentry);
