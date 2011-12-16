@@ -1,4 +1,0 @@
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/HLT_IsoMu12_LooseIsoPFTau10_v2_DYJetsToLL_TauNtuple_PU_2/64432101daa043ff28ac6b93e9b012d4
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/QCD_Pt-20_MuEnrichedPt-15_TuneZ2_7TeV-pythia6/HLT_IsoMu12_LooseIsoPFTau10_v2_QCD_Pt_20_TauNtuple_PU/64432101daa043ff28ac6b93e9b012d4
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/HLT_IsoMu12_LooseIsoPFTau10_v2_WJetsToLNu_TauNtuple_PU/64432101daa043ff28ac6b93e9b012d4
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/TauPlusX/HLT_IsoMu15_LooseIsoPFTau15_v8_TauPlusX_TauNtuple_version5_12_PU/cb7c3b2a63a66fcfdfd3248876335dc6
