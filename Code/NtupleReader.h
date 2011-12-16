@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sun Dec 11 15:47:58 2011 by ROOT version 5.26/00c
+// Fri Dec 16 16:41:55 2011 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -30,8 +30,9 @@ public :
    std::vector<float>   *Vtx_x;
    std::vector<float>   *Vtx_y;
    std::vector<float>   *Vtx_z;
-   std::vector<std::vector<float> > *Vtx_Cov;
+   std::vector<std::vector<std::vector<float> > > *Vtx_Cov;
    std::vector<std::vector<int> > *Vtx_Track_idx;
+   std::vector<float>   *Vtx_isFake;
    std::vector<std::vector<float> > *Muon_p4;
    std::vector<std::vector<double> > *Muon_Poca;
    std::vector<bool>    *Muon_isGlobalMuon;
@@ -58,6 +59,12 @@ public :
    std::vector<float>   *Muon_sumPt05;
    std::vector<float>   *Muon_trackerVetoPt05;
    std::vector<unsigned int> *Muon_Track_idx;
+   std::vector<float>   *Muon_hitPattern_pixelLayerwithMeas;
+   std::vector<float>   *Muon_numberOfMatchedStations;
+   std::vector<float>   *Muon_normChi2;
+   std::vector<float>   *Muon_hitPattern_numberOfValidMuonHits;
+   std::vector<float>   *Muon_innerTrack_numberofValidHits;
+   std::vector<float>   *Muon_numberOfMatches;
    std::vector<std::vector<float> > *PFTau_p4;
    std::vector<bool>    *PFTau_isTightIsolation;
    std::vector<bool>    *PFTau_isMediumIsolation;
@@ -109,6 +116,11 @@ public :
    std::vector<float>   *PFJet_etaphiMoment;
    std::vector<std::vector<int> > *PFJet_Track_idx;
    std::vector<unsigned int> *PFJet_MatchedHPS_idx;
+   std::vector<int>     *PFJet_numberOfDaughters;
+   std::vector<float>   *PFJet_chargedEmEnergyFraction;
+   std::vector<float>   *PFJet_chargedHadronEnergyFraction;
+   std::vector<float>   *PFJet_neutralHadronEnergyFraction;
+   std::vector<float>   *PFJet_PFJet_neutralEmEnergyFraction;
    Double_t        MET_et;
    Double_t        MET_phi;
    Double_t        MET_sumET;
@@ -130,6 +142,8 @@ public :
    std::vector<unsigned short> *Track_numberOfLostHits;
    std::vector<unsigned short> *Track_numberOfValidHits;
    std::vector<unsigned int> *Track_qualityMask;
+   std::vector<std::vector<float> > *Track_par;
+   std::vector<std::vector<std::vector<float> > > *Track_parCov;
    Float_t         GenEventInfoProduct_signalProcessID;
    Float_t         GenEventInfoProduct_weight;
    std::vector<double>  *GenEventInfoProduct_weights;
@@ -158,6 +172,7 @@ public :
    TBranch        *b_Vtx_z;   //!
    TBranch        *b_Vtx_Cov;   //!
    TBranch        *b_Vtx_Track_idx;   //!
+   TBranch        *b_Vtx_isFake;   //!
    TBranch        *b_Muon_p4;   //!
    TBranch        *b_Muon_Poca;   //!
    TBranch        *b_Muon_isGlobalMuon;   //!
@@ -184,6 +199,12 @@ public :
    TBranch        *b_Muon_sumPt05;   //!
    TBranch        *b_Muon_trackerVetoPt05;   //!
    TBranch        *b_Muon_Track_idx;   //!
+   TBranch        *b_Muon_hitPattern_pixelLayerwithMeas;   //!
+   TBranch        *b_Muon_numberOfMatchedStations;   //!
+   TBranch        *b_Muon_normChi2;   //!
+   TBranch        *b_Muon_hitPattern_numberOfValidMuonHits;   //!
+   TBranch        *b_Muon_innerTrack_numberofValidHits;   //!
+   TBranch        *b_Muon_numberOfMatches;   //!
    TBranch        *b_PFTau_p4;   //!
    TBranch        *b_PFTau_isTightIsolation;   //!
    TBranch        *b_PFTau_isMediumIsolation;   //!
@@ -235,6 +256,11 @@ public :
    TBranch        *b_PFJet_etaphiMoment;   //!
    TBranch        *b_PFJet_Track_idx;   //!
    TBranch        *b_PFJet_MatchedHPS_idx;   //!
+   TBranch        *b_PFJet_numberOfDaughters;   //!
+   TBranch        *b_PFJet_chargedEmEnergyFraction;   //!
+   TBranch        *b_PFJet_chargedHadronEnergyFraction;   //!
+   TBranch        *b_PFJet_neutralHadronEnergyFraction;   //!
+   TBranch        *b_PFJet_PFJet_neutralEmEnergyFraction;   //!
    TBranch        *b_MET_et;   //!
    TBranch        *b_MET_phi;   //!
    TBranch        *b_MET_sumET;   //!
@@ -256,6 +282,8 @@ public :
    TBranch        *b_Track_numberOfLostHits;   //!
    TBranch        *b_Track_numberOfValidHits;   //!
    TBranch        *b_Track_qualityMask;   //!
+   TBranch        *b_Track_par;   //!
+   TBranch        *b_Track_parCov;   //!
    TBranch        *b_GenEventInfoProduct_signalProcessID;   //!
    TBranch        *b_GenEventInfoProduct_weight;   //!
    TBranch        *b_GenEventInfoProduct_weights;   //!
@@ -363,6 +391,7 @@ void NtupleReader::Init(TTree *tree)
    Vtx_z = 0;
    Vtx_Cov = 0;
    Vtx_Track_idx = 0;
+   Vtx_isFake = 0;
    Muon_p4 = 0;
    Muon_Poca = 0;
    Muon_isGlobalMuon = 0;
@@ -389,6 +418,12 @@ void NtupleReader::Init(TTree *tree)
    Muon_sumPt05 = 0;
    Muon_trackerVetoPt05 = 0;
    Muon_Track_idx = 0;
+   Muon_hitPattern_pixelLayerwithMeas = 0;
+   Muon_numberOfMatchedStations = 0;
+   Muon_normChi2 = 0;
+   Muon_hitPattern_numberOfValidMuonHits = 0;
+   Muon_innerTrack_numberofValidHits = 0;
+   Muon_numberOfMatches = 0;
    PFTau_p4 = 0;
    PFTau_isTightIsolation = 0;
    PFTau_isMediumIsolation = 0;
@@ -439,6 +474,11 @@ void NtupleReader::Init(TTree *tree)
    PFJet_etaphiMoment = 0;
    PFJet_Track_idx = 0;
    PFJet_MatchedHPS_idx = 0;
+   PFJet_numberOfDaughters = 0;
+   PFJet_chargedEmEnergyFraction = 0;
+   PFJet_chargedHadronEnergyFraction = 0;
+   PFJet_neutralHadronEnergyFraction = 0;
+   PFJet_PFJet_neutralEmEnergyFraction = 0;
    Track_p4 = 0;
    Track_Poca = 0;
    Track_charge = 0;
@@ -447,6 +487,8 @@ void NtupleReader::Init(TTree *tree)
    Track_numberOfLostHits = 0;
    Track_numberOfValidHits = 0;
    Track_qualityMask = 0;
+   Track_par = 0;
+   Track_parCov = 0;
    GenEventInfoProduct_weights = 0;
    MCSignalParticle_p4 = 0;
    MCSignalParticle_pdgid = 0;
@@ -474,6 +516,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Vtx_z", &Vtx_z, &b_Vtx_z);
    fChain->SetBranchAddress("Vtx_Cov", &Vtx_Cov, &b_Vtx_Cov);
    fChain->SetBranchAddress("Vtx_Track_idx", &Vtx_Track_idx, &b_Vtx_Track_idx);
+   fChain->SetBranchAddress("Vtx_isFake", &Vtx_isFake, &b_Vtx_isFake);
    fChain->SetBranchAddress("Muon_p4", &Muon_p4, &b_Muon_p4);
    fChain->SetBranchAddress("Muon_Poca", &Muon_Poca, &b_Muon_Poca);
    fChain->SetBranchAddress("Muon_isGlobalMuon", &Muon_isGlobalMuon, &b_Muon_isGlobalMuon);
@@ -500,6 +543,12 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Muon_sumPt05", &Muon_sumPt05, &b_Muon_sumPt05);
    fChain->SetBranchAddress("Muon_trackerVetoPt05", &Muon_trackerVetoPt05, &b_Muon_trackerVetoPt05);
    fChain->SetBranchAddress("Muon_Track_idx", &Muon_Track_idx, &b_Muon_Track_idx);
+   fChain->SetBranchAddress("Muon_hitPattern_pixelLayerwithMeas", &Muon_hitPattern_pixelLayerwithMeas, &b_Muon_hitPattern_pixelLayerwithMeas);
+   fChain->SetBranchAddress("Muon_numberOfMatchedStations", &Muon_numberOfMatchedStations, &b_Muon_numberOfMatchedStations);
+   fChain->SetBranchAddress("Muon_normChi2", &Muon_normChi2, &b_Muon_normChi2);
+   fChain->SetBranchAddress("Muon_hitPattern_numberOfValidMuonHits", &Muon_hitPattern_numberOfValidMuonHits, &b_Muon_hitPattern_numberOfValidMuonHits);
+   fChain->SetBranchAddress("Muon_innerTrack_numberofValidHits", &Muon_innerTrack_numberofValidHits, &b_Muon_innerTrack_numberofValidHits);
+   fChain->SetBranchAddress("Muon_numberOfMatches", &Muon_numberOfMatches, &b_Muon_numberOfMatches);
    fChain->SetBranchAddress("PFTau_p4", &PFTau_p4, &b_PFTau_p4);
    fChain->SetBranchAddress("PFTau_isTightIsolation", &PFTau_isTightIsolation, &b_PFTau_isTightIsolation);
    fChain->SetBranchAddress("PFTau_isMediumIsolation", &PFTau_isMediumIsolation, &b_PFTau_isMediumIsolation);
@@ -551,6 +600,11 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFJet_etaphiMoment", &PFJet_etaphiMoment, &b_PFJet_etaphiMoment);
    fChain->SetBranchAddress("PFJet_Track_idx", &PFJet_Track_idx, &b_PFJet_Track_idx);
    fChain->SetBranchAddress("PFJet_MatchedHPS_idx", &PFJet_MatchedHPS_idx, &b_PFJet_MatchedHPS_idx);
+   fChain->SetBranchAddress("PFJet_numberOfDaughters", &PFJet_numberOfDaughters, &b_PFJet_numberOfDaughters);
+   fChain->SetBranchAddress("PFJet_chargedEmEnergyFraction", &PFJet_chargedEmEnergyFraction, &b_PFJet_chargedEmEnergyFraction);
+   fChain->SetBranchAddress("PFJet_chargedHadronEnergyFraction", &PFJet_chargedHadronEnergyFraction, &b_PFJet_chargedHadronEnergyFraction);
+   fChain->SetBranchAddress("PFJet_neutralHadronEnergyFraction", &PFJet_neutralHadronEnergyFraction, &b_PFJet_neutralHadronEnergyFraction);
+   fChain->SetBranchAddress("PFJet_PFJet_neutralEmEnergyFraction", &PFJet_PFJet_neutralEmEnergyFraction, &b_PFJet_PFJet_neutralEmEnergyFraction);
    fChain->SetBranchAddress("MET_et", &MET_et, &b_MET_et);
    fChain->SetBranchAddress("MET_phi", &MET_phi, &b_MET_phi);
    fChain->SetBranchAddress("MET_sumET", &MET_sumET, &b_MET_sumET);
@@ -572,6 +626,8 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Track_numberOfLostHits", &Track_numberOfLostHits, &b_Track_numberOfLostHits);
    fChain->SetBranchAddress("Track_numberOfValidHits", &Track_numberOfValidHits, &b_Track_numberOfValidHits);
    fChain->SetBranchAddress("Track_qualityMask", &Track_qualityMask, &b_Track_qualityMask);
+   fChain->SetBranchAddress("Track_par", &Track_par, &b_Track_par);
+   fChain->SetBranchAddress("Track_parCov", &Track_parCov, &b_Track_parCov);
    fChain->SetBranchAddress("GenEventInfoProduct_signalProcessID", &GenEventInfoProduct_signalProcessID, &b_GenEventInfoProduct_signalProcessID);
    fChain->SetBranchAddress("GenEventInfoProduct_weight", &GenEventInfoProduct_weight, &b_GenEventInfoProduct_weight);
    fChain->SetBranchAddress("GenEventInfoProduct_weights", &GenEventInfoProduct_weights, &b_GenEventInfoProduct_weights);

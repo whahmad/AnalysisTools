@@ -94,7 +94,9 @@ class Ntuple_Controller{
     confirmed = 3, goodIterative = 4, looseSetWithPV = 5, highPuritySetWithPV = 6,
     qualitySize = 7
   };
+  enum TrackPar{i_qoverp = 0, i_lambda, i_phi, i_dxy,i_dsz};
 
+  double GeV;
 
   // Ntuple Access Functions 
   virtual Int_t Get_Entries();
@@ -142,7 +144,9 @@ class Ntuple_Controller{
   float        Vtx_ndof(unsigned int i){return Ntp->Vtx_ndof->at(i);}
   TMatrixF     Vtx_Cov(unsigned int i);
   std::vector<int>  Vtx_Track_idx(unsigned int i){return Ntp->Vtx_Track_idx->at(i);}
+  float Vtx_isFake(unsigned int i){return Ntp->Vtx_isFake->at(i);}
   bool isVtxGood(unsigned int i); 
+
 
   // Muon information
   unsigned int   NMuons(){return Ntp->Muon_p4->size();}
@@ -172,8 +176,15 @@ class Ntuple_Controller{
   float          Muon_sumPt05(unsigned int i){return Ntp->Muon_sumPt05->at(i);}
   float          Muon_trackerVetoPt05(unsigned int i){return Ntp->Muon_trackerVetoPt05->at(i);}
   unsigned int   Muon_Track_idx(unsigned int i){return Ntp->Muon_Track_idx->at(i);}
-
-
+  float          Muon_hitPattern_pixelLayerwithMeas(unsigned int i){return Ntp->Muon_hitPattern_pixelLayerwithMeas->at(i);}
+  float          Muon_numberOfMatchedStations(unsigned int i){return Ntp->Muon_numberOfMatchedStations->at(i);}
+  float          Muon_normChi2(unsigned int i){return Ntp->Muon_normChi2->at(i);}
+  float          Muon_hitPattern_numberOfValidMuonHits(unsigned int i){return Ntp->Muon_hitPattern_numberOfValidMuonHits->at(i);}
+  float          Muon_innerTrack_numberofValidHits(unsigned int i){return Ntp->Muon_innerTrack_numberofValidHits->at(i);}
+  float          Muon_numberOfMatches(unsigned int i){return Ntp->Muon_numberOfMatches->at(i);}
+  bool           isGoodMuon(unsigned int i);
+  bool           isGoodMuon_nooverlapremoval(unsigned int i);
+  
   //Base Tau Information (PF)
    unsigned int      NPFTaus(){return Ntp->PFTau_p4->size();}
    TLorentzVector    PFTau_p4(unsigned int i){return TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));}
@@ -236,6 +247,15 @@ class Ntuple_Controller{
    float              PFJet_etaphiMoment(unsigned int i){return Ntp->PFJet_etaphiMoment->at(i);}
    std::vector<int>   PFJet_Track_idx(unsigned int i){return Ntp->PFJet_Track_idx->at(i);}
    unsigned int       PFJet_MatchedHPS_idx(unsigned int i){return Ntp->PFJet_MatchedHPS_idx->at(i);}
+   int                PFJet_numberOfDaughters(unsigned int i){return Ntp->PFJet_numberOfDaughters->at(i);}
+   float              PFJet_chargedEmEnergyFraction(unsigned int i){return Ntp->PFJet_chargedEmEnergyFraction->at(i);}
+   float              PFJet_chargedHadronEnergyFraction(unsigned int i){return Ntp->PFJet_chargedHadronEnergyFraction->at(i);}
+   float              PFJet_neutralHadronEnergyFraction(unsigned int i){return Ntp->PFJet_neutralHadronEnergyFraction->at(i);}
+   float              PFJet_PFJet_neutralEmEnergyFraction(unsigned int i){return Ntp->PFJet_PFJet_neutralEmEnergyFraction->at(i);}
+   bool               isGoodJet(unsigned int i);
+   bool               isGoodJet_nooverlapremoval(unsigned int i);
+   bool               isJetID(unsigned int i);
+
 
    //MET information
    double             MET_et(){return Ntp->MET_et;}
@@ -252,7 +272,10 @@ class Ntuple_Controller{
    unsigned short    Track_numberOfLostHits(unsigned int i){return Ntp->Track_numberOfLostHits->at(i);}
    unsigned short    Track_numberOfValidHits(unsigned int i){return Ntp->Track_numberOfValidHits->at(i);}
    unsigned int      Track_qualityMask(unsigned int i){return Ntp->Track_qualityMask->at(i);}
-   
+   float             Track_par(unsigned int i, TrackPar par){return Ntp->Track_par->at(i).at(par);}
+   TMatrixF          Track_parCov(unsigned int i);
+   float             Track_parCov(unsigned int i, TrackPar par1, TrackPar par2);
+
    // MC Informaation
    // Singal particles (Z0,W+/-,H0,H+/-)
    unsigned int               NMCSignalParticles(){return Ntp->MCSignalParticle_p4->size();}

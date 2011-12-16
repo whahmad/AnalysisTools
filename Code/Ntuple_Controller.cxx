@@ -4,7 +4,7 @@
 #define Ntuple_Controller_cxx
 
 #include "Ntuple_Controller.h"
-
+#include "Tools.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -14,6 +14,7 @@
 Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
+  ,GeV(1000)
 {
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
@@ -190,8 +191,8 @@ TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
   for(unsigned int j=0;j<dim;j++){
     for(unsigned int k=0;k<=j;k++){
       if(j*dim+k<Ntp->Vtx_Cov->at(i).size()){
-	M[j][k]=Ntp->Vtx_Cov->at(i).at(j*dim+k);
-	M[k][j]=Ntp->Vtx_Cov->at(i).at(j*dim+k);
+	M[j][k]=Ntp->Vtx_Cov->at(i).at(j).at(k);
+	M[k][j]=Ntp->Vtx_Cov->at(i).at(j).at(k);
       }
     }
   }
@@ -204,6 +205,149 @@ bool Ntuple_Controller::isVtxGood(unsigned int i){
   return false;
 }
 
+bool Ntuple_Controller::isGoodMuon(unsigned int i){
+  //  Top Dilepton muon selection without Transverse IP cut and PT cut at 17GeV for our trigger 
+  //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel       
+  //  isGoodMuon_nooverlapremoval(i) with
+  //  ΔR(μ,jet)>0.3 where jet is any jet passing the jet requirements not applied applied       
+  if(isGoodMuon_nooverlapremoval(i)){
+    for(unsigned int j=0;j<NPFJets();j++){
+      if(isGoodJet_nooverlapremoval(j)){
+	if(Tools::dr(Muons_p4(i),PFJet_p4(j))<0.3) return false;
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+
+bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
+  //  Top Dilepton muon selection without Transverse IP cut and PT cut at 17GeV for our trigger and no overlpar removal applied
+  //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel  
+  //  GlobalMuon && TrackerMuon applied applied                                         
+  //  pT > 20 GeV                                                                       
+  //  fasb(eta) < 2.4                                                                   
+  //  normChi2 < 10                                                                     
+  //  n Tracker Hits > 10                                                               
+  //  n Muon Hit > 0                                                                    
+  //  Transverse IP of the muon wrt the beam spot (cm) < 0.02                           
+  //  relIso < 0.20                                                                      
+  //  fabs( muon.vertex().z() - PV.z()) not applied                           
+  //  muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() not applied
+  //  numberOfMatchedStations() not applied                              
+  if(Muon_isGlobalMuon(i) && Muon_isStandAloneMuon(i)){
+    if(Muons_p4(i).Pt()>17.0*GeV){
+      if(fabs(Muons_p4(i).Eta())<2.4){
+	if(Muon_normChi2(i)<10.0){
+	  if(Muon_innerTrack_numberofValidHits(i)>10){
+	    if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
+	      if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
+		return true;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  return false;
+}
+
+
+
+
+
+bool Ntuple_Controller::isGoodJet(unsigned int i){
+  //  Top Dilepton Jet selection with pt 15GeV
+  //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel 
+  //  isGoodJet_nooverlapremoval(i) with:
+  //  deltaR jet-electron cleaning < 0.4 (2 selected lepton only) < 0.3 (e+jets only) 0.3
+  //  deltaR jet-muon cleaning < 0.4(2 selected lepton only) < 0.3 (mu+jets only), 0.1 for PF and JET 0.3
+  if(isGoodJet_nooverlapremoval(i)){
+    if(isGoodMuon_nooverlapremoval(i)){
+      for(unsigned int j=0;j<NMuons();j++){
+	if(isGoodMuon_nooverlapremoval(j)){
+	  if(Tools::dr(Muons_p4(j),PFJet_p4(i))<0.4) return false;
+	}
+      }
+      return true;
+    }
+
+  }
+}
+
+bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
+  //  Top Dilepton Jet selection with pt 15GeV
+  //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel
+  //  Jet ID defined in isJetID(i)               
+  //  cut         dilepton    l+jet
+  //  corrected pT 30 GeV 30 GeV    
+  //  residual correction (data) applied applied
+  //  abs(eta) < 2.5 < 2.4                      
+  //  jet ID applied applied                    
+  if(isJetID(i)){
+    if(PFJet_p4(i).Pt()>15.0*GeV){
+      if(fabs(PFJet_p4(i).Eta())<2.4){
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool Ntuple_Controller::isJetID(unsigned int i){
+  //  Top Dilepton Jet selection with pt and iso matching the muon and tau.
+  //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel  
+  //  Jet ID :
+  //  number of constituents>1 (patJet->numberOfDaughters())
+  //  CEF<0.99 (patJet->chargedEmEnergyFraction())
+  //  NHF<0.99 (patJet->neutralHadronEnergyFraction())
+  //  NEF<0.99 (patJet->neutralEmEnergyFraction())
+  //  if |η|<2.4, CHF>0 (patJet->chargedHadronEnergyFraction())
+  //  if |η|<2.4, NCH>0 (patJet->chargedMultiplicity()) 
+  /////////////////////////////////////////////////////////////////////////
+  // apply jet ID
+  bool JetID_ok=false;
+  if(PFJet_numberOfDaughters(i)>1){
+    if(PFJet_chargedEmEnergyFraction(i)<0.99){
+      if(PFJet_neutralHadronEnergyFraction(i)<0.99){
+	if(PFJet_PFJet_neutralEmEnergyFraction(i)<0.99){
+	  if(fabs(PFJet_p4(i).Eta())<2.4){
+	    if(PFJet_chargedHadronEnergyFraction(i)>0){
+	      if(PFJet_chargedMultiplicity(i)>0){
+		return true;
+	      }
+	    }
+	  }
+	  else{
+	    return true;
+	  }
+	}
+      }
+    }
+  }
+  return false;
+}
+
+
+TMatrixF     Ntuple_Controller::Track_parCov(unsigned int i){
+  unsigned int dim=5;
+  TMatrixF M(dim,dim);
+  for(unsigned int j=0;j<dim;j++){
+    for(unsigned int k=0;k<=j;k++){
+      if(j*dim+k<Ntp->Track_parCov->at(i).size()){
+        M[j][k]=Ntp->Track_parCov->at(i).at(j).at(k);
+        M[k][j]=Ntp->Track_parCov->at(i).at(j).at(k);
+      }
+    }
+  }
+}
+
+float     Ntuple_Controller::Track_parCov(unsigned int i, TrackPar par1, TrackPar par2){
+  if(par1>par2)return Ntp->Track_parCov->at(i).at(par1).at(par2);
+  return Ntp->Track_parCov->at(i).at(par2).at(par1);
+}
 
 #endif
 
