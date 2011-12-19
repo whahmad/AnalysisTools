@@ -25,12 +25,11 @@ class HistoConfig {
   TString GetName(unsigned int i);
   TString GetLeg(unsigned int i);
   double  GetCrossSection(int id);
-  void GetHistoInfo(std::vector<TString> &types,std::vector<float> &CrossSectionandAcceptance,std::vector<TString> &legend,std::vector<int> &colour);
+  void GetHistoInfo(std::vector<int> &types,std::vector<float> &CrossSectionandAcceptance,std::vector<TString> &legend,std::vector<int> &colour);
 
  private:
   static std::vector<int>          ID;
   static std::vector<double>       CS;
-  static std::vector<unsigned int> IDtoHistoMap;
   static std::vector<TString>      HistoName;
   static std::vector<TString>      HistoLegend;
   static std::vector<int>          HistoColour;

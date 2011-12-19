@@ -14,17 +14,17 @@
 #include <cstdlib>
 #include "TH1D.h"
 #include <math.h>
-std::vector<float>   SkimConfig::nevents;
-std::vector<TString> SkimConfig::dsname;
 
-std::vector<TString> SkimConfig::SkimIDs;
-std::vector<float>   SkimConfig::EventsPassed;
-std::vector<float>   SkimConfig::EventsPassedErr;
-std::vector<float>   SkimConfig::EventEff_noweight;
+std::vector<int> SkimConfig::SkimIDs;
+std::vector<float>   SkimConfig::NEvents;
+std::vector<float>   SkimConfig::NEventsErr;
+std::vector<float>   SkimConfig::NEvents_sel;
+std::vector<float>   SkimConfig::NEventsErr_sel;
+std::vector<float>   SkimConfig::NEvents_noweight;
+std::vector<float>   SkimConfig::NEvents_noweight_sel;
+bool SkimConfig::loaded=false;
 
-
-SkimConfig::SkimConfig():
-  loaded(false)
+SkimConfig::SkimConfig()
 {
 }
 
@@ -33,103 +33,50 @@ bool SkimConfig::Load()
   return SkimConfig::Load("Tools/DataSets.dat");
 }
 
-bool SkimConfig::Load(TString Name_)  
-{
-  if(loaded) return true;
-  std::cout << "SkimConfig::Load("<< Name_ <<")" << std::endl;
-  nevents.clear();
-  dsname.clear();
-  if(Name_==""){
-    loaded=true;
-    return true;
-  }
-  ifstream input_file;
-  char *file_=(char*)Name_.Data();
-  input_file.open(file_, std::ios::in);
-  if (!(input_file)){
-    std::cout << "\nERROR: Opening xml file "<< Name_ <<" for SkimConfig has failed.\n" << std::endl;
-    return false;
-  }
-  loaded=true;
-  std::cout << "\nOpened SkimConfig xml file: "<< Name_ <<".\n" << std::endl;
-
-  std::string s;
-  unsigned int a=0;
-  while(getline(input_file, s)){
-    a++;
-    if(a>1000) break;
-    std::stringstream line(s); 
-    TString ds;
-    int nfiles;
-    int nevt;
-    line >> ds >> nfiles >> nevt;
-    dsname.push_back(ds);
-    nevents.push_back(nevt);
-  }
-  input_file.close();
-  for(int i=0; i<dsname.size();i++){
-    std::cout << "SkimConfig::Load " << i << " "  << dsname.at(i) << " NEvents=" << nevents.at(i) << std::endl;  
-  }
-  std::cout << "SkimConfig::Load("<< Name_ <<") complete" << std::endl;
-}
-
-void SkimConfig::LoadSkimEff(TString Name_)
+bool SkimConfig::Load(TString Name_)
 {
   std::cout << "SkimConfig::LoadSkimEff("<< Name_ <<")" << std::endl;
-  bool first=true;
-  //if(SkimIDs.size()>0)first=false;
-
+  if(loaded) return false;
   SkimIDs.clear();
-  EventsPassed.clear();
-  EventsPassedErr.clear();
-  EventEff_noweight.clear();
+  NEvents.clear();
+  NEventsErr.clear();
+  NEvents_sel.clear();
+  NEventsErr_sel.clear();
+  NEvents_noweight.clear();
+  NEvents_noweight_sel.clear();
   ifstream input_file;
   char *file_=(char*)Name_.Data();
   input_file.open(file_, std::ios::in);
   if (!(input_file)){
     std::cout << "\nERROR: Opening SkimEff file "<< Name_ <<" for SkimConfig has failed.\n" << std::endl;
-    return;
+    return false;
   }
   std::cout << "\nOpened SkimConfig SkimEff file: "<< Name_ <<".\n" << std::endl;
-
+  loaded =true;
   std::string s;
-  unsigned int a=0;
+  int a=0;
   while(getline(input_file, s)){
     a++;
     if(a>1000) break;
     std::stringstream line(s);
-    TString id;
+    int id;
     float nevents;
     float neventserr;
-    float c;
-    float noweighteff;
-    line >> id >> nevents >> neventserr >> c >> noweighteff;
-    if(first){
-      std::cout << "First" << std::endl;
-      SkimIDs.push_back(id);
-      EventsPassed.push_back(nevents);
-      EventsPassedErr.push_back(neventserr);
-      EventEff_noweight.push_back(noweighteff);
-    }
-    else{
-      for(int j=0; j<SkimIDs.size();j++){
-	std::cout << j << std::endl;
-	if(SkimIDs.at(j)==id){
-	  EventEff_noweight.at(j)+=noweighteff;
-	}
-	std::cout << j << " " << "done" << std::endl;
-      }
-    }
-
+    float nevents_sel;
+    float neventserr_sel;
+    float noweight;
+    float noweight_sel;
+    line >> id >> nevents >> neventserr >> nevents_sel >> neventserr_sel >> noweight >> noweight_sel;
+    SkimIDs.push_back(id);
+    NEvents.push_back(nevents);
+    NEventsErr.push_back(neventserr);
+    NEvents_sel.push_back(nevents_sel);
+    NEventsErr_sel.push_back(neventserr_sel);
+    NEvents_noweight.push_back(noweight);
+    NEvents_noweight_sel.push_back(noweight_sel);
   }
   input_file.close();
-  std::cout << "SkimConfig::LoadSkimEff " << SkimIDs.size() << " " << EventsPassed.size() << " " << EventsPassedErr.size() 
-	    << " " << EventEff_noweight.size() << std::endl;
-  for(int i=0; i<SkimIDs.size();i++){
-    std::cout << "SkimConfig::LoadSkimEff " << i << " "  << SkimIDs.at(i) << " " << EventsPassed.at(i) << " " 
-	      << EventsPassedErr.at(i) << " " << EventEff_noweight.at(i) << std::endl;
-  }
-  std::cout << "SkimConfig::LoadSkimEff("<< Name_ <<") complete" << std::endl;
+  return true;
 }
 
 SkimConfig::~SkimConfig(){
@@ -137,44 +84,55 @@ SkimConfig::~SkimConfig(){
 }
 
 
-void SkimConfig::SaveEfficiency(TString Name,std::vector<TString> ids,std::vector<TH1D> NPassed, std::vector<TH1D> NPassed_noweight){
+double SkimConfig::GetNEvents(int id){
+  for(int i=0; i<SkimIDs.size();i++){
+    if(id==SkimIDs.at(i))return NEvents.at(i);
+  }
+  return 0;
+}
+
+void SkimConfig::SaveEfficiency(TString Name,std::vector<int> ids,std::vector<TH1D> NPassed, std::vector<TH1D> NPassed_noweight){
   ofstream output;
   output.open(Name+"SkimEff.dat", std::ios::out);
   int nbins=NPassed.at(0).GetNbinsX();
   for(int i=0; i<ids.size();i++){
-    ids.at(i).ReplaceAll(" ","");
-    //if(NPassed_noweight.at(i).GetBinContent(1)!=0 && NPassed.at(i).GetBinContent(1)!=0){
     (output) << ids.at(i)  << setprecision (15)
-	     << " " << NPassed.at(i).GetBinContent(1) << " " << NPassed.at(i).GetBinError(1) 
-	     << " " << NPassed_noweight.at(i).GetBinContent(1) 
-	     << " " << NPassed_noweight.at(i).GetBinContent(nbins)/NPassed_noweight.at(i).GetBinContent(1)
-	     << " " << NPassed.at(i).GetBinContent(nbins) 
-	     << " " << NPassed_noweight.at(i).GetBinContent(nbins)
+	     << " " << NPassed.at(i).GetBinContent(1)           << " " << NPassed.at(i).GetBinError(1)
+	     << " " << NPassed.at(i).GetBinContent(nbins)       << " " << NPassed.at(i).GetBinError(nbins) 
+	     << " " << NPassed_noweight.at(i).GetBinContent(1)  << " " << NPassed_noweight.at(i).GetBinContent(1) 
 	     << std::endl;
-      cout << ids.at(i)
-	   << " " << NPassed.at(i).GetBinContent(1) << " " << NPassed.at(i).GetBinError(1)
-	   << " " << NPassed_noweight.at(i).GetBinContent(1)
-	   << " " << NPassed_noweight.at(i).GetBinContent(nbins)/NPassed_noweight.at(i).GetBinContent(1)
-	   << std::endl;
-
   }
 }
 
-void SkimConfig::ApplySkimEfficiency(std::vector<TString> ids,std::vector<TH1D> &NPassed, std::vector<TH1D> &NPassed_noweight){
-  for(int i=0; i<ids.size();i++){
-    std::cout << "ApplySkimEfficiency" << ids.at(i) << " " << SkimIDs.size() << std::endl;
-    for(int j=0; j<SkimIDs.size();j++){
-      ids.at(i).ReplaceAll(" ","");
-      if(SkimIDs.at(j).Contains(ids.at(i))){
-	NPassed.at(i).SetBinContent(1,EventsPassed.at(j));
-	NPassed.at(i).SetBinError(1,EventsPassedErr.at(j));
-        NPassed.at(i).SetBinContent(0,EventsPassed.at(j));
-        NPassed.at(i).SetBinError(0,EventsPassedErr.at(j));
-	float value=NPassed_noweight.at(i).GetBinContent(1);
-	if(EventEff_noweight.at(j)!=0){
-	  NPassed_noweight.at(i).SetBinContent(1,value/EventEff_noweight.at(j));
-	  NPassed_noweight.at(i).SetBinError(1,sqrt(value/EventEff_noweight.at(j)));
-	}
+void SkimConfig::ApplySkimEfficiency(std::vector<int> ids,std::vector<TH1D> &NPassed, std::vector<TH1D> &NPassed_noweight){
+  std::vector<bool> hasid(SkimIDs.size(),false);
+  for(unsigned int i=0; i<ids.size();i++){
+    for(unsigned int j=0; j<SkimIDs.size();j++){
+      if(SkimIDs.at(i)==ids.at(i))hasid.at(j)=true;
+    }
+  }
+  for(unsigned int i=0; i<ids.size();i++){
+    NPassed.at(i).SetBinContent(1,0);
+    NPassed.at(i).SetBinError(1,0);
+    NPassed.at(i).SetBinContent(0,0);
+    NPassed.at(i).SetBinError(0,0);
+    NPassed_noweight.at(i).SetBinContent(1,0);
+    NPassed_noweight.at(i).SetBinError(1,0);
+  }
+  for(unsigned int j=0; j<SkimIDs.size();j++){
+    for(unsigned int i=0; i<ids.size();i++){
+      if((hasid.at(j) && ids.at(i)==SkimIDs.at(i)) || (!hasid.at(j) && ids.at(i)==SkimIDs.at(i)%100)){
+	std::cout << "ApplySkimEfficiency" << ids.at(i) << " " << SkimIDs.size() << std::endl;
+	float tmp=NPassed.at(i).GetBinContent(1);
+	NPassed.at(i).SetBinContent(1,tmp+NEvents.at(j));
+	tmp=NPassed.at(i).GetBinError(1);
+	NPassed.at(i).SetBinError(1,sqrt(tmp*tmp+NEventsErr.at(j)*NEventsErr.at(j)));
+	NPassed.at(i).SetBinContent(0,NPassed.at(i).GetBinContent(1));
+	NPassed.at(i).SetBinError(0,NPassed.at(i).GetBinError(1));
+	tmp=NPassed_noweight.at(i).GetBinContent(1);
+	NPassed_noweight.at(i).SetBinContent(1,tmp+NEvents_noweight.at(j));
+	tmp=NPassed_noweight.at(i).GetBinError(1);
+	NPassed_noweight.at(i).SetBinError(1,sqrt(tmp*tmp+NEvents_noweight.at(j)*NEvents_noweight.at(j)));
       }
     }
   }
@@ -182,34 +140,34 @@ void SkimConfig::ApplySkimEfficiency(std::vector<TString> ids,std::vector<TH1D> 
 
 
 
-void SkimConfig::CorrectNEvents(std::vector<TString> ids, std::vector<float> nevts){
+
+void SkimConfig::CheckNEvents(std::vector<int> ids, std::vector<float> nevts){
   if(!loaded){
     std::cout << "Error SkimConfig::CorrectEvents input not loaded -> no skim summary " << std::endl;  
-  }
-
-  if(ids.size()!=nevts.size()){
-    std::cout << "Error SkimConfig::CorrectEvents invalid sizes "  << ids.size() << " " << nevts.size() << std::endl;
     return;
   }
-  for(int i=0; i<ids.size();i++){
-    float sumevts=0; 
-    for(int j=0; j<dsname.size();j++){
-      if(dsname[j].Contains(ids[i])){
-	sumevts+=nevents[j];
-      }
-    }	
-    if(nevts[i]==0){
-      std::cout << "Warning " << ids[i] << " not used " << std::endl;
+  std::vector<bool> hasid(SkimIDs.size(),false); 
+  std::vector<float> skimnevts(nevts.size(),0);
+  for(unsigned int i=0; i<ids.size();i++){
+    for(unsigned int j=0; j<SkimIDs.size();j++){
+      if(SkimIDs.at(i)==ids.at(i))hasid.at(j)=true;
     }
-    else if(fabs(nevts[i]-sumevts)>0.01){
-      std::cout << "Failed " << ids[i] << " incorrect number of events "
-		<< "Found: " << nevts[i] << " Expected: " << sumevts 
-		<< " Ratio " <<   nevts[i]/sumevts
+  }
+  for(unsigned int j=0; j<SkimIDs.size();j++){
+    for(unsigned int i=0; i<ids.size();i++){
+      if((hasid.at(j) && ids.at(i)==SkimIDs.at(j)) || (!hasid.at(j) && ids.at(i)==SkimIDs.at(j)%100)) skimnevts.at(i)+=nevts.at(i);
+    }
+  }
+  for(unsigned int i=0; i<ids.size();i++){
+    if(fabs(nevts.at(i)-skimnevts.at(i))>0.01){
+      std::cout << "Failed " << ids.at(i) << " incorrect number of events "
+		<< "Found: " << nevts.at(i) << " Expected: " << skimnevts.at(i) 
+		<< " Ratio " <<   nevts.at(i)/skimnevts.at(i)
 		<< std::endl;
     }
-    else if(fabs(nevts[i]-sumevts)<0.01){
-      std::cout << "Passed " << ids[i] << " all events analysed "
-		<< "Found: " << nevts[i] << " Expected: " << sumevts
+    else if(fabs(nevts.at(i)-skimnevts.at(i))<0.01){
+      std::cout << "Passed " <<  ids.at(i) << " all events analysed "
+		<< "Found: " << nevts.at(i) << " Expected: " << skimnevts.at(i)
 		<< std::endl;
     }
   }

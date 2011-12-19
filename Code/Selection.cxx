@@ -24,6 +24,11 @@ Selection::Selection(TString Name_, TString id_):
 }
 
 Selection::~Selection(){
+  //Check that the correct number of events are run over
+  SkimConfig SC;
+  SC.CheckNEvents(types,nevents_noweight_default);
+
+  //Check the number of files read
   std::cout << Get_Name() << " NGoodFile= " <<  NGoodFiles << " NBadFiles=" << NBadFiles << std::endl;
   if(ListofBadFiles.size()>0)std::cout <<  " List of Bad Files:" << std::endl;
   for(int i=0; i< ListofBadFiles.size(); i++){
@@ -222,19 +227,15 @@ void  Selection::Finish(){
   f.Close();
   std::vector<float> nevents;
   std::vector<float> nevents_noweight;
-
-  SkimConfig SC;
-  //SC.Load();
-  //TString SkimFile=Name;
-  //SC.LoadSkimEff("Tools/Zee_MET_CS_0SkimEff.dat");
-  //SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
-  std::cout << "F" << std::endl;
+  std::vector<float> nevents_noweight_default;
   for(int i=0; i<Npassed.size();i++){
     nevents.push_back(Npassed.at(i).GetBinContent(1));
     nevents_noweight.push_back(Npassed_noweight.at(i).GetBinContent(1));
-    std::cout << "Weights: " << Npassed.at(i).GetBinContent(1) << std::endl;
   }
-  std::cout << "G" << std::endl;
+  nevents_noweight_default=nevents_noweight;
+  SkimConfig SC;
+  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
+
   if(runtype!=GRID){
     std::cout << "Printing Plots " << std::endl;
     
@@ -263,10 +264,8 @@ void  Selection::Finish(){
     T.MakeEffTable(Npassed,title,Lumi,CrossSectionandAcceptance,nevents);
     std::cout << "Plots and Tables Complete"<< std::endl;
   }
-  std::cout << "H" << std::endl;
   //Check that the correct number of events are run over
-  //SC.CorrectNEvents(types,nevents_noweight);
-  std::cout << "I" << std::endl;
+  SC.CheckNEvents(types,nevents_noweight_default);
 }
 
 

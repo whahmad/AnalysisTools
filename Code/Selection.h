@@ -42,14 +42,14 @@ class Selection : public Selection_Base {
   HistoConfig HConfig;
 
 
-  std::vector<TString> types;
-  std::vector<int> typesID;
+  std::vector<int> types;
   std::vector<TString> legend;
   std::vector<TH1D> Npassed; //[type]
   std::vector<TH1D> Npassed_noweight; //[type]
   std::vector<float> CrossSectionandAcceptance; //[type]
   std::vector<float> kFactor; //[type]
   std::vector<int> colour; //[type]
+  std::vector<float> nevents_noweight_default; // to keep track of number of event
 
   float Lumi;
   std::vector<TString> title;

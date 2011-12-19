@@ -13,20 +13,19 @@ class SkimConfig {
 
   bool Load();
   bool Load(TString Name_);
-  void LoadSkimEff(TString Name_);
-  void CorrectNEvents(std::vector<TString> ids, std::vector<float> nevts); 
-  void SaveEfficiency(TString Name,std::vector<TString> ids,std::vector<TH1D> NPassed, std::vector<TH1D> NPassed_noweight);
-  void ApplySkimEfficiency(std::vector<TString> ids,std::vector<TH1D> &NPassed, std::vector<TH1D> &NPassed_noweight);
-
+  void CheckNEvents(std::vector<int> ids, std::vector<float> nevts); 
+  void SaveEfficiency(TString Name,std::vector<int> ids,std::vector<TH1D> NPassed, std::vector<TH1D> NPassed_noweight);
+  void ApplySkimEfficiency(std::vector<int> ids,std::vector<TH1D> &NPassed, std::vector<TH1D> &NPassed_noweight);
+  double GetNEvents(int id);
 
  private:
-  static  std::vector<float>   nevents;
-  static  std::vector<TString> dsname;
-  static  std::vector<TString> SkimIDs;
-  static  std::vector<float>   EventsPassed;
-  static  std::vector<float>   EventsPassedErr;
-  static  std::vector<float>   EventEff_noweight;
-
-  bool loaded;
+  static std::vector<int> SkimIDs;
+  static std::vector<float>        NEvents;
+  static std::vector<float>        NEventsErr;
+  static std::vector<float>        NEvents_sel;
+  static std::vector<float>        NEventsErr_sel;
+  static std::vector<float>        NEvents_noweight;
+  static std::vector<float>        NEvents_noweight_sel;
+  static bool loaded;
 };
 #endif
