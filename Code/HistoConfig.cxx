@@ -18,7 +18,6 @@
 // Static var
 std::vector<int>          HistoConfig::ID;
 std::vector<double>       HistoConfig::CS;
-std::vector<unsigned int> HistoConfig::IDtoHistoMap;
 std::vector<TString>      HistoConfig::HistoName;
 std::vector<TString>      HistoConfig::HistoLegend;
 std::vector<int>          HistoConfig::HistoColour;
@@ -37,7 +36,6 @@ bool HistoConfig::Load(TString Name_)
   if(loaded) return true;
   std::cout << "HistoConfig::Load("<< Name_ <<")" << std::endl;
   ID.clear();
-  IDtoHistoMap.clear();
   HistoName.clear();
   HistoLegend.clear();
 
@@ -72,23 +70,16 @@ bool HistoConfig::Load(TString Name_)
       if(ID.at(i)==id) isnew=false;
     }
     if(isnew){
-      unsigned int i;
-      for(i=0; i<HistoName.size();i++){
-	if(HistoName.at(i)==name) break;
-      }
       ID.push_back(id);
       CS.push_back(cs);
-      IDtoHistoMap.push_back(i);
-      if(i==HistoName.size() || i==0){
-	HistoName.push_back(name);
-	HistoLegend.push_back(leg);
-	HistoColour.push_back(colour);
-      }
+      HistoName.push_back(name);
+      HistoLegend.push_back(leg);
+      HistoColour.push_back(colour);
     }
   }
   input_file.close();
   for(int i=0; i<ID.size();i++){
-    std::cout << "Hitogram Data/MC ID: " << ID.at(i) << " CS: " << CS.at(i) << " Name: " <<  HistoName.at(IDtoHistoMap.at(i)) << " Legend: " <<  HistoLegend.at(IDtoHistoMap.at(i)) << " Colour: " << HistoColour.at(IDtoHistoMap.at(i)) << std::endl;
+    std::cout << "Hitogram Data/MC ID: " << ID.at(i) << " CS: " << CS.at(i) << " Name: " <<  HistoName.at(i) << " Legend: " <<  HistoLegend.at(i) << " Colour: " << HistoColour.at(i) << std::endl;
   }
 
   std::cout << "HistoConfig::Load("<< Name_ <<") complete" << std::endl;
@@ -102,10 +93,13 @@ HistoConfig::~HistoConfig(){
 
 //utility Functions
 bool HistoConfig::GetHisto(bool isdata,int id,unsigned int &histo){
-  if(isdata)id=0;
+  if(isdata){
+    id=1;
+    return true;
+  }
   for(int i=0; i<ID.size(); i++){
     if(ID.at(i)==id){
-      histo=IDtoHistoMap.at(i);
+      histo=i;
       return true;
     } 
   }
@@ -121,18 +115,13 @@ double HistoConfig::GetCrossSection(int id){
   return 0;
 }
 
-void HistoConfig::GetHistoInfo(std::vector<TString> &types,std::vector<float> &CrossSectionandAcceptance,std::vector<TString> &legend,std::vector<int> &colour){
-  types=HistoName;
+void HistoConfig::GetHistoInfo(std::vector<int> &types,std::vector<float> &CrossSectionandAcceptance,std::vector<TString> &legend,std::vector<int> &colour){
+  types=ID;
   legend=HistoLegend;
   colour=HistoColour;
   CrossSectionandAcceptance.clear();
   for(int i=0; i<HistoName.size();i++){
-    CrossSectionandAcceptance.push_back(0);
-    for(int j=0;j<IDtoHistoMap.size();j++){
-      if(i==IDtoHistoMap.at(j)){
-	CrossSectionandAcceptance.at(i)+=CS.at(j);
-      }
-    }
+    CrossSectionandAcceptance.push_back(CS.at(i));
   }
 }
 
