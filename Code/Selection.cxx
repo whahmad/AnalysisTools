@@ -25,8 +25,8 @@ Selection::Selection(TString Name_, TString id_):
 
 Selection::~Selection(){
   //Check that the correct number of events are run over
-  SkimConfig SC;
-  SC.CheckNEvents(types,nevents_noweight_default);
+  //SkimConfig SC;
+  //SC.CheckNEvents(types,nevents_noweight_default);
 
   //Check the number of files read
   std::cout << Get_Name() << " NGoodFile= " <<  NGoodFiles << " NBadFiles=" << NBadFiles << std::endl;
@@ -225,6 +225,7 @@ void  Selection::Finish(){
     }
   }
   f.Close();
+  std::cout << "Writing out "+Name+".root Complete" << std::endl;
   std::vector<float> nevents;
   std::vector<float> nevents_noweight;
   std::vector<float> nevents_noweight_default;
@@ -233,8 +234,8 @@ void  Selection::Finish(){
     nevents_noweight.push_back(Npassed_noweight.at(i).GetBinContent(1));
   }
   nevents_noweight_default=nevents_noweight;
-  SkimConfig SC;
-  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
+  //SkimConfig SC;
+  //SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
 
   if(runtype!=GRID){
     std::cout << "Printing Plots " << std::endl;
@@ -265,7 +266,7 @@ void  Selection::Finish(){
     std::cout << "Plots and Tables Complete"<< std::endl;
   }
   //Check that the correct number of events are run over
-  SC.CheckNEvents(types,nevents_noweight_default);
+  //SC.CheckNEvents(types,nevents_noweight_default);
 }
 
 
