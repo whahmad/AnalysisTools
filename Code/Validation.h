@@ -13,7 +13,7 @@ class Validation : public Selection {
 
   virtual void  Configure();
 
-  enum cuts {TriggerOk=0,PrimeVtx,TauPt,QC,LooseIso,ET,NCuts};
+  enum cuts {TriggerOk=0,PrimeVtx,GoodMuon,TauPt,QC,LooseIso,ET,NCuts};
 
  protected:
   virtual void doEvent();

@@ -45,8 +45,8 @@ void Selection::ConfigureHistograms(){
       TString name=Npassed.at(j).GetName();
       name+="_noweight";
       Npassed_noweight.push_back((*((TH1D*)Npassed.at(j).Clone(name))));
-      Npassed_noweight.at(j).Sumw2();
-      Npassed.at(j).Sumw2();
+      //Npassed_noweight.at(j).Sumw2();
+      //Npassed.at(j).Sumw2();
     }
     if(verbose) std::cout << "Selection::ConfigureHistograms() Finished" << std::endl;
   }

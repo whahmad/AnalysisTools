@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "HistoConfig.h"
 #include <iostream>
+#include "Tools.h"
 
 Validation::Validation(TString Name_, TString id_):
   Selection(Name_,id_)
@@ -30,6 +31,7 @@ void  Validation::Configure(){
     if(i==QC)           cut.at(QC) = 1;
     if(i==LooseIso)     cut.at(LooseIso) = 1;
     if(i==ET)           cut.at(ET) = 20;
+    if(i==GoodMuon)     cut.at(GoodMuon)=1;
   }
 
   TString hlabel;
@@ -48,8 +50,8 @@ void  Validation::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="Number of Prime Vertices";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_PrimeVtx_",htitle,11,-0.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_PrimeVtx_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_PrimeVtx_",htitle,26,-0.5,25.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_PrimeVtx_",htitle,26,-0.5,25.5,hlabel,"Events"));
     }
     else if(i==TriggerOk){
       title.at(i)="Trigger ";
@@ -78,6 +80,12 @@ void  Validation::Configure(){
     else if(i==ET){
       title.at(i)="ET";
       hlabel="ET ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
+    }
+    else if(i==GoodMuon){
+      title.at(i)="NGoodMuons";
+      hlabel="Number of Good Muon ";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
     }
@@ -124,8 +132,8 @@ void  Validation::Configure(){
 
   VisibleMass=HConfig.GetTH1D(Name+"_VisibleMass","VisibleMass",51,19.5,120.5,"VisibleMass","Events");
   FullMass=HConfig.GetTH1D(Name+"_FullMass","FullMass",51,19.5,120.5,"FullMass","Events");
-  DeltaPhi=HConfig.GetTH1D(Name+"_DeltaPhi","DeltaPhi",40,0,6.28,"DeltaPhi","Events");
-  DeltaRTauMu=HConfig.GetTH1D(Name+"_DeltaRTauMu","DeltaRTauMu",40,0,6,"DeltaRTauMu","Events");
+  DeltaPhi=HConfig.GetTH1D(Name+"_DeltaPhi","DeltaPhi",32,-TMath::Pi(),TMath::Pi(),"$Delta#phi(#tau,#mu) (rad)","Events");
+  DeltaRTauMu=HConfig.GetTH1D(Name+"_DeltaRTauMu","DeltaRTauMu",40,0,6,"#DeltaR(#tau,#mu)","Events");
   DeltaPhiTauMuNeutrino=HConfig.GetTH1D(Name+"_DeltaPhiTauMuNeutrino","DeltaPhiTauMuNeutrino",40,0,2,"DeltaPhiTauMuNeutrino","Events");
   Muon_nJets05_hist=HConfig.GetTH1D(Name+"_Muon_nJets05_hist","Muon_nJets05_hist",11,-0.05,10.05,"Muon_nJets05_hist","Events");
   Muon_nTracks05_hist=HConfig.GetTH1D(Name+"_Muon_nTracks05_hist","Muon_nTracks05_hist",11,-0.05,10.05,"Muon_nTracks05_hist","Events");
@@ -142,24 +150,24 @@ void  Validation::Configure(){
   PFTau_Charge_hist=HConfig.GetTH1D(Name+"_PFTau_Charge_hist","PFTau_Charge_hist",4,-1,3,"PFTau_Charge_hist","Events");
   
   PFTau_Tau_Highestpt_hist=HConfig.GetTH1D(Name+"_PFTau_Tau_Highestpt_hist","PFTau_Tau_Highestpt_hist",50,0,50,"PFTau_Tau_Highestpt_hist","Events");      
-  PFTau_Tau_Highestpt_phi_hist=HConfig.GetTH1D(Name+"_PFTau_Tau_Highestpt_phi_hist","PFTau_Tau_Highestpt_phi_hist",50,-3.14,3.14,"PFTau_Tau_Highestpt_phi_hist","Events");      
+  PFTau_Tau_Highestpt_phi_hist=HConfig.GetTH1D(Name+"_PFTau_Tau_Highestpt_phi_hist","PFTau_Tau_Highestpt_phi_hist",32,-TMath::Pi(),TMath::Pi(),"PFTau_Tau_Highestpt_phi_hist","Events");      
 
 
 
   KFTau_Fit_iterations_hist=HConfig.GetTH1D(Name+"_KFTau_Fit_iterations_hist","KFTau_Fit_iterations_hist",10,0,10,"KFTau_Fit_iterations_hist","Events");
   KFTau_Fit_chi2_hist=HConfig.GetTH1D(Name+"_KFTau_Fit_chi2_hist","KFTau_Fit_chi2_hist",20,0,5,"KFTau_Fit_chi2_hist","Events");	       
   KFTau_TauFit_pt_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_pt_hist","KFTau_TauFit_pt_hist",50,0,50,"KFTau_TauFit_pt_hist","Events");      
-  KFTau_TauFit_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_phi_hist","KFTau_TauFit_phi_hist",50,-3.14,3.14,"KFTau_TauFit_phi_hist","Events");      
-  KFTau_TauVis_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauVis_phi_hist","KFTau_TauVis_phi_hist",50,-3.14,3.14,"KFTau_TauVis_phi_hist","Events");      
+  KFTau_TauFit_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_phi_hist","KFTau_TauFit_phi_hist",32,-TMath::Pi(),TMath::Pi(),"KFTau_TauFit_phi_hist","Events");      
+  KFTau_TauVis_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauVis_phi_hist","KFTau_TauVis_phi_hist",32,-TMath::Pi(),TMath::Pi(),"KFTau_TauVis_phi_hist","Events");      
   KFTau_Neutrino_p4_hist=HConfig.GetTH1D(Name+"_KFTau_Neutrino_p4_hist","KFTau_Neutrino_p4_hist",50,0,50 ,"KFTau_Neutrino_p4_hist" ,"Events");   
-  KFTau_Neutrino_phi_hist=HConfig.GetTH1D(Name+"_KFTau_Neutrino_phi_hist","KFTau_Neutrino_phi_hist",50,-3.14,3.14 ,"KFTau_Neutrino_phi_hist" ,"Events");   
+  KFTau_Neutrino_phi_hist=HConfig.GetTH1D(Name+"_KFTau_Neutrino_phi_hist","KFTau_Neutrino_phi_hist",32,-TMath::Pi(),TMath::Pi() ,"KFTau_Neutrino_phi_hist" ,"Events");   
   KFTau_TauVis_a1_hist=HConfig.GetTH1D(Name+"_KFTau_TauVis_a1_hist","KFTau_TauVis_a1_hist",100,0.3,1.7,"KFTau_TauVis_a1_hist","Events");      
   KFTau_Fit_csum_hist=HConfig.GetTH1D(Name+"_KFTau_Fit_csum_hist","KFTau_Fit_csum_hist",20,0,0.05,"KFTau_Fit_csum_hist","Events");	       
 					   
 
   KFTau_TauFit_Highestpt_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_Highestpt_hist","KFTau_TauFit_Highestpt_hist",50,0,50,"KFTau_TauFit_Highestpt_hist","Events");      
-  KFTau_TauFit_Highestpt_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_Highestpt_phi_hist","KFTau_TauFit_Highestpt_phi_hist",50,-3.14,3.14,"KFTau_TauFit_Highestpt_phi_hist","Events");      
-  PFTau_Tau_phi_hist=HConfig.GetTH1D(Name+"_PFTau_Tau_phi_hist","PFTau_Tau_phi_hist",50,-3.14,3.14,"PFTau_Tau_phi_hist","Events");      
+  KFTau_TauFit_Highestpt_phi_hist=HConfig.GetTH1D(Name+"_KFTau_TauFit_Highestpt_phi_hist","KFTau_TauFit_Highestpt_phi_hist",32,-TMath::Pi(),TMath::Pi(),"KFTau_TauFit_Highestpt_phi_hist","Events");      
+  PFTau_Tau_phi_hist=HConfig.GetTH1D(Name+"_PFTau_Tau_phi_hist","PFTau_Tau_phi_hist",32,-TMath::Pi(),TMath::Pi(),"PFTau_Tau_phi_hist","Events");      
   PFTau_Tau_pt_hist =HConfig.GetTH1D(Name+"_PFTau_Tau_pt_hist","PFTau_Tau_pt_hist",50,0,50,"PFTau_Tau_pt_hist","Events");   
   PFTau_Tau_Highestpt_hist =HConfig.GetTH1D(Name+"_PFTau_Tau_Highestpt_hist","PFTau_Tau_Highestpt_hist",50,0,50,"PFTau_Tau_Highestpt_hist","Events");   
 
@@ -267,8 +275,9 @@ void  Validation::Store_ExtraDist(){
 void  Validation::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
+  //std::cout << id << " " << t << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-  
+  std::cout << id << " " << t << std::endl;  
   // Apply Selection
   unsigned int nGoodVtx=0;
   for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -280,10 +289,16 @@ void  Validation::doEvent(){
   value.at(TriggerOk)=1;
   pass.at(TriggerOk)=true;
 
+  int nmu=0;
+  for(int i=0;i<Ntp->NMuons();i++){
+    if(Ntp->isGoodMuon(i)) nmu++;
+  }
+  value.at(GoodMuon)=nmu;
+  pass.at(GoodMuon)=value.at(GoodMuon)>0;
 
     for(unsigned int iTau=0;iTau < Ntp->NKFTau();iTau++){
       value.at(TauPt)= Ntp->KFTau_TauFit_p4(iTau).Pt();
-      pass.at(TauPt)=true;//(value.at(TauPt)<=cut.at(TauPt));
+      pass.at(TauPt)=(value.at(TauPt)<=cut.at(TauPt));
 
       value.at(QC) = Ntp->KFTau_discriminatorByQC(iTau);
       pass.at(QC)=(value.at(QC)==cut.at(QC));
@@ -297,11 +312,7 @@ void  Validation::doEvent(){
     
       value.at(ET) = Ntp->MET_et();
       pass.at(ET)=(value.at(ET)<=cut.at(ET));
-
- 
-
-
-  
+   
   double wobs=1;
   double w;
 
@@ -342,7 +353,7 @@ void  Validation::doEvent(){
 
       if(Ntp->Muon_isGlobalMuon(iMuon)){  	NGlMuons++;       }
 
-      if(Ntp->Muons_p4(iMuon).Pt() > muonPt){
+      if(Ntp->Muons_p4(iMuon).Pt() > muonPt && Ntp->isGoodMuon(iMuon)){
 	muonPt = Ntp->Muons_p4(iMuon).Pt();
 	SecondPtMuonIndex = HighestPtMuonIndex;
 	HighestPtMuonIndex = iMuon;
@@ -450,7 +461,7 @@ void  Validation::doEvent(){
     
     if(Ntp->NKFTau()!=0 && Ntp->NMuons()!=0){
 
-      if(Ntp->Muon_isGlobalMuon(HighestPtMuonIndex) && Ntp->KFTau_discriminatorByQC(HighestPtTauIndex)){
+      if(Ntp->Muon_isGlobalMuon(HighestPtMuonIndex) && Ntp->KFTau_discriminatorByQC(HighestPtTauIndex)  ){
 	TLorentzVector TauVis = Ntp->KFTau_TauVis_p4(HighestPtTauIndex);
 	TLorentzVector TauFit = Ntp->KFTau_TauFit_p4(HighestPtTauIndex);
 	TLorentzVector Neutrino= Ntp->KFTau_Neutrino_p4(HighestPtTauIndex);
@@ -470,9 +481,9 @@ void  Validation::doEvent(){
   
 	VisibleMass.at(t).Fill(ZVis.M(),w);
 	FullMass.at(t).Fill(ZFit.M(),w);
-	DeltaPhi.at(t).Fill(fabs(MuoGlo.Phi() - TauFit.Phi()),w);
+	DeltaPhi.at(t).Fill(Tools::DeltaPhi(MuoGlo.Phi(),TauFit.Phi()),w);
 	DeltaRTauMu.at(t).Fill(sqrt(pow(MuoGlo.Phi() - TauFit.Phi(),2) + pow(MuoGlo.Eta() - TauFit.Eta(),2)),w);
-	DeltaPhiTauMuNeutrino.at(t).Fill(fabs(1 - fabs(TauVis.Phi() - (Ntp->MET_phi() - Neutrino.Phi()))/3.1415),w);
+	DeltaPhiTauMuNeutrino.at(t).Fill(fabs(1 - fabs(TauVis.Phi() - (Ntp->MET_phi() - Neutrino.Phi()))/TMath::Pi()),w);
 
 
       }

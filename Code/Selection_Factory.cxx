@@ -15,7 +15,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   Analysis.ToLower();
   if(Analysis.Contains("example"))s=new Example(Analysis,UncertType);
   else if(Analysis.Contains("validation"))s=new Validation(Analysis,UncertType);
-  else if(Analysis.Contains("Ztotautau_hadmu_ControlSample"))s=new Ztotautau_hadmu_ControlSample(Analysis,UncertType);
+  else if(Analysis.Contains("ztotautau_hadmu_controlsample"))s=new Ztotautau_hadmu_ControlSample(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);
