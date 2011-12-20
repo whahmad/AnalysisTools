@@ -277,7 +277,7 @@ void  Validation::doEvent(){
   int id(Ntp->GetMCID());
   //std::cout << id << " " << t << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-  std::cout << id << " " << t << std::endl;  
+  //std::cout << id << " " << t << std::endl;  
   // Apply Selection
   unsigned int nGoodVtx=0;
   for(unsigned int i=0;i<Ntp->NVtx();i++){

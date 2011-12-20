@@ -34,10 +34,11 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
     if(i==dpocaMuonTau)       cut.at(GoodVertexMatch)=1;
     if(i==ZMass)              cut.at(ZMass)=1;
   }
-
+  std::cout << "A" << std::endl;
   TString hlabel;
   TString htitle;
   for(unsigned int i=0; i<NCuts; i++){
+    std::cout << "B " << i<< std::endl;
     title.push_back("");
     distindx.push_back(false);
     dist.push_back(std::vector<float>());
@@ -110,7 +111,7 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuons_",htitle,32,-TMath::Pi(),TMath::Pi(),hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuons_",htitle,32,-TMath::Pi(),TMath::Pi(),hlabel,"Events"));
     }
-    if(i==dpocaMuonTau){
+    else if(i==dpocaMuonTau){
       title.at(i)="$dL(\\tau,\\mu)>$";
       title.at(i)+=cut.at(dphiMuonTau);
       title.at(i)+=")";
@@ -145,7 +146,7 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Accumulative Cuts Passed","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Vertex","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
-
+  std::cout << "C" << std::endl;
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
 }
