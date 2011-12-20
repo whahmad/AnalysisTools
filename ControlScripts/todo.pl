@@ -5,6 +5,7 @@ use POSIX;
 $numArgs = $#ARGV +1;
 $ARGV[$argnum];
 
+$UserID= POSIX::cuserid();
 #Default vaules
 $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
 $OutputDir="/net/scratch_cms/institut_3b/$UserID";
@@ -39,7 +40,6 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
 } 
 
 ######################################
-$UserID= POSIX::cuserid();
 $InputFile=$ARGV[1];
 
 for($l=2;$l<$numArgs; $l++){
