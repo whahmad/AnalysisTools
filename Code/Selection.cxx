@@ -134,12 +134,14 @@ bool Selection::AnalysisCuts(int t,double w,double wobjs){
     std::cout << "ERROR Histograms not Configured. Please fix your code!!!! Running Selection::ConfigureHistograms()" << std::endl;
     Selection::ConfigureHistograms();
   }
+  cout << t << endl;
    if(0<=t && t<types.size()){
     int nfail=0;
     int fail=-1;
     Npassed.at(t).Fill(-0.5,w);
     Npassed_noweight.at(t).Fill(-0.5,1);
     for(int i=0; i<ncuts;i++){
+      cout << i << " " << value.at(i) << " " << endl;
       if(!pass.at(i)){
 	fail=i;
 	nfail++;

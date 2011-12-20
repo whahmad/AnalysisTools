@@ -94,7 +94,7 @@ HistoConfig::~HistoConfig(){
 //utility Functions
 bool HistoConfig::GetHisto(bool isdata,int id,unsigned int &histo){
   if(isdata){
-    id=1;
+    histo=1;
     return true;
   }
   for(int i=0; i<ID.size(); i++){
