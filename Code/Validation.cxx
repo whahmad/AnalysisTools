@@ -132,7 +132,7 @@ void  Validation::Configure(){
 
   VisibleMass=HConfig.GetTH1D(Name+"_VisibleMass","VisibleMass",51,19.5,120.5,"VisibleMass","Events");
   FullMass=HConfig.GetTH1D(Name+"_FullMass","FullMass",51,19.5,120.5,"FullMass","Events");
-  DeltaPhi=HConfig.GetTH1D(Name+"_DeltaPhi","DeltaPhi",32,-TMath::Pi(),TMath::Pi(),"$Delta#phi(#tau,#mu) (rad)","Events");
+  DeltaPhi=HConfig.GetTH1D(Name+"_DeltaPhi","DeltaPhi",32,-TMath::Pi(),TMath::Pi(),"#Delta#phi(#tau,#mu) (rad)","Events");
   DeltaRTauMu=HConfig.GetTH1D(Name+"_DeltaRTauMu","DeltaRTauMu",40,0,6,"#DeltaR(#tau,#mu)","Events");
   DeltaPhiTauMuNeutrino=HConfig.GetTH1D(Name+"_DeltaPhiTauMuNeutrino","DeltaPhiTauMuNeutrino",40,0,2,"DeltaPhiTauMuNeutrino","Events");
   Muon_nJets05_hist=HConfig.GetTH1D(Name+"_Muon_nJets05_hist","Muon_nJets05_hist",11,-0.05,10.05,"Muon_nJets05_hist","Events");
@@ -322,8 +322,7 @@ void  Validation::doEvent(){
  
   ///////////////////////////////////////////////////////////
   // Add plots
-  //  if(status){
-  if(true){
+  if(status){
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -331,7 +330,7 @@ void  Validation::doEvent(){
       if(Ntp->isVtxGood(i))nGoodVtx++;
     }
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
-  
+    
 
 
 
