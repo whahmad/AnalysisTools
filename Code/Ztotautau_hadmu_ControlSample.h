@@ -15,14 +15,18 @@ class Ztotautau_hadmu_ControlSample : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     NMuons,
-	     NMuonswithOverLap,
-	     NTau,
-	     TriggerMatch,
-	     dphiMuonTau,
-	     dpocaMuonTau,
-	     GoodVertexMatch,
-	     ZMass,
+	     MuonisGlob,
+	     MuonPt,
+	     TauPt,
+	     TauIsRef,
+	     MuonIso,
+	     TauIsIso,
+	     MET,
+	     deltaPhi,
+	     ZMassV,
+	     ZMassHPS,
+	     tauPhi,
+	     charge,
 	     NCuts};
 
  protected:
@@ -35,6 +39,7 @@ class Ztotautau_hadmu_ControlSample : public Selection {
   std::vector<TH1D> NVtx;
   std::vector<TH1D> NGoodVtx;
   std::vector<TH1D> NTrackperVtx;
+
 
 
 };
