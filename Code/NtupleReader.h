@@ -65,6 +65,9 @@ public :
    std::vector<float>   *Muon_hitPattern_numberOfValidMuonHits;
    std::vector<float>   *Muon_innerTrack_numberofValidHits;
    std::vector<float>   *Muon_numberOfMatches;
+   std::vector<int>     *Muon_numberOfChambers;
+   std::vector<int>     *Muon_Charge;
+
    std::vector<std::vector<float> > *PFTau_p4;
    std::vector<bool>    *PFTau_isTightIsolation;
    std::vector<bool>    *PFTau_isMediumIsolation;
@@ -205,6 +208,8 @@ public :
    TBranch        *b_Muon_hitPattern_numberOfValidMuonHits;   //!
    TBranch        *b_Muon_innerTrack_numberofValidHits;   //!
    TBranch        *b_Muon_numberOfMatches;   //!
+   TBranch        *b_Muon_Charge;   //!
+   TBranch        *b_Muon_numberOfChambers;   //!
    TBranch        *b_PFTau_p4;   //!
    TBranch        *b_PFTau_isTightIsolation;   //!
    TBranch        *b_PFTau_isMediumIsolation;   //!
@@ -424,6 +429,9 @@ void NtupleReader::Init(TTree *tree)
    Muon_hitPattern_numberOfValidMuonHits = 0;
    Muon_innerTrack_numberofValidHits = 0;
    Muon_numberOfMatches = 0;
+   Muon_Charge = 0;
+   Muon_numberOfChambers = 0;
+
    PFTau_p4 = 0;
    PFTau_isTightIsolation = 0;
    PFTau_isMediumIsolation = 0;
@@ -549,6 +557,8 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Muon_hitPattern_numberOfValidMuonHits", &Muon_hitPattern_numberOfValidMuonHits, &b_Muon_hitPattern_numberOfValidMuonHits);
    fChain->SetBranchAddress("Muon_innerTrack_numberofValidHits", &Muon_innerTrack_numberofValidHits, &b_Muon_innerTrack_numberofValidHits);
    fChain->SetBranchAddress("Muon_numberOfMatches", &Muon_numberOfMatches, &b_Muon_numberOfMatches);
+   fChain->SetBranchAddress("Muon_numberOfChambers", &Muon_numberOfChambers, &b_Muon_numberOfChambers);
+   fChain->SetBranchAddress("Muon_Charge", &Muon_Charge, &b_Muon_Charge);
    fChain->SetBranchAddress("PFTau_p4", &PFTau_p4, &b_PFTau_p4);
    fChain->SetBranchAddress("PFTau_isTightIsolation", &PFTau_isTightIsolation, &b_PFTau_isTightIsolation);
    fChain->SetBranchAddress("PFTau_isMediumIsolation", &PFTau_isMediumIsolation, &b_PFTau_isMediumIsolation);

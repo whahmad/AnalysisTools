@@ -180,6 +180,8 @@ class Ntuple_Controller{
   float          Muon_hitPattern_numberOfValidMuonHits(unsigned int i){return Ntp->Muon_hitPattern_numberOfValidMuonHits->at(i);}
   float          Muon_innerTrack_numberofValidHits(unsigned int i){return Ntp->Muon_innerTrack_numberofValidHits->at(i);}
   float          Muon_numberOfMatches(unsigned int i){return Ntp->Muon_numberOfMatches->at(i);}
+  int            Muon_numberOfChambers(unsigned int i){return Ntp->Muon_numberOfChambers->at(i);}
+  int            Muon_Charge(unsigned int i){return Ntp->Muon_Charge->at(i);}
   bool           isGoodMuon(unsigned int i);
   bool           isGoodMuon_nooverlapremoval(unsigned int i);
   
