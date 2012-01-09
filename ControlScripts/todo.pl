@@ -392,20 +392,20 @@ if( $ARGV[0] eq "--DCache" ){
 			system(sprintf("echo \"source $OutputDir/workdir$set/Set_$B/Set_$B-get.sh \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh")) ;
 			system(sprintf("chmod +x $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"mkdir  /user/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"cp -r *   /user/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"cd /user/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \"mkdir  /user/scratch/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \"cp -r *   /user/scratch/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \"cd /user/scratch/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"$OutputDir/workdir$set/Code/Analysis.exe  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cp -r *  $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"source $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"rm -r  /user/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));			
+			system(sprintf("echo \"rm -r  /user/scratch/$UserID/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));			
 
                         # Setup Set_$B_get.sh and Set_$B_clean.sh
 			system(sprintf("echo \"#! /bin/bash\"         >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
-			system(sprintf("echo \"mkdir /user/$UserID \" >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
-			system(sprintf("echo \"cd /user/$UserID \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh")); 
+			system(sprintf("echo \"mkdir /user/scratch/$UserID \" >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
+			system(sprintf("echo \"cd /user/scratch/$UserID \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh")); 
 			system(sprintf("echo \"#! /bin/bash\"         >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
-			system(sprintf("echo \"cd /user/$UserID \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh")); 
+			system(sprintf("echo \"cd /user/scratch/$UserID \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh")); 
 
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh")) ;
 			# Setup Input.txt
@@ -423,8 +423,8 @@ if( $ARGV[0] eq "--DCache" ){
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }
 		    system(sprintf("echo \"/opt/d-cache/dcap/bin/dccp  dcap://grid-dcap.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
-		    system(sprintf("echo \"File:  /user/$UserID/$file \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
-		    system(sprintf("echo \"rm -rf /user/$UserID/$file  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
+		    system(sprintf("echo \"File:  /user/scratch/$UserID/$file \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
+		    system(sprintf("echo \"rm -rf /user/scratch/$UserID/$file  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
 		    $A++;
 		}
 	    }
