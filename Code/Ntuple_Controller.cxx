@@ -5,8 +5,10 @@
 
 #include "Ntuple_Controller.h"
 #include "Tools.h"
-#include "PdtPdgMini.h"
 #include "PDG_Var.h"
+
+// External code
+#include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
