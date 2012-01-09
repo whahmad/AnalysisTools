@@ -100,9 +100,9 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cvs co -d RecoTauTag  -r V01-01-02 UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d CommonTools -r V01-01-02 UserCode/RWTH3b/Tau/src/CommonTools\" >> Setup_TauNtuple"));
     system(sprintf("echo \"addpkg PhysicsTools/Utilities V08-03-14\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d TauDataFormat -r V00-00-05 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d SkimmingTools UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d SkimProduction UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d TauDataFormat  -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimmingTools  -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimProduction -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
     # add private hacks
     system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Setup_TauNtuple"));
