@@ -27,10 +27,12 @@ OBJS          = PdtPdgMini.o
 SHAREDLIB     = lib/libCommonUtils.so
 
 $(SHAREDLIB): $(OBJS)
+	@echo "======================================================="
 	@echo "Linking SharedLib: $(SHAREDLIB) ..."
 	@echo $(LD) $(LDFLAGS) -shared OBJECTS/*.o $(LIBS) -o $(SHAREDLIB)
 	@$(LD) $(LDFLAGS) -shared OBJECTS/*.o $(LIBS) -o $(SHAREDLIB)
-	@echo "done"
+	@echo "Linking SharedLib: $(SHAREDLIB) Complete"
+	@echo "======================================================="
 
 VPATH = utilities:OBJECTS
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
