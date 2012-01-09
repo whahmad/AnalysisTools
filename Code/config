@@ -2,4 +2,16 @@
 echo "Configuring Environment...."
 export ROOTSYS=/usr/lib/root-5.22.00b/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
+## now downloading required code from CVS
+cd CommonUtils
+npdg=$(ls TauDataFormat/*/*/* | grep PdtPdgMini | wc -l)
+cd ..
+if [ $npdg != 2 ]; then
+    echo "c1"
+    rm CommonUtils/TauDataFormat -rf
+    rm CommonUtils/TauDataFormat -rf
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/PdtPdgMini.h
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cc
+    mv CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cc CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
+fi
 echo "Environment Configured"

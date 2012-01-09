@@ -13,18 +13,16 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-CXXFLAGS      = -I$(ROOTSYS)/include -c
+CXXFLAGS      = -I$(ROOTSYS)/include -I./ -c
 LDFLAGS       =  
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -lm -ldl  -LObj  -lpthread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 
-TARGETS       =	PdtPdgMini
-
-HDRS          = $(TARGETS:=.h) 		
-SRCS          = $(TARGETS:=.cxx)
-OBJS          = $(SRCS:.cxx=.o)
+HDRS          = TauDataFormat/TauNtuple/src/PdtPdgMini.h
+SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
+OBJS          = PdtPdgMini.o
 
 SHAREDLIB     = lib/libCommonUtils.so
 
@@ -41,7 +39,7 @@ VPATH = utilities:OBJECTS
 ###                                                    ###
 ##########################################################
 
-$(OBJS): %.o:%.cxx
+$(OBJS): %.o: $(SRCS)
 	$(CXX) $(CXXFLAGS) $(DEFS) -fpic $< -o OBJECTS/$@
 
 .PHONY: clean install 
