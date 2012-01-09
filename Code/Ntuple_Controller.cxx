@@ -5,6 +5,8 @@
 
 #include "Ntuple_Controller.h"
 #include "Tools.h"
+#include "PdtPdgMini.h"
+#include "PDG_Var.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -177,6 +179,17 @@ void Ntuple_Controller::doMET(){
 
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
+  if((Ntp->DataMC_Type)==10230530){
+    for(int i=0;i<NMCSignalParticles();i++){
+      if(abs(MCSignalParticle_pdgid(i))==PdtPdgMini::Z0){
+	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
+	  return Signal;
+	}
+      }
+    }
+    return Ntp->DataMC_Type;
+  }
+  if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;
   return (Ntp->DataMC_Type%100); 
 }
 

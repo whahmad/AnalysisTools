@@ -26,6 +26,8 @@
 #include <string.h>
 
 #include "NtupleReader.h"
+
+#include "HistoConfig.h"
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -81,7 +83,7 @@ class Ntuple_Controller{
 
   // Systematic controls variables
   int theSys;
-
+  HistoConfig HConfig;
  public:
   // Constructor
   Ntuple_Controller(std::vector<TString> RootFiles);
@@ -109,7 +111,7 @@ class Ntuple_Controller{
 
   // Systematic controls
   enum    Systematic {Default=0,NSystematics};
-  enum    MCDataID {Data=0,MC_DY=1,MC_WJ=2,MC_QCD=3,Unknown=999};
+  enum    MCDataID {Data=0,MC_DY=1,MC_WJ=2,MC_QCD=3,DY_Signal=10230530,Signal=998,Unknown=999};
   int     SetupSystematics(TString sys_);
   void    SetSysID(int sysid){theSys=sysid;}
   double  GetSystematicWeight();

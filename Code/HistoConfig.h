@@ -26,7 +26,7 @@ class HistoConfig {
   TString GetLeg(unsigned int i);
   double  GetCrossSection(int id);
   void GetHistoInfo(std::vector<int> &types,std::vector<float> &CrossSectionandAcceptance,std::vector<TString> &legend,std::vector<int> &colour);
-
+  bool hasID(int id_);
  private:
   static std::vector<int>          ID;
   static std::vector<double>       CS;

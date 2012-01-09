@@ -1,5 +1,5 @@
 #! /bin/bash
 echo "Configuring Environment...."
 export ROOTSYS=/usr/lib/root-5.22.00b/
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/PileupReweighting/StandAlone
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
 echo "Environment Configured"

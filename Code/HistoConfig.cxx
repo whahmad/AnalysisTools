@@ -161,4 +161,9 @@ std::vector<TH2D> HistoConfig::GetTH2D(TString name,TString title,int nbinsx, do
   return histos;
 }
 
-
+bool HistoConfig::hasID(int id_){
+  for(unsigned int i=0; i<ID.size();i++){
+    if(ID.at(i)==id_) return true;
+  }
+  return false;
+}

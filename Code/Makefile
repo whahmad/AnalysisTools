@@ -13,11 +13,11 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-#SHAREDLIBFLAGS =-L./TopD3PDSelection/lib -lTopD3PDSelection  -L./PileupReweighting/StandAlone -lPileupReweighting 
-#SHAREDCXXFLAGS =-I./TopD3PDSelection -I./PileupReweighting 
+SHAREDLIBFLAGS =-L./CommonUtils/lib -lCommonUtils
+SHAREDCXXFLAGS =-I./CommonUtils
+SUBDIRS = CommonUtils/
 
-CXXFLAGS      = -I$(ROOTSYS)/include -c
-#-I/include $(SHAREDCXXFLAGS) -c
+CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c
 LDFLAGS       =  
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -lm -ldl  -LObj  -lpthread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
@@ -33,6 +33,8 @@ TARGETS       =	Ntuple_Controller \
 		Tables \
 		Plots \
 		DoubleEventRemoval \
+		PDG_Var \
+		Tools \
 		SkimConfig \
 		HistoConfig \
 		Example \

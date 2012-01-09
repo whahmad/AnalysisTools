@@ -1,3 +1,8 @@
+#ifndef Tools_h
+#define Tools_h
+
+#include "TMath.h"
+#include "TLorentzVector.h"
 
 namespace Tools {
 
@@ -31,3 +36,4 @@ namespace Tools {
 
  
 }
+#endif

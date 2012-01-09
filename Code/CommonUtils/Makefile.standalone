@@ -1,0 +1,53 @@
+#################################################
+### Defining Compiling variables              ###
+#################################################
+
+
+
+CXX           = g++ -m32  -Wno-deprecated
+LD            = g++ -m32  -Wno-deprecated 
+INSTALL	      = /usr/bin/install
+SHELL = /bin/sh
+
+####################################
+###                              ###
+####################################
+
+CXXFLAGS      = -I$(ROOTSYS)/include -c
+LDFLAGS       =  
+ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -lm -ldl  -LObj  -lpthread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+
+DEFS  	      = -DSTANDALONE=1
+LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
+
+TARGETS       =	PdtPdgMini
+
+HDRS          = $(TARGETS:=.h) 		
+SRCS          = $(TARGETS:=.cxx)
+OBJS          = $(SRCS:.cxx=.o)
+
+SHAREDLIB     = lib/libCommonUtils.so
+
+$(SHAREDLIB): $(OBJS)
+	@echo "Linking SharedLib: $(SHAREDLIB) ..."
+	@echo $(LD) $(LDFLAGS) -shared OBJECTS/*.o $(LIBS) -o $(SHAREDLIB)
+	@$(LD) $(LDFLAGS) -shared OBJECTS/*.o $(LIBS) -o $(SHAREDLIB)
+	@echo "done"
+
+VPATH = utilities:OBJECTS
+#	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
+
+##########################################################
+###                                                    ###
+##########################################################
+
+$(OBJS): %.o:%.cxx
+	$(CXX) $(CXXFLAGS) $(DEFS) -fpic $< -o OBJECTS/$@
+
+.PHONY: clean install 
+
+install: $(SHAREDLIB)
+
+clean:
+	@rm OBJECTS/*.o
+	@rm lib/*.so
