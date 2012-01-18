@@ -24,7 +24,7 @@ HDRS          = TauDataFormat/TauNtuple/src/PdtPdgMini.h
 SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
 OBJS          = PdtPdgMini.o
 
-SHAREDLIB     = lib/libCommonUtils.so
+SHAREDLIB     = lib/libTauNtuple.so
 
 $(SHAREDLIB): $(OBJS)
 	@echo "======================================================="
