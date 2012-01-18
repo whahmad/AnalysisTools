@@ -13,9 +13,9 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-SHAREDLIBFLAGS =-L./CommonUtils/lib -lCommonUtils
-SHAREDCXXFLAGS =-I./CommonUtils
-SUBDIRS = CommonUtils/
+SHAREDLIBFLAGS =-L./EXTERNAL/TauNtuple/lib -lTauNtuple
+SHAREDCXXFLAGS =-I./EXTERNAL/TauNtuple
+SUBDIRS = EXTERNAL/TauNtuple/
 
 CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c
 LDFLAGS       =  
@@ -75,7 +75,7 @@ clean:
 cleanall:
 	@for subdir in $(SUBDIRS); do \
 		echo "Making all in $$subdir"; \
-		cd $$subdir && $(MAKE) -f Makefile.standalone clean && cd ../../; \
+		cd $$subdir && $(MAKE) -f Makefile.standalone clean && cd ../../../; \
 	done
 	@rm i386_linux/*.o
 	@rm Analysis.exe
@@ -85,7 +85,7 @@ all: sharedlib install
 sharedlib:
 	@for subdir in $(SUBDIRS); do \
 		echo "Making all in $$subdir"; \
-		cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../../; \
+		cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../../../; \
 	done
 	$(install)
 
