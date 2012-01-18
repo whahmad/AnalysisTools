@@ -13,7 +13,7 @@ class Ztotautau_hadmu_ControlSample : public Selection {
 
   virtual void  Configure();
 
-  enum cuts {TriggerOk=0,
+  enum cuts {TriggerOk=0, 
 	     PrimeVtx,
 	     MuonisGlob,
 	     MuonPt,
@@ -24,9 +24,11 @@ class Ztotautau_hadmu_ControlSample : public Selection {
 	     MET,
 	     deltaPhi,
 	     ZMassV,
+	     ZPt,
 	     ZMassHPS,
 	     tauPhi,
 	     charge,
+	     decayMode,
 	     NCuts};
 
  protected:

@@ -28,16 +28,18 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
     if(i==MuonisGlob)         cut.at(MuonisGlob)=1;
     if(i==MuonPt)             cut.at(MuonPt)=25; //18
-    if(i==TauPt)              cut.at(TauPt)=1;
+    if(i==TauPt)              cut.at(TauPt)=25;
     if(i==TauIsRef)           cut.at(TauIsRef)=1;
     if(i==MuonIso)            cut.at(MuonIso)=0.2;
     if(i==TauIsIso)           cut.at(TauIsIso)=1;
     if(i==deltaPhi)           cut.at(deltaPhi)=1;
     if(i==ZMassV)             cut.at(ZMassV)=1;
+    if(i==ZPt)                cut.at(ZPt)=1;
     if(i==ZMassHPS)           cut.at(ZMassHPS)=1;
     if(i==MET)                cut.at(MET)=25;
     if(i==tauPhi)             cut.at(tauPhi)=1;
     if(i==charge)             cut.at(charge)=-1;
+    if(i==decayMode)          cut.at(decayMode)=-1;
 
 
 
@@ -121,9 +123,20 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="#mu_{pT}";
+      hlabel="#tau_{pT}";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauPt_",htitle,30,0,50,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauPt_",htitle,30,0,50,hlabel,"Events"));
+    }
+   else if(i==ZPt){
+      title.at(i)="$ZPt > $";
+      title.at(i)+=cut.at(ZPt);
+      title.at(i)+=")";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="#Z_{pT}";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ZPt_",htitle,30,0,40,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ZPt_",htitle,30,0,40,hlabel,"Events"));
     }
    else if(i==TauIsIso){
       title.at(i)="$TauIsIso == $";
@@ -206,6 +219,18 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_charge_",htitle,3,-1.5,1.5,hlabel,"Events"));
     } 
 
+   else if(i==decayMode){
+      title.at(i)="$opposite charge$";
+      title.at(i)+=cut.at(decayMode);
+      title.at(i)+=")";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="decayMode";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_decayMode_",htitle,2000000,10130500,12130500,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_decayMode_",htitle,2000000,10130500,12130500,hlabel,"Events"));
+    } 
+
 
     //-----------
   }
@@ -248,7 +273,7 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   value.at(TriggerOk)=1;
   pass.at(TriggerOk)=true;
   
-  std::cout<<" debug 1" <<std::endl;
+ 
 
     unsigned int HighestPtMuonIndex=0;
     unsigned int SecondPtMuonIndex=0;
@@ -311,9 +336,9 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   value.at(TauPt) = Ntp->KFTau_TauFit_p4(HighestPtTauIndex).Pt();
   pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
 
-  value.at(TauPt) = Ntp->KFTau_TauFit_p4(HighestPtTauIndex).Pt();
+  //  value.at(TauPt) = Ntp->KFTau_TauFit_p4(HighestPtTauIndex).Pt();
   //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
-  pass.at(TauPt)=true;
+  //pass.at(TauPt)=true;
 
 
 
@@ -344,16 +369,22 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
     //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
     pass.at(ZMassHPS)=true;
  
-    std::cout<<ZVis.M() <<"  " << ZHPS.M()<<std::endl;
-
+    value.at(ZPt) = fabs(MuoGlo.Pt() - TauFit.Pt());
+    //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
+    pass.at(ZPt)=true;
    
     value.at(tauPhi) = TauFit.Phi();
     //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
     pass.at(tauPhi)=true;
+
+    value.at(decayMode) = Ntp->GetMCID();
+    //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
+    pass.at(decayMode)=true;
     
+
     if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
       value.at(charge) =Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));
-      std::cout<<" debug 6" <<std::endl;
+
       //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
       pass.at(charge)=(Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex)) == -1);
     }
@@ -369,11 +400,12 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   else{w=1;}
 
   
-  bool status=AnalysisCuts(t,w,wobs);
+  bool status=AnalysisCuts(t,w,wobs); 
  
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
+    std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
