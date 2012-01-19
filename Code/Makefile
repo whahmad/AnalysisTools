@@ -13,8 +13,8 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple
-SHAREDCXXFLAGS =-I./CommonUtils/
+SHAREDLIBFLAGS =-L./CommonUtils/lib -lCommonUtils
+SHAREDCXXFLAGS =-I./CommonUtils
 SUBDIRS = CommonUtils/
 
 CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c
@@ -39,7 +39,8 @@ TARGETS       =	Ntuple_Controller \
 		HistoConfig \
 		Example \
 		Validation \
-		Ztotautau_hadmu_ControlSample
+		Ztotautau_hadmu_ControlSample \
+                Tau_momentum_calculation
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx

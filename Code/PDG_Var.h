@@ -4,6 +4,7 @@
 namespace PDG_Var {
   double Z_mass();
   double Z_width();
+  double Tau_mass();
 }
 
 #endif
