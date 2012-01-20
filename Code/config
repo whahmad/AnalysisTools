@@ -1,17 +1,59 @@
 #! /bin/bash
 echo "Configuring Environment...."
 export ROOTSYS=/usr/lib/root-5.22.00b/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/EXTERNAL/TauNtuple/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
 ## now downloading required code from CVS
-cd EXTERNAL/TauNtuple
+cd 
 npdg=$(ls TauDataFormat/*/*/* | grep PdtPdgMini | wc -l)
 cd ..
 if [ $npdg != 2 ]; then
     echo "c1"
-    rm EXTERNAL/TauNtuple/TauDataFormat -rf
-    rm EXTERNAL/TauNtuple/TauDataFormat -rf
-    cvs co -d EXTERNAL/TauNtuple/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/PdtPdgMini.h
-    cvs co -d EXTERNAL/TauNtuple/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cc
-    mv EXTERNAL/TauNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cc EXTERNAL/TauNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
+    rm CommonUtils/TauDataFormat -rf
+    rm CommonUtils/TauDataFormat -rf
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/PdtPdgMini.h
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cc
+    mv CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cc CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
 fi
 echo "Environment Configured"
+
+exit
+# now get TauSpiner
+wget http://lcgapp.cern.ch/project/simu/HepMC/download/HepMC-2.06.05.tar.gz
+tar -xzvf HepMC-2.06.05.tar.gz 
+mkdir hepmc
+cd hepmc/
+mkdir build install
+cd build/
+../../HepMC-2.06.05/configure -prefix=${PWD}/../install -with-momentum=GEV -with-length=CM
+make
+make check
+make install
+cd ../../
+
+# use cvs version since CERN version is 3.6G and wget is corrupted
+#wget http://www.hepforge.org/downloads/lhapdf/lhapdf-5.8.6.tar.gz
+#wget http://www.hepforge.org/archive/lhapdf/pdfsets/current/MSTW2008nnlo90cl.LHgrid
+tar -xzvf lhapdf-5.8.6.tgz 
+cd lhapdf/5.8.6/
+./configure --prefix=${PWD}/../
+make
+make install
+cd ../../
+
+wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8135.tgz
+cd pythia8135
+./configure --enable-shared --lcgplatform=x86_64-slc5-gcc43-opt --with-hepmc=${PWD}/../hepmc/install/ --with-hepmcversion=2.06.05
+make
+
+cp /afs/cern.ch/sw/lcg/external/MCGenerators/distribution/tauola++-1.0.5-src.tgz .
+tar -xzvf tauola++-1.0.5-src.tgz
+cd tauola++/1.0.5
+./configure --with-hepmc=${PWD}/../../hepmc/install/ --with-pythia8libs=${PWD}/../../pythia8135/
+make 
+make install
+
+wget http://hibiscus.if.uj.edu.pl/~przedzinski/tau-reweight/downloads/release/TauSpiner.v1.0.tgz
+tar -xzvf TauSpiner.v1.0.tgz
+cd TauSpiner.v1.0
+cp ../Makefile.TauSpiner Makefile
+make
