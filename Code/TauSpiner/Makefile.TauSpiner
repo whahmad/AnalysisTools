@@ -40,10 +40,12 @@ override CXXFLAGS += -g
 
 LIBS = src/tau_reweight_lib.o  src/read_particles_from_TAUOLA.o
 
-all: tau-reweight-test.exe
+SHAREDLIB     = lib/libTauSpiner.so
+
+all: tau-reweight-test.exe $(SHAREDLIB)
 
 %.o: %.c
-	$(CC) $(CXXFLAGS) -c $< -o $@ -I./src $(ROOTINC) -I$(LHAPDFLOCATION)/include -I$(TAUOLALOCATION)/include -I$(MCTESTERLOCATION)/include \
+	$(CC) $(CXXFLAGS) -fPIC -c $< -o $@ -I./src $(ROOTINC) -I$(LHAPDFLOCATION)/include -I$(TAUOLALOCATION)/include -I$(MCTESTERLOCATION)/include \
 	-I$(HEPMCLOCATION)/include    \
 	-I$(TAUOLALOCATION)/include/Tauola   \
 	-I$(MCTESTERLOCATION)/include \
@@ -56,6 +58,10 @@ all: tau-reweight-test.exe
 	-Wl,-rpath,$(ROOTLIBPATH)          \
 	-Wl,-rpath,$(MCTESTERLOCATION)/lib \
 	-Wl,-rpath,$(LHAPDFLOCATION)/lib
+
+$(SHAREDLIB): $(LIBS)
+	 $(LD) $(LDFLAGS) -shared $(LIBS) $(HEPMC_LIBS) $(TAUOLA_LIBS) $(ROOTLIB) $(MC_TESTER_LIBS) $(LHAPDF_LIBS) -o $(SHAREDLIB)
+
 
 clean:
 	rm -f *.exe *.o src/*.o
