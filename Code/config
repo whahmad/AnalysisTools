@@ -54,6 +54,7 @@ if [ $tauspiner == 0  ]; then
     wget http://hibiscus.if.uj.edu.pl/~przedzinski/tau-reweight/downloads/release/TauSpiner.v1.0.tgz
     tar -xzvf TauSpiner.v1.0.tgz
     cp Makefile.TauSpiner TauSpiner.v1.0/Makefile
+    mkdir TauSpiner.v1.0/lib
     cd ..
 fi
 
