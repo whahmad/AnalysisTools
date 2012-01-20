@@ -2,12 +2,9 @@
 # - HepMC
 # - Tauola++
 # - MC-TESTER (optional)
-HEPMCLOCATION    = ${PWD}/../HepMC-2.06.05/install/
+HEPMCLOCATION    = ${PWD}/../hepmc/install/
 TAUOLALOCATION   = ${PWD}/../tauola++/1.0.5/
 LHAPDFLOCATION   = ${PWD}/../lhapdf
-
-ROOTLIB = $(shell root-config --glibs)
-ROOTINC = $(shell root-config --cflags)
 
 # INFO: Options for program, see README
 #USE_MCTESTER = yes
@@ -19,14 +16,14 @@ ROOTINC = $(shell root-config --cflags)
 
 # INFO: Initialization of option  ' USE_MCTESTER'
 ifdef USE_MCTESTER
-  MCTESTERLOCATION = /home/others/przedzinski/MC-TESTER
+  MCTESTERLOCATION = /afs/cern.ch/sw/lcg/external/MCGenerators/mctester/1.24.4.a/$(PLATFORM)/
 
   ROOTLIB       :=  $(shell root-config --glibs)
   ROOTINC       :=  $(shell root-config --cflags)
   ROOTLIBPATH   :=  $(shell root-config --libdir)
   MC_TESTER_LIBS = -L$(MCTESTERLOCATION)/lib -lHEPEvent -lHepMCEvent -lMCTester
 
-  override CXXFLAGS += -D_USE_MCTESTER_
+  override CXXFLAGS += -D_USE_MCTESTER_ -O0
 endif
 
 # INFO: Initialization of option  ' USE_SPIN_VALIDATION_ONLY'
@@ -41,15 +38,14 @@ LHAPDF_LIBS    = -L$(LHAPDFLOCATION)/lib -lLHAPDF
 CC       = g++
 override CXXFLAGS += -g
 
-LIBS = src/tau_reweight_lib.o  src/read_particles_from_TAUOLA.o \
-       src/read_particles_from_NTUPLE.o
+LIBS = src/tau_reweight_lib.o  src/read_particles_from_TAUOLA.o
 
-all: tau-reweight-test.exe tau-spiner-ntuple.exe
+all: tau-reweight-test.exe
 
 %.o: %.c
-	$(CC) $(CXXFLAGS) -c $< -o $@ -I./src $(ROOTINC) \
+	$(CC) $(CXXFLAGS) -c $< -o $@ -I./src $(ROOTINC) -I$(LHAPDFLOCATION)/include -I$(TAUOLALOCATION)/include -I$(MCTESTERLOCATION)/include \
 	-I$(HEPMCLOCATION)/include    \
-	-I$(TAUOLALOCATION)/include/   \
+	-I$(TAUOLALOCATION)/include/Tauola   \
 	-I$(MCTESTERLOCATION)/include \
 	-I$(LHAPDFLOCATION)/include
 

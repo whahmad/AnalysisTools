@@ -1,0 +1,55 @@
+#################################################
+### Defining Compiling variables              ###
+#################################################
+
+
+
+CXX           = g++ -m32  -Wno-deprecated
+LD            = g++ -m32  -Wno-deprecated 
+INSTALL	      = /usr/bin/install
+SHELL = /bin/sh
+
+####################################
+###                              ###
+####################################
+
+.PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
+
+install: TAUSPINNER 
+
+###########HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
+
+clean:
+        @echo "============================="
+
+
+HEPMC:
+	@cd hepmc/build/; \
+	../../HepMC-2.06.05/configure -prefix=${PWD}/hepmc/install -with-momentum=GEV -with-length=CM; \
+	make; \
+	make check; \
+	make install; \
+	cd ../../;  
+
+LHAPDF:
+	@cd lhapdf/5.8.6/; \
+	./configure --prefix=${PWD}/lhapdf/; \
+	make; \
+	make install; \
+	cd ../../; 
+
+PYTHIA8:
+	@cd pythia8135; \
+	./configure --enable-shared --lcgplatform=x86_64-slc5-gcc43-opt --with-hepmc=${PWD}/hepmc/install/ --with-hepmcversion=2.06.05; \
+	make;
+
+TAUOLA:
+	@cd tauola++/1.0.5; \
+	./configure --with-hepmc=${PWD}/hepmc/install/ --with-pythia8libs=${PWD}/pythia8135/; \
+	make; \
+	make install; 
+
+TAUSPINNER:
+	@cd TauSpiner.v1.0; \
+	make;
+
