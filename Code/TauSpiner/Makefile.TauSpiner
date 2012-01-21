@@ -60,7 +60,7 @@ all: tau-reweight-test.exe $(SHAREDLIB)
 	-Wl,-rpath,$(LHAPDFLOCATION)/lib
 
 $(SHAREDLIB): $(LIBS)
-	$(LD) $(LDFLAGS) -shared $(LIBS) $(HEPMC_LIBS) $(TAUOLA_LIBS) $(ROOTLIB) $(MC_TESTER_LIBS) $(LHAPDF_LIBS) -o $(SHAREDLIB)
+	$(CC)  -shared $(LIBS) $(HEPMC_LIBS) $(TAUOLA_LIBS) $(ROOTLIB) $(MC_TESTER_LIBS) $(LHAPDF_LIBS) -o $(SHAREDLIB)
 	@cp src/*.h include/
 
 clean:

@@ -4,8 +4,8 @@
 
 
 
-CXX           = g++ -m32  -Wno-deprecated
-LD            = g++ -m32  -Wno-deprecated 
+CXX           = g++ -Wno-deprecated
+LD            = g++ -Wno-deprecated 
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
 
@@ -15,7 +15,7 @@ SHELL = /bin/sh
 
 CXXFLAGS      = -I$(ROOTSYS)/include -I./ -c
 LDFLAGS       =  
-ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -lm -ldl  -LObj  -lpthread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
