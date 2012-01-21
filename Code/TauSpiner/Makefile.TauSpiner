@@ -42,7 +42,7 @@ LIBS = src/tau_reweight_lib.o  src/read_particles_from_TAUOLA.o
 
 SHAREDLIB     = lib/libTauSpiner.so
 
-all: tau-reweight-test.exe $(SHAREDLIB)
+all: tau-reweight-test.exe $(SHAREDLIB) 
 
 %.o: %.c
 	$(CC) $(CXXFLAGS) -fPIC -c $< -o $@ -I./src $(ROOTINC) -I$(LHAPDFLOCATION)/include -I$(TAUOLALOCATION)/include -I$(MCTESTERLOCATION)/include \
@@ -60,8 +60,8 @@ all: tau-reweight-test.exe $(SHAREDLIB)
 	-Wl,-rpath,$(LHAPDFLOCATION)/lib
 
 $(SHAREDLIB): $(LIBS)
-	 $(LD) $(LDFLAGS) -shared $(LIBS) $(HEPMC_LIBS) $(TAUOLA_LIBS) $(ROOTLIB) $(MC_TESTER_LIBS) $(LHAPDF_LIBS) -o $(SHAREDLIB)
-
+	$(LD) $(LDFLAGS) -shared $(LIBS) $(HEPMC_LIBS) $(TAUOLA_LIBS) $(ROOTLIB) $(MC_TESTER_LIBS) $(LHAPDF_LIBS) -o $(SHAREDLIB)
+	@cp src/*.h include/
 
 clean:
 	rm -f *.exe *.o src/*.o
