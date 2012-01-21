@@ -55,13 +55,14 @@ if [ $tauspiner == 0  ]; then
     tar -xzvf TauSpiner.v1.0.tgz
     cp Makefile.TauSpiner TauSpiner.v1.0/Makefile
     mkdir TauSpiner.v1.0/lib
+    mkdir TauSpiner.v1.0/include
     cd ..
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/TauSpiner.v1.0/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/tauola++/1.0.5/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/pythia8135/lib/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/lhapdf-5.8.6/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/lhapdf/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/hepmc/install/lib/
 
 

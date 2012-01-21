@@ -4,8 +4,10 @@
 
 
 
-CXX           = g++ -m32  -Wno-deprecated
-LD            = g++ -m32  -Wno-deprecated 
+CXX           = g++  -Wno-deprecated
+#-m32  -Wno-deprecated
+LD            = g++  -Wno-deprecated
+#-m32  -Wno-deprecated 
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
 
@@ -13,13 +15,32 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-SHAREDLIBFLAGS =-L./CommonUtils/lib -lCommonUtils
-SHAREDCXXFLAGS =-I./CommonUtils
-SUBDIRS = CommonUtils/
+SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple \
+		-L./TauSpiner/TauSpiner.v1.0/lib/ -lTauSpiner \
+		-L./TauSpiner/lhapdf/lib/ -lLHAPDF
+
+#-L./TauSpiner/hepmc/install/lib/ -lHepMCfio  -lHepMC \
+#-L./TauSpiner/tauola++/1.0.5/lib/ -lTauolaCxxInterface -lTauolaFortran \
+#-L./TauSpiner/lhapdf/lib/ -lLHAPDF \
+#-L./TauSpiner/pythia8135/lib/ -lhepmcinterface  -llhapdfdummy  -lpythia8 \
+#-L./TauSpiner/TauSpiner.v1.0/lib/ -lTauSpiner 
+
+SHAREDCXXFLAGS =-I./CommonUtils \
+	 	-I./TauSpiner/TauSpiner.v1.0/include \
+		-I./TauSpiner/hepmc/install/include \
+		-I./TauSpiner/tauola++/1.0.5/include \
+		-I./TauSpiner/lhapdf/include \
+		-I./TauSpiner/pythia8135/include
+
+SUBDIRS = CommonUtils/ TauSpiner/
+
+
 
 CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c
 LDFLAGS       =  
-ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -lm -ldl  -LObj  -lpthread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+
+# -ldl -lpthread
 
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
@@ -86,7 +107,7 @@ all: sharedlib install
 sharedlib:
 	@for subdir in $(SUBDIRS); do \
 		echo "Making all in $$subdir"; \
-		cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../../; \
+		cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../ && pwd; \
 	done
 	$(install)
 
