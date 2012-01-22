@@ -4,9 +4,9 @@
 
 
 
-CXX           = g++  -Wno-deprecated
+CXX           = g++ -Wno-deprecated
 #-m32  -Wno-deprecated
-LD            = g++  -Wno-deprecated
+LD            = g++ -Wno-deprecated
 #-m32  -Wno-deprecated 
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
@@ -17,13 +17,9 @@ SHELL = /bin/sh
 
 SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple \
 		-L./TauSpiner/TauSpiner.v1.0/lib/ -lTauSpiner \
-		-L./TauSpiner/lhapdf/lib/ -lLHAPDF
-
-#-L./TauSpiner/hepmc/install/lib/ -lHepMCfio  -lHepMC \
-#-L./TauSpiner/tauola++/1.0.5/lib/ -lTauolaCxxInterface -lTauolaFortran \
-#-L./TauSpiner/lhapdf/lib/ -lLHAPDF \
-#-L./TauSpiner/pythia8135/lib/ -lhepmcinterface  -llhapdfdummy  -lpythia8 \
-#-L./TauSpiner/TauSpiner.v1.0/lib/ -lTauSpiner 
+		-L./TauSpiner/lhapdf/lib/ -lLHAPDF \
+		-L./TauSpiner/tauola++/1.0.5/lib/ -lTauolaCxxInterface -lTauolaFortran \
+		-L./TauSpiner/hepmc/install/lib/ -lHepMC 
 
 SHAREDCXXFLAGS =-I./CommonUtils \
 	 	-I./TauSpiner/TauSpiner.v1.0/include \
@@ -61,7 +57,8 @@ TARGETS       =	Ntuple_Controller \
 		Example \
 		Validation \
 		Ztotautau_hadmu_ControlSample \
-                Tau_momentum_calculation
+                Tau_momentum_calculation \
+		TauSpinerInterface
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
