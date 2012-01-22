@@ -34,6 +34,7 @@ LHAPDF:
 	./configure --prefix=${PWD}/lhapdf/; \
 	make; \
 	make install; \
+	ln -s ${PWD}/lhapdf/5.8.6/share/lhapdf/PDFsets/ ${PWD}/lhapdf/share/lhapdf/ \
 	cd ../../; 
 
 PYTHIA8:
