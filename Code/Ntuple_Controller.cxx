@@ -1,7 +1,5 @@
 //Ntuple_Controller.cxx IMPLEMENTATION FILE
 
-#ifndef Ntuple_Controller_cxx
-#define Ntuple_Controller_cxx
 
 #include "Ntuple_Controller.h"
 #include "Tools.h"
@@ -9,6 +7,8 @@
 
 // External code
 #include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -19,6 +19,7 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
 {
+  TauSpinerInt=NULL;
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
   std::cout << "Ntuple_Controller" << RootFiles.size() << std::endl;
@@ -104,6 +105,7 @@ void Ntuple_Controller::Branch_Setup(TString B_Name, int type){
 Ntuple_Controller::~Ntuple_Controller() {
   std::cout << "Ntuple_Controller::~Ntuple_Controller()" << std::endl;
   delete Ntp;
+  if(TauSpinerInt!=NULL)delete TauSpinerInt;
   std::cout << "Ntuple_Controller::~Ntuple_Controller() complete" << std::endl;
 }
 
@@ -359,7 +361,78 @@ float     Ntuple_Controller::Track_parCov(unsigned int i, TrackPar par1, TrackPa
   return Ntp->Track_parCov->at(i).at(par2).at(par1);
 }
 
-#endif
+
+
+
+double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType SpinType){
+  if(!isData()){
+    std::vector<SimpleParticle> tau_daughters, tau_daughters2;
+    SimpleParticle tau, tau2;
+    for(int i=0; i<Ntp->MCSignalParticle_pdgid->size();i++){
+      // check for signal Boson
+      if(Ntp->MCSignalParticle_pdgid->at(i)==25 || 
+	 Ntp->MCSignalParticle_pdgid->at(i)==36 || 
+	 Ntp->MCSignalParticle_pdgid->at(i)==22 || 
+	 Ntp->MCSignalParticle_pdgid->at(i)==23){
+	if(Ntp->MCSignalParticle_Tauidx->at(i).size()==2){
+	  SimpleParticle X(Ntp->MCSignalParticle_p4->at(i).at(1),
+			   Ntp->MCSignalParticle_p4->at(i).at(2),
+			   Ntp->MCSignalParticle_p4->at(i).at(3),
+			   Ntp->MCSignalParticle_p4->at(i).at(0),
+			   Ntp->MCSignalParticle_pdgid->at(i));
+	  //first tau
+	  int tauidx=Ntp->MCSignalParticle_Tauidx->at(i).at(0);
+	  if(tauidx<Ntp->MCTauandProd_p4->size()){
+	    for(int t=0;t<Ntp->MCTauandProd_p4->at(tauidx).size();t++){
+	      if(t==0){
+		tau=SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
+				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
+				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
+				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
+				   Ntp->MCTauandProd_pdgid->at(tauidx).at(t));
+	      }
+	      else{
+		tau_daughters.push_back(SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
+						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
+						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
+						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
+						       Ntp->MCTauandProd_pdgid->at(tauidx).at(t)));
+	      }
+	      // second tau
+	      tauidx=Ntp->MCSignalParticle_Tauidx->at(i).at(1);
+	      if(tauidx<Ntp->MCTauandProd_p4->size()){
+		for(int t=0;t<Ntp->MCTauandProd_p4->at(tauidx).size();t++){
+		  if(t==0){
+		    tau2=SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
+					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
+					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
+					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
+					Ntp->MCTauandProd_pdgid->at(tauidx).at(t));
+		  }
+		  else{
+		    tau_daughters2.push_back(SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
+							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
+							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
+							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
+							    Ntp->MCTauandProd_pdgid->at(tauidx).at(t)));
+		  }
+		  if(TauSpinerInt==NULL) TauSpinerInt=new TauSpinerInterface();
+		  return TauSpinerInt->Weight(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  return 1.0;
+}
+
+
+
+
+
 
 
 

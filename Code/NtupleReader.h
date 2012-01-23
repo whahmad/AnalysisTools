@@ -239,11 +239,11 @@ public :
    TBranch        *b_KFTau_Fit_charge;   //!
    TBranch        *b_KFTau_Fit_csum;   //!
    TBranch        *b_KFTau_Fit_iterations;   //!
-   TBranch        *KFTau_Fit_TauEnergyFraction;  //!
-   TBranch        *KFTau_Fit_RefitVisibleMass;   //!
-   TBranch        *KFTau_Fit_Chi2;	       //!
-   TBranch        *KFTau_Fit_PV_PV_significance; //!
-   TBranch        *KFTau_Fit_SV_PV_significance; //!
+   TBranch        *b_KFTau_Fit_TauEnergyFraction;  //!
+   TBranch        *b_KFTau_Fit_RefitVisibleMass;   //!
+   TBranch        *b_KFTau_Fit_Chi2;	       //!
+   TBranch        *b_KFTau_Fit_PV_PV_significance; //!
+   TBranch        *b_KFTau_Fit_SV_PV_significance; //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
    TBranch        *b_PFJet_chargedHadronEnergy;   //!

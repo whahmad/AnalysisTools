@@ -28,6 +28,7 @@
 #include "NtupleReader.h"
 
 #include "HistoConfig.h"
+#include "TauSpinerInterface.h"
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -84,12 +85,19 @@ class Ntuple_Controller{
   // Systematic controls variables
   int theSys;
   HistoConfig HConfig;
+
+  // Interfaces
+  TauSpinerInterface *TauSpinerInt;
+
  public:
   // Constructor
   Ntuple_Controller(std::vector<TString> RootFiles);
 
   // Destructor
   ~Ntuple_Controller() ;
+
+  //TauSpiner function
+  double TauSpinerWeight(TauSpinerInterface::TauSpinerType SpinType);
 
   enum TrackQuality {
     undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
@@ -307,5 +315,6 @@ class Ntuple_Controller{
    int MCTauandProd_charge(unsigned int i, unsigned int j){return Ntp->MCTauandProd_charge->at(i).at(j);}
 
 };
+
 #endif
 
