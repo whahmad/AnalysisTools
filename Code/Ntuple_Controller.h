@@ -218,7 +218,12 @@ class Ntuple_Controller{
    int      KFTau_Fit_charge(unsigned int i){return Ntp->KFTau_Fit_charge->at(i);}
    int      KFTau_Fit_csum(unsigned int i){return Ntp->KFTau_Fit_csum->at(i);}
    int      KFTau_Fit_iterations(unsigned int i){return Ntp->KFTau_Fit_iterations->at(i);}
-
+   double   KFTau_Fit_TauEnergyFraction(unsigned int i){return Ntp->KFTau_Fit_TauEnergyFraction->at(i);}
+   double   KFTau_Fit_RefitVisibleMass(unsigned int i){return Ntp->KFTau_Fit_RefitVisibleMass->at(i);}
+   double   KFTau_Fit_Chi2(unsigned int i){return Ntp->KFTau_Fit_Chi2->at(i);}
+   double   KFTau_Fit_PV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_PV_PV_significance->at(i);}
+   double   KFTau_Fit_SV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_SV_PV_significance->at(i);}
+   
 
    // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}

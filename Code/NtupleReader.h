@@ -92,6 +92,11 @@ public :
    std::vector<int>     *KFTau_Fit_charge;
    std::vector<int>     *KFTau_Fit_csum;
    std::vector<int>     *KFTau_Fit_iterations;
+   std::vector<double>  *KFTau_Fit_TauEnergyFraction;
+   std::vector<double>  *KFTau_Fit_RefitVisibleMass;
+   std::vector<double>  *KFTau_Fit_Chi2;
+   std::vector<double>  *KFTau_Fit_PV_PV_significance;
+   std::vector<double>  *KFTau_Fit_SV_PV_significance;
    std::vector<std::vector<float> > *PFJet_p4;
    std::vector<float>   *PFJet_chargedEmEnergy;
    std::vector<float>   *PFJet_chargedHadronEnergy;
@@ -234,6 +239,11 @@ public :
    TBranch        *b_KFTau_Fit_charge;   //!
    TBranch        *b_KFTau_Fit_csum;   //!
    TBranch        *b_KFTau_Fit_iterations;   //!
+   TBranch        *KFTau_Fit_TauEnergyFraction;  //!
+   TBranch        *KFTau_Fit_RefitVisibleMass;   //!
+   TBranch        *KFTau_Fit_Chi2;	       //!
+   TBranch        *KFTau_Fit_PV_PV_significance; //!
+   TBranch        *KFTau_Fit_SV_PV_significance; //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
    TBranch        *b_PFJet_chargedHadronEnergy;   //!
@@ -455,6 +465,11 @@ void NtupleReader::Init(TTree *tree)
    KFTau_Fit_charge = 0;
    KFTau_Fit_csum = 0;
    KFTau_Fit_iterations = 0;
+   KFTau_Fit_TauEnergyFraction= 0; 
+   KFTau_Fit_RefitVisibleMass= 0;  
+   KFTau_Fit_Chi2= 0;	      
+   KFTau_Fit_PV_PV_significance= 0;
+   KFTau_Fit_SV_PV_significance= 0;
    PFJet_p4 = 0;
    PFJet_chargedEmEnergy = 0;
    PFJet_chargedHadronEnergy = 0;
@@ -583,6 +598,11 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Fit_charge", &KFTau_Fit_charge, &b_KFTau_Fit_charge);
    fChain->SetBranchAddress("KFTau_Fit_csum", &KFTau_Fit_csum, &b_KFTau_Fit_csum);
    fChain->SetBranchAddress("KFTau_Fit_iterations", &KFTau_Fit_iterations, &b_KFTau_Fit_iterations);
+   fChain->SetBranchAddress("KFTau_Fit_TauEnergyFraction", &KFTau_Fit_TauEnergyFraction, &b_KFTau_Fit_TauEnergyFraction); 
+   fChain->SetBranchAddress("KFTau_Fit_RefitVisibleMass", &KFTau_Fit_RefitVisibleMass, &b_KFTau_Fit_RefitVisibleMass);  
+   fChain->SetBranchAddress("KFTau_Fit_Chi2", &KFTau_Fit_Chi2, &b_KFTau_Fit_Chi2);	      
+   fChain->SetBranchAddress("KFTau_Fit_PV_PV_significance", &KFTau_Fit_PV_PV_significance, &b_KFTau_Fit_PV_PV_significance);
+   fChain->SetBranchAddress("KFTau_Fit_SV_PV_significance", &KFTau_Fit_SV_PV_significance, &b_KFTau_Fit_SV_PV_significance);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
    fChain->SetBranchAddress("PFJet_chargedEmEnergy", &PFJet_chargedEmEnergy, &b_PFJet_chargedEmEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronEnergy", &PFJet_chargedHadronEnergy, &b_PFJet_chargedHadronEnergy);
