@@ -14,8 +14,10 @@ SHELL = /bin/sh
 ####################################
 
 .PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
+#LINKS 
 
 install: HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
+#LINKS
 
 clean:
         @echo "============================="
@@ -34,7 +36,6 @@ LHAPDF:
 	./configure --prefix=${PWD}/lhapdf/; \
 	make; \
 	make install; \
-	ln -s ${PWD}/lhapdf/5.8.6/share/lhapdf/PDFsets/ ${PWD}/lhapdf/share/lhapdf/ \
 	cd ../../; 
 
 PYTHIA8:
@@ -52,3 +53,5 @@ TAUSPINNER:
 	@cd TauSpiner.v1.0; \
 	make;
 
+LINKS:
+	@ln -s ${PWD}/lhapdf/5.8.6/share/lhapdf/PDFsets/ ${PWD}/lhapdf/share/lhapdf/
