@@ -4,15 +4,17 @@ export ROOTSYS=/usr/lib/root-5.26.00c/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
 ## now downloading required code from CVS
 cd CommonUtils
-npdg=$(ls TauDataFormat/*/*/* | grep PdtPdgMini | wc -l)
+CommonUtils=$(ls | grep TauDataFormat | wc -l)
 cd ..
-if [ $npdg != 2 ]; then
-    rm CommonUtils/TauDataFormat -rf
-    rm CommonUtils/TauDataFormat -rf
+if [ $CommonUtils == 0 ]; then
+    #Get PdtPdgMini
     cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/PdtPdgMini.h
     cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/PdtPdgMini.cc
-    mv CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cc CommonUtils/TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
+    #Get TauDecay
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/TauDecay.h
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/TauDecay.cc
 fi
+
 
 # now get TauSpiner
 hepmc=$(ls TauSpiner/* | grep HepMC | wc -l) 

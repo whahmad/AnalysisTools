@@ -433,6 +433,24 @@ double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType Spin
 
 
 
-
+bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,TauDecay::JAK tau_jak, unsigned int &idx){
+  for(int i=0; i<NMCSignalParticles();i++){
+    if(MCTauandProd_pdgid(i)==parent_pdgid){
+      if(MCSignalParticle_Tauidx(i).at(0)<NMCTaus() && MCSignalParticle_Tauidx(i).at(1)<NMCTaus()){
+	for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+	  if(MCSignalParticle_Tauidx(i).at(0)>=NMCTaus()){
+	    std::cout << "Warning INVALID Tau index... Skipping event!" << std::endl;
+	    return false;
+	  }
+	}
+	for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j);
+	  if(MCTau_JAK(tauidx)==tau_jak){ idx=tauidx;return true;}
+	}
+      }
+    }
+  }
+  return false;
+}
 
 

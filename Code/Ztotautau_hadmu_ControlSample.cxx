@@ -261,6 +261,7 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
+
   
   // Apply Selection
   unsigned int nGoodVtx=0;
@@ -396,7 +397,9 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   double wobs=1;
   double w;
 
-  if(!Ntp->isData()){w = Ntp->EvtWeight3D();}
+  if(!Ntp->isData()){
+    w *= Ntp->EvtWeight3D();
+  }
   else{w=1;}
 
   

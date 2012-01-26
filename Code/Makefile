@@ -57,6 +57,8 @@ TARGETS       =	Ntuple_Controller \
 		Example \
 		Validation \
 		Ztotautau_hadmu_ControlSample \
+		Ztotautau_ControlSample \
+		TauSpinExample \
                 Tau_momentum_calculation \
 		TauSpinerInterface
 

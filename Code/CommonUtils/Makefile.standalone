@@ -20,8 +20,10 @@ ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 
-HDRS          = TauDataFormat/TauNtuple/src/PdtPdgMini.h
-SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cxx
+HDRS          = TauDataFormat/TauNtuple/interface/PdtPdgMini.h \
+		TauDataFormat/TauNtuple/interface/TauDecay.h
+SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cc \
+		TauDataFormat/TauNtuple/src/TauDecay.cc
 OBJS          = PdtPdgMini.o
 
 SHAREDLIB     = lib/libTauNtuple.so

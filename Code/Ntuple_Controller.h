@@ -29,6 +29,8 @@
 
 #include "HistoConfig.h"
 #include "TauSpinerInterface.h"
+#include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
+#include "TauDataFormat/TauNtuple/interface/TauDecay.h"
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -122,7 +124,6 @@ class Ntuple_Controller{
   enum    MCDataID {Data=0,MC_DY=1,MC_WJ=2,MC_QCD=3,DY_Signal=10230530,Signal=998,Unknown=999};
   int     SetupSystematics(TString sys_);
   void    SetSysID(int sysid){theSys=sysid;}
-  double  GetSystematicWeight();
 
 
   // Data/MC switch and thin
@@ -313,7 +314,7 @@ class Ntuple_Controller{
    int MCTauandProd_pdgid(unsigned int i, unsigned int j){return Ntp->MCTauandProd_pdgid->at(i).at(j);}
    unsigned int MCTauandProd_midx(unsigned int i, unsigned int j){return Ntp->MCTauandProd_midx->at(i).at(j);}
    int MCTauandProd_charge(unsigned int i, unsigned int j){return Ntp->MCTauandProd_charge->at(i).at(j);}
-
+   bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,TauDecay::JAK tau_jak, unsigned int &idx);
 };
 
 #endif
