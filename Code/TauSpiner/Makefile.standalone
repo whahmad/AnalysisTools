@@ -13,11 +13,9 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-.PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
-#LINKS 
+.PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER LINKS 
 
-install: HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER 
-#LINKS
+install: HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER LINKS
 
 clean:
         @echo "============================="
