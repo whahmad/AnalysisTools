@@ -18,6 +18,7 @@
 Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
+  ,verbose(false)
 {
   TauSpinerInt=NULL;
   // TChains the ROOTuple file
@@ -383,14 +384,14 @@ double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType Spin
 	  bool tau1good(false),tau2good(false);
 	  //first tau
 	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(0);
-	  std::cout  << "tau 1 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	  if(verbose)std::cout  << "tau 1 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
 	  if(tauidx<NMCTaus()){
 	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
-	      std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t)
-			<< " px " << MCTauandProd_p4(tauidx,t).Px()
-			<< " py " << MCTauandProd_p4(tauidx,t).Py()
-			<< " pz " << MCTauandProd_p4(tauidx,t).Pz()
-			<< " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
+	      if(verbose)std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t)
+				   << " px " << MCTauandProd_p4(tauidx,t).Px()
+				   << " py " << MCTauandProd_p4(tauidx,t).Py()
+				   << " pz " << MCTauandProd_p4(tauidx,t).Pz()
+				   << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
 	      if(t==0){
 		tau=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
 				   MCTauandProd_p4(tauidx,t).Py(),
@@ -408,13 +409,13 @@ double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType Spin
 	      }
 	      // second tau
 	      tauidx=MCSignalParticle_Tauidx(i).at(1);
-	      std::cout  << "tau 2 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	      if(verbose)std::cout  << "tau 2 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
 	      if(tauidx<NMCTaus()){
-		std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t) 
-			  << " px " << MCTauandProd_p4(tauidx,t).Px()
-			  << " py " << MCTauandProd_p4(tauidx,t).Py()
-			  << " pz " << MCTauandProd_p4(tauidx,t).Pz()
-			  << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
+		if(verbose)std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t) 
+				     << " px " << MCTauandProd_p4(tauidx,t).Px()
+				     << " py " << MCTauandProd_p4(tauidx,t).Py()
+				     << " pz " << MCTauandProd_p4(tauidx,t).Pz()
+				     << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
 		for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
 		  
 		  if(t==0){

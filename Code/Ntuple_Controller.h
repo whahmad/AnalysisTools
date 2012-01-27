@@ -56,6 +56,8 @@ class Ntuple_Controller{
   int nb;
   bool copyTree;
 
+  bool verbose;
+
   // Ntuple Access Functions
   virtual void Branch_Setup(TString B_Name, int type);
   virtual void Branch_Setup(){}

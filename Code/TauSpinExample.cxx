@@ -37,6 +37,9 @@ void  TauSpinExample::Configure(){
   
     if(i==isZtautauto3pimu){
       title.at(i)="Is $Z\\rightarrow\\tau\\tau\\rightarrow\\mu\\pi\\pi\\pi$ MC (bool)";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
       hlabel="Is Z#rightarrow#tau#tau#rightarrow#mu#pi#pi#pi MC (bool)";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_isZtautauto3pimu_",htitle,2,-0.5,1.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_isZtautauto3pimu_",htitle,2,-0.5,1.5,hlabel,"Events"));
@@ -49,9 +52,9 @@ void  TauSpinExample::Configure(){
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Accumulative Cuts Passed","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Vertex","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
-  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",100,0.0,4.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",100,0.0,100.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",100,0.0,100,"P_{#mu}/P_{#tau}","Events");
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
@@ -78,11 +81,10 @@ void  TauSpinExample::doEvent(){
   pass.at(isZtautauto3pimu) =  Ntp->hasSignalTauDecay(PdtPdgMini::Z0,TauDecay::JAK_MUON,idx);
   if(pass.at(isZtautauto3pimu))value.at(isZtautauto3pimu)=1;
   double wobs=1;
-  double w;
-  if(!Ntp->isData()){
+  double w=1;
+  /*  if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
-  }
-  else{w=1;}
+    }*/
 
   std::cout << Ntp->GetMCID() << " " << Npassed.size() << " " << t << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
@@ -102,11 +104,12 @@ void  TauSpinExample::doEvent(){
     //
     // Spin Validation
     //
-    std::cout <<  Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin) << std::endl;
+    double WT=Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin);
+    std::cout <<  "TauSpiner WT: " << WT << std::endl;
 
-    PmuoverEtau.at(t).Fill(1);
-    PmuoverEtau_hplus.at(t).Fill(1);
-    PmuoverEtau_hminus.at(t).Fill(1);
+    PmuoverEtau.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::Spin));
+    PmuoverEtau_hplus.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::UnSpin));
+    PmuoverEtau_hminus.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin));
 
 
   }

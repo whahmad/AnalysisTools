@@ -43,6 +43,7 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
   (output) << "\\usepackage{cite}" << std::endl;
   (output) << "\\usepackage{fancyhdr}" << std::endl;
   (output) << "\\usepackage{lscape,graphicx}" << std::endl;
+  (output) << "\\usepackage{hyperref}"  << std::endl;
   TString title=Name;
   title.ReplaceAll("_"," ");
   (output) << "\\title{Analysis Results for: " << title <<"}" << std::endl;
