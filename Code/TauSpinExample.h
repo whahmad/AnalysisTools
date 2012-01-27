@@ -13,7 +13,7 @@ class TauSpinExample : public Selection {
 
   virtual void  Configure();
 
-  enum cuts {isZtautauto3pimu,NCuts};
+  enum cuts {isZtautauto3pimu=0,NCuts};
 
  protected:
   virtual void doEvent();

@@ -58,7 +58,6 @@ int main() {
   Par.GetVectorString("Analysis:",Analysis);
   Par.GetVectorString("UncertType:",UncertType,"<default>");
   Par.GetVectorStringDouble("UncertList:",UncertList,UncertW);
-
   /////////////////////////////////////////////////
   // Check Input
   HistoConfig H; 
@@ -173,8 +172,8 @@ int main() {
       }
       bool passed=false;
       for(int j=0; j<selections.size();j++){
-	selections[j]->Event();
-	if(selections[j]->Passed()) passed=true;
+	selections.at(j)->Event();
+	if(selections.at(j)->Passed()) passed=true;
       }
       if(skim && passed){
 	Ntp.AddEventToCloneTree();

@@ -16,8 +16,8 @@ Selection_Factory::~Selection_Factory(){
 Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,int mode, int runtype){
   Selection_Base* s;
   Analysis.ToLower();
-  if(Analysis.Contains("example"))s=new Example(Analysis,UncertType);
-  else if(Analysis.Contains("validation"))s=new Validation(Analysis,UncertType);
+
+  if(Analysis.Contains("validation"))s=new Validation(Analysis,UncertType);
   else if(Analysis.Contains("ztotautau_hadmu_controlsample"))s=new Ztotautau_hadmu_ControlSample(Analysis,UncertType);
   else if(Analysis.Contains("tau_momentum_calculation"))s=new Tau_momentum_calculation(Analysis,UncertType);
   else if(Analysis.Contains("ztotautau_controlsample"))s=new Ztotautau_ControlSample(Analysis,UncertType);

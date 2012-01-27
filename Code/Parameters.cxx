@@ -83,7 +83,7 @@ void Parameters::GetVectorString(TString p, std::vector<TString> &v, TString dv)
     line >> par >> val;
     par.ToLower();
     p.ToLower();
-    if(par==p){
+    if(p.Contains(par) && par.Contains(p)){
       v.push_back(val);
     }
   }
@@ -130,12 +130,12 @@ void Parameters::GetParameter(TString p, T &v,T dv){
     p.ToLower();
     if(par==p){
       v=val;
-      std::cout << "Parameters::GetVectorString File=" << file << " Found: " <<  p << "=" << v << std::endl;
+      std::cout << "Parameters::GetParameter File=" << file << " Found: " <<  p << "=" << v << std::endl;
       return;
     }
   }
   v=dv;
-  std::cout << "Parameters::GetVectorString File=" << file << " Not Found: " <<  p << "=" << v << std::endl;
+  std::cout << "Parameters::GetParameter File=" << file << " Not Found: " <<  p << "=" << v << std::endl;
   input_file.close();
   return;
 }

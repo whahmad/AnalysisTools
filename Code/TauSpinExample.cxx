@@ -36,7 +36,7 @@ void  TauSpinExample::Configure(){
     TString c="_Cut_";c+=i;
   
     if(i==isZtautauto3pimu){
-      title.at(i)="Is $Z\\rightarrow\\tau\\tau\\rightarrow\\mu\\pi\\pi\\pi MC (bool)";
+      title.at(i)="Is $Z\\rightarrow\\tau\\tau\\rightarrow\\mu\\pi\\pi\\pi$ MC (bool)";
       hlabel="Is Z#rightarrow#tau#tau#rightarrow#mu#pi#pi#pi MC (bool)";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_isZtautauto3pimu_",htitle,2,-0.5,1.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_isZtautauto3pimu_",htitle,2,-0.5,1.5,hlabel,"Events"));
@@ -70,27 +70,23 @@ void  TauSpinExample::Store_ExtraDist(){
 }
 
 void  TauSpinExample::doEvent(){
- 
-  unsigned int t;
+  unsigned int t(0);
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-
   unsigned int idx;
   value.at(isZtautauto3pimu)=0;
   pass.at(isZtautauto3pimu) =  Ntp->hasSignalTauDecay(PdtPdgMini::Z0,TauDecay::JAK_MUON,idx);
   if(pass.at(isZtautauto3pimu))value.at(isZtautauto3pimu)=1;
-
   double wobs=1;
   double w;
-
   if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
   }
   else{w=1;}
 
-  
+  std::cout << Ntp->GetMCID() << " " << Npassed.size() << " " << t << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
- 
+  std::cout << "Status" << std::endl; 
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
@@ -114,6 +110,7 @@ void  TauSpinExample::doEvent(){
 
 
   }
+  std::cout << "done" << std::endl;
 }
 
 

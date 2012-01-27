@@ -368,57 +368,75 @@ double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType Spin
   if(!isData()){
     std::vector<SimpleParticle> tau_daughters, tau_daughters2;
     SimpleParticle tau, tau2;
-    for(int i=0; i<Ntp->MCSignalParticle_pdgid->size();i++){
+    for(int i=0; i<NMCSignalParticles();i++){
       // check for signal Boson
-      if(Ntp->MCSignalParticle_pdgid->at(i)==25 || 
-	 Ntp->MCSignalParticle_pdgid->at(i)==36 || 
-	 Ntp->MCSignalParticle_pdgid->at(i)==22 || 
-	 Ntp->MCSignalParticle_pdgid->at(i)==23){
-	if(Ntp->MCSignalParticle_Tauidx->at(i).size()==2){
-	  SimpleParticle X(Ntp->MCSignalParticle_p4->at(i).at(1),
-			   Ntp->MCSignalParticle_p4->at(i).at(2),
-			   Ntp->MCSignalParticle_p4->at(i).at(3),
-			   Ntp->MCSignalParticle_p4->at(i).at(0),
-			   Ntp->MCSignalParticle_pdgid->at(i));
+      if(MCSignalParticle_pdgid(i)==25 || 
+	 MCSignalParticle_pdgid(i)==36 || 
+	 MCSignalParticle_pdgid(i)==22 || 
+	 MCSignalParticle_pdgid(i)==23){
+	if(MCSignalParticle_Tauidx(i).size()==2){
+	  SimpleParticle X(MCSignalParticle_p4(i).Px(),
+			   MCSignalParticle_p4(i).Py(),
+			   MCSignalParticle_p4(i).Pz(),
+			   MCSignalParticle_p4(i).E(),
+			   MCSignalParticle_pdgid(i));
+	  bool tau1good(false),tau2good(false);
 	  //first tau
-	  int tauidx=Ntp->MCSignalParticle_Tauidx->at(i).at(0);
-	  if(tauidx<Ntp->MCTauandProd_p4->size()){
-	    for(int t=0;t<Ntp->MCTauandProd_p4->at(tauidx).size();t++){
+	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(0);
+	  std::cout  << "tau 1 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	  if(tauidx<NMCTaus()){
+	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
+	      std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t)
+			<< " px " << MCTauandProd_p4(tauidx,t).Px()
+			<< " py " << MCTauandProd_p4(tauidx,t).Py()
+			<< " pz " << MCTauandProd_p4(tauidx,t).Pz()
+			<< " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
 	      if(t==0){
-		tau=SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
-				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
-				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
-				   Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
-				   Ntp->MCTauandProd_pdgid->at(tauidx).at(t));
+		tau=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+				   MCTauandProd_p4(tauidx,t).Py(),
+				   MCTauandProd_p4(tauidx,t).Pz(),
+				   MCTauandProd_p4(tauidx,t).E(),
+				   MCTauandProd_pdgid(tauidx,t));
 	      }
 	      else{
-		tau_daughters.push_back(SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
-						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
-						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
-						       Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
-						       Ntp->MCTauandProd_pdgid->at(tauidx).at(t)));
+		if(tau_daughters.size()>0)tau1good=true;
+		tau_daughters.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+						       MCTauandProd_p4(tauidx,t).Py(),
+						       MCTauandProd_p4(tauidx,t).Pz(),
+						       MCTauandProd_p4(tauidx,t).E(),
+						       MCTauandProd_pdgid(tauidx,t)));
 	      }
 	      // second tau
-	      tauidx=Ntp->MCSignalParticle_Tauidx->at(i).at(1);
-	      if(tauidx<Ntp->MCTauandProd_p4->size()){
-		for(int t=0;t<Ntp->MCTauandProd_p4->at(tauidx).size();t++){
+	      tauidx=MCSignalParticle_Tauidx(i).at(1);
+	      std::cout  << "tau 2 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	      if(tauidx<NMCTaus()){
+		std::cout << "pdgid " << MCTauandProd_pdgid(tauidx,t) 
+			  << " px " << MCTauandProd_p4(tauidx,t).Px()
+			  << " py " << MCTauandProd_p4(tauidx,t).Py()
+			  << " pz " << MCTauandProd_p4(tauidx,t).Pz()
+			  << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
+		for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
+		  
 		  if(t==0){
-		    tau2=SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
-					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
-					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
-					Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
-					Ntp->MCTauandProd_pdgid->at(tauidx).at(t));
-		  }
+		    tau2=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+					MCTauandProd_p4(tauidx,t).Py(),
+					MCTauandProd_p4(tauidx,t).Pz(),
+					MCTauandProd_p4(tauidx,t).E(),
+					MCTauandProd_pdgid(tauidx,t));
+		    }
 		  else{
-		    tau_daughters2.push_back(SimpleParticle(Ntp->MCTauandProd_p4->at(tauidx).at(t).at(1),
-							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(2),
-							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(3),
-							    Ntp->MCTauandProd_p4->at(tauidx).at(t).at(0),
-							    Ntp->MCTauandProd_pdgid->at(tauidx).at(t)));
+		    if(tau_daughters.size()>0)tau2good=true;
+		    tau_daughters2.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+							    MCTauandProd_p4(tauidx,t).Py(),
+							    MCTauandProd_p4(tauidx,t).Pz(),
+							    MCTauandProd_p4(tauidx,t).E(),
+							    MCTauandProd_pdgid(tauidx,t)));
 		  }
-		  if(TauSpinerInt==NULL) TauSpinerInt=new TauSpinerInterface();
-		  return TauSpinerInt->Weight(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
 		}
+	      }
+	      if(tau1good && tau2good){
+		if(TauSpinerInt==NULL) TauSpinerInt=new TauSpinerInterface();
+		return TauSpinerInt->Weight(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
 	      }
 	    }
 	  }
@@ -435,18 +453,17 @@ double Ntuple_Controller::TauSpinerWeight(TauSpinerInterface::TauSpinerType Spin
 
 bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,TauDecay::JAK tau_jak, unsigned int &idx){
   for(int i=0; i<NMCSignalParticles();i++){
-    if(MCTauandProd_pdgid(i)==parent_pdgid){
-      if(MCSignalParticle_Tauidx(i).at(0)<NMCTaus() && MCSignalParticle_Tauidx(i).at(1)<NMCTaus()){
-	for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
-	  if(MCSignalParticle_Tauidx(i).at(0)>=NMCTaus()){
-	    std::cout << "Warning INVALID Tau index... Skipping event!" << std::endl;
-	    return false;
-	  }
+    if(MCSignalParticle_pdgid(i)==parent_pdgid){
+      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+	if(MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
+	  std::cout << "Warning INVALID Tau index... Skipping event! MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << std::endl;
+	  return false;
 	}
-	for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
-	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j);
-	  if(MCTau_JAK(tauidx)==tau_jak){ idx=tauidx;return true;}
-	}
+      }
+      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+	unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j)/2;
+	std::cout << "MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << " " << Ntp->MCTau_JAK->size() <<  std::endl;
+	if(MCTau_JAK(tauidx)==tau_jak){ std::cout << "G " << j  << std::endl;idx=tauidx;return true;}
       }
     }
   }
