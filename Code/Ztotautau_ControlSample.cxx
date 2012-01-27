@@ -277,7 +277,6 @@ void  Ztotautau_ControlSample::doEvent(){
 
   if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
-    w*=Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin);
   }
   else{w=1;}
 

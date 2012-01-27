@@ -27,6 +27,9 @@ class TauSpinExample : public Selection {
   std::vector<TH1D> PmuoverEtau;
   std::vector<TH1D> PmuoverEtau_hplus;
   std::vector<TH1D> PmuoverEtau_hminus;
-
+  std::vector<TH1D> WT_Spin;
+  std::vector<TH1D> WT_UnSpin;
+  std::vector<TH1D> WT_FlipSpin;
+  std::vector<TH1D> LongitudinalPolarization;
 };
 #endif

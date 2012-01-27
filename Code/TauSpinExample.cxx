@@ -52,10 +52,13 @@ void  TauSpinExample::Configure(){
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Accumulative Cuts Passed","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Vertex","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
-  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",100,0.0,4.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",100,0.0,100.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",100,0.0,100,"P_{#mu}/P_{#tau}","Events");
-
+  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
+  WT_Spin=HConfig.GetTH1D(Name+"_WT_Spin","WT_Spin",100,0.0,4.0,"WT","Events");
+  WT_UnSpin=HConfig.GetTH1D(Name+"_WT_UnSpin","WT_UnSpin",100,0.0,10.0,"1/WT","Events");
+  WT_FlipSpin=HConfig.GetTH1D(Name+"_WT_FlipSpin","WT_FlipSpin",100,0.0,10,"(2-WT)/(WT)","Events");
+  LongitudinalPolarization=HConfig.GetTH1D(Name+"_LongitudinalPolarization","LongitudinalPolarization",100,-1.0,1.0,"Longitudinal Polarization","Events");
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
 }
@@ -70,15 +73,19 @@ void  TauSpinExample::Store_ExtraDist(){
  Extradist1d.push_back(&PmuoverEtau);
  Extradist1d.push_back(&PmuoverEtau_hplus);
  Extradist1d.push_back(&PmuoverEtau_hminus);
+ Extradist1d.push_back(&WT_Spin);
+ Extradist1d.push_back(&WT_UnSpin);
+ Extradist1d.push_back(&WT_FlipSpin);
+ Extradist1d.push_back(&LongitudinalPolarization);
 }
 
 void  TauSpinExample::doEvent(){
   unsigned int t(0);
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-  unsigned int idx;
+  unsigned int Boson_idx,tau_idx;
   value.at(isZtautauto3pimu)=0;
-  pass.at(isZtautauto3pimu) =  Ntp->hasSignalTauDecay(PdtPdgMini::Z0,TauDecay::JAK_MUON,idx);
+  pass.at(isZtautauto3pimu) =  Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_MUON,tau_idx);
   if(pass.at(isZtautauto3pimu))value.at(isZtautauto3pimu)=1;
   double wobs=1;
   double w=1;
@@ -104,14 +111,26 @@ void  TauSpinExample::doEvent(){
     //
     // Spin Validation
     //
-    double WT=Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin);
+    double WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
     std::cout <<  "TauSpiner WT: " << WT << std::endl;
 
-    PmuoverEtau.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::Spin));
-    PmuoverEtau_hplus.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::UnSpin));
-    PmuoverEtau_hminus.at(t).Fill(Ntp->TauSpinerWeight(TauSpinerInterface::FlipSpin));
-
-
+    WT_Spin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::Spin),w);
+    WT_UnSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::UnSpin),w);
+    WT_FlipSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin),w);
+    LongitudinalPolarization.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w);
+    TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
+    TLorentzVector Tau_LV(0,0,0,0);
+    TLorentzVector Mu_LV(0,0,0,0);
+    for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
+      if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::tau_minus)) Tau_LV = Ntp->MCTauandProd_p4(tau_idx,i);
+      if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::mu_minus)) Mu_LV  = Ntp->MCTauandProd_p4(tau_idx,i);
+    }
+    if(Tau_LV.E()>0){
+      Tau_LV.Boost(-Boson_LV.BoostVector());
+      Mu_LV.Boost(-Boson_LV.BoostVector());
+      Boson_LV.Boost(-Boson_LV.BoostVector());
+    PmuoverEtau.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w);
+    }
   }
   std::cout << "done" << std::endl;
 }

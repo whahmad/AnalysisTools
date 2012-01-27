@@ -101,7 +101,7 @@ class Ntuple_Controller{
   ~Ntuple_Controller() ;
 
   //TauSpiner function
-  double TauSpinerWeight(TauSpinerInterface::TauSpinerType SpinType);
+  double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
 
   enum TrackQuality {
     undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
@@ -316,7 +316,7 @@ class Ntuple_Controller{
    int MCTauandProd_pdgid(unsigned int i, unsigned int j){return Ntp->MCTauandProd_pdgid->at(i).at(j);}
    unsigned int MCTauandProd_midx(unsigned int i, unsigned int j){return Ntp->MCTauandProd_midx->at(i).at(j);}
    int MCTauandProd_charge(unsigned int i, unsigned int j){return Ntp->MCTauandProd_charge->at(i).at(j);}
-   bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,TauDecay::JAK tau_jak, unsigned int &idx);
+   bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
 };
 
 #endif

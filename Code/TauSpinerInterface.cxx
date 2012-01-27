@@ -6,6 +6,7 @@
 #include "tau_reweight_lib.h"
 #include "read_particles_from_TAUOLA.h"
 #include<iostream>
+#include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 
 TauSpinerInterface::TauSpinerInterface(){
   ////////////////////////////////////////////////////////////
@@ -25,7 +26,12 @@ TauSpinerInterface::~TauSpinerInterface(){
 
 }
 
-double TauSpinerInterface::Weight(TauSpinerType type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
+double TauSpinerInterface::Get(TauSpinerType type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
+  if(LPolarization==type) {
+    double S=X.e()*X.e() - X.px()*X.px() - X.py()*X.py() - X.pz()*X.pz();
+    if(tau2.pdgid()==PdtPdgMini::tau_minus)return getLongitudinalPolarization(S, tau, tau2);
+    return getLongitudinalPolarization(S, tau2, tau);
+  }
   double WT    = 1.0; // assume that there is 1 bosons decaying into                                                                                                                                                                        
   // Calculate weight for first boson
   if( abs(X.pdgid())==24 ||  abs(X.pdgid())==37 ){
