@@ -1,6 +1,0 @@
-Thin: False
-Skim: False
-HistoFile: InputData/Histo.txt
-Analysis: Ztotautau_hadmu_ControlSample
-UncertType: default
-SkimInfo: InputData/SkimSummary.log
