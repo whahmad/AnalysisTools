@@ -49,16 +49,22 @@ void  TauSpinExample::Configure(){
   // Setup NPassed Histogams
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
   // Setup Extra Histograms
-  NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Accumulative Cuts Passed","Events");
-  NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Vertex","Events");
+  NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Verrtex","Events");
+  NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Good Vertex","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
-  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
-  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",100,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
-  WT_Spin=HConfig.GetTH1D(Name+"_WT_Spin","WT_Spin",100,0.0,4.0,"WT","Events");
+  PmuoverEtau=HConfig.GetTH1D(Name+"_PmuoverEtau","PmuoverEtau",20,0.0,1.0,"P_{#mu}/P_{#tau}","Events");
+  PmuoverEtau_hplus=HConfig.GetTH1D(Name+"_PmuoverEtau_hplus","PmuoverEtau_hplus",20,0.0,1.0,"P_{#mu}/P_{#tau}|_{h^{+}}","Events");
+  PmuoverEtau_hminus=HConfig.GetTH1D(Name+"_PmuoverEtau_hminus","PmuoverEtau_hminus",20,0.0,1.0,"P_{#mu}/P_{#tau}|_{h^{-}}","Events");
+  PmuoverEtau_Spin=HConfig.GetTH1D(Name+"_PmuoverEtau_Spin","PmuoverEtau_Spin",20,0.0,1.0,"P_{#mu}/P_{#tau}|_{Spin}","Events");
+  PmuoverEtau_UnSpin=HConfig.GetTH1D(Name+"_PmuoverEtau_UnSpin","PmuoverEtau_UnSpin",20,0.0,1.0,"P_{#mu}/P_{#tau}|_{UnSpin}","Events");
+  PmuoverEtau_FlipSpin=HConfig.GetTH1D(Name+"_PmuoverEtau_FlipSpin","PmuoverEtau_FlipSpin",20,0.0,1.0,"P_{#mu}/P_{#tau}|_{FlipSpin}","Events");
+  WT_Spin=HConfig.GetTH1D(Name+"_WT_Spin","WT_Spin",40,0.0,4.0,"WT","Events");
   WT_UnSpin=HConfig.GetTH1D(Name+"_WT_UnSpin","WT_UnSpin",100,0.0,10.0,"1/WT","Events");
   WT_FlipSpin=HConfig.GetTH1D(Name+"_WT_FlipSpin","WT_FlipSpin",100,0.0,10,"(2-WT)/(WT)","Events");
-  LongitudinalPolarization=HConfig.GetTH1D(Name+"_LongitudinalPolarization","LongitudinalPolarization",100,-1.0,1.0,"Longitudinal Polarization","Events");
+  LongitudinalPolarization=HConfig.GetTH1D(Name+"_LongitudinalPolarization","LongitudinalPolarization",20,-2.0,2.0,"#rho_{l}","Events");
+  LongitudinalPolarization_Spin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_Spin","LongitudinalPolarization_Spin",20,-2.0,2.0,"#rho_{l}|_{Spin}","Events");
+  LongitudinalPolarization_UnSpin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_UnSpin","LongitudinalPolarization_UnSpin",20,-2.0,2.0,"#rho_{l}|_{UnSpin}","Events");
+  LongitudinalPolarization_FlipSpin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_FlipSpin","LongitudinalPolarization_FlipSpin",20,-2.0,2.0,"#rho_{l}|_{FlipSpin}","Events");
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
 }
@@ -73,10 +79,16 @@ void  TauSpinExample::Store_ExtraDist(){
  Extradist1d.push_back(&PmuoverEtau);
  Extradist1d.push_back(&PmuoverEtau_hplus);
  Extradist1d.push_back(&PmuoverEtau_hminus);
+ Extradist1d.push_back(&PmuoverEtau_Spin);
+ Extradist1d.push_back(&PmuoverEtau_UnSpin);
+ Extradist1d.push_back(&PmuoverEtau_FlipSpin);
  Extradist1d.push_back(&WT_Spin);
  Extradist1d.push_back(&WT_UnSpin);
  Extradist1d.push_back(&WT_FlipSpin);
  Extradist1d.push_back(&LongitudinalPolarization);
+ Extradist1d.push_back(&LongitudinalPolarization_Spin);
+ Extradist1d.push_back(&LongitudinalPolarization_UnSpin);
+ Extradist1d.push_back(&LongitudinalPolarization_FlipSpin);
 }
 
 void  TauSpinExample::doEvent(){
@@ -92,14 +104,14 @@ void  TauSpinExample::doEvent(){
   /*  if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
     }*/
-
-  std::cout << Ntp->GetMCID() << " " << Npassed.size() << " " << t << std::endl;
+  if(verbose)  std::cout << Ntp->GetMCID() << " " << Npassed.size() << " " << t << " " << Boson_idx << " " << " " << tau_idx 
+	    << " " << Ntp->NMCTaus() << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
   std::cout << "Status" << std::endl; 
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
-    std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
+    if(verbose)std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -112,12 +124,15 @@ void  TauSpinExample::doEvent(){
     // Spin Validation
     //
     double WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
-    std::cout <<  "TauSpiner WT: " << WT << std::endl;
+    if(verbose)std::cout <<  "TauSpiner WT: " << WT << std::endl;
 
     WT_Spin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::Spin),w);
     WT_UnSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::UnSpin),w);
     WT_FlipSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin),w);
     LongitudinalPolarization.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w);
+    LongitudinalPolarization_Spin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*Ntp->TauSpinerGet(TauSpinerInterface::Spin));
+    LongitudinalPolarization_UnSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*Ntp->TauSpinerGet(TauSpinerInterface::UnSpin));
+    LongitudinalPolarization_FlipSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin));
     TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
     TLorentzVector Tau_LV(0,0,0,0);
     TLorentzVector Mu_LV(0,0,0,0);
@@ -129,10 +144,15 @@ void  TauSpinExample::doEvent(){
       Tau_LV.Boost(-Boson_LV.BoostVector());
       Mu_LV.Boost(-Boson_LV.BoostVector());
       Boson_LV.Boost(-Boson_LV.BoostVector());
-    PmuoverEtau.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w);
+      PmuoverEtau.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w);
+      PmuoverEtau_Spin.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::Spin));
+      PmuoverEtau_UnSpin.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::UnSpin));
+      PmuoverEtau_FlipSpin.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin));
+      PmuoverEtau_hplus.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus));
+      PmuoverEtau_hminus.at(t).Fill(Mu_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus));
     }
   }
-  std::cout << "done" << std::endl;
+  if(verbose)std::cout << "done" << std::endl;
 }
 
 

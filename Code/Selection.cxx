@@ -239,7 +239,11 @@ void  Selection::Finish(){
 
   if(runtype!=GRID){
     std::cout << "Printing Plots " << std::endl;
-    
+    for(int i=0;i<CrossSectionandAcceptance.size();i++){
+      std::cout << i << " CrossSectionandAcceptance " << CrossSectionandAcceptance.at(i) << " " << nevents.at(i) << " " << nevents_noweight.at(i) << std::endl;
+    }
+
+
     Plots P;
     P.Plot1D(Nminus1,Lumi,CrossSectionandAcceptance,nevents,colour,legend);
     P.Plot1D(Nminus0,Lumi,CrossSectionandAcceptance,nevents,colour,legend);

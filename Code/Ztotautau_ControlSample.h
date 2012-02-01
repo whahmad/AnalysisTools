@@ -18,15 +18,18 @@ class Ztotautau_ControlSample : public Selection {
 	     hasTag,
 	     TagPt,
 	     TagIso,
+	     NJets,
 	     JetPt,
 	     deltaPhi,
 	     MET,
 	     MT,
+	     TauAvgMETPhi,
+	     PInBalance,
 	     ZMassV,
 	     charge,
-	     TauIsRef,
-	     TauIsIso,
 	     NCuts};
+
+  enum Channel{muontag,electontag,rhotag,threepiontag,NChannels};
 
  protected:
   virtual void doEvent();
@@ -41,6 +44,8 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> PmuoverEtau;
   std::vector<TH1D> PmuoverEtau_hplus;
   std::vector<TH1D> PmuoverEtau_hminus;
+
+  int channel;
 
 };
 #endif

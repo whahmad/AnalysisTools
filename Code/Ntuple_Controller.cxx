@@ -224,11 +224,11 @@ bool Ntuple_Controller::isGoodMuon(unsigned int i){
   //  isGoodMuon_nooverlapremoval(i) with
   //  ΔR(μ,jet)>0.3 where jet is any jet passing the jet requirements not applied applied       
   if(isGoodMuon_nooverlapremoval(i)){
-    for(unsigned int j=0;j<NPFJets();j++){
-      if(isGoodJet_nooverlapremoval(j)){
-	if(Tools::dr(Muons_p4(i),PFJet_p4(j))<0.3) return false;
-      }
-    }
+    //for(unsigned int j=0;j<NPFJets();j++){
+      //if(isGoodJet_nooverlapremoval(j)){
+      //if(Tools::dr(Muons_p4(i),PFJet_p4(j))<0.3) return false;
+      //}
+    //}
     return true;
   }
   return false;
@@ -250,16 +250,16 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
   //  muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() not applied
   //  numberOfMatchedStations() not applied                              
   if(Muon_isGlobalMuon(i) && Muon_isStandAloneMuon(i)){
-    if(Muons_p4(i).Pt()>17.0){
+    if(Muons_p4(i).Pt()>15.0){
       if(fabs(Muons_p4(i).Eta())<2.4){
 	if(Muon_normChi2(i)<10.0){
-	  if(Muon_innerTrack_numberofValidHits(i)>10){
-	    if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
-	      if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
-		return true;
-	      }
-	    }
-	  }
+	  //if(Muon_innerTrack_numberofValidHits(i)>10){
+	  //if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
+	      //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
+	      return true;
+	      //}
+	      //}
+	      //}
 	}
       }
     }
@@ -278,15 +278,12 @@ bool Ntuple_Controller::isGoodJet(unsigned int i){
   //  deltaR jet-electron cleaning < 0.4 (2 selected lepton only) < 0.3 (e+jets only) 0.3
   //  deltaR jet-muon cleaning < 0.4(2 selected lepton only) < 0.3 (mu+jets only), 0.1 for PF and JET 0.3
   if(isGoodJet_nooverlapremoval(i)){
-    if(isGoodMuon_nooverlapremoval(i)){
-      for(unsigned int j=0;j<NMuons();j++){
-	if(isGoodMuon_nooverlapremoval(j)){
-	  if(Tools::dr(Muons_p4(j),PFJet_p4(i))<0.4) return false;
-	}
+    for(unsigned int j=0;j<NMuons();j++){
+      if(isGoodMuon_nooverlapremoval(j)){
+	if(Tools::dr(Muons_p4(j),PFJet_p4(i))<0.4) return false;
       }
-      return true;
     }
-
+    return true;
   }
 }
 
@@ -469,7 +466,7 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 	}
       }
       for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
-	unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j)/2;
+	unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j);
 	if(verbose)std::cout << "MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << " " << Ntp->MCTau_JAK->size() << " " << Ntp->MCTauandProd_pdgid->size() << std::endl;
 	if(MCTau_JAK(tauidx)==tau_jak){ std::cout << "G " << j  << std::endl;tau_idx=tauidx;Boson_idx=i;return true;}
       }
