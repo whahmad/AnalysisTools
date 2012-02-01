@@ -19,8 +19,8 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
   ,verbose(false)
+  ,TauSpinerInt()
 {
-  TauSpinerInt=NULL;
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
   std::cout << "Ntuple_Controller" << RootFiles.size() << std::endl;
@@ -106,8 +106,7 @@ void Ntuple_Controller::Branch_Setup(TString B_Name, int type){
 Ntuple_Controller::~Ntuple_Controller() {
   std::cout << "Ntuple_Controller::~Ntuple_Controller()" << std::endl;
   delete Ntp;
-  if(TauSpinerInt!=NULL)delete TauSpinerInt;
-  std::cout << "Ntuple_Controller::~Ntuple_Controller() complete" << std::endl;
+    std::cout << "Ntuple_Controller::~Ntuple_Controller() complete" << std::endl;
 }
 
 
@@ -441,8 +440,7 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
 	    }
 	    if(tau1good && tau2good){
 	      if(verbose)std::cout  << "Two Taus found: " << tau_daughters.size() << " " << tau_daughters2.size() << std::endl;
-	      if(TauSpinerInt==NULL) TauSpinerInt=new TauSpinerInterface();
-	      return TauSpinerInt->Get(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
+	      return TauSpinerInt.Get(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
 	    }
 	  }
 	}
@@ -468,7 +466,7 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
       for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
 	unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j);
 	if(verbose)std::cout << "MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << " " << Ntp->MCTau_JAK->size() << " " << Ntp->MCTauandProd_pdgid->size() << std::endl;
-	if(MCTau_JAK(tauidx)==tau_jak){ std::cout << "G " << j  << std::endl;tau_idx=tauidx;Boson_idx=i;return true;}
+	if(MCTau_JAK(tauidx)==tau_jak){ tau_idx=tauidx;Boson_idx=i;return true;}
       }
     }
   }

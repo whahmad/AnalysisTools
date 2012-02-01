@@ -91,7 +91,7 @@ class Ntuple_Controller{
   HistoConfig HConfig;
 
   // Interfaces
-  TauSpinerInterface *TauSpinerInt;
+  TauSpinerInterface TauSpinerInt;
 
  public:
   // Constructor
@@ -102,7 +102,7 @@ class Ntuple_Controller{
 
   //TauSpiner function
   double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
-
+  void TauSpinerSetSignal(int signalcharge){TauSpinerInt.SetTauSignalCharge(signalcharge);}
   enum TrackQuality {
     undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
     confirmed = 3, goodIterative = 4, looseSetWithPV = 5, highPuritySetWithPV = 6,
@@ -306,8 +306,8 @@ class Ntuple_Controller{
    // Tau decays (Tau is first element of vector)
    int NMCTaus(){return Ntp->MCTauandProd_p4->size();}
    TLorentzVector MCTau_p4(unsigned int i){return MCTauandProd_p4(i,0);}
-   int MCTauandProd_pdgid(unsigned int i){return MCTauandProd_pdgid(i,0);}
-   int MCTauandProd_charge(unsigned int i){return MCTauandProd_charge(i,0);}
+   int MCTau_pdgid(unsigned int i){return MCTauandProd_pdgid(i,0);}
+   int MCTau_charge(unsigned int i){return MCTauandProd_charge(i,0);}
    unsigned int MCTau_JAK(unsigned int i){return Ntp->MCTau_JAK->at(i);}
    unsigned int MCTau_DecayBitMask(unsigned int i){return Ntp->MCTau_DecayBitMask->at(i);}
    //Tau and decay products

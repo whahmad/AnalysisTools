@@ -8,25 +8,34 @@
 #include<iostream>
 #include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 
+int TauSpinerInterface::signalcharge=-1;
+bool TauSpinerInterface::initialized=false;
+
 TauSpinerInterface::TauSpinerInterface(){
-  ////////////////////////////////////////////////////////////
-  //
-  // This class is based on TauSpiner Example
-  Tauola::initialize();
-  string name="MSTW2008nnlo90cl.LHgrid";
-  LHAPDF::initPDFSetByName(name);
-  double CMSENE = 7000.0; // center of mass system energy.
-                          // used in PDF calculation. For pp collisions only
-  bool Ipp = true;  // for pp collisions
-  // Initialize TauSpinner
-  initialize_spiner(Ipp, CMSENE);
 }
 
 TauSpinerInterface::~TauSpinerInterface(){
 
 }
 
+void TauSpinerInterface::Initialize(){
+  Tauola::initialize();
+  string name="MSTW2008nnlo90cl.LHgrid";
+  LHAPDF::initPDFSetByName(name);
+  double CMSENE = 7000.0; // center of mass system energy.
+                          // used in PDF calculation. For pp collisions only
+  bool Ipp = true;  // for pp collisions 
+  // Initialize TauSpinner
+  initialize_spiner(Ipp, CMSENE);
+}
+
+
+
 double TauSpinerInterface::Get(TauSpinerType type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
+  if(!initialized){
+    Initialize();
+    initialized=true;
+  }
   if(hminus==type || hplus==type){
     double HHState=tautauHelicityState(X, tau, tau2, tau_daughters,tau_daughters2);
     if(HHState>0.0 && hplus==type)  return 1.0;
@@ -49,6 +58,7 @@ double TauSpinerInterface::Get(TauSpinerType type, SimpleParticle X, SimpleParti
   else{
     cout<<"WARNING: Unexpected PDG for tau mother: "<<X.pdgid()<<endl;
   }
+  if(!(0.0<WT && WT<4.0)) return 0.0; // safty to prevent infinities in calculation  
   if(Spin==type) return WT;
   if(UnSpin==type) return 1.0/WT;
   if(FlipSpin==type) return (2.0-WT)/(WT);
@@ -62,7 +72,9 @@ double TauSpinerInterface::tautauHelicityState(SimpleParticle &sp_X, SimpleParti
   SimpleParticle         sp_tau;
   SimpleParticle         sp_nu_tau;
   std::vector<SimpleParticle> sp_tau_daughters;
-  
+  double phi2_p = 0.0, theta2_p = 0.0;
+  double phi2_m = 0.0, theta2_m = 0.0;  
+
   // First iteration is for tau plus, so the 'nu_tau' is tau minus
   if (sp_tau1.pdgid() == -15 )
   {
@@ -104,16 +116,13 @@ double TauSpinerInterface::tautauHelicityState(SimpleParticle &sp_X, SimpleParti
       tau_daughters.push_back(pp);
     }
 
-    double phi2 = 0.0, theta2 = 0.0;
-
-
     //  Move decay kinematics first to tau rest frame  with z axis pointing along nu_tau direction
     //  later rotate again to have neutrino from tau decay along z axis: angles phi2, theta2
-    prepareKinematicForHH   (tau, nu_tau, tau_daughters, &phi2, &theta2);
+    prepareKinematicForHH   (tau, nu_tau, tau_daughters, &phi2_p, &theta2_p);
 
 
     //  Determine decay channel and then calculate polarimetric vector HH
-    HHp = calculateHH(tau_pdgid, tau_daughters, phi2, theta2);
+    HHp = calculateHH(tau_pdgid, tau_daughters, phi2_p, theta2_p);
 
   } // end of tau+
 
@@ -156,27 +165,34 @@ double TauSpinerInterface::tautauHelicityState(SimpleParticle &sp_X, SimpleParti
       tau_daughters.push_back(pp);
     }
 
-    double phi2 = 0.0, theta2 = 0.0;
-
-
     //  Move decay kinematics first to tau rest frame  with z axis pointing along nu_tau direction
     //  later rotate again to have neutrino from tau decay along z axis: angles phi2, theta2
-    prepareKinematicForHH   (tau, nu_tau, tau_daughters, &phi2, &theta2);
+    prepareKinematicForHH   (tau, nu_tau, tau_daughters, &phi2_m, &theta2_m);
 
 
     //  Determine decay channel and then calculate polarimetric vector HH
-    HHm = calculateHH(tau_pdgid, tau_daughters, phi2, theta2);
+    HHm = calculateHH(tau_pdgid, tau_daughters, phi2_m, theta2_m);
 
   } // end of tau-
 
-  // polarization vector (unit vector) has been rotated such that the z axis is allon the tau direction 
-  // (note: polarization is -s where s is the tau spin direction) 
-  double Helicity_taup=0.5*HHp[2]/fabs(HHp[2]);
-  double Helicity_taum=0.5*HHm[2]/fabs(HHm[2]);
+  double taup_x=cos(-phi2_p)*sin(-theta2_p);
+  double taup_y=sin(-phi2_p)*sin(-theta2_p);
+  double taup_z=cos(-theta2_p);
+
+  double taum_x=cos(-phi2_m)*sin(-theta2_m);
+  double taum_y=sin(-phi2_m)*sin(-theta2_m);
+  double taum_z=cos(-theta2_m);
+
+  // polarization vector (unit vector) has been rotated such that the z axis is along the tau direction 
+  // (note: polarization vector by definition is -s where s is the tau spin direction) 
+  double Helicity_taup=HHp[2];
+  double Helicity_taum=HHm[2];
 
   delete[] HHp;
   delete[] HHm;
   
-  return Helicity_taup+Helicity_taum;
+  //  return Helicity_taup+Helicity_taum;
+  if(signalcharge==-tauplus) return Helicity_taup;
+  return Helicity_taum;
 }
 
