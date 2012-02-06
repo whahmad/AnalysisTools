@@ -15,6 +15,7 @@ class TauSpinerInterface {
 
   double Get(TauSpinerType type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2);
   void SetTauSignalCharge(int tsc){signalcharge=tsc;}
+  double calculateWeightFromParticlesZ(double pol,SimpleParticle &sp_X, SimpleParticle &sp_tau1, SimpleParticle &sp_tau2, std::vector<SimpleParticle> &sp_tau1_daughters, std::vector<SimpleParticle> &sp_tau2_daughters);
 
  private:
   double tautauHelicityState(SimpleParticle &sp_X, SimpleParticle &sp_tau1, SimpleParticle &sp_tau2,std::vector<SimpleParticle> &sp_tau1_daughters, std::vector<SimpleParticle> &sp_tau2_daughters);

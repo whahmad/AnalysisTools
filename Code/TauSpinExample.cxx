@@ -156,7 +156,7 @@ void  TauSpinExample::Store_ExtraDist(){
 void  TauSpinExample::doEvent(){
   unsigned int t(0);
   int id(Ntp->GetMCID());
-  if(!HConfig.GetHisto(Ntp->isData(),id,t)){t=2;}// std::cout << "failed to find id" <<std::endl; return;}
+  if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
   unsigned int Boson_idx,tau_idx;
   value.at(isZtautauto3pimu)=0;
   pass.at(isZtautauto3pimu) = true;
