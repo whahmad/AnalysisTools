@@ -21,9 +21,6 @@ class TauSpinExample : public Selection {
 
  private:
   // Selection Variables
-  std::vector<TH1D> NVtx;
-  std::vector<TH1D> NGoodVtx;
-  std::vector<TH1D> NTrackperVtx;
   std::vector<TH1D> LongitudinalPolarization;
   std::vector<TH1D> LongitudinalPolarization_Spin;
   std::vector<TH1D> LongitudinalPolarization_UnSpin;
