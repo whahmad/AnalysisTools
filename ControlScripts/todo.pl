@@ -218,7 +218,7 @@ if( $ARGV[0] eq "--Local" ){
 			$A=1;
 			$B++;
 			# Add Set information to Combining scripts and Input.txt
-			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/ \" >>  $OutputDir/workdir$set/Input.txt ")) ;
+			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/  \" >>  $OutputDir/workdir$set/Input.txt ")) ;
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B \" >> $OutputDir/workdir$set/Submit")) ;
 			system(sprintf("echo \"condor_submit  Condor_Set_$B  \" >> $OutputDir/workdir$set/Submit")) ;
 
@@ -250,7 +250,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 			
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }
-		    system(sprintf("echo \"File: $InputDir/$subdir/$file \" >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
+		    system(sprintf("echo \"File: $InputDir/$subdir/$file  \" >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
 		    $A++;
 		}
 	    }
@@ -288,7 +288,7 @@ if( $ARGV[0] eq "--DCache" ){
     open(DAT, $TempDataSetFile) || die("Could not open file $TempDataSetFile!");
     while ($item = <DAT>) {
 	chomp($item);
-	print("File: $item");
+	print("File: $item \n");
 	push(@DataSets,$item);
     }
     close(DAT);
