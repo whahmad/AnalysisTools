@@ -31,7 +31,7 @@ class Selection : public Selection_Base {
   virtual double Compute(double thisdata,double thissignal, double thissignalTotal, double thisbkg,
 				    double data,double signal,double signalTotal, double bkg);
   virtual void EvaluateSystematics(Selection_Base* &selectionsys, double w);
- 
+
  protected:
   virtual bool AnalysisCuts(int t,double w,double wobjs=1.0);
   virtual void Store_ExtraDist()=0;

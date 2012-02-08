@@ -65,7 +65,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 		   histo.at(j).at(0).GetXaxis()->GetXmax());
 	Total.SetFillStyle(3005);
 	Total.SetFillColor(1);
-	Total.SetLineColor(1);
+	Total.SetLineColor(18);
 	Total.SetMarkerColor(1);
 	Total.SetMarkerSize(0.001);
 	Total.Sumw2();
@@ -120,9 +120,9 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 		histo.at(j).at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
 	      }
 	      else {
-		//if(histo.at(j).at(0).Integral()>0 && histo.at(j).at(i).Integral()>0) {
-		  //histo.at(j).at(i).Scale(histo.at(j).at(0).Integral()/histo.at(j).at(i).Integral());
-		//}
+		if(histo.at(j).at(0).Integral()>0 && histo.at(j).at(i).Integral()>0) {
+		  histo.at(j).at(i).Scale(histo.at(j).at(0).Integral()/histo.at(j).at(i).Integral());
+		}
 	      }
 	      if(histo.at(j).at(i).Integral()>0 ){
 		MCHistoStack.Add(&histo.at(j).at(i));
@@ -159,9 +159,9 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	  }
 	    histo.at(j).at(0).Draw("E");
 	    MCHistoStack.Draw("Histsame");
-	  histo.at(j).at(0).Draw("Esame");
-	  histo.at(j).at(0).Draw("axissame");
-	  Total.Draw("E2same");
+	    Total.Draw("E2same");
+	    histo.at(j).at(0).Draw("Esame");
+	    histo.at(j).at(0).Draw("axissame");
 	  TString hTitle=histo.at(j).at(0).GetName();
 	  if(hTitle.Contains("KSTest")){
 	    double KS=histo.at(j).at(0).KolmogorovTest(&Total); 

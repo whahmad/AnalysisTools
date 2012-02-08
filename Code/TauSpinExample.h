@@ -12,7 +12,7 @@ class TauSpinExample : public Selection {
   virtual ~TauSpinExample();
 
   virtual void  Configure();
-
+  virtual void  Finish();
   enum cuts {isZtautauto3pimu=0,NCuts};
 
  protected:
@@ -26,45 +26,52 @@ class TauSpinExample : public Selection {
   std::vector<TH1D> LongitudinalPolarization_UnSpin;
   std::vector<TH1D> LongitudinalPolarization_FlipSpin;
 
-  std::vector<TH1D> mu_PmuoverEtau;
-  std::vector<TH1D> mu_PmuoverEtau_hplus;
-  std::vector<TH1D> mu_PmuoverEtau_hminus;
-  std::vector<TH1D> mu_PmuoverEtau_Spin;
-  std::vector<TH1D> mu_PmuoverEtau_UnSpin;
-  std::vector<TH1D> mu_PmuoverEtau_FlipSpin;
+  std::vector<TH1D> mu_ExoverEtau;
+  std::vector<TH1D> mu_ExoverEtau_hplus;
+  std::vector<TH1D> mu_ExoverEtau_hminus;
+  std::vector<TH1D> mu_ExoverEtau_Spin;
+  std::vector<TH1D> mu_ExoverEtau_UnSpin;
+  std::vector<TH1D> mu_ExoverEtau_FlipSpin;
   std::vector<TH1D> mu_WT_Spin;
   std::vector<TH1D> mu_WT_UnSpin;
   std::vector<TH1D> mu_WT_FlipSpin;
+  std::vector<TH1D> mu_PtRatio_hplus;
+  std::vector<TH1D> mu_PtRatio_hminus;
 
-  std::vector<TH1D> pi_PmuoverEtau;
-  std::vector<TH1D> pi_PmuoverEtau_hplus;
-  std::vector<TH1D> pi_PmuoverEtau_hminus;
-  std::vector<TH1D> pi_PmuoverEtau_Spin;
-  std::vector<TH1D> pi_PmuoverEtau_UnSpin;
-  std::vector<TH1D> pi_PmuoverEtau_FlipSpin;
+  std::vector<TH1D> pi_ExoverEtau;
+  std::vector<TH1D> pi_ExoverEtau_hplus;
+  std::vector<TH1D> pi_ExoverEtau_hminus;
+  std::vector<TH1D> pi_ExoverEtau_Spin;
+  std::vector<TH1D> pi_ExoverEtau_UnSpin;
+  std::vector<TH1D> pi_ExoverEtau_FlipSpin;
   std::vector<TH1D> pi_WT_Spin;
   std::vector<TH1D> pi_WT_UnSpin;
   std::vector<TH1D> pi_WT_FlipSpin;
+  std::vector<TH1D> pi_PtRatio_hplus;
+  std::vector<TH1D> pi_PtRatio_hminus;
 
-  std::vector<TH1D> a1_PmuoverEtau;
-  std::vector<TH1D> a1_PmuoverEtau_hplus;
-  std::vector<TH1D> a1_PmuoverEtau_hminus;
-  std::vector<TH1D> a1_PmuoverEtau_Spin;
-  std::vector<TH1D> a1_PmuoverEtau_UnSpin;
-  std::vector<TH1D> a1_PmuoverEtau_FlipSpin;
+  std::vector<TH1D> a1_ExoverEtau;
+  std::vector<TH1D> a1_ExoverEtau_hplus;
+  std::vector<TH1D> a1_ExoverEtau_hminus;
+  std::vector<TH1D> a1_ExoverEtau_Spin;
+  std::vector<TH1D> a1_ExoverEtau_UnSpin;
+  std::vector<TH1D> a1_ExoverEtau_FlipSpin;
   std::vector<TH1D> a1_WT_Spin;
   std::vector<TH1D> a1_WT_UnSpin;
   std::vector<TH1D> a1_WT_FlipSpin;
+  std::vector<TH1D> a1_PtRatio_hplus;
+  std::vector<TH1D> a1_PtRatio_hminus;
 
-  std::vector<TH1D> rho_PmuoverEtau;
-  std::vector<TH1D> rho_PmuoverEtau_hplus;
-  std::vector<TH1D> rho_PmuoverEtau_hminus;
-  std::vector<TH1D> rho_PmuoverEtau_Spin;
-  std::vector<TH1D> rho_PmuoverEtau_UnSpin;
-  std::vector<TH1D> rho_PmuoverEtau_FlipSpin;
+  std::vector<TH1D> rho_ExoverEtau;
+  std::vector<TH1D> rho_ExoverEtau_hplus;
+  std::vector<TH1D> rho_ExoverEtau_hminus;
+  std::vector<TH1D> rho_ExoverEtau_Spin;
+  std::vector<TH1D> rho_ExoverEtau_UnSpin;
+  std::vector<TH1D> rho_ExoverEtau_FlipSpin;
   std::vector<TH1D> rho_WT_Spin;
   std::vector<TH1D> rho_WT_UnSpin;
   std::vector<TH1D> rho_WT_FlipSpin;
-
+  std::vector<TH1D> rho_PtRatio_hplus;
+  std::vector<TH1D> rho_PtRatio_hminus;
 };
 #endif
