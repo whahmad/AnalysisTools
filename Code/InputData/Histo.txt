@@ -1,14 +1,7 @@
 Histo: 1   -1 Data Data 1
-<<<<<<< Histo.txt
-Histo: 60       59.17 MC_QCD MC_QCD 619
-Histo: 20       12.86 MC_WJ MC_WJ 414
-Histo: 30       0.26  MC_DY MC_DY 55
-Histo: 998      0.26  Signal  Signal 62
-Histo: 10230530 0.26  DY_Signal DY_Signal 10
-=======
-Histo: 10230530 0.26  DY_Signal DY_Signal 95
-Histo: 998      0.26  Signal  Signal 20
-Histo: 30       0.26  MC_DY MC_DY 2
-Histo: 20       12.86 MC_WJ MC_WJ 3
-Histo: 60       59.17  MC_QCD MC_QCD 4
->>>>>>> 1.6
+Histo: 60       59.17 MC_QCD QCD 619
+Histo: 20       12.86 MC_WJ W+J 414
+Histo: 30       0.26  MC_DY DrellYan 53
+Histo: 998      0.26  DY_Signal DY(#tau#tau#rightarrow#mu,had) 65
+Histo: 10230530 0.26  DY_Signal Z#rightarrow#tau#tau#rightarrow#muhad 10
+

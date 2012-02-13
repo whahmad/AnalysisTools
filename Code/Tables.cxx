@@ -84,6 +84,8 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	if(k<=j && j<nhist && j<k+ncol && t<histo.size()){
 	  TString id=histo[t].GetTitle();
 	  id.ReplaceAll("N Passed ","");
+	  id.ReplaceAll("#","\\");
+	  id.ReplaceAll("had"," had");
 	  (output) << " &  $" << id  << "$";
 	}
 	t++;
@@ -162,6 +164,8 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	if(k<=j && j<nhist && j<k+ncol && t<histo.size()){
 	  TString id=histo[t].GetTitle();
 	  id.ReplaceAll("N Passed ","");
+	  id.ReplaceAll("#","\\");
+	  id.ReplaceAll("had"," had");
 	  (output) << " &  $" << id  << "$";
 	}
 	t++;
@@ -272,6 +276,8 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	if(k<=j && j<nhist && j<k+ncol && t<histo.size()){
 	  TString id=histo[t].GetTitle();
 	  id.ReplaceAll("N Passed ","");
+	  id.ReplaceAll("#","\\");
+	  id.ReplaceAll("had"," had");
 	  (output) << " &  $" << id  << "$";
 	}
 	t++;
@@ -343,6 +349,8 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	if(k<=j && j<nhist && j<k+ncol && t<histo.size()){
 	  TString id=histo[t].GetTitle();
 	  id.ReplaceAll("N Passed ","");
+	  id.ReplaceAll("#","\\");
+	  id.ReplaceAll("had"," had");
 	  (output) << " &  $" << id  << "$";
 	}
 	t++;
