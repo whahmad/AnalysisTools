@@ -317,6 +317,10 @@ class Ntuple_Controller{
    unsigned int MCTauandProd_midx(unsigned int i, unsigned int j){return Ntp->MCTauandProd_midx->at(i).at(j);}
    int MCTauandProd_charge(unsigned int i, unsigned int j){return Ntp->MCTauandProd_charge->at(i).at(j);}
    bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
+
+   bool jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx);
+   bool muonhasJetOverlap(unsigned int muon_idx,unsigned int &jet_idx);
+   bool muonhasJetMatch(unsigned int muon_idx,unsigned int &jet_idx);
 };
 
 #endif

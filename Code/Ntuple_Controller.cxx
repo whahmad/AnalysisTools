@@ -223,15 +223,30 @@ bool Ntuple_Controller::isGoodMuon(unsigned int i){
   //  isGoodMuon_nooverlapremoval(i) with
   //  ΔR(μ,jet)>0.3 where jet is any jet passing the jet requirements not applied applied       
   if(isGoodMuon_nooverlapremoval(i)){
-    //for(unsigned int j=0;j<NPFJets();j++){
-      //if(isGoodJet_nooverlapremoval(j)){
-      //if(Tools::dr(Muons_p4(i),PFJet_p4(j))<0.3) return false;
-      //}
-    //}
-    return true;
+    unsigned int jet_idx=0;
+    return !muonhasJetOverlap(i,jet_idx);
   }
   return false;
 }
+
+bool Ntuple_Controller::muonhasJetOverlap(unsigned int muon_idx,unsigned int &jet_idx){
+  for(unsigned int j=0;j<NPFJets();j++){
+    if(isGoodJet_nooverlapremoval(j)){
+      if(Tools::dr(Muons_p4(muon_idx),PFJet_p4(j))>0.2 && Tools::dr(Muons_p4(muon_idx),PFJet_p4(j))<0.4){ jet_idx=j;return true;}
+    }
+  }
+  return false;
+}
+
+bool Ntuple_Controller::muonhasJetMatch(unsigned int muon_idx,unsigned int &jet_idx){
+  for(unsigned int j=0;j<NPFJets();j++){
+    if(isGoodJet_nooverlapremoval(j)){
+      if(Tools::dr(Muons_p4(muon_idx),PFJet_p4(j))<0.2){ jet_idx=j;return true;}
+    }
+  }
+  return false;
+}
+
 
 
 bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
@@ -249,16 +264,16 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
   //  muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() not applied
   //  numberOfMatchedStations() not applied                              
   if(Muon_isGlobalMuon(i) && Muon_isStandAloneMuon(i)){
-    if(Muons_p4(i).Pt()>15.0){
-      if(fabs(Muons_p4(i).Eta())<2.4){
-	if(Muon_normChi2(i)<10.0){
-	  //if(Muon_innerTrack_numberofValidHits(i)>10){
-	  //if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
-	      //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
-	      return true;
+    //if(Muons_p4(i).Pt()>15.0){
+    if(fabs(Muons_p4(i).Eta())<2.4){
+      if(Muon_normChi2(i)<10.0){
+	if(Muon_innerTrack_numberofValidHits(i)>10){
+	  if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
+	    //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
+	    return true;
+	    //}
 	      //}
-	      //}
-	      //}
+	  }
 	}
       }
     }
@@ -277,14 +292,21 @@ bool Ntuple_Controller::isGoodJet(unsigned int i){
   //  deltaR jet-electron cleaning < 0.4 (2 selected lepton only) < 0.3 (e+jets only) 0.3
   //  deltaR jet-muon cleaning < 0.4(2 selected lepton only) < 0.3 (mu+jets only), 0.1 for PF and JET 0.3
   if(isGoodJet_nooverlapremoval(i)){
-    for(unsigned int j=0;j<NMuons();j++){
-      if(isGoodMuon_nooverlapremoval(j)){
-	if(Tools::dr(Muons_p4(j),PFJet_p4(i))<0.4) return false;
-      }
-    }
-    return true;
+    unsigned int muon_idx;
+    return !jethasMuonOverlap(i,muon_idx);
   }
+  return false;
 }
+
+bool Ntuple_Controller::jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx){
+  for(unsigned int j=0;j<NMuons();j++){
+    if(isGoodMuon_nooverlapremoval(j)){
+      if(Tools::dr(Muons_p4(j),PFJet_p4(jet_idx))<0.4){ muon_idx=j;return true;}
+    }
+  }
+  return false;
+}
+
 
 bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   //  Top Dilepton Jet selection with pt 15GeV
