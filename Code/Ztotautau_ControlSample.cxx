@@ -302,7 +302,7 @@ void  Ztotautau_ControlSample::doEvent(){
   else { 
     value.at(deltaPhi)=0;
   }
-  pass.at(deltaPhi)=(value.at(deltaPhi)>=cut.at(deltaPhi));
+  pass.at(deltaPhi)=(fabs(value.at(deltaPhi))>=cut.at(deltaPhi));
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() f" << std::endl;
 
   value.at(MET)=Ntp->MET_et();
