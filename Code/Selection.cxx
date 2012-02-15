@@ -226,16 +226,17 @@ void  Selection::Finish(){
   }
   f.Close();
   std::cout << "Writing out "+Name+".root Complete" << std::endl;
+  SkimConfig SC;
+  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
   std::vector<float> nevents;
   std::vector<float> nevents_noweight;
   std::vector<float> nevents_noweight_default;
   for(int i=0; i<Npassed.size();i++){
-    nevents.push_back(Npassed.at(i).GetBinContent(1));
-    nevents_noweight.push_back(Npassed_noweight.at(i).GetBinContent(1));
+    nevents.push_back(Npassed.at(i).GetBinContent(0));
+    nevents_noweight.push_back(Npassed_noweight.at(i).GetBinContent(0));
+    nevents_noweight_default.push_back(Npassed_noweight.at(i).GetBinContent(1));
   }
-  nevents_noweight_default=nevents_noweight;
-  SkimConfig SC;
-  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
+
   if(runtype!=GRID){
     std::cout << "Printing Plots " << std::endl;
     for(int i=0;i<CrossSectionandAcceptance.size();i++){

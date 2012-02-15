@@ -408,8 +408,8 @@ void  Ztotautau_ControlSample::doEvent(){
     w*=Ntp->EvtWeight3D();
   }
   else{w=1;}
-  std::cout << "w=" << w << std::endl;
   */
+  std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
  
   ///////////////////////////////////////////////////////////

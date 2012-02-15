@@ -144,24 +144,16 @@ void SkimConfig::ApplySkimEfficiency(std::vector<int> ids,std::vector<TH1D> &NPa
     }
   }
   for(unsigned int i=0; i<ids.size();i++){
-    NPassed.at(i).SetBinContent(1,0);
-    NPassed.at(i).SetBinError(1,0);
     NPassed.at(i).SetBinContent(0,0);
     NPassed.at(i).SetBinError(0,0);
-    NPassed_noweight.at(i).SetBinContent(1,0);
-    NPassed_noweight.at(i).SetBinError(1,0);
+    NPassed_noweight.at(i).SetBinContent(0,0);
+    NPassed_noweight.at(i).SetBinError(0,0);
   }
   for(unsigned int i=0; i<SkimIDs.size();i++){
-    float tmp=NPassed.at(i).GetBinContent(1);
-    NPassed.at(i).SetBinContent(1,tmp+NEvents.at(i));
-    tmp=NPassed.at(i).GetBinError(1);
-    NPassed.at(i).SetBinError(1,sqrt(tmp*tmp+NEventsErr.at(i)*NEventsErr.at(i)));
-    NPassed.at(i).SetBinContent(0,NPassed.at(i).GetBinContent(1));
-    NPassed.at(i).SetBinError(0,NPassed.at(i).GetBinError(1));
-    tmp=NPassed_noweight.at(i).GetBinContent(1);
-    NPassed_noweight.at(i).SetBinContent(1,tmp+NEvents_noweight.at(i));
-    tmp=NPassed_noweight.at(i).GetBinError(1);
-    NPassed_noweight.at(i).SetBinError(1,sqrt(tmp*tmp+NEvents_noweight.at(i)*NEvents_noweight.at(i)));
+    NPassed.at(i).SetBinContent(0,NEvents.at(i));
+    NPassed.at(i).SetBinError(0,NEventsErr.at(i));
+    NPassed_noweight.at(i).SetBinContent(0,NEvents_noweight.at(i));
+    NPassed_noweight.at(i).SetBinError(0,NEvents_noweight.at(i)*NEvents_noweight.at(i));
   }
 }
 
@@ -226,6 +218,7 @@ bool SkimConfig::CovertToHistoFormat(){
   for(unsigned int i=0;i<SkimIDs_new.size();i++){
     for(unsigned int j=0;j<SkimIDs.size();j++){
       if(SkimIDs.at(j)==SkimIDs_new.at(i)){
+	std::cout << "SkimConfig::CovertToHistoFormat() Found Full Mask: " << SkimIDs.at(j) << std::endl;
 	IDFlag.at(j)=true;
 	NEvents_new.at(i)=NEvents.at(j);
 	NEventsErr_new.at(i)=NEventsErr.at(j);
@@ -241,13 +234,14 @@ bool SkimConfig::CovertToHistoFormat(){
     for(unsigned int j=0;j<SkimIDs.size();j++){
       if(!IDFlag.at(j)){
 	if(SkimIDs.at(j)%100==SkimIDs_new.at(i)){
+	  std::cout << "SkimConfig::CovertToHistoFormat() Found Master Decay: " << SkimIDs.at(j) << std::endl;
 	  IDFlag.at(j)=true;
 	  NEvents_new.at(i)+=NEvents.at(j);
 	  NEventsErr_new.at(i)+=sqrt(NEventsErr.at(j)*NEventsErr.at(j)+NEventsErr_new.at(i)*NEventsErr_new.at(i));
 	  NEvents_sel_new.at(i)+=NEvents_sel.at(j);
 	  NEventsErr_sel_new.at(i)+=sqrt(NEventsErr_sel.at(j)*NEventsErr_sel.at(j)+NEventsErr_sel_new.at(i)*NEventsErr_sel_new.at(i));
 	  NEvents_noweight_new.at(i)+=NEvents_noweight.at(j);
-	  NEvents_noweight_sel_new.at(i)+=sqrt(NEvents_noweight_sel.at(j)*NEvents_noweight_sel.at(j)+NEvents_noweight_sel_new.at(i)*NEvents_noweight_sel_new.at(i));
+	  NEvents_noweight_sel_new.at(i)+=NEvents_noweight_sel.at(j);
 	}
       }
     }
@@ -255,9 +249,24 @@ bool SkimConfig::CovertToHistoFormat(){
 
   for(unsigned int i=0;i<SkimIDs_new.size();i++){
     if(SkimIDs_new.at(i)==DataMCType::Signal){
-      for(unsigned int j=0;j<SkimIDs_new.size();j++){
-	if(SkimIDs_new.at(j)==DataMCType::DY_Signal) SkimIDs_new.at(i)=SkimIDs_new.at(j);
+      for(unsigned int j=0;j<SkimIDs.size();j++){
+	std::cout << "SkimConfig::CovertToHistoFormat() Found Signal Match " << SkimIDs.at(j) << std::endl;
+	if(SkimIDs.at(j)==DataMCType::DY_Signal){
+	  IDFlag.at(j)=true;
+	  NEvents_new.at(i)=NEvents.at(j);
+	  NEventsErr_new.at(i)=NEventsErr.at(j);
+	  NEvents_sel_new.at(i)=NEvents_sel.at(j);
+	  NEventsErr_sel_new.at(i)=NEventsErr_sel.at(j);
+	  NEvents_noweight_new.at(i)=NEvents_noweight.at(j);
+	  NEvents_noweight_sel_new.at(i)=NEvents_noweight_sel.at(j);
+	}
       }
+    }
+  }
+
+  for(unsigned int j=0;j<SkimIDs.size();j++){
+    if(!IDFlag.at(j)){
+      std::cout << "SkimConfig::CovertToHistoFormat() WARNING unmatched DataMCType: " << SkimIDs.at(j) << std::endl;
     }
   }
 
