@@ -1,1 +1,23 @@
-
+ID= 1 AllEvt= 34486069.000000 AllEvtErr= 5872.484330 SelEvt= 312841.000000  SelEvtErr= 559.321949 AllEvtnoweight= 34486069.000000 SelEvtnoweight= 312841.000000 Eff(weight)= 0.009072 Eff(noweight)= 0.009072 Nfile= 186 
+ID= 30 AllEvt= 33250685.000000 AllEvtErr= 5766.340917 SelEvt= 81709.000000  SelEvtErr= 285.847878 AllEvtnoweight= 33250685.000000 SelEvtnoweight= 81709.000000 Eff(weight)= 0.002457 Eff(noweight)= 0.002457 Nfile= 195 
+ID= 10030530 AllEvt= 42.000000 AllEvtErr= 6.480736 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 42.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 36 
+ID= 10130530 AllEvt= 377452.000000 AllEvtErr= 614.371224 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 377452.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 195 
+ID= 10230530 AllEvt= 367651.000000 AllEvtErr= 606.342262 SelEvt= 15295.000000  SelEvtErr= 123.672937 AllEvtnoweight= 367651.000000 SelEvtnoweight= 15295.000000 Eff(weight)= 0.041602 Eff(noweight)= 0.041602 Nfile= 195 
+ID= 10330530 AllEvt= 242786.000000 AllEvtErr= 492.733085 SelEvt= 23.000000  SelEvtErr= 4.795832 AllEvtnoweight= 242786.000000 SelEvtnoweight= 23.000000 Eff(weight)= 0.000095 Eff(noweight)= 0.000095 Nfile= 195 
+ID= 10430530 AllEvt= 524595.000000 AllEvtErr= 724.289376 SelEvt= 15.000000  SelEvtErr= 3.872981 AllEvtnoweight= 524595.000000 SelEvtnoweight= 15.000000 Eff(weight)= 0.000029 Eff(noweight)= 0.000029 Nfile= 195 
+ID= 10530530 AllEvt= 189861.000000 AllEvtErr= 435.730476 SelEvt= 4.000000  SelEvtErr= 2.000000 AllEvtnoweight= 189861.000000 SelEvtnoweight= 4.000000 Eff(weight)= 0.000021 Eff(noweight)= 0.000021 Nfile= 195 
+ID= 10630530 AllEvt= 15973.000000 AllEvtErr= 126.384327 SelEvt= 3.000000  SelEvtErr= 1.732051 AllEvtnoweight= 15973.000000 SelEvtnoweight= 3.000000 Eff(weight)= 0.000188 Eff(noweight)= 0.000188 Nfile= 195 
+ID= 10730530 AllEvt= 21946.000000 AllEvtErr= 148.141845 SelEvt= 1.000000  SelEvtErr= 1.000000 AllEvtnoweight= 21946.000000 SelEvtnoweight= 1.000000 Eff(weight)= 0.000046 Eff(noweight)= 0.000046 Nfile= 195 
+ID= 10930530 AllEvt= 21188.000000 AllEvtErr= 145.560983 SelEvt= 1.000000  SelEvtErr= 1.000000 AllEvtnoweight= 21188.000000 SelEvtnoweight= 1.000000 Eff(weight)= 0.000047 Eff(noweight)= 0.000047 Nfile= 195 
+ID= 11530530 AllEvt= 829.000000 AllEvtErr= 28.792361 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 829.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 192 
+ID= 11730530 AllEvt= 1046.000000 AllEvtErr= 32.341926 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 1046.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 194 
+ID= 12030530 AllEvt= 3497.000000 AllEvtErr= 59.135453 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 3497.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 195 
+ID= 12130530 AllEvt= 10595.000000 AllEvtErr= 102.932013 SelEvt= 2.000000  SelEvtErr= 1.414214 AllEvtnoweight= 10595.000000 SelEvtnoweight= 2.000000 Eff(weight)= 0.000189 Eff(noweight)= 0.000189 Nfile= 195 
+ID= 30530530 AllEvt= 92326.000000 AllEvtErr= 303.851922 SelEvt= 2.000000  SelEvtErr= 1.414214 AllEvtnoweight= 92326.000000 SelEvtnoweight= 2.000000 Eff(weight)= 0.000022 Eff(noweight)= 0.000022 Nfile= 195 
+ID= 30830530 AllEvt= 47705.000000 AllEvtErr= 218.414698 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 47705.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 195 
+ID= 31030530 AllEvt= 1002.000000 AllEvtErr= 31.654386 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 1002.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 193 
+ID= 31330530 AllEvt= 502.000000 AllEvtErr= 22.405347 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 502.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 179 
+ID= 31430530 AllEvt= 1573.000000 AllEvtErr= 39.661068 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 1573.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 194 
+ID= 31830530 AllEvt= 5246.000000 AllEvtErr= 72.429271 SelEvt= 0.000000  SelEvtErr= 0.000000 AllEvtnoweight= 5246.000000 SelEvtnoweight= 0.000000 Eff(weight)= 0.000000 Eff(noweight)= 0.000000 Nfile= 195 
+ID= 20 AllEvt= 76243064.000000 AllEvtErr= 8731.727941 SelEvt= 94435.000000  SelEvtErr= 307.302766 AllEvtnoweight= 76243064.000000 SelEvtnoweight= 94435.000000 Eff(weight)= 0.001239 Eff(noweight)= 0.001239 Nfile= 220 
+ID= 60 AllEvt= 25080241.000000 AllEvtErr= 5008.017170 SelEvt= 17525.000000  SelEvtErr= 132.382020 AllEvtnoweight= 25080241.000000 SelEvtnoweight= 17525.000000 Eff(weight)= 0.000699 Eff(noweight)= 0.000699 Nfile= 203 
