@@ -21,10 +21,14 @@ DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 
 HDRS          = TauDataFormat/TauNtuple/interface/PdtPdgMini.h \
-		TauDataFormat/TauNtuple/interface/TauDecay.h
+		TauDataFormat/TauNtuple/interface/TauDecay.h \
+		TauDataFormat/TauNtuple/interface/DataMCType.h
+
 SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cc \
-		TauDataFormat/TauNtuple/src/TauDecay.cc
-OBJS          = PdtPdgMini.o
+		TauDataFormat/TauNtuple/src/TauDecay.cc \
+		TauDataFormat/TauNtuple/src/DataMCType.cc
+
+OBJS          = PdtPdgMini.o TauDecay.o DataMCType.o
 
 SHAREDLIB     = lib/libTauNtuple.so
 

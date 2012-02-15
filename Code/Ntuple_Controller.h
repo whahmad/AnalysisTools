@@ -31,6 +31,7 @@
 #include "TauSpinerInterface.h"
 #include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 #include "TauDataFormat/TauNtuple/interface/TauDecay.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -123,7 +124,7 @@ class Ntuple_Controller{
 
   // Systematic controls
   enum    Systematic {Default=0,NSystematics};
-  enum    MCDataID {Data=0,MC_DY=1,MC_WJ=2,MC_QCD=3,DY_Signal=10230530,Signal=998,Unknown=999};
+
   int     SetupSystematics(TString sys_);
   void    SetSysID(int sysid){theSys=sysid;}
 

@@ -16,7 +16,7 @@
 #include <math.h>
 
 #include "HistoConfig.h"
-#include "Ntuple_Controller.h"
+#include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
 std::vector<int> SkimConfig::SkimIDs;
 std::vector<float>   SkimConfig::NEvents;
@@ -104,7 +104,13 @@ void SkimConfig::SaveEfficiency(TString Name,std::vector<int> ids,std::vector<TH
     std::cout << "Error SkimConfig::SaveEfficiency input not loaded -> no skim summary " << std::endl;
     return;
   }
-  if(!converted)CovertToHistoFormat();
+  if(!converted){
+    if(!CovertToHistoFormat()) {
+      std::cout << "Error SkimConfig::SaveEfficiency Input not mapped to Histograms " << std::endl;
+      return;
+    }
+  }
+
 
   ofstream output;
   output.open(Name+"SkimEff.dat", std::ios::out);
@@ -164,7 +170,7 @@ void SkimConfig::ApplySkimEfficiency(std::vector<int> ids,std::vector<TH1D> &NPa
 
 void SkimConfig::CheckNEvents(std::vector<int> ids, std::vector<float> nevts){
   if(!loaded){
-    std::cout << "Error SkimConfig::CorrectEvents input not loaded -> no skim summary " << std::endl;  
+    std::cout << "Error SkimConfig::CheckNEvents input not loaded -> no skim summary " << std::endl;  
     return;
   }
   if(!converted){
@@ -248,9 +254,9 @@ bool SkimConfig::CovertToHistoFormat(){
   }
 
   for(unsigned int i=0;i<SkimIDs_new.size();i++){
-    if(SkimIDs_new.at(i)==Ntuple_Controller::Signal){
+    if(SkimIDs_new.at(i)==DataMCType::Signal){
       for(unsigned int j=0;j<SkimIDs_new.size();j++){
-	if(SkimIDs_new.at(j)==Ntuple_Controller::DY_Signal) SkimIDs_new.at(i)=SkimIDs_new.at(j);
+	if(SkimIDs_new.at(j)==DataMCType::DY_Signal) SkimIDs_new.at(i)=SkimIDs_new.at(j);
       }
     }
   }

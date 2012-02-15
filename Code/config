@@ -13,6 +13,9 @@ if [ $CommonUtils == 0 ]; then
     #Get TauDecay
     cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/TauDecay.h
     cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/TauDecay.cc
+    #Get DataMCType
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/DataMCType.h
+    cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/DataMCType.cc
 fi
 
 
