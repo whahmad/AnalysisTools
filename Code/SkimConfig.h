@@ -19,6 +19,8 @@ class SkimConfig {
   double GetNEvents(int id);
 
  private:
+  bool CovertToHistoFormat();
+
   static std::vector<int> SkimIDs;
   static std::vector<float>        NEvents;
   static std::vector<float>        NEventsErr;
@@ -27,5 +29,6 @@ class SkimConfig {
   static std::vector<float>        NEvents_noweight;
   static std::vector<float>        NEvents_noweight_sel;
   static bool loaded;
+  static bool converted;
 };
 #endif

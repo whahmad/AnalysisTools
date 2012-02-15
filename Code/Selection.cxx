@@ -234,9 +234,8 @@ void  Selection::Finish(){
     nevents_noweight.push_back(Npassed_noweight.at(i).GetBinContent(1));
   }
   nevents_noweight_default=nevents_noweight;
-  //SkimConfig SC;
-  //SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
-
+  SkimConfig SC;
+  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
   if(runtype!=GRID){
     std::cout << "Printing Plots " << std::endl;
     for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -270,7 +269,7 @@ void  Selection::Finish(){
     std::cout << "Plots and Tables Complete"<< std::endl;
   }
   //Check that the correct number of events are run over
-  //SC.CheckNEvents(types,nevents_noweight_default);
+  SC.CheckNEvents(types,nevents_noweight_default);
 }
 
 
