@@ -1,25 +1,25 @@
-#include "Tau_momentum_calculation.h"
+#include "Handle_KinFit_resolution.h"
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
 #include <iostream>
 #include "PDG_Var.h"
 
-Tau_momentum_calculation::Tau_momentum_calculation(TString Name_, TString id_):
+Handle_KinFit_resolution::Handle_KinFit_resolution(TString Name_, TString id_):
   Selection(Name_,id_)
 {
 }
 
-Tau_momentum_calculation::~Tau_momentum_calculation(){
+Handle_KinFit_resolution::~Handle_KinFit_resolution(){
   for(int j=0; j<Npassed.size(); j++){
-    std::cout << "Tau_momentum_calculation::~Tau_momentum_calculation Selection Summary before: " 
+    std::cout << "Handle_KinFit_resolution::~Handle_KinFit_resolution Selection Summary before: " 
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "Tau_momentum_calculation::~Tau_momentum_calculation()" << std::endl;
+  std::cout << "Handle_KinFit_resolution::~Handle_KinFit_resolution()" << std::endl;
 }
 
-void  Tau_momentum_calculation::Configure(){
+void  Handle_KinFit_resolution::Configure(){
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
     cut.push_back(0);
@@ -167,18 +167,13 @@ void  Tau_momentum_calculation::Configure(){
   Tau2Deltatheta=HConfig.GetTH1D(Name+"_Tau2Deltatheta","Tau2Deltatheta",20,0,3.14,"Tau2Deltatheta","Events");  
   DeltaTheta_1st=HConfig.GetTH1D(Name+"_DeltaTheta_1st","DeltaTheta_1st",20,0,3.14,"DeltaTheta_1st","Events");
   DeltaTheta_2nd=HConfig.GetTH1D(Name+"_DeltaTheta_2nd","DeltaTheta_2nd",20,0,3.14,"DeltaTheta_2nd","Events");
-  Energy_resolution1=HConfig.GetTH1D(Name+"_Energy_resolution1","Energy_resolution1",30,-100,100,"Energy_resolution1","Events");
-  Energy_resolution2=HConfig.GetTH1D(Name+"_Energy_resolution2","Energy_resolution2",30,-100,100,"Energy_resolution2","Events");
-  TransverseEnergy_resolution=HConfig.GetTH1D(Name+"_TransverseEnergy_resolution","TransverseEnergy_resolution",30,100,100,"TransverseEnergy_resolution","Events");
-  Energy_resolution_cuts=HConfig.GetTH1D(Name+"_Energy_resolution_cuts","Energy_resolution_cuts",30,-100,100,"Energy_resolution_cuts","Events");
+  Energy_resolution1=HConfig.GetTH1D(Name+"_Energy_resolution1","Energy_resolution1",15,0,100,"Energy_resolution1","Events");
+  Energy_resolution2=HConfig.GetTH1D(Name+"_Energy_resolution2","Energy_resolution2",15,0,100,"Energy_resolution2","Events");
+  TransverseEnergy_resolution=HConfig.GetTH1D(Name+"_TransverseEnergy_resolution","TransverseEnergy_resolution",15,0,100,"TransverseEnergy_resolution","Events");
+  Energy_resolution_cuts=HConfig.GetTH1D(Name+"_Energy_resolution_cuts","Energy_resolution_cuts",15,0,100,"Energy_resolution_cuts","Events");
   ResVsDeltaMu=HConfig.GetTH2D(Name+"_ResVsDeltaMu","ResVsDeltaMu_cuts",20,0,40,10,0,0.5,"ResVsDeltaMu","Events");
   TauMuEnergyRatio=HConfig.GetTH1D(Name+"_TauMuEnergyRatio","TauMuEnergyRatio",10,0,1,"TauMuEnergyRatio","Events");
   TauMuTransverseEnergyRatio=HConfig.GetTH1D(Name+"_TauMuTransverseEnergyRatio","TauMuTransverseEnergyRatio",10,0,2,"TauMuTransverseEnergyRatio","Events");
-
-  TruthRatioTrTauVsTrMuon=HConfig.GetTH1D(Name+"_TruthRatioTrTauVsTrMuoxn","TruthRatioTrTauVsTrMuon",10,0,1,"TruthRatioTrTauVsTrMuon","Events");
-  TruthRatio=HConfig.GetTH1D(Name+"_TruthRatio","TruthRatio",10,0,1,"TruthRatio","Events");
-  TruthResolution=HConfig.GetTH1D(Name+"_TruthResolution","TruthResolution",30,-100,100,"TruthResolution","Events");
-  TruthDeltaTheta=HConfig.GetTH1D(Name+"_TruthDeltaTheta","TruthDeltaTheta",20,0,3.14,"TruthDeltaTheta","Events");
 
 
   Selection::ConfigureHistograms();
@@ -189,7 +184,7 @@ void  Tau_momentum_calculation::Configure(){
 // TString name,TString title,int nbinsx, double minx, double maxx, 
 // 				       int nbinsy, double miny, double maxy, TString xaxis, TString yaxis)
 
-void  Tau_momentum_calculation::Store_ExtraDist(){
+void  Handle_KinFit_resolution::Store_ExtraDist(){
 
  Extradist1d.push_back(&NVtx);
  Extradist1d.push_back(&NGoodVtx);
@@ -214,18 +209,9 @@ void  Tau_momentum_calculation::Store_ExtraDist(){
  Extradist2d.push_back(&ResVsDeltaMu);
  Extradist1d.push_back(&TauMuEnergyRatio);
  Extradist1d.push_back(&TauMuTransverseEnergyRatio);
-
-
-
-
- Extradist1d.push_back(&TruthRatioTrTauVsTrMuon);
- Extradist1d.push_back(&TruthRatio);
- Extradist1d.push_back(&TruthResolution);
- Extradist1d.push_back(&TruthDeltaTheta);
-
 }
 
-void  Tau_momentum_calculation::doEvent(){
+void  Handle_KinFit_resolution::doEvent(){
  
   unsigned int t;
   int id(Ntp->GetMCID());
@@ -248,7 +234,7 @@ void  Tau_momentum_calculation::doEvent(){
   unsigned int iMuon=0;
   
   std::cout<<"DataMCType   ==================++>" << Ntp->GetMCID()<<std::endl;
-std::cout<<" Tau momentum calculation "<<std::endl;
+std::cout<<" Handle KinFit resolution "<<std::endl;
   for(iTau=0;iTau < Ntp->NKFTau();iTau++){
     if(Ntp->KFTau_TauFit_p4(iTau).Pt() > tauPt){
       tauPt = Ntp->KFTau_TauFit_p4(iTau).Pt();
@@ -289,11 +275,11 @@ std::cout<<" Tau momentum calculation "<<std::endl;
   value.at(MET) =   sqrt(2*Ntp->Muons_p4(HighestPtMuonIndex).Pt()*Ntp->MET_et()*(1  - cos(Ntp->Muons_p4(HighestPtMuonIndex).Phi() - Ntp->MET_phi())) );
   pass.at(MET)=(value.at(MET)<=cut.at(MET));
 
-  value.at(MuonIso) = (Ntp->Muon_emEt05(HighestPtMuonIndex) + Ntp->Muon_hadEt05(HighestPtMuonIndex) + Ntp->Muon_sumPt05(HighestPtMuonIndex))/Ntp->Muons_p4(HighestPtMuonIndex).Pt();
-  pass.at(MuonIso)=(value.at(MuonIso)<=cut.at(MuonIso));
-
   value.at(TauIsIso) =   Ntp->PFTau_isMediumIsolation(Ntp->KFTau_MatchedHPS_idx(HighestPtTauIndex));
   pass.at(TauIsIso)=(value.at(TauIsIso) ==cut.at(TauIsIso));
+
+  value.at(MuonIso) = (Ntp->Muon_emEt05(HighestPtMuonIndex) + Ntp->Muon_hadEt05(HighestPtMuonIndex) + Ntp->Muon_sumPt05(HighestPtMuonIndex))/Ntp->Muons_p4(HighestPtMuonIndex).Pt();
+  pass.at(MuonIso)=(value.at(MuonIso)<=cut.at(MuonIso));
 
     if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
       value.at(charge) =Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));
@@ -321,7 +307,7 @@ std::cout<<" Tau momentum calculation "<<std::endl;
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
-
+std::cout<<" 1 " <<std::endl;
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -332,6 +318,7 @@ std::cout<<" Tau momentum calculation "<<std::endl;
     if(Ntp->NKFTau()!=0 && Ntp->NMuons()!=0){
 
     TLorentzVector tau_3pi = Ntp->KFTau_TauFit_p4(HighestPtTauIndex);
+    
     TLorentzVector muon    = Ntp->Muons_p4(HighestPtMuonIndex);
 
     TLorentzVector tau1,tau2,taumu1,taumu2,Z;
@@ -340,13 +327,20 @@ std::cout<<" Tau momentum calculation "<<std::endl;
     TLorentzVector z1,z2;
 
     double zmass = 91.1876,mtau = 1.777;
+    std::cout<<"---------------------------------------------------------------------> Pt " <<tau_3pi.Pt() <<"  Px  " <<tau_3pi.Px() <<"  Py  " <<tau_3pi.Py() <<std::endl;
+    if(tau_3pi.Pt() >zmass/2 ){
+      double scale = zmass/2/tau_3pi.Pt(); 
+      tau_3pi.SetPx(scale*tau_3pi.Px());
+      tau_3pi.SetPy(scale*tau_3pi.Py());
+    }
+    std::cout<<"---------------------------------------------------------------------> new Pt " <<tau_3pi.Pt() <<" new Px  " <<tau_3pi.Px() <<" new Py  " <<tau_3pi.Py() <<std::endl;
 
     double A =  0.5*(zmass*zmass - 2*mtau*mtau) -tau_3pi.Pt()* tau_3pi.Pt() ;
     double B =  mtau*mtau + tau_3pi.Pt()* tau_3pi.Pt() + A*A/tau_3pi.Pz()/tau_3pi.Pz();
     double root = sqrt(A*A*tau_3pi.E()*tau_3pi.E() - B*tau_3pi.Pz()*tau_3pi.Pz()*(mtau*mtau + tau_3pi.Pt()* tau_3pi.Pt()));
 
     std::cout<< "A: "<< A <<"   B: "<< B <<"   root:" << root << "  pt: " << tau_3pi.Pt()<< " pz:  "<<tau_3pi.Pz() << " energy: "<< tau_3pi.E() <<std::endl;
-
+   
     e1 = (A*tau_3pi.E() + root)/(mtau*mtau + tau_3pi.Pt()* tau_3pi.Pt());
     e2 = (A*tau_3pi.E() - root)/(mtau*mtau + tau_3pi.Pt()* tau_3pi.Pt());
     std::cout<< "e1: "<< e1 <<"   e2: "<< e2 << std::endl;
@@ -382,86 +376,39 @@ std::cout<<" Tau momentum calculation "<<std::endl;
     std::cout<< "taumu1 transverse energy ratio: "<< muon.Et()/taumu1.Et() << std::endl;
     }
     //------------------------------- comment out for work with data
-//      std::cout<<"---------------------------------- " <<std::endl;
-//      printf("energy1 %f   energy2 %f   first tau Pt %f\n",tau1.E(),tau2.E(),tau_3pi.E());
-//      std::cout<<"z1 pt " <<z1.Pt() << "  z2 pt  " << z2.Pt() <<" tau pt  "<<tau1.Pt() <<std::endl;
+//    std::cout<<"---------------------------------- " <<std::endl;
+//    printf("energy1 %f   energy2 %f   first tau Pt %f\n",tau1.E(),tau2.E(),tau_3pi.E());
+//    std::cout<<"z1 pt " <<z1.Pt() << "  z2 pt  " << z2.Pt() <<" tau pt  "<<tau1.Pt() <<std::endl;
 
 
 //   for(int iz =0; iz<Ntp->NMCSignalParticles(); iz++){
 //     TLorentzVector TruthTauMu;
 //     TLorentzVector TruthTauPi;
-
-//     TLorentzVector TruthMu;
-//     TLorentzVector RecoiledTauMu;
-//     TLorentzVector RecoiledZ;
-//     int TauMuIndex =0;
-
-//     double e1sim,e2sim,pz1sim,pz2sim;
-//     TLorentzVector z1sim,z2sim;
-//     TLorentzVector tau1sim,tau2sim,taumu1sim,taumu2sim,Zsim;
-
-  
 //     bool signal =false;
-//     if(Ntp->MCTau_JAK(0) == 2 and Ntp->MCTau_JAK(1) ==5 ){TruthTauMu = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)); TruthTauPi = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)); signal =true;TauMuIndex = 0;}
-//     else if(Ntp->MCTau_JAK(0) == 5 and Ntp->MCTau_JAK(1) ==2){TruthTauMu = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)); TruthTauPi = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)); signal =true;TauMuIndex = 1;}
+//     if(Ntp->MCTau_JAK(0) == 2 and Ntp->MCTau_JAK(1) ==5 ){TruthTauMu = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)); TruthTauPi = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)); signal =true;}
+//     else if(Ntp->MCTau_JAK(0) == 5 and Ntp->MCTau_JAK(1) ==2){TruthTauMu = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)); TruthTauPi = Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)); signal =true;}
 
- 
-//     if(signal){
-//       for(int iProd1 =0; iProd1 < Ntp->NMCTauDecayProducts(TauMuIndex); iProd1++ ){
-// 	 std::cout<<"--pdgId 1  " << Ntp->MCTauandProd_pdgid(TauMuIndex,iProd1) <<std::endl;
-// 	 if(abs( Ntp->MCTauandProd_pdgid(TauMuIndex,iProd1))==14){
-// 	   TruthMu = Ntp->MCTauandProd_p4(TauMuIndex,iProd1);
-	   
-	   
-	   
-// 	   double A1 =  0.5*(zmass*zmass - 2*mtau*mtau) -TruthTauPi.Pt()*TruthTauPi.Pt() ;
-// 	   double B1 =  mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt() + A1*A1/TruthTauPi.Pz()/TruthTauPi.Pz();
-// 	   double root1 = sqrt(A1*A1*TruthTauPi.E()*TruthTauPi.E() - B1*TruthTauPi.Pz()*TruthTauPi.Pz()*(mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt()));
-
-// 	   e1sim = (A1*TruthTauPi.E() + root1)/(mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt());
-// 	   e2sim = (A1*TruthTauPi.E() - root1)/(mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt());
-	 
-// 	   pz1sim = sqrt(e1sim*e1sim -  (mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt()));
-// 	   pz2sim = sqrt(e2sim*e2sim -  (mtau*mtau + TruthTauPi.Pt()* TruthTauPi.Pt()));
-	 
-	 
-// 	   tau1sim.SetXYZM(-TruthTauPi.Px(),-TruthTauPi.Py(),pz1sim,mtau); 
-// 	   tau2sim.SetXYZM(-TruthTauPi.Px(),-TruthTauPi.Py(),pz2sim,mtau); 
-
-// 	   z1sim = tau1sim+TruthTauPi;
-// 	   z2sim = tau2sim+TruthTauPi;
-// 	   if(fabs(tau1sim.Theta() - TruthMu.Theta()) < fabs(tau2sim.Theta() - TruthMu.Theta())){taumu1sim = tau1sim; taumu2sim = tau2sim;}
-// 	   else{taumu1sim = tau2sim; taumu2sim = tau1sim;}
-
-
-// 	   TruthRatioTrTauVsTrMuon.at(t).Fill(TruthMu.Et()/TruthTauMu.Et(),w); 
-// 	   TruthRatio.at(t).Fill(TruthMu.E()/taumu1sim.E(),w); 
-// 	   TruthResolution.at(t).Fill(taumu1sim.E() - TruthTauMu.E(),w); 
-// 	   TruthDeltaTheta.at(t).Fill(taumu1sim.Theta() - TruthMu.Theta(),w); 
-
-
-// 	 }
-
- 
-//     }
-//   }
 
 
 
 //     if(signal){
-// 	Energy_resolution1.at(t).Fill(taumu1.E() -TruthTauMu.E(),w); 
+//       Energy_resolution1.at(t).Fill((taumu1.E() -TruthTauMu.E())/TruthTauMu.E(),w); 
 // 	ResVsDeltaMu.at(t).Fill(taumu1.E() - TruthTauMu.E(),taumu1.Theta() - muon.Theta(),w); 
-// 	Energy_resolution2.at(t).Fill(taumu2.E() -TruthTauMu.E(),w); 
-// 	TransverseEnergy_resolution.at(t).Fill(taumu1.Et() -TruthTauMu.Et(),w); 
+// 	Energy_resolution2.at(t).Fill((taumu2.E() -TruthTauMu.E())/TruthTauMu.E(),w); 
+// 	TransverseEnergy_resolution.at(t).Fill((taumu1.Et() -TruthTauMu.Et())/TruthTauMu.Et(),w); 
 //     }
 //     if(signal and Ntp->MCSignalParticle_p4(iz).Pt() < 10 ){Energy_resolution_cuts.at(t).Fill(taumu1.E() -TruthTauMu.E(),w); }
 
-
+//     std::cout<<"Z truth Pt " << Ntp->MCSignalParticle_p4(iz).Pt() <<std::endl;
 //     ZTruthPt.at(t).Fill(Ntp->MCSignalParticle_p4(iz).Pt(),w);
+//     std::cout<<"=========> 1st " << Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)).E() << "  2nd  " <<Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)).E() <<std::endl;
+//     std::cout<<"=========> 1st " << Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(0)).Theta() << "  2nd  " <<Ntp->MCTau_p4(Ntp->MCSignalParticle_Tauidx(iz).at(1)).Theta() <<std::endl;
+
+//     std::cout<< " jak1 " << Ntp->MCTau_JAK(0) << "  2nd  " <<Ntp->MCTau_JAK(1)<<std::endl;
 
 
 
-//    }
+//   }
 
 //      //------------------------------- comment out for work with data
 

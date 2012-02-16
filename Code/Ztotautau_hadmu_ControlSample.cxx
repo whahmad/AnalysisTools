@@ -27,8 +27,8 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
     if(i==TriggerOk)          cut.at(TriggerOk)=1;
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
     if(i==MuonisGlob)         cut.at(MuonisGlob)=1;
-    if(i==MuonPt)             cut.at(MuonPt)=25; //18
-    if(i==TauPt)              cut.at(TauPt)=25;
+    if(i==MuonPt)             cut.at(MuonPt)=24; //18
+    if(i==TauPt)              cut.at(TauPt)=24;
     if(i==TauIsRef)           cut.at(TauIsRef)=1;
     if(i==MuonIso)            cut.at(MuonIso)=0.2;
     if(i==TauIsIso)           cut.at(TauIsIso)=1;
@@ -36,7 +36,7 @@ void  Ztotautau_hadmu_ControlSample::Configure(){
     if(i==ZMassV)             cut.at(ZMassV)=1;
     if(i==ZPt)                cut.at(ZPt)=1;
     if(i==ZMassHPS)           cut.at(ZMassHPS)=1;
-    if(i==MET)                cut.at(MET)=25;
+    if(i==MET)                cut.at(MET)=30;
     if(i==tauPhi)             cut.at(tauPhi)=1;
     if(i==charge)             cut.at(charge)=-1;
     if(i==decayMode)          cut.at(decayMode)=-1;
@@ -261,7 +261,6 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-
   
   // Apply Selection
   unsigned int nGoodVtx=0;
@@ -269,7 +268,7 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
     if(Ntp->isVtxGood(i))nGoodVtx++;
   }
   value.at(PrimeVtx)=nGoodVtx;
-  pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
+  pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx)); 
   
   value.at(TriggerOk)=1;
   pass.at(TriggerOk)=true;
@@ -329,7 +328,7 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   value.at(TauIsRef) = Ntp->KFTau_discriminatorByQC(HighestPtTauIndex);
   pass.at(TauIsRef)=(value.at(TauIsRef) == 1);
 
-  value.at(TauIsIso) =   Ntp->PFTau_isLooseIsolation(Ntp->KFTau_MatchedHPS_idx(HighestPtTauIndex));
+  value.at(TauIsIso) =   Ntp->PFTau_isMediumIsolation(Ntp->KFTau_MatchedHPS_idx(HighestPtTauIndex));
   pass.at(TauIsIso)=(value.at(TauIsIso) ==cut.at(TauIsIso));
 
 
@@ -397,9 +396,7 @@ void  Ztotautau_hadmu_ControlSample::doEvent(){
   double wobs=1;
   double w;
 
-  if(!Ntp->isData()){
-    w *= Ntp->EvtWeight3D();
-  }
+  if(!Ntp->isData()){w = Ntp->EvtWeight3D();}
   else{w=1;}
 
   

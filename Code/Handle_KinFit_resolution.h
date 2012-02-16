@@ -1,16 +1,16 @@
-#ifndef Tau_momentum_calculation_h
-#define Tau_momentum_calculation_h
+#ifndef Handle_KinFit_resolution_h
+#define Handle_KinFit_resolution_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 
 
-class Tau_momentum_calculation : public Selection {
+class Handle_KinFit_resolution : public Selection {
 
  public:
-  Tau_momentum_calculation(TString Name_, TString id_);
-  virtual ~Tau_momentum_calculation();
+  Handle_KinFit_resolution(TString Name_, TString id_);
+  virtual ~Handle_KinFit_resolution();
 
   virtual void  Configure();
 
@@ -53,12 +53,6 @@ class Tau_momentum_calculation : public Selection {
   std::vector<TH1D> TransverseEnergy_resolution;
   std::vector<TH1D> TauMuEnergyRatio;
   std::vector<TH1D> TauMuTransverseEnergyRatio;
-
-  std::vector<TH1D> TruthRatioTrTauVsTrMuon;
-  std::vector<TH1D> TruthRatio;
-  std::vector<TH1D> TruthResolution;
-  std::vector<TH1D> TruthDeltaTheta;
-
 
   std::vector<TH1D> Energy_resolution_cuts;
 

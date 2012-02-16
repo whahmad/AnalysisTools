@@ -27,12 +27,15 @@ void  Validation::Configure(){
     pass.push_back(false);
     if(i==TriggerOk)    cut.at(TriggerOk)=1;
     if(i==PrimeVtx)     cut.at(PrimeVtx)=1;
-    if(i==TauPt)        cut.at(TauPt) = 15;
-    if(i==QC)           cut.at(QC) = 1;
-    if(i==LooseIso)     cut.at(LooseIso) = 1;
-    if(i==ET)           cut.at(ET) = 20;
-    if(i==GoodMuon)     cut.at(GoodMuon)=1;
-  }
+    if(i==TauPt)        cut.at(TauPt) = 20;
+    if(i==TauIsQuality) cut.at(TauIsQuality) = 1;
+    if(i==MET)          cut.at(MET) = 80;
+    if(i==MuonisGlob)   cut.at(MuonisGlob)=1;
+    if(i==MuonPt)       cut.at(MuonPt)=20;
+    if(i==MuonIso)       cut.at(MuonIso)=0.8;
+
+  }    
+
 
   TString hlabel;
   TString htitle;
@@ -65,29 +68,37 @@ void  Validation::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauPt_",htitle,51,-0.5,50.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauPt_",htitle,51,-0.5,50.5,hlabel,"Events"));
     }
-    else if(i==QC){
-      title.at(i)="QC";
-      hlabel="QC ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_QC_",htitle,2,-0.5,1.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_QC_",htitle,2,-0.5,1.5,hlabel,"Events"));
+    else if(i==TauIsQuality){
+      title.at(i)="TauIsQuality";
+      hlabel="TauIsQuality ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauIsQuality_",htitle,2,-0.5,1.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauIsQuality_",htitle,2,-0.5,1.5,hlabel,"Events"));
     }
-    else if(i==LooseIso){
-      title.at(i)="LooseIso";
-      hlabel="LooseIso ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_LooseIso_",htitle,2,-0.5,1.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_LooseIso_",htitle,2,-0.5,1.5,hlabel,"Events"));
+    else if(i==MET){ 
+      title.at(i)="MET";
+      hlabel="MET ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MET_",htitle,41,-0.5,80.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MET_",htitle,41,-0.5,80.5,hlabel,"Events"));
     }
-    else if(i==ET){
-      title.at(i)="ET";
-      hlabel="ET ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
+    else if(i==MuonisGlob){
+      title.at(i)="MuonisGlob";
+      hlabel="MuonisGlob ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuonisGlob_",htitle,2,0,2,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuonisGlob_",htitle,2,0,2,hlabel,"Events"));
     }
-    else if(i==GoodMuon){
-      title.at(i)="NGoodMuons";
-      hlabel="Number of Good Muon ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ET_",htitle,51,-0.5,50.5,hlabel,"Events"));
+
+    else if(i==MuonPt){
+      title.at(i)="MuonPt";
+      hlabel="MuonPt ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuonPt_",htitle,41,-0.5,50.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuonPt_",htitle,41,-0.5,50.5,hlabel,"Events"));
+    }
+
+    else if(i==MuonIso){
+      title.at(i)="MuonIso";
+      hlabel="MuonIso ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuonIso_",htitle,35,0,1,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuonIso_",htitle,35,0,1,hlabel,"Events"));
     }
 
   } 
@@ -178,16 +189,7 @@ void  Validation::Configure(){
   KinFitTau_HPSMediumIso_hist=HConfig.GetTH1D(Name+"_KinFitTau_HPSMediumIso_hist","KinFitTau_HPSMediumIso_hist",2,0,2,"KinFitTau_HPSMediumIso_hist","Events");
 
 
-
-
-
-
-
-
-
-
-
-  TransvereMass=HConfig.GetTH1D(Name+"_TransvereMass","TransvereMass",121,-0.5,120.5,"TransvereMass","Events");	
+  TransvereMass=HConfig.GetTH1D(Name+"_TransvereMass","TransvereMass",61,-0.5,120.5,"TransvereMass","Events");	
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
 }
@@ -289,32 +291,65 @@ void  Validation::doEvent(){
   value.at(TriggerOk)=1;
   pass.at(TriggerOk)=true;
 
-  int nmu=0;
-  for(int i=0;i<Ntp->NMuons();i++){
-    if(Ntp->isGoodMuon(i)) nmu++;
-  }
-  value.at(GoodMuon)=nmu;
-  pass.at(GoodMuon)=value.at(GoodMuon)>0;
+  unsigned int HighestPtMuonIndex=0;
+  unsigned int HighestPtTauIndex=0;
+  unsigned int SecondPtMuonIndex =0;
+  float muonPt=0;
+  float tauPt=0;
+  unsigned int iTau=0;
+  unsigned int iMuon=0;
 
-    for(unsigned int iTau=0;iTau < Ntp->NKFTau();iTau++){
-      value.at(TauPt)= Ntp->KFTau_TauFit_p4(iTau).Pt();
-      pass.at(TauPt)=(value.at(TauPt)<=cut.at(TauPt));
-
-      value.at(QC) = Ntp->KFTau_discriminatorByQC(iTau);
-      pass.at(QC)=(value.at(QC)==cut.at(QC));
-
-
-        if( Ntp->KFTau_discriminatorByKFit(iTau) ){
-	  value.at(LooseIso) = Ntp->PFTau_isLooseIsolation(Ntp->KFTau_MatchedHPS_idx(iTau));
-	  pass.at(LooseIso)=true;//(value.at(LooseIso)==cut.at(LooseIso));
-	}
+  for(iTau=0;iTau < Ntp->NKFTau();iTau++){
+    if(Ntp->KFTau_TauFit_p4(iTau).Pt() > tauPt){
+      tauPt = Ntp->KFTau_TauFit_p4(iTau).Pt();
+      HighestPtTauIndex = iTau; 
     }
-    
-      value.at(ET) = Ntp->MET_et();
-      pass.at(ET)=(value.at(ET)<=cut.at(ET));
-   
+  }
+ 
+  if(Ntp->NMuons()!=0){
+    for(iMuon=0; iMuon<Ntp->NMuons(); iMuon++){
+      if(Ntp->Muons_p4(iMuon).Pt() > muonPt){
+	muonPt = Ntp->Muons_p4(iMuon).Pt();
+	SecondPtMuonIndex = HighestPtMuonIndex;
+	HighestPtMuonIndex = iMuon;
+      }
+    }
+  }
+
+  value.at(PrimeVtx)=nGoodVtx;
+  pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
+ 
+  value.at(TriggerOk)=1;
+  pass.at(TriggerOk)=true;
+
+  if(Ntp->NKFTau()!=0 && Ntp->NMuons()!=0){
+
+  value.at(MuonisGlob) = Ntp->Muon_isGlobalMuon(HighestPtMuonIndex);
+  pass.at(MuonisGlob)  = (value.at(MuonisGlob)==cut.at(MuonisGlob));
+
+  value.at(TauIsQuality) =  Ntp->KFTau_discriminatorByKFit(HighestPtTauIndex);//Ntp->KFTau_discriminatorByQC(HighestPtTauIndex);
+  pass.at(TauIsQuality)  =  (value.at(TauIsQuality)==cut.at(TauIsQuality));
+
+  value.at(TauPt) = Ntp->KFTau_TauFit_p4(HighestPtTauIndex).Pt(); 
+  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
+
+  value.at(MuonPt) = Ntp->Muons_p4(HighestPtMuonIndex).Pt();
+  pass.at(MuonPt)=(value.at(MuonPt) >=cut.at(MuonPt));
+ 
+  value.at(MET) =   sqrt(2*Ntp->Muons_p4(HighestPtMuonIndex).Pt()*Ntp->MET_et()*(1  - cos(Ntp->Muons_p4(HighestPtMuonIndex).Phi() - Ntp->MET_phi())) );
+  pass.at(MET)=(value.at(MET)<=cut.at(MET));
+
+  value.at(MuonIso) = (Ntp->Muon_emEt05(HighestPtMuonIndex) + Ntp->Muon_hadEt05(HighestPtMuonIndex) + Ntp->Muon_sumPt05(HighestPtMuonIndex))/Ntp->Muons_p4(HighestPtMuonIndex).Pt();
+  pass.at(MuonIso)=true;//(value.at(MuonIso)<=cut.at(MuonIso));
+
+  
+
+  }
+
+
   double wobs=1;
   double w;
+
 
   if(!Ntp->isData()){w = Ntp->EvtWeight3D();}
   else{w=1;}
@@ -332,7 +367,7 @@ void  Validation::doEvent(){
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
     
 
-
+ 
 
     unsigned int HighestPtMuonIndex=0;
     unsigned int SecondPtMuonIndex=0;
@@ -378,9 +413,9 @@ void  Validation::doEvent(){
 	KFTau_Fit_chi2_hist.at(t).Fill(Ntp->KFTau_Fit_chi2(Ntp->KFTau_indexOfFitInfo(iTau)),w);
 	KFTau_Fit_csum_hist.at(t).Fill(Ntp->KFTau_Fit_csum(Ntp->KFTau_indexOfFitInfo(iTau)),w);
        }
-
+  
       //  if(Ntp->KFTau_discriminatorByKFit(iTau) and Ntp->KFTau_discriminatorByQC(iTau) )
-{
+      {
 	KFTau_TauFit_pt_hist.at(t).Fill(Ntp->KFTau_TauFit_p4(iTau).Pt(),w);
 	KFTau_TauFit_phi_hist.at(t).Fill(Ntp->KFTau_TauFit_p4(iTau).Phi(),w);
 	KFTau_TauVis_phi_hist.at(t).Fill(Ntp->KFTau_TauVis_p4(iTau).Phi(),w);
@@ -388,7 +423,7 @@ void  Validation::doEvent(){
 	KFTau_Neutrino_phi_hist.at(t).Fill(Ntp->KFTau_Neutrino_p4(iTau).Phi(),w);
 	KFTau_TauVis_a1_hist.at(t).Fill(Ntp->KFTau_TauVis_p4(iTau).M(),w);
       }
-      
+  
         if(Ntp->NKFTau()>0 && Ntp->NPFTaus()>0 &&  Ntp->NPFTaus()>=Ntp->KFTau_MatchedHPS_idx(iTau) && Ntp->KFTau_discriminatorByKFit(iTau) ){
 	  KinFitTau_HPSMode_hist.at(t).Fill(Ntp->PFTau_hpsDecayMode(Ntp->KFTau_MatchedHPS_idx(iTau)));
 	  KinFitTau_HPSLooseIso_hist.at(t).Fill(Ntp->PFTau_isLooseIsolation(Ntp->KFTau_MatchedHPS_idx(iTau)));
