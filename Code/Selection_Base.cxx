@@ -9,6 +9,7 @@ Selection_Base::Selection_Base(TString Name_, TString id_):
   ,runtype(GRID)
   ,verbose(false)
   ,doDetails(false)
+  ,Lumi(1)
 {
   Name+="_";
   Name+=systype;

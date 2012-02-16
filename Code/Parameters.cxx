@@ -128,7 +128,7 @@ void Parameters::GetParameter(TString p, T &v,T dv){
     line >> par >> val; 
     par.ToLower();
     p.ToLower();
-    if(par==p){
+    if(p.Contains(par) && par.Contains(p)){
       v=val;
       std::cout << "Parameters::GetParameter File=" << file << " Found: " <<  p << "=" << v << std::endl;
       return;
@@ -166,7 +166,7 @@ void Parameters::GetVectorStringDouble(TString p, std::vector<TString> &v1, std:
     line >> par >> val1 >> val2;
     par.ToLower();
     p.ToLower();
-    if(par==p){
+    if(p.Contains(par) && par.Contains(p)){
       v1.push_back(val1);
       v2.push_back(val2);
     }

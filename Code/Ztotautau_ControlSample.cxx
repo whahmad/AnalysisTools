@@ -39,7 +39,7 @@ void  Ztotautau_ControlSample::Configure(){
     if(i==TagIso)             cut.at(TagIso)=0.2;
     if(i==NJets)              cut.at(NJets)=1;
     if(i==JetPt)              cut.at(JetPt)=10;
-    if(i==deltaPhi)           cut.at(deltaPhi)==TMath::Pi()*3.0/4.0;
+    if(i==deltaPhi)           cut.at(deltaPhi)==TMath::Pi()*7.0/8.0;
     if(i==MET)                cut.at(MET)=40;
     if(i==MT)                 cut.at(MT)=30;
     if(i==PInBalance)         cut.at(PInBalance)=0.1;

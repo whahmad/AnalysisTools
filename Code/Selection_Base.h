@@ -37,6 +37,8 @@ class Selection_Base {
   void SetRunType(int runtype_);
   void SetDetail(bool i){doDetails=i;}
   void SetVerbosity(int i){if(i>=FATAL && i<=DEBUG) verbose=i;}
+  void SetLumi(double l){Lumi=l;}
+  double GetLumi(){return Lumi;}
 
  protected:
   virtual void doEvent()=0;
@@ -53,6 +55,6 @@ class Selection_Base {
   int runtype;
   int verbose;
   bool doDetails;
-
+  double Lumi;
 };
 #endif

@@ -15,7 +15,7 @@ TString Plots::File_;
 std::vector<TString> Plots::HistogramNames_;
 
 Plots::Plots():
-  doscale(true)//(false)
+  doscale(false)
   ,verbose(false)
   ,dooneprofile(true)
 {

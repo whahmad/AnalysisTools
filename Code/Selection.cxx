@@ -17,7 +17,6 @@ Selection::Selection(TString Name_, TString id_):
   ,isStored(false)
   ,data(0)
   ,HConfig()
-  ,Lumi(1)
 {
   if(Name_)
   ListofBadFiles.clear();

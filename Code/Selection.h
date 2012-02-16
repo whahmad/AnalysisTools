@@ -51,7 +51,6 @@ class Selection : public Selection_Base {
   std::vector<int> colour; //[type]
   std::vector<float> nevents_noweight_default; // to keep track of number of event
 
-  float Lumi;
   std::vector<TString> title;
   std::vector<std::vector<TH1D> >  Nminus1;      //[cut n-1][type]
   std::vector<std::vector<TH1D> >  Nminus0;      //[cut n-0][type]

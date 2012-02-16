@@ -13,7 +13,7 @@ Selection_Factory::Selection_Factory(){
 Selection_Factory::~Selection_Factory(){
 }
 
-Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,int mode, int runtype){
+Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,int mode, int runtype, double lumi){
   Selection_Base* s;
   Analysis.ToLower();
 
@@ -29,5 +29,6 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   s->Configure();
   s->SetMode(mode);
   s->SetRunType(runtype);
+  s->SetLumi(lumi);
   return s;
 }

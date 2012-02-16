@@ -48,6 +48,7 @@ int main() {
   bool thin, skim;
   int mode, runtype;
   TString mode_str, runType_str, histofile, skimfile;
+  double Lumi;
   Par.GetVectorString("File:",Files);
   Par.GetBool("Thin:",thin,"False");
   Par.GetBool("Skim:",skim,"False");
@@ -58,6 +59,7 @@ int main() {
   Par.GetVectorString("Analysis:",Analysis);
   Par.GetVectorString("UncertType:",UncertType,"<default>");
   Par.GetVectorStringDouble("UncertList:",UncertList,UncertW);
+  Par.GetDouble("Lumi:",Lumi,1);
   /////////////////////////////////////////////////
   // Check Input
   HistoConfig H; 
@@ -116,7 +118,7 @@ int main() {
     cout << "Configuring systematic " << UncertType.at(i) << endl;
     for(int j=0; j<Analysis.size();j++){
       cout << "Configuring Selection " << Analysis.at(j) << endl;
-      selections.push_back(SF.Factory(Analysis.at(j),UncertType.at(i),mode,runtype));
+      selections.push_back(SF.Factory(Analysis.at(j),UncertType.at(i),mode,runtype,Lumi));
     }
   }
   cout << "Selection modules Setup NSelection= " << selections.size() << endl;
@@ -211,7 +213,7 @@ int main() {
 	  for(int i=0;i<UncertList.size();i++){
 	    TString n=selections.at(j)->Get_Name();
 	    cout << "Adding Systematic Uncertainty " << UncertType.at(i) << endl;
-	    Selection_Base *s=SF.Factory(selections.at(j)->Get_Analysis(),UncertList.at(i),Selection_Base::RECONSTRUCT,Selection_Base::Local);
+	    Selection_Base *s=SF.Factory(selections.at(j)->Get_Analysis(),UncertList.at(i),mode,runtype,Lumi);
 	    s->LoadResults(Files);
 	    selections[j]->EvaluateSystematics(s,1.0);
 	    delete s;
