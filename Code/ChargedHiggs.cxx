@@ -1,4 +1,4 @@
-#include "Ztotautau_ControlSample.h"
+#include "ChargedHiggs.h"
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
@@ -6,27 +6,24 @@
 
 #include "Tools.h"
 
-Ztotautau_ControlSample::Ztotautau_ControlSample(TString Name_, TString id_):
+ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
   Selection(Name_,id_)
   ,channel(muontag)
 {
-  if(Get_Name().Contains("muontag")) channel=muontag;
-  if(Get_Name().Contains("electrontag")) channel=muontag;  // not implemented yet
-  if(Get_Name().Contains("rhotag")) channel=muontag;       // not implemented yet
-  if(Get_Name().Contains("threepiontag")) channel=muontag; // not implemented yet
-
+  if(Name_.Contains("muon"))channel=muontag;
+  if(Name_.Contains("electron"))channel=electrontag;
 }
 
-Ztotautau_ControlSample::~Ztotautau_ControlSample(){
+ChargedHiggs::~ChargedHiggs(){
   for(int j=0; j<Npassed.size(); j++){
-    std::cout << "Ztotautau_ControlSample::~Ztotautau_ControlSample Selection Summary before: " 
+    std::cout << "ChargedHiggs::~ChargedHiggs Selection Summary before: " 
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "Ztotautau_ControlSample::~Ztotautau_ControlSample()" << std::endl;
+  std::cout << "ChargedHiggs::~ChargedHiggs()" << std::endl;
 }
 
-void  Ztotautau_ControlSample::Configure(){
+void  ChargedHiggs::Configure(){
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
     cut.push_back(0);
@@ -43,8 +40,6 @@ void  Ztotautau_ControlSample::Configure(){
     if(i==deltaPhi)           cut.at(deltaPhi)=TMath::Pi()*7.0/8.0;
     if(i==MET)                cut.at(MET)=40;
     if(i==MT)                 cut.at(MT)=30;
-    if(i==PInBalance)         cut.at(PInBalance)=0.1;
-    if(i==TauAvgMETPhi)       cut.at(TauAvgMETPhi)=0.75;
     if(i==ZMassmin)           cut.at(ZMassmin)=70;
     if(i==ZMassmax)           cut.at(ZMassmax)=100;
     if(i==charge)             cut.at(charge)=0;
@@ -171,28 +166,6 @@ void  Ztotautau_ControlSample::Configure(){
      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,40,0,200,hlabel,"Events"));
      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,40,0,200,hlabel,"Events"));
    }
-   else if(i==PInBalance){
-     title.at(i)="$|P_{T}^{\\mu-Jet}-P_{T}^{Jets}|/|P_{T}^{\\mu-Jet}+P_{T}^{Jets}|$";
-     title.at(i)+=cut.at(PInBalance);
-     title.at(i)+="(GeV)";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="|P_{T}^{#mu-Jet}-P_{T}^{Jets}|/|P_{T}^{#mu-Jet}+P_{T}^{Jets}|";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_PInBalance_",htitle,40,0,2.0,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_PInBalance_",htitle,40,0,2.0,hlabel,"Events"));
-   }
-   else if(i==TauAvgMETPhi){
-     title.at(i)="$sin(\\phi_{\\mu}-\\phi_{E_{T}^{Miss}})$";
-     title.at(i)+=cut.at(TauAvgMETPhi);
-     title.at(i)+="(GeV)";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="sin(#phi_{#mu}-#phi_{E^{T}^{miss}})";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauAvgMETPhi_",htitle,20,-1,1,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauAvgMETPhi_",htitle,20,-1,1,hlabel,"Events"));
-   }
    else if(i==deltaPhi){
       title.at(i)="$\\Delta\\phi(Tag,Jet) < $";
       title.at(i)+=cut.at(deltaPhi);
@@ -257,19 +230,19 @@ void  Ztotautau_ControlSample::Configure(){
 
 
 
-void  Ztotautau_ControlSample::Store_ExtraDist(){
+void  ChargedHiggs::Store_ExtraDist(){
  Extradist1d.push_back(&NVtx);
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
 }
 
-void  Ztotautau_ControlSample::doEvent(){
+void  ChargedHiggs::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() A" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() A" << std::endl;
   value.at(TriggerOk)=1;
   pass.at(TriggerOk)=true;
   
@@ -280,7 +253,7 @@ void  Ztotautau_ControlSample::doEvent(){
   }
   value.at(PrimeVtx)=nGoodVtx;
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() B" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() B" << std::endl;
 
   unsigned mu_idx(999),nmus(0);
   double mu_pt(0);
@@ -291,7 +264,7 @@ void  Ztotautau_ControlSample::doEvent(){
 	nmus++;
       }
     }
-    if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() C" << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs::doEvent() C" << std::endl;
     value.at(hasTag)=nmus;
     pass.at(hasTag)=(value.at(hasTag)==cut.at(hasTag));
     std::cout << nmus << std::endl;    
@@ -301,13 +274,13 @@ void  Ztotautau_ControlSample::doEvent(){
     value.at(TagPtmax)=mu_pt;
     pass.at(TagPtmax)=(value.at(TagPtmax)<cut.at(TagPtmax));
 
-    if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() C2 - " << mu_idx << " " << Ntp->NMuons() << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs::doEvent() C2 - " << mu_idx << " " << Ntp->NMuons() << std::endl;
     if(mu_idx!=999){value.at(TagIso) = (Ntp->Muon_emEt05(mu_idx) + Ntp->Muon_hadEt05(mu_idx) + Ntp->Muon_sumPt05(mu_idx))/Ntp->Muons_p4(mu_idx).Pt();}
     else{value.at(TagIso)=999;}
     pass.at(TagIso)=(value.at(TagIso)<=cut.at(TagIso));
     
   }
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() d" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() d" << std::endl;
   unsigned int jet_idx(999),njets(0);
   double jet_pt(0);
   for(int i=0;i<Ntp->NPFJets();i++){
@@ -319,7 +292,7 @@ void  Ztotautau_ControlSample::doEvent(){
       if(verbose)std::cout << "jet loop is good end" << std::endl;
     }
   }
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() e" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() e" << std::endl;
   value.at(NJets)=njets;
   pass.at(NJets)=(value.at(NJets)>=cut.at(NJets));
 
@@ -355,52 +328,8 @@ void  Ztotautau_ControlSample::doEvent(){
   value.at(ZMassmax)=Z_lv.M();
   pass.at(ZMassmax)=(value.at(ZMassmax)<cut.at(ZMassmax));
 
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() g" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() g" << std::endl;
 
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() h" << std::endl;
-  if(jet_idx!=999 && mu_idx!=999){
-    Ntp->Muons_p4(mu_idx);
-    Ntp->PFJet_p4(jet_idx);
-    double N=(((Ntp->PFJet_p4(jet_idx).Px()-Ntp->Muons_p4(mu_idx).Px())*Ntp->MET_et()*sin(Ntp->MET_phi()))-
-	      ((Ntp->PFJet_p4(jet_idx).Py()-Ntp->Muons_p4(mu_idx).Py())*Ntp->MET_et()*cos(Ntp->MET_phi())));
-    double D=sqrt(pow(Ntp->Muons_p4(mu_idx).Px()-Ntp->PFJet_p4(jet_idx).Px(),2.0)+pow(Ntp->Muons_p4(mu_idx).Py()-Ntp->PFJet_p4(jet_idx).Py(),2.0))*fabs(Ntp->MET_et());
-    value.at(TauAvgMETPhi)=N/D;
-    pass.at(TauAvgMETPhi)=(fabs(value.at(TauAvgMETPhi))>cut.at(TauAvgMETPhi));
-    std::cout << "TauAvgMETPhi" << value.at(TauAvgMETPhi) << std::endl;
-  }
-  else{
-    value.at(TauAvgMETPhi)=0;
-    pass.at(TauAvgMETPhi)=false;
-  }
-  pass.at(TauAvgMETPhi)=true;
-
-  if(jet_idx!=999 && mu_idx!=999){
-    unsigned int jetmatch_idx=0;
-    bool hasmatch=Ntp->muonhasJetMatch(mu_idx,jetmatch_idx);
-    TLorentzVector LV_diff=Ntp->PFJet_p4(jet_idx);
-    TLorentzVector LV_sum=Ntp->PFJet_p4(jet_idx);
-    double pt_sum(Ntp->PFJet_p4(jet_idx).Pt()), pt_diff(Ntp->PFJet_p4(jet_idx).Pt());
-    if(hasmatch){
-      LV_diff+=Ntp->PFJet_p4(jetmatch_idx);
-      LV_sum-=Ntp->PFJet_p4(jetmatch_idx);
-      pt_diff-=Ntp->PFJet_p4(jetmatch_idx).Pt();
-      pt_sum+=Ntp->PFJet_p4(jetmatch_idx).Pt();
-    }
-    else{
-      LV_diff+=Ntp->Muons_p4(mu_idx);
-      LV_sum-=Ntp->Muons_p4(mu_idx);
-      pt_diff-=Ntp->Muons_p4(mu_idx).Pt();
-      pt_sum+=Ntp->Muons_p4(mu_idx).Pt();
-    }
-
-    value.at(PInBalance)=fabs(LV_diff.Pt())/LV_sum.Pt();
-    pass.at(PInBalance)=value.at(PInBalance)>cut.at(PInBalance);
-  }
-  else{
-    value.at(PInBalance)=0;
-    pass.at(PInBalance)=false;
-  }
-  pass.at(PInBalance)=true;
   // Momentum weighted charge is slow only do if nminus1
   // must be last cut
   bool charge_nminus1(true);
@@ -426,7 +355,7 @@ void  Ztotautau_ControlSample::doEvent(){
     pass.at(charge)=false;
   }
   pass.at(charge)=true;
-  if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() i" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() i" << std::endl;
   /*
   if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
     value.at(charge) =Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));

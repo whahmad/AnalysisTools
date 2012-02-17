@@ -1,15 +1,15 @@
-#ifndef Ztotautau_ControlSample_h
-#define Ztotautau_ControlSample_h
+#ifndef ChargedHiggs_h
+#define ChargedHiggs_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 
-class Ztotautau_ControlSample : public Selection {
+class ChargedHiggs : public Selection {
 
  public:
-  Ztotautau_ControlSample(TString Name_, TString id_);
-  virtual ~Ztotautau_ControlSample();
+  ChargedHiggs(TString Name_, TString id_);
+  virtual ~ChargedHiggs();
 
   virtual void  Configure();
 
@@ -24,14 +24,12 @@ class Ztotautau_ControlSample : public Selection {
 	     deltaPhi,
 	     MET,
 	     MT,
-	     TauAvgMETPhi,
-	     PInBalance,
 	     ZMassmax,
              ZMassmin,
 	     charge,
 	     NCuts};
 
-  enum Channel{muontag,electontag,rhotag,threepiontag,NChannels};
+  enum tagtype{muontag,electrontag};
 
  protected:
   virtual void doEvent();

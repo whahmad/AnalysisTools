@@ -171,7 +171,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	    latex.DrawLatex(0.225, 0.95,hTitle);
 	  }
 	  if(verbose) std::cout << "Data: " << histo.at(j).at(0).Integral() << " MC: " << Total.Integral() << std::endl; 
-	}
+	  }
 	else{
 	  MCHistoStack.Draw("Hist");
 	  double max=Total.GetBinContent(Total.GetMaximumBin());
@@ -192,30 +192,22 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	  MCHistoStack.Draw("Histsame");
 	  MCHistoStack.Draw("axissame");
 	  Total.Draw("E2same");
-	  if(verbose) std::cout << "B" << std::endl;
 	}	
-	  if(verbose) std::cout << "C" << std::endl;
 	leg.Draw();
-	if(verbose) std::cout << "C1" << std::endl;
 	c.Update();
-	if(verbose) std::cout << "C2" << std::endl;
 	TString name=histo.at(j).at(0).GetName();
-	if(verbose) std::cout << "C32" << std::endl;
 	if(l==1){
 	  name+="_log";
 	}
-	if(verbose) std::cout << "4" << std::endl;
 	name+="_index_";
 	name+=j;
 	TString EPSName="EPS/";
 	EPSName+=name;
 	EPSName+=".eps";
-	if(verbose) std::cout << "D" << std::endl;
-	if(l==0 || !(name.Contains("Nminus") || name.Contains("Accumdist") )){
+	if(l==0 || !name.Contains("Nminus")  || name.Contains("Accumdist") ){
 	  c.Print(EPSName);
 	}
 	if(l==0){
-	  if(verbose) std::cout << "E" << std::endl;
 	  for(int a=0;a<HistogramNames_.size();a++){
 	    if(histo.at(j).at(0).GetName()==HistogramNames_.at(a)){
 	      TFile f(File_+"_EXTRA.root","RECREATE");
@@ -229,16 +221,11 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	      }
 	      histo.at(j).at(2).Write(n+"background");
 	      f.Close();
-	      if(verbose) std::cout << "F" << std::endl;
 	    }
 	  }
-	  if(verbose) std::cout << "G" << std::endl;
 	}
-	if(verbose) std::cout << "H" << std::endl;
       }
-	if(verbose) std::cout << "I" << std::endl;
       }
-      if(verbose) std::cout << "J" << std::endl;
     }
     std::cout << "Plot1D done "  << std::endl;
 }
@@ -308,7 +295,7 @@ void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt,bool lt,float Lu
       EPSName+=name;
       EPSName+=".eps";
      
-      if( !(name.Contains("Nminus") && !name.Contains("Accumdist") )){
+      if( !name.Contains("Accumdist") ){
 	c.Print(EPSName);
 	Int_t bmax=histo.at(0).GetMaximumBin();
 	if(gt)bmax+=1;
@@ -408,7 +395,7 @@ void Plots::Plot1Dsigtobkg(std::vector<TH1D> histo, bool gt,bool lt,float Lumi,s
       TString EPSName="EPS/";
       EPSName+=name;
       EPSName+=".eps";
-      if( !(name.Contains("Nminus") && !name.Contains("Accumdist") )){
+      if( !name.Contains("Accumdist") ){
 	c.Print(EPSName);
       }
     }
@@ -482,7 +469,7 @@ void Plots::Plot1D_DataMC_Compare(std::vector<TH1D> histo, float Lumi,std::vecto
       TString EPSName="EPS/";
       EPSName+=name;
       EPSName+=".eps";
-      if( !(name.Contains("Nminus") && !name.Contains("Accumdist") )){
+      if(  !name.Contains("Accumdist") ){
 	c.Print(EPSName);
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +490,7 @@ void Plots::Plot1D_DataMC_Compare(std::vector<TH1D> histo, float Lumi,std::vecto
       EPSName="EPS/";
       EPSName+=name;
       EPSName+=".eps";
-      if( !(name.Contains("Nminus") && !name.Contains("Accumdist") )){
+      if(  !name.Contains("Accumdist") ){
         c.Print(EPSName);
       }
 

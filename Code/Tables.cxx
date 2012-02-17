@@ -204,7 +204,7 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
       }
       (output) << " \\\\  " << std::endl;
 
-
+    
       for(int i=-1; i<ncuts;i++){
 	t=0;
 	if(i>=0){
@@ -421,23 +421,49 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
     for(int i=0;i<files.size();i++){
       if(files[i].Contains(".eps") && files[i].Contains(Name)){
 	//cout << files[i] << endl;
-	TString index="_index_";
+	TString index="Data_index_";
 	index+=l;
+	index+=".eps";
+	TString idxstr="_index_";
+	idxstr+=l;
 	if(j==0 && files[i].Contains("Nminus1_") && files[i].Contains(index)){
 	  //cout << files[i] << endl;
 	  TString EPSName0=files[i];
 	  TString EPSName1=EPSName0;
 	  EPSName1.ReplaceAll("Nminus1","Nminus0");
 	  TString EPSName2=EPSName0;
-	  EPSName2.ReplaceAll("Nminus1","Nminus1dist");
-	  TString EPSName3=EPSName0;
-	  EPSName3.ReplaceAll("Nminus1","Accumdist");
+	  EPSName2.ReplaceAll("_index_","_sig_index_");
+	  EPSName2.ReplaceAll(idxstr,"_index_0");
+          TString EPSName3=EPSName2;
+          EPSName3.ReplaceAll("_sig_index_","_sigtobkg_index_");
+          TString EPSName4=EPSName2;
+          EPSName4.ReplaceAll("_sig_index_","_siglt_index_");
+          TString EPSName5=EPSName2;
+          EPSName5.ReplaceAll("_sig_index_","_sigtobkglt_index_");
+          TString EPSName6=EPSName2;
+          EPSName6.ReplaceAll("_sig_index_","_siggt_index_");
+          TString EPSName7=EPSName2;
+          EPSName7.ReplaceAll("_sig_index_","_sigtobkggt_index_");
 
-	  bool is1(false),is2(false),is3(false);
+
+	  TString EPSName2dist=EPSName0;
+          EPSName2dist.ReplaceAll("Nminus1","Nminus1dist");
+          TString EPSName3Accum=EPSName0;
+          EPSName3Accum.ReplaceAll("Nminus1","Accumdist");
+
+
+
+	  bool is1(false),is2(false),is3(false),is4(false),is5(false),is6(false),is7(false),is2dist(false),is3Accum(false);
 	  for(int k=0;k<files.size();k++){
 	    if(files[k].Contains(EPSName1)) is1=true;
 	    if(files[k].Contains(EPSName2)) is2=true;
 	    if(files[k].Contains(EPSName3)) is3=true;
+	    if(files[k].Contains(EPSName4)) is4=true;
+	    if(files[k].Contains(EPSName5)) is5=true;
+	    if(files[k].Contains(EPSName6)) is6=true;
+	    if(files[k].Contains(EPSName7)) is7=true;
+	    if(files[k].Contains(EPSName2dist)) is2dist=true;
+	    if(files[k].Contains(EPSName3Accum)) is3Accum=true;
 	  }
 
 	  TString name=files[i];
@@ -447,6 +473,7 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	  name.ReplaceAll("Data.eps","");
 	  name.ReplaceAll("Nminus1","");
 
+	  // Default Nminus 1
 	  (output) << "\\begin{figure}[p]" << std::endl;
 	  (output) << "  \\begin{center} " << std::endl;
 	  (output) << "    \\begin{tabular}{c}" << std::endl;
@@ -455,23 +482,30 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	  (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
 	  (output) << "            \\begin{center}" << std::endl;
 	  (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName0 << "}" << std::endl;
-	  if(is1 && (is2 || is3) ) (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName1 << "}" << std::endl;
+	  if(is2){
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName2 << "}" << std::endl;
+	  }
 	  (output) << "            \\end{center}" << std::endl;
 	  (output) << "          \\end{minipage}" << std::endl;
-	  (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
-	  (output) << "            \\begin{center}" << std::endl;
-	  if(is1 && !(is2 || is3) ) (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName1 << "}" << std::endl;
-	  if(is2)(output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName2 << "}" << std::endl;
-	  if(is3)(output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName3 << "}" << std::endl;
-	  (output) << "            \\end{center}" << std::endl; 
-	  (output) << "          \\end{minipage}" << std::endl;
+	  if(is1 || is3){
+	    (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
+	    (output) << "            \\begin{center}" << std::endl;
+	    if(is1) (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName1 << "}" << std::endl;
+	    if(is3) (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName3 << "}" << std::endl;
+	    (output) << "            \\end{center}" << std::endl; 
+	    (output) << "          \\end{minipage}" << std::endl;
+	  }
 	  (output) << "          \\caption[ "<< name <<"  ]{"<< std::endl;
-	  if(is2 || is3)            (output) << "(Upper Left) The N minus 1 plot for the "<< name << " cut. " << std::endl;
-	  if(!(is2 || is3))         (output) << "(Left) The N minus 1 plot for the "<< name << " cut. " << std::endl;
-	  if(is1 &&  (is2 || is3))  (output) << "(Lower Left) The N minus 0 plot for the "<< name << " cut. " << std::endl;
-	  if(is1 && !(is2 || is3))  (output) << "(Right) The N minus 0 plot for the "<< name << " cut. " << std::endl;
-	  if(is2)                   (output) << "(Upper Right) The associated plot for the "<< name << " cut, with all cuts except the "<< name << " cut applied. " << std::endl;
-	  if(is3)                   (output) << "(Lower Right) The accumulative associated plot for the "<< name << " cut. This plot is  accumulative, meaning that all cuts from the cut flow before the "<< name << " cut have been applied. " << std::endl;
+	  if(is1 && is2 && is3){
+	    (output) << "(Upper Left)  The N minus 1 plot for the "<< name << " cut. " << std::endl;
+	    (output) << "(Upper Right) The N minus 0 plot for the "<< name << " cut. " << std::endl;
+	    (output) << "(Lower Left)  The associated plot for the "<< name << " cut, with all cuts except the "<< name << " cut applied. " << std::endl;
+	    (output) << "(Lower Right) The accumulative associated plot for the "<< name << " cut. This plot is  accumulative, meaning that all cuts from the cut flow before the "<< name << " cut have been applied. " << std::endl;
+	  }
+	  if(!(is2 && is3)){
+	    (output) << "(Left) The N minus 1 plot for the "<< name << " cut. " << std::endl;
+ 	    (output) << "(Right) The N minus 0 plot for the "<< name << " cut. " << std::endl;
+	  }
 	  (output) << " }" << std::endl; 
 	  (output) << "        \\end{center}" << std::endl; 
 	  (output) << "      \\end{minipage}" << std::endl;
@@ -479,6 +513,68 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	  (output) << "  \\end{center}" << std::endl;
 	  (output) << "\\end{figure}" << std::endl; 
 	  (output) << "\\clearpage" << std::endl;
+
+	  // Cut optimization
+	  if(is4 && is5 && is6 && is7){
+	    (output) << "\\begin{figure}[p]" << std::endl;
+	    (output) << "  \\begin{center} " << std::endl;
+	    (output) << "    \\begin{tabular}{c}" << std::endl;
+	    (output) << "      \\begin{minipage}[h!]{404pt}" << std::endl;
+	    (output) << "        \\begin{center}" << std::endl;
+	    (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
+	    (output) << "            \\begin{center}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName4 << "}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName6 << "}" << std::endl;
+	    (output) << "            \\end{center}" << std::endl;
+	    (output) << "          \\end{minipage}" << std::endl;
+	    (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
+	    (output) << "            \\begin{center}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName5 << "}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName7 << "}" << std::endl;
+	    (output) << "            \\end{center}" << std::endl;
+	    (output) << "          \\end{minipage}" << std::endl;
+	    (output) << "          \\caption[ "<< name <<"  ]{"<< std::endl;
+	    (output) << "(Upper Left) The significance plot (lt) of "<< name << ". (Upper Right) The Purity plot (lt) of "<< name
+                     << "." << "(Lower Left) The significance plot (gt) of "<< name
+                     << ". (Lower Right) The purity (gt) plot of "<< name << "." <<  std::endl;
+	    (output) << " }" << std::endl;
+	    (output) << "        \\end{center}" << std::endl;
+	    (output) << "      \\end{minipage}" << std::endl;
+	    (output) << "    \\end{tabular}" << std::endl;
+	    (output) << "  \\end{center}" << std::endl;
+	    (output) << "\\end{figure}" << std::endl;
+	    (output) << "\\clearpage" << std::endl;
+	  }
+
+	  //Extras
+	  if(is2dist && is3Accum){
+	    (output) << "\\begin{figure}[p]" << std::endl;
+	    (output) << "  \\begin{center} " << std::endl;
+	    (output) << "    \\begin{tabular}{c}" << std::endl;
+	    (output) << "      \\begin{minipage}[h!]{404pt}" << std::endl;
+	    (output) << "        \\begin{center}" << std::endl;
+	    (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
+	    (output) << "            \\begin{center}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName2dist << "}" << std::endl;
+	    (output) << "            \\end{center}" << std::endl;
+	    (output) << "          \\end{minipage}" << std::endl;
+	    (output) << "          \\begin{minipage}[h!]{200pt}" << std::endl;
+	    (output) << "            \\begin{center}" << std::endl;
+	    (output) << "              \\includegraphics*[width=200pt,bb=0pt 0pt 567pt 550pt]{./EPS/" << EPSName3Accum << "}" << std::endl;
+	    (output) << "            \\end{center}" << std::endl;
+	    (output) << "          \\end{minipage}" << std::endl;
+	    (output) << "          \\caption[ "<< name <<"  ]{"<< std::endl;
+	    (output) << "(Left)  The associated plot for the "<< name << " cut, with all cuts except the "<< name << " cut applied. " << std::endl;
+	    (output) << "(Right) The accumulative associated plot for the "<< name << " cut. This plot is  accumulative, meaning that all cuts from the cut flow before the "<< name << " cut have been applied. " << std::endl;
+	    (output) << " }" << std::endl;
+	    (output) << "        \\end{center}" << std::endl;
+	    (output) << "      \\end{minipage}" << std::endl;
+	    (output) << "    \\end{tabular}" << std::endl;
+	    (output) << "  \\end{center}" << std::endl;
+	    (output) << "\\end{figure}" << std::endl;
+	    (output) << "\\clearpage" << std::endl;
+	  }
+	  
 	}
 	else if(j==1 && files[i].Contains(index) && !files[i].Contains("Nminus1") && !files[i].Contains("Nminus0") && !files[i].Contains("Accumdist") && !files[i].Contains("Nminus1dist") && !files[i].Contains("_log_") && !files[i].Contains("_sig") && !files[i].Contains("_sigtobkg")){
 	  cout << "in File loop" << endl;
