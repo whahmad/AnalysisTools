@@ -78,6 +78,9 @@ $(PROGRAM):     $(OBJS)
 VPATH = utilities:i386_linux
 vpath %.cxx inugent
 vpath %.h inugent
+vpath %.cxx cherepanov
+vpath %.h cherepanov
+
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
 
 ##########################################################

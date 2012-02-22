@@ -1,12 +1,12 @@
 #include "Selection_Factory.h"
 
 #include "Example.h"
-#include "Validation.h"
-#include "Ztotautau_hadmu_ControlSample.h"
-#include "Tau_momentum_calculation.h"
+#include "cherepanov/Validation.h"
+#include "cherepanov/Ztotautau_hadmu_ControlSample.h"
+#include "cherepanov/Tau_momentum_calculation.h"
 #include "inugent/Ztotautau_ControlSample.h"
 #include "TauSpinExample.h"
-#include "ChargedHiggs.h"
+#include "inugent/ChargedHiggs.h"
 
 Selection_Factory::Selection_Factory(){
 }
