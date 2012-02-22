@@ -576,7 +576,7 @@ void  Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString>  names,
 	  }
 	  
 	}
-	else if(j==1 && files[i].Contains(index) && !files[i].Contains("Nminus1") && !files[i].Contains("Nminus0") && !files[i].Contains("Accumdist") && !files[i].Contains("Nminus1dist") && !files[i].Contains("_log_") && !files[i].Contains("_sig") && !files[i].Contains("_sigtobkg")){
+	else if(j==1 && files[i].Contains(idxstr) && !files[i].Contains("Nminus1") && !files[i].Contains("Nminus0") && !files[i].Contains("Accumdist") && !files[i].Contains("Nminus1dist") && !files[i].Contains("_log_") && !files[i].Contains("_sig") && !files[i].Contains("_sigtobkg")){
 	  cout << "in File loop" << endl;
 	  TString EPSName1=files[i];
 	  TString EPSName2=EPSName1;
