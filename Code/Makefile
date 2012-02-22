@@ -32,7 +32,7 @@ SUBDIRS = CommonUtils/ TauSpiner/
 
 
 
-CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c
+CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c -I./ -c
 LDFLAGS       =  
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
@@ -76,13 +76,15 @@ $(PROGRAM):     $(OBJS)
 	@echo "done"
 
 VPATH = utilities:i386_linux
+vpath %.cxx inugent
+vpath %.h inugent
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
 
 ##########################################################
 ###                                                    ###
 ##########################################################
 
-$(OBJS): %.o:%.cxx
+$(OBJS): %.o : %.cxx
 	$(CXX) $(CXXFLAGS) $(DEFS) $< -o i386_linux/$@ 
 
 .PHONY: clean cleanall all install sharedlib 
