@@ -10,7 +10,7 @@
 #include <cmath>
 #include <iostream>
 
-TString Plots::Data_type_="";
+int Plots::plotLabel=0;
 TString Plots::File_;
 std::vector<TString> Plots::HistogramNames_;
 
@@ -19,10 +19,22 @@ Plots::Plots():
   ,verbose(false)
   ,dooneprofile(false)
 {
-  AtlasStyle();
+  
 }
 
 Plots::~Plots(){
+}
+
+void Plots::Set_Plot_Type(TString style, TString label){
+  style.ToLower();
+  label.ToLower();
+  if(label.Contains("internal"))    plotLabel=cmsInternal;
+  if(label.Contains("private"))     plotLabel=cmsPrivate;
+  if(label.Contains("preliminary")) plotLabel=cmsPreliminary;
+  if(label.Contains("public"))      plotLabel=cmsPublic;
+  if(style.Contains("style1")){      CMSStyle1();}
+  else if(style.Contains("style2")){ CMSStyle2();}
+  else{ CMSStyle2();}
 }
 
 void Plots::Plot1D(std::vector<TH1D> histo,float Lumi,std::vector<float> CrossSectionandAcceptance,std::vector<float> nevents,std::vector<int> colour,std::vector<TString> legend){
@@ -99,7 +111,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	  theIntegral+=histo.at(j).at(i).Integral();
 	  if(i==0){
 	    Data_Integral+=histo.at(j).at(0).Integral();
-	    leg.AddEntry(&histo.at(j).at(i),legend.at(i)/*+Data_type_*/,"pe");
+	    leg.AddEntry(&histo.at(j).at(i),legend.at(i),"pe");
 	    theIntegral=0;
 	  }
 	  else{
@@ -505,7 +517,6 @@ void Plots::Plot1D_DataMC_Compare(std::vector<TH1D> histo, float Lumi,std::vecto
 
 void Plots::Plot2D(std::vector<TH2D>  histo,float Lumi,std::vector<float> CrossSectionandAcceptance,std::vector<float> nevents,std::vector<int> colour,std::vector<TString> legend){
   std::cout << "Plots::Plot2D" << std::endl;
-  AtlasStyle();
   gStyle->SetPadTopMargin(0.10);
   gStyle->SetPadBottomMargin(0.22);
   gStyle->SetPadLeftMargin(0.180);
@@ -817,80 +828,82 @@ void Plots::Plot2D(std::vector<TH2D>  histo,float Lumi,std::vector<float> CrossS
 }
 
 
+void Plots::CMSStyle1(){
+  std::cout << "Configuring Plots::CMSStyle1()" << std::endl;
+  // use plain black on white colors
+  Int_t icol=0; // WHITE 
+  gStyle->SetFrameBorderMode(icol);
+  gStyle->SetFrameFillColor(icol);
+  gStyle->SetCanvasBorderMode(icol);
+  gStyle->SetCanvasColor(icol);
+  gStyle->SetPadBorderMode(icol);
+  gStyle->SetPadColor(icol);
+  gStyle->SetStatColor(icol);
+  //gStyle->SetFillColor(icol); // don't use: white fill color for *all* objects
+  // set the paper & margin sizes                                               
+  gStyle->SetPaperSize(20,26);
 
-void Plots::PlotStyle(){
+  // set margin sizes
+  gStyle->SetPadTopMargin(0.05);
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetPadBottomMargin(0.16);
+  gStyle->SetPadLeftMargin(0.16);
 
-  gROOT->SetStyle("Plain");
-  gStyle->SetPadBorderMode(0);
-  gStyle->SetPadColor(0);
-  gStyle->SetCanvasColor(0);
-  gStyle->SetCanvasBorderMode(0);
-  gStyle->SetMarkerSize(0.35);
+  // set title offsets (for axis label)
+  gStyle->SetTitleXOffset(1.4);
+  gStyle->SetTitleYOffset(1.4);
+
+  // use large fonts
+  //Int_t font=72; // Helvetica italics                                                                                                                                                                                                      
+  Int_t font=42; // Helvetica
+  Double_t tsize=0.05;
+  gStyle->SetTextFont(font);
+
+  gStyle->SetTextSize(tsize);
+  gStyle->SetLabelFont(font,"x");
+  gStyle->SetTitleFont(font,"x");
+  gStyle->SetLabelFont(font,"y");
+  gStyle->SetTitleFont(font,"y");
+  gStyle->SetLabelFont(font,"z");
+  gStyle->SetTitleFont(font,"z");
+
+  gStyle->SetLabelSize(tsize,"x");
+  gStyle->SetTitleSize(tsize,"x");
+  gStyle->SetLabelSize(tsize,"y");
+  gStyle->SetTitleSize(tsize,"y");
+  gStyle->SetLabelSize(tsize,"z");
+  gStyle->SetTitleSize(tsize,"z");
+
+  // use bold lines and markers
+  gStyle->SetMarkerStyle(20);
+  gStyle->SetMarkerSize(1.2);
+  gStyle->SetHistLineWidth(2);
+  gStyle->SetLineStyleString(2,"[12 12]"); // postscript dashes
+
+  // get rid of X error bars
+  //gStyle->SetErrorX(0.001);
+  // get rid of error bar caps
+  gStyle->SetEndErrorSize(0.);
+
+  // do not display any of the standard histogram decorations
+  gStyle->SetOptTitle(0);
+  //gStyle->SetOptStat(1111);
   gStyle->SetOptStat(0);
+  //gStyle->SetOptFit(1111);
   gStyle->SetOptFit(0);
-  gStyle->SetStatW(0.35);
-  gStyle->SetStatH(0.10);
-  gStyle->SetStatX(0.975);
-  gStyle->SetStatY(0.95);
-  gStyle->SetStatStyle(0);
-  gStyle->SetStatTextColor(4);
-  gStyle->SetStatFontSize(0.020);
-  gStyle->SetTitleH(0.10);
-  gStyle->SetTitleW(0.5);
-  gStyle->SetTitleX(0.125);
-  gStyle->SetTitleY(0.95);
-  gStyle->SetTitleStyle(0);
-  gStyle->SetTitleFontSize(0.20);
-  gStyle->SetHatchesSpacing(1);
   // put tick marks on top and RHS of plots
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
-  //..Get rid of X error bars
-  gStyle->SetErrorX(0.001);
-  // do not display any of the standard histogram decorations
-  gStyle->SetOptTitle(0);
-  gStyle->SetOptStat(0);
-  gStyle->SetOptFit(0);
-  // use bold lines and markers
-  gStyle->SetMarkerStyle(8);
-  gStyle->SetHistLineWidth(1);
-  gStyle->SetLineStyleString(2,".at(12 12)"); // postscript dashes
-  gStyle->SetLegendBorderSize(0);
-  //make pretty 2d plots
   gStyle->SetPalette(1);
-  //gStyle->SetNdivisions(505,"X");
-  //gStyle->SetNdivisions(505,"Y");
-  //////////////////////////////////////////////////
-  //
-  // Do not want to use gROOT->ForceStyle(true) 
-  // since it overrides the colour and style 
-  // of the histograms. These cmd will be done to 
-  // each histogram before plotting
-  //
-  //////////////////////////////////////////////////
-  gStyle->SetLabelFont(63,"X");
-  gStyle->SetLabelSize(30,"X");
-  gStyle->SetTitleOffset(1.25,"X");
-  gStyle->SetTitleFont(63,"X");
-  gStyle->SetTitleSize(35,"X");
-  gStyle->SetLabelFont(63,"Y");
-  gStyle->SetLabelSize(30,"Y");
-  gStyle->SetTitleOffset(1.75,"Y");
-  gStyle->SetTitleFont(63,"Y");
-  gStyle->SetTitleSize(35,"Y");
-  gStyle->SetLabelFont(63,"Z");
-  gStyle->SetLabelSize(30,"Z");
-  //gStyle->SetNdivisions(505,"X");
-  //gStyle->SetNdivisions(505,"Y");
-  //gROOT->ForceStyle(true);
+  gROOT->ForceStyle(true);
+
 }
 
 
 
 
-void Plots::AtlasStyle(){
-  
-
+void Plots::CMSStyle2(){
+  std::cout << "Configuring Plots::CMSStyle2()" << std::endl;
   // use plain black on white colors
   Int_t icol=0; // WHITE
   gStyle->SetFrameBorderMode(icol);
@@ -964,23 +977,27 @@ void Plots::AtlasStyle(){
 
 
 
-
-void Plots::ATLASLabel(Double_t x,Double_t y,bool Preliminary,Color_t color)
+void Plots::CMSLabel(Double_t x,Double_t y,Color_t color)
 {
-  TLatex l; //l.SetTextAlign(12); l.SetTextSize(tsize);                                                                                                                                             
+  TLatex l; //l.SetTextAlign(12); l.SetTextSize(tsize);                                                                                                                                                                                      
   l.SetNDC();
   l.SetTextFont(72);
   l.SetTextColor(color);
 
   double delx = 0.115*696*gPad->GetWh()/(472*gPad->GetWw());
 
-  l.DrawLatex(x,y,"ATLAS");
-  if (Preliminary) {
-    TLatex p;
-    p.SetNDC();
-    p.SetTextFont(42);
-    p.SetTextColor(color);
+  l.DrawLatex(x,y,"CMS");
+  TLatex p;
+  p.SetNDC();
+  p.SetTextFont(42);
+  p.SetTextColor(color);
+  if(plotLabel==cmsPrivate){
+    p.DrawLatex(x+delx,y,"Private");
+  }
+  if(plotLabel==cmsPreliminary){
     p.DrawLatex(x+delx,y,"Preliminary");
-    //    p.DrawLatex(x,y,"#sqrt{s}=900GeV");                                                                                                                                                       
   }
 }
+
+
+

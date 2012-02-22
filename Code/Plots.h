@@ -16,17 +16,17 @@ class Plots {
  Plots();
  ~Plots();
 
-  void Set_Data_Type(TString Data_type){
-    Data_type_=Data_type;
-  }
+ enum PLOTLABEL {none=0,cmsInternal,cmsPrivate,cmsPreliminary,cmsPublic};
 
-  void SaveHistograms(TString File, std::vector<TString> HistogramNames);
+ enum PLOTTYPE {cmsStyle1,cmsStyle2};
 
+ void Set_Plot_Type(TString style, TString label);
+ void SaveHistograms(TString File, std::vector<TString> HistogramNames);
 
- void PlotStyle();
- //void SetAtlasStyle ();
- void AtlasStyle();
- void ATLASLabel(Double_t x,Double_t y,bool Preliminary,Color_t color);
+ void CMSStyle1();
+ void CMSStyle2();
+ void CMSPrivateLabel(Double_t x,Double_t y,bool Preliminary,Color_t color);
+ void CMSLabel(Double_t x,Double_t y,Color_t color);
 
  void Plot1D(std::vector<TH1D> histo,float Lumi,std::vector<float> CrossSectionandAcceptance,std::vector<float> nevents,std::vector<int> colour,std::vector<TString> legend);
  void Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<float> CrossSectionandAcceptance,std::vector<float> nevents,std::vector<int> colour,std::vector<TString> legend);
@@ -39,7 +39,7 @@ class Plots {
  private:
  static TString File_;
  static std::vector<TString> HistogramNames_;
- static TString Data_type_;
+ static int plotLabel;
  bool doscale;
  bool doprofiles;
  bool verbose;

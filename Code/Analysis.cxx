@@ -25,7 +25,7 @@
 #include "Selection_Factory.h"
 #include "DoubleEventRemoval.h"
 #include "Parameters.h"
-
+#include "Plots.h"
 
 int main() {
   std::cout << "\n\n\n================" << std::endl;
@@ -47,7 +47,7 @@ int main() {
   std::vector<double> UncertW;
   bool thin, skim;
   int mode, runtype;
-  TString mode_str, runType_str, histofile, skimfile;
+  TString mode_str, runType_str, histofile, skimfile,PlotStyle,PlotLabel;
   double Lumi;
   Par.GetVectorString("File:",Files);
   Par.GetBool("Thin:",thin,"False");
@@ -60,6 +60,8 @@ int main() {
   Par.GetVectorString("UncertType:",UncertType,"<default>");
   Par.GetVectorStringDouble("UncertList:",UncertList,UncertW);
   Par.GetDouble("Lumi:",Lumi,1);
+  Par.GetString("PlotStyle:",PlotStyle,"style1");
+  Par.GetString("PlotLabel:",PlotLabel,"none");
   /////////////////////////////////////////////////
   // Check Input
   HistoConfig H; 
@@ -110,6 +112,8 @@ int main() {
     cout << "FATAL: No Mode Type!!!!" << endl;
     exit(6);
   }
+  Plots P;
+  P.Set_Plot_Type(PlotStyle,PlotLabel);
   //////////////////////////////////////////////////
   // Configure Analysis
   Selection_Factory SF;
