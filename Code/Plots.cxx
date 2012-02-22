@@ -17,7 +17,7 @@ std::vector<TString> Plots::HistogramNames_;
 Plots::Plots():
   doscale(false)
   ,verbose(false)
-  ,dooneprofile(true)
+  ,dooneprofile(false)
 {
   AtlasStyle();
 }
@@ -663,6 +663,7 @@ void Plots::Plot2D(std::vector<TH2D>  histo,float Lumi,std::vector<float> CrossS
       c.Clear();
       c.Divide(1,1);
     }
+    std::cout << Goodhistoindx.size() << std::endl;
     std::vector<TH1D*> ProfileStat;
     std::vector<TH1D*> ProfileRMS;
     ProfileStat.clear();
