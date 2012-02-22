@@ -457,7 +457,7 @@ void  Ztotautau_ControlSample::doEvent(){
       if(Ntp->isVtxGood(i))nGoodVtx++;
     }
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
-    if(mu_idx)TagEtaPT.at(t).Fill(Ntp->Muons_p4(mu_idx).Eta(),Ntp->Muons_p4(mu_idx).Pt(),w);
+    if(mu_idx!=999) TagEtaPT.at(t).Fill(fabs(Ntp->Muons_p4(mu_idx).Eta()),Ntp->Muons_p4(mu_idx).Pt(),w);
 
   }
 }
