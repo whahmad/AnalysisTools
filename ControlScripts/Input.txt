@@ -4,4 +4,6 @@ HistoFile: InputData/Histo.txt
 Analysis: Ztotautau_hadmu_ControlSample
 UncertType: default
 SkimInfo: InputData/SkimSummary.log
-Lumi: 5000.0
+Lumi: 3936.790
+PlotStyle: style1
+
