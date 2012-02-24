@@ -121,7 +121,6 @@ if( $ARGV[0] eq "--TauNtuple"){
 	system(sprintf("echo \"$currentdir/subs \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_,PUOutputFile_\\\" \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_\\\" TauDataFormat/TauNtuple/src/TauNtuple.cc\" >> Setup_TauNtuple"));
     }
 
-    system(sprintf("echo \"cp ~/bin/TauNtuple/kinematictauAdvanced_cfi.py RecoTauTag/KinematicTau/python/\" >> Setup_TauNtuple")); 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Setup_TauNtuple"));
     system(sprintf("echo \"source \$VO_CMS_SW_DIR/cmsset_default.sh\" >> Setup_TauNtuple "));
