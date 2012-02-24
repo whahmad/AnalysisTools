@@ -11,8 +11,9 @@ $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
 $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 $CodeDir="../Code";
 $set="V1";
-$CMSSWRel="4_2_8";
-
+$CMSSWRel="4_4_0";
+$PileupVersion="V08-03-17";
+$tag="HEAD";
 
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
@@ -22,6 +23,8 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                   <TauNtupleDir> location of CMSSW for TauNtuple.");
     printf("\n                                                   Optional Commmads: ");
     printf("\n                                                     --CMSSWRel <CMSSW release #> The CMSSW release you want to use Default: $CMSSWRel\n");
+    printf("\n                                                     --PileupVersion <Version # ie V08-03-17>");
+    printf("\n                                                     --tag <tag for TauNuptle/SkimProduction/TiggerFiliter/...>");
     printf("\n./todo.pl --Local <InputPar.txt>                   INTENTED FOR SMALL SCALE TESTS ONLY");  
     printf("\n                                                   Configure a directory to run locally. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
@@ -41,27 +44,34 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
 
 ######################################
 $InputFile=$ARGV[1];
-
 for($l=2;$l<$numArgs; $l++){
-    if($ARGV[l] eq "--InputDir"){
+    if($ARGV[$l] eq "--InputDir"){
 	$l++;
-	$InputDir=$ARGV[l];
+	$InputDir=$ARGV[$l];
     }
-    if($ARGV[l] eq "--OutputDir"){
+    if($ARGV[$l] eq "--OutputDir"){
 	$l++;
-	$OutputDir=$ARGV[l];
+	$OutputDir=$ARGV[$l];
     }
-    if($ARGV[l] eq "--CodeDir"){
+    if($ARGV[$l] eq "--CodeDir"){
 	$l++;
-	$CodeDir=$ARGV[l];
+	$CodeDir=$ARGV[$l];
     }
-    if($ARGV[l] eq "--SetName"){
+    if($ARGV[$l] eq "--SetName"){
 	$l++;
-	$set=$ARGV[l];
+	$set=$ARGV[$l];
     }
-    if($ARGV[l] eq "--CMSSWRel"){
+    if($ARGV[$l] eq "--CMSSWRel"){
         $l++;
-        $CMSSWRel=$ARGV[l];
+        $CMSSWRel=$ARGV[$l];
+    }
+    if($ARGV[$l] eq "--PileupVersion"){
+       $l++;
+        $PileupVersion=$ARGV[$l];
+    }
+    if($ARGV[$l] eq "--tag"){
+        $l++;
+        $tag=$ARGV[$l];
     }
 
 }
@@ -76,14 +86,11 @@ if( $ARGV[0] eq "--TauNtuple"){
 	printf("\nFor more details use: ./todo --help\n"); 
 	exit(0);
     }
-    printf("\nHave you setup the CMSROOT, kinit and klog? (y/n)\n");
-    $answer=<STDIN>;
-    chomp($answer);
-    printf("\nYour answer was [$answer]\n");
 
     printf("\nWorkingDir for CMSSW: $basedir");
     printf("\nCurrentDir is: $currentdir");
-    printf("\nUsing CMSSW Release: $CMSSWRel\n");
+    printf("\nUsing CMSSW Release: $CMSSWRel");
+    printf("\nUsing PileupVersion: $PileupVersion");
 
     # setup CMSSW
     system(sprintf("rm Setup_TauNtuple"));
@@ -96,16 +103,24 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cmsenv\" >> Setup_TauNtuple")); 
     system(sprintf("echo \"addpkg RecoVertex/KinematicFit V02-00-06 \" >> Setup_TauNtuple")); 
     system(sprintf("echo \"addpkg RecoVertex/KinematicFitPrimitives  V02-00-02 \" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d DataFormats -r V01-01-02 UserCode/RWTH3b/Tau/src/DataFormats\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d RecoTauTag  -r V01-01-02 UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d CommonTools -r V01-01-02 UserCode/RWTH3b/Tau/src/CommonTools\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"addpkg PhysicsTools/Utilities V08-03-14\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d TauDataFormat  -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d SkimmingTools  -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
-    system(sprintf("echo \"cvs co -d SkimProduction -r V00-00-12 UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d DataFormats -r V01-03-03 UserCode/RWTH3b/Tau/src/DataFormats\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d RecoTauTag  -r V01-03-03 UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d CommonTools -r V01-03-03 UserCode/RWTH3b/Tau/src/CommonTools\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"addpkg PhysicsTools/Utilities $PileupVersion \" >> Setup_TauNtuple"));
+    system(sprintf("echo \"addpkg RecoLuminosity/LumiDB V03-03-16\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d TauDataFormat  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimmingTools  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d SkimProduction -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
+    system(sprintf("echo \"cvs co -d TriggerFilter  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
     # add private hacks
-    system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Setup_TauNtuple"));
+    if($CMSSWRel eq "4_2_8"){    
+	system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Setup_TauNtuple"));
+    }
+    if($PileupVersion eq "V08-03-14"){
+	system(sprintf("echo \"$currentdir/subs \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_,PUOutputFile_\\\" \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_\\\" TauDataFormat/TauNtuple/src/TauNtuple.cc\" >> Setup_TauNtuple"));
+    }
+
     system(sprintf("echo \"cp ~/bin/TauNtuple/kinematictauAdvanced_cfi.py RecoTauTag/KinematicTau/python/\" >> Setup_TauNtuple")); 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Setup_TauNtuple"));
@@ -116,20 +131,18 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"scram b\" >> Setup_TauNtuple"));
 
     # print Instructions
-    printf("\n\nInstructions");
-    if($answer ne "y"){
-	printf("Please setup CVSROOT, klog and kinit before proceeding...");
-        printf("\nexport CVSROOT=\":gserver:cmscvs.cern.ch:/cvs_server/repositories/CMSSW\"");
-        printf("\nkinit <UserID>@CERN.CH"); 
-        printf("\nklog <UserID>@CERN.CH"); 
-    }
+    printf("\n\nInstructions\n");
+    printf("Please setup CVSROOT, klog and kinit before proceeding...");
+    printf("\nexport CVSROOT=\":gserver:cmscvs.cern.ch:/cvs_server/repositories/CMSSW\"");
+    printf("\nkinit <UserID>@CERN.CH"); 
+    printf("\nklog <UserID>@CERN.CH"); 
     printf("\nsource Setup_TauNtuple"); 
     printf("\nYou can now go to the Production Directory and submit jobs.");
     printf("\ncd  $basedir/SkimProduction/CRAB/");
     printf("\n1) Read the instruction for todo.pl: ./todo.pl --help");
     printf("\n2) Setup the jobs: ./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat ");
     printf("\n3) Setup the jobs and submit 1 Test job: ./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n 1");
-    printf("\n4) Setup the jobs and start production:./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n -1");
+    printf("\n4) Setup the jobs and start production:./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n -1\n");
 }
 
 
