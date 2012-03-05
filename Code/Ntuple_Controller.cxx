@@ -494,4 +494,20 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
   return false;
 }
 
+unsigned int Ntuple_Controller::GetMuonVertex(unsigned int muon_idx){
+  if(NMuons()>muon_idx){
+    unsigned int mu_trk_idx=Muon_Track_idx(muon_idx);
+    for(int i=0;i<NVtx();i++){
+      std::vector<int> vtrk=Vtx_Track_idx(i);
+      for(int j=0;j<vtrk.size();j++){
+	if(vtrk.at(j)==mu_trk_idx) return i;
+      }
+    }
+  }
+  return 999;
+}
+
+unsigned int Ntuple_Controller::GetJetVertex(unsigned int jet_idx){
+  return 999;
+}
 

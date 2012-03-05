@@ -322,6 +322,10 @@ class Ntuple_Controller{
    bool jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx);
    bool muonhasJetOverlap(unsigned int muon_idx,unsigned int &jet_idx);
    bool muonhasJetMatch(unsigned int muon_idx,unsigned int &jet_idx);
+
+   unsigned int GetMuonVertex(unsigned int muon_idx);
+   unsigned int GetJetVertex(unsigned int jet_idx);
+
 };
 
 #endif

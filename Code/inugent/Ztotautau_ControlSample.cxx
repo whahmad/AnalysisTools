@@ -437,12 +437,11 @@ void  Ztotautau_ControlSample::doEvent(){
   */
 
   double wobs(1),w(1);
-  /*
   if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
   }
   else{w=1;}
-  */
+  
   std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
  
