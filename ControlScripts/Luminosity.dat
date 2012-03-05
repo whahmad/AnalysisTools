@@ -29,18 +29,27 @@
 |HLT_IsoMu15_LooseIsoPFTau15_v8 |      18693 | 576.889(/pb) | 576.889(/pb) |
 |HLT_IsoMu15_LooseIsoPFTau15_v9 |       7011 | 247.744(/pb) | 247.744(/pb) |
 
+
+
 175835 - 176982:
-|HLT_IsoMu15_LooseIsoPFTau15_v9 |      15764 | 717.998(/pb) | 384.956(/pb) |
+|HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v1 |      15764 | 717.998(/pb) | 717.998(/pb) |
 
 
 177053 - 178367:
-|HLT_IsoMu15_LooseIsoPFTau15_v9 |      19786 | 996.373(/pb) | 578.359(/pb) |
+|HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v1 |      19786 | 996.373(/pb) |  996.373(/pb) |
 
 178380 - 180252:
+|HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v1 |        193 |   6.296(/pb) |   6.296(/pb) |
+|HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v5 |      12983 | 694.789(/pb) | 694.789(/pb) |
+|HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v6 |       1819 | 117.644(/pb) | 117.644(/pb) |
 
-|HLT_IsoMu15_LooseIsoPFTau15_v9 |        193 |   6.296(/pb) |   6.296(/pb) |
+
+
+
 
 
 Total: 
 160431 - 180252
-|HLT_IsoMu??_LooseIsoPFTau?? |        193 |   3936.790(/pb) |   3936.790(/pb) |
+
+4749.223 (1/pb)
+
