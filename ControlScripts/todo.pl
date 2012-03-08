@@ -14,6 +14,7 @@ $set="V1";
 $CMSSWRel="4_4_0";
 $PileupVersion="V08-03-17";
 $tag="HEAD";
+$TauReco="4_4_Y_08_03_2012";
 
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
@@ -22,10 +23,11 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n./todo.pl --TauNtuple <TauNtupleDir>               Setups up TauNtuple and gives instructions for submission");
     printf("\n                                                   <TauNtupleDir> location of CMSSW for TauNtuple.");
     printf("\n                                                   Optional Commmads: ");
-    printf("\n                                                     --CMSSWRel <CMSSW release #> The CMSSW release you want to use Default: $CMSSWRel\n");
+    printf("\n                                                     --CMSSWRel <CMSSW release #> The CMSSW release you want to use Default: $CMSSWRel");
     printf("\n                                                     --PileupVersion <Version # ie V08-03-17>");
     printf("\n                                                     --tag <tag for TauNuptle/SkimProduction/TiggerFiliter/...>");
-    printf("\n./todo.pl --Local <InputPar.txt>                   INTENTED FOR SMALL SCALE TESTS ONLY");  
+    printf("\n                                                     --TauReco <tag for Recommended TauReco> current option: na or 4_4_Y_08_03_2012");
+    printf("\n./todo.pl --Local <Input.txt>                      INTENTED FOR SMALL SCALE TESTS ONLY");  
     printf("\n                                                   Configure a directory to run locally. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
     printf("\n                                                   Optional commands:  ");
@@ -33,7 +35,7 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                     --OutputDir <OutputDir> Default value: $OutputDir");
     printf("\n                                                     --CodeDir  <CodeDir>    Default value: $CodeDir");
     printf("\n                                                     --SetName <SetName>     Default value: $set \n");
-    printf("\n./todo.pl --DCache <InputPar.txt> <ListofDS.txt>   INTENTED FOR REGULAR USE (DEFAULT)");
+    printf("\n./todo.pl --DCache <Input.txt> <ListofDS.txt>      INTENTED FOR REGULAR USE (DEFAULT)");
     printf("\n                                                   Configure a directory to run from. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
     printf("\n                                                   <ListoDS.txt> list of DCache Dataset directories you want to run on.");
@@ -72,6 +74,10 @@ for($l=2;$l<$numArgs; $l++){
     if($ARGV[$l] eq "--tag"){
         $l++;
         $tag=$ARGV[$l];
+    }
+    if($ARGV[$l] eq "--TauReco"){
+        $l++;
+        $TauReco=$ARGV[$l];
     }
 
 }
@@ -113,6 +119,13 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cvs co -d SkimProduction -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d TriggerFilter  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
+    if($TauReco eq "4_4_Y_08_03_2012"){
+	system(sprintf("echo \"cvs co -r V01-02-01 RecoTauTag/TauTagTools \" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs co -r V01-02-16 RecoTauTag/RecoTau \" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs co -r V01-02-12 RecoTauTag/Configuration \" >> Setup_TauNtuple"));
+	system(sprintf("echo \"addpkg  PhysicsTools/PatAlgos \" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs up -r 1.47 PhysicsTools/PatAlgos/python/tools/tauTools.py \" >> Setup_TauNtuple"));
+    }
     # add private hacks
     if($CMSSWRel eq "4_2_8"){    
 	system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Setup_TauNtuple"));
