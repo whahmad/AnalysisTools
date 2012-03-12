@@ -74,7 +74,20 @@ public :
    std::vector<bool>    *PFTau_isLooseIsolation;
    std::vector<int>     *PFTau_hpsDecayMode;
    std::vector<int>     *PFTau_Charge;
+   std::vector<bool>    *PFTau_isTightIsolationDBSumPtCorr;
+   std::vector<bool>    *PFTau_isMediumIsolationDBSumPtCorr;
+   std::vector<bool>    *PFTau_isLooseIsolationDBSumPtCorr;
+   std::vector<bool>    *PFTau_isVLooseIsolationDBSumPtCorr;
+
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsLoose;
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsMedium;
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsTight;
+   std::vector<bool>    *PFTau_isHPSAgainstMuonLoose;
+   std::vector<bool>    *PFTau_isHPSAgainstMuonTight;
+   std::vector<bool>    *PFTau_isHPSByDecayModeFinding;     
+
    std::vector<std::vector<int> > *PFTau_Track_idx;
+
    std::vector<bool>    *KFTau_discriminatorByKFit;
    std::vector<bool>    *KFTau_discriminatorByQC;
    Int_t           KFTau_nKinTaus;
@@ -221,6 +234,17 @@ public :
    TBranch        *b_PFTau_isLooseIsolation;   //!
    TBranch        *b_PFTau_hpsDecayMode;   //!
    TBranch        *b_PFTau_Charge;   //!
+   TBranch        *b_PFTau_isTightIsolationDBSumPtCorr;    //!
+   TBranch        *b_PFTau_isMediumIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isLooseIsolationDBSumPtCorr;    //!
+   TBranch        *b_PFTau_isVLooseIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsLoose;     //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsMedium;    //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsTight;     //!
+   TBranch        *b_PFTau_isHPSAgainstMuonLoose;	       //!
+   TBranch        *b_PFTau_isHPSAgainstMuonTight;	       //!
+   TBranch        *b_PFTau_isHPSByDecayModeFinding;        //!
+
    TBranch        *b_PFTau_Track_idx;   //!
    TBranch        *b_KFTau_discriminatorByKFit;   //!
    TBranch        *b_KFTau_discriminatorByQC;   //!
@@ -448,6 +472,18 @@ void NtupleReader::Init(TTree *tree)
    PFTau_isLooseIsolation = 0;
    PFTau_hpsDecayMode = 0;
    PFTau_Charge = 0;
+   PFTau_isTightIsolationDBSumPtCorr = 0;
+   PFTau_isMediumIsolationDBSumPtCorr = 0;
+   PFTau_isLooseIsolationDBSumPtCorr = 0;
+   PFTau_isVLooseIsolationDBSumPtCorr = 0;
+   PFTau_isHPSAgainstElectronsLoose = 0; 
+   PFTau_isHPSAgainstElectronsMedium = 0;
+   PFTau_isHPSAgainstElectronsTight = 0; 
+   PFTau_isHPSAgainstMuonLoose = 0;	     
+   PFTau_isHPSAgainstMuonTight = 0;	     
+   PFTau_isHPSByDecayModeFinding = 0;    
+
+
    PFTau_Track_idx = 0;
    KFTau_discriminatorByKFit = 0;
    KFTau_discriminatorByQC = 0;
@@ -580,6 +616,17 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_isLooseIsolation", &PFTau_isLooseIsolation, &b_PFTau_isLooseIsolation);
    fChain->SetBranchAddress("PFTau_hpsDecayMode", &PFTau_hpsDecayMode, &b_PFTau_hpsDecayMode);
    fChain->SetBranchAddress("PFTau_Charge", &PFTau_Charge, &b_PFTau_Charge);
+   fChain->SetBranchAddress("PFTau_isTightIsolationDBSumPtCorr", &PFTau_isTightIsolationDBSumPtCorr, &b_PFTau_isTightIsolationDBSumPtCorr);
+   fChain->SetBranchAddress("PFTau_isMediumIsolationDBSumPtCorr", &PFTau_isMediumIsolationDBSumPtCorr, &b_PFTau_isMediumIsolationDBSumPtCorr);
+   fChain->SetBranchAddress("PFTau_isLooseIsolationDBSumPtCorr", &PFTau_isLooseIsolationDBSumPtCorr, &b_PFTau_isLooseIsolationDBSumPtCorr);
+   fChain->SetBranchAddress("PFTau_isVLooseIsolationDBSumPtCorr", &PFTau_isVLooseIsolationDBSumPtCorr, &b_PFTau_isVLooseIsolationDBSumPtCorr);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsLoose", &PFTau_isHPSAgainstElectronsLoose, &b_PFTau_isHPSAgainstElectronsLoose);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsMedium", &PFTau_isHPSAgainstElectronsMedium, &b_PFTau_isHPSAgainstElectronsMedium);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsTight", &PFTau_isHPSAgainstElectronsTight, &b_PFTau_isHPSAgainstElectronsTight);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonLoose", &PFTau_isHPSAgainstMuonLoose, &b_PFTau_isHPSAgainstMuonLoose);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonTight", &PFTau_isHPSAgainstMuonTight, &b_PFTau_isHPSAgainstMuonTight);
+   fChain->SetBranchAddress("PFTau_isHPSByDecayModeFinding", &PFTau_isHPSByDecayModeFinding, &b_PFTau_isHPSByDecayModeFinding);
+
    fChain->SetBranchAddress("PFTau_Track_idx", &PFTau_Track_idx, &b_PFTau_Track_idx);
    fChain->SetBranchAddress("KFTau_discriminatorByKFit", &KFTau_discriminatorByKFit, &b_KFTau_discriminatorByKFit);
    fChain->SetBranchAddress("KFTau_discriminatorByQC", &KFTau_discriminatorByQC, &b_KFTau_discriminatorByQC);
