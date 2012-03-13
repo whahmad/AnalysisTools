@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri Dec 16 16:41:55 2011 by ROOT version 5.26/00c
+// Tue Mar 13 10:13:59 2012 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -10,12 +10,10 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-#include <TFile.h>
 #include <TTreeCache.h>
-#include <vector>
-#include <string>
-#include<iostream>
-
+#include <vector.h>
+#include <string.h>
+#include <iostream>
 
 class NtupleReader {
 public :
@@ -65,29 +63,47 @@ public :
    std::vector<float>   *Muon_hitPattern_numberOfValidMuonHits;
    std::vector<float>   *Muon_innerTrack_numberofValidHits;
    std::vector<float>   *Muon_numberOfMatches;
-   std::vector<int>     *Muon_numberOfChambers;
    std::vector<int>     *Muon_Charge;
-
+   std::vector<int>     *Muon_numberOfChambers;
+   std::vector<std::vector<float> > *Electron_p4;
+   std::vector<std::vector<double> > *Electron_Poca;
+   std::vector<float>   *Electron_Charge;
+   std::vector<float>   *Electron_Gsf_deltaEtaEleClusterTrackAtCalo;
+   std::vector<float>   *Electron_Gsf_deltaEtaSeedClusterTrackAtCalo;
+   std::vector<float>   *Electron_Gsf_deltaEtaSuperClusterTrackAtVtx;
+   std::vector<float>   *Electron_Gsf_deltaPhiEleClusterTrackAtCalo;
+   std::vector<float>   *Electron_Gsf_deltaPhiSeedClusterTrackAtCalo;
+   std::vector<float>   *Electron_Gsf_deltaPhiSuperClusterTrackAtVtx;
+   std::vector<float>   *Electron_Gsf_dr03EcalRecHitSumE;
+   std::vector<float>   *Electron_Gsf_dr03HcalDepth1TowerSumEt;
+   std::vector<float>   *Electron_Gsf_dr03HcalDepth1TowerSumEtBc;
+   std::vector<float>   *Electron_Gsf_dr03HcalDepth2TowerSumEt;
+   std::vector<float>   *Electron_Gsf_dr03HcalDepth2TowerSumEtBc;
+   std::vector<float>   *Electron_Gsf_dr03HcalTowerSumEt;
+   std::vector<float>   *Electron_Gsf_dr03HcalTowerSumEtBc;
+   std::vector<float>   *Electron_Gsf_dr03TkSumPt;
+   std::vector<bool>    *Electron_Gsf_passingCutBasedPreselection;
+   std::vector<bool>    *Electron_Gsf_passingMvaPreselection;
+   std::vector<int>     *Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits;
+   std::vector<float>   *Electron_supercluster_e;
+   std::vector<float>   *Electron_supercluster_phi;
+   std::vector<float>   *Electron_supercluster_eta;
+   std::vector<float>   *Electron_supercluster_centroid_x;
+   std::vector<float>   *Electron_supercluster_centroid_y;
+   std::vector<float>   *Electron_supercluster_centroid_z;
+   std::vector<unsigned int> *Electron_Track_idx;
    std::vector<std::vector<float> > *PFTau_p4;
+   std::vector<std::vector<double> > *PFTau_Poca;
    std::vector<bool>    *PFTau_isTightIsolation;
    std::vector<bool>    *PFTau_isMediumIsolation;
    std::vector<bool>    *PFTau_isLooseIsolation;
-   std::vector<int>     *PFTau_hpsDecayMode;
-   std::vector<int>     *PFTau_Charge;
    std::vector<bool>    *PFTau_isTightIsolationDBSumPtCorr;
    std::vector<bool>    *PFTau_isMediumIsolationDBSumPtCorr;
    std::vector<bool>    *PFTau_isLooseIsolationDBSumPtCorr;
    std::vector<bool>    *PFTau_isVLooseIsolationDBSumPtCorr;
-
-   std::vector<bool>    *PFTau_isHPSAgainstElectronsLoose;
-   std::vector<bool>    *PFTau_isHPSAgainstElectronsMedium;
-   std::vector<bool>    *PFTau_isHPSAgainstElectronsTight;
-   std::vector<bool>    *PFTau_isHPSAgainstMuonLoose;
-   std::vector<bool>    *PFTau_isHPSAgainstMuonTight;
-   std::vector<bool>    *PFTau_isHPSByDecayModeFinding;     
-
+   std::vector<int>     *PFTau_hpsDecayMode;
+   std::vector<int>     *PFTau_Charge;
    std::vector<std::vector<int> > *PFTau_Track_idx;
-
    std::vector<bool>    *KFTau_discriminatorByKFit;
    std::vector<bool>    *KFTau_discriminatorByQC;
    Int_t           KFTau_nKinTaus;
@@ -111,6 +127,7 @@ public :
    std::vector<double>  *KFTau_Fit_PV_PV_significance;
    std::vector<double>  *KFTau_Fit_SV_PV_significance;
    std::vector<std::vector<float> > *PFJet_p4;
+   std::vector<std::vector<double> > *PFJet_Poca;
    std::vector<float>   *PFJet_chargedEmEnergy;
    std::vector<float>   *PFJet_chargedHadronEnergy;
    std::vector<float>   *PFJet_chargedHadronMultiplicity;
@@ -182,6 +199,18 @@ public :
    std::vector<std::vector<int> > *MCTauandProd_charge;
    std::vector<unsigned int> *MCTau_JAK;
    std::vector<unsigned int> *MCTau_DecayBitMask;
+   std::vector<std::string>  *HTLTriggerName;
+   std::vector<bool>    *TriggerAccept;
+   std::vector<bool>    *TriggerError;
+   std::vector<bool>    *TriggerWasRun;
+   std::vector<unsigned int> *HLTPrescale;
+   std::vector<unsigned int> *NHLTL1GTSeeds;
+   std::vector<unsigned int> *L1SEEDPrescale;
+   std::vector<bool>    *L1SEEDInvalidPrescale;
+   std::vector<std::vector<float> > *MuonTriggerMatch;
+   std::vector<std::vector<float> > *ElectronTriggerMatch;
+   std::vector<std::vector<float> > *JetTriggerMatch;
+   std::vector<std::vector<float> > *TauTriggerMatch;
 
    // List of branches
    TBranch        *b_DataMC_Type;   //!
@@ -228,23 +257,44 @@ public :
    TBranch        *b_Muon_numberOfMatches;   //!
    TBranch        *b_Muon_Charge;   //!
    TBranch        *b_Muon_numberOfChambers;   //!
+   TBranch        *b_Electron_p4;   //!
+   TBranch        *b_Electron_Poca;   //!
+   TBranch        *b_Electron_Charge;   //!
+   TBranch        *b_Electron_Gsf_deltaEtaEleClusterTrackAtCalo;   //!
+   TBranch        *b_Electron_Gsf_deltaEtaSeedClusterTrackAtCalo;   //!
+   TBranch        *b_Electron_Gsf_deltaEtaSuperClusterTrackAtVtx;   //!
+   TBranch        *b_Electron_Gsf_deltaPhiEleClusterTrackAtCalo;   //!
+   TBranch        *b_Electron_Gsf_deltaPhiSeedClusterTrackAtCalo;   //!
+   TBranch        *b_Electron_Gsf_deltaPhiSuperClusterTrackAtVtx;   //!
+   TBranch        *b_Electron_Gsf_dr03EcalRecHitSumE;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalDepth1TowerSumEt;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalDepth1TowerSumEtBc;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalDepth2TowerSumEt;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalDepth2TowerSumEtBc;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalTowerSumEt;   //!
+   TBranch        *b_Electron_Gsf_dr03HcalTowerSumEtBc;   //!
+   TBranch        *b_Electron_Gsf_dr03TkSumPt;   //!
+   TBranch        *b_Electron_Gsf_passingCutBasedPreselection;   //!
+   TBranch        *b_Electron_Gsf_passingMvaPreselection;   //!
+   TBranch        *b_Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits;   //!
+   TBranch        *b_Electron_supercluster_e;   //!
+   TBranch        *b_Electron_supercluster_phi;   //!
+   TBranch        *b_Electron_supercluster_eta;   //!
+   TBranch        *b_Electron_supercluster_centroid_x;   //!
+   TBranch        *b_Electron_supercluster_centroid_y;   //!
+   TBranch        *b_Electron_supercluster_centroid_z;   //!
+   TBranch        *b_Electron_Track_idx;   //!
    TBranch        *b_PFTau_p4;   //!
+   TBranch        *b_PFTau_Poca;   //!
    TBranch        *b_PFTau_isTightIsolation;   //!
    TBranch        *b_PFTau_isMediumIsolation;   //!
    TBranch        *b_PFTau_isLooseIsolation;   //!
+   TBranch        *b_PFTau_isTightIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isMediumIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isLooseIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isVLooseIsolationDBSumPtCorr;   //!
    TBranch        *b_PFTau_hpsDecayMode;   //!
    TBranch        *b_PFTau_Charge;   //!
-   TBranch        *b_PFTau_isTightIsolationDBSumPtCorr;    //!
-   TBranch        *b_PFTau_isMediumIsolationDBSumPtCorr;   //!
-   TBranch        *b_PFTau_isLooseIsolationDBSumPtCorr;    //!
-   TBranch        *b_PFTau_isVLooseIsolationDBSumPtCorr;   //!
-   TBranch        *b_PFTau_isHPSAgainstElectronsLoose;     //!
-   TBranch        *b_PFTau_isHPSAgainstElectronsMedium;    //!
-   TBranch        *b_PFTau_isHPSAgainstElectronsTight;     //!
-   TBranch        *b_PFTau_isHPSAgainstMuonLoose;	       //!
-   TBranch        *b_PFTau_isHPSAgainstMuonTight;	       //!
-   TBranch        *b_PFTau_isHPSByDecayModeFinding;        //!
-
    TBranch        *b_PFTau_Track_idx;   //!
    TBranch        *b_KFTau_discriminatorByKFit;   //!
    TBranch        *b_KFTau_discriminatorByQC;   //!
@@ -263,12 +313,13 @@ public :
    TBranch        *b_KFTau_Fit_charge;   //!
    TBranch        *b_KFTau_Fit_csum;   //!
    TBranch        *b_KFTau_Fit_iterations;   //!
-   TBranch        *b_KFTau_Fit_TauEnergyFraction;  //!
+   TBranch        *b_KFTau_Fit_TauEnergyFraction;   //!
    TBranch        *b_KFTau_Fit_RefitVisibleMass;   //!
-   TBranch        *b_KFTau_Fit_Chi2;	       //!
-   TBranch        *b_KFTau_Fit_PV_PV_significance; //!
-   TBranch        *b_KFTau_Fit_SV_PV_significance; //!
+   TBranch        *b_KFTau_Fit_Chi2;   //!
+   TBranch        *b_KFTau_Fit_PV_PV_significance;   //!
+   TBranch        *b_KFTau_Fit_SV_PV_significance;   //!
    TBranch        *b_PFJet_p4;   //!
+   TBranch        *b_PFJet_Poca;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
    TBranch        *b_PFJet_chargedHadronEnergy;   //!
    TBranch        *b_PFJet_chargedHadronMultiplicity;   //!
@@ -340,6 +391,18 @@ public :
    TBranch        *b_MCTauandProd_charge;   //!
    TBranch        *b_MCTau_JAK;   //!
    TBranch        *b_MCTau_DecayBitMask;   //!
+   TBranch        *b_HTLTriggerName;   //!
+   TBranch        *b_TriggerAccept;   //!
+   TBranch        *b_TriggerError;   //!
+   TBranch        *b_TriggerWasRun;   //!
+   TBranch        *b_HLTPrescale;   //!
+   TBranch        *b_NHLTL1GTSeeds;   //!
+   TBranch        *b_L1SEEDPrescale;   //!
+   TBranch        *b_L1SEEDInvalidPrescale;   //!
+   TBranch        *b_MuonTriggerMatch;   //!
+   TBranch        *b_ElectronTriggerMatch;   //!
+   TBranch        *b_JetTriggerMatch;   //!
+   TBranch        *b_TauTriggerMatch;   //!
 
    NtupleReader(TTree *tree=0);
    virtual ~NtupleReader();
@@ -376,7 +439,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/user/inugent/MC_DY_SkimmedTauNtuple_1_1_1Yh.root/t");
+      chain->Add("../Set_1/TauNtuple_123_1_t4m.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -465,25 +528,44 @@ void NtupleReader::Init(TTree *tree)
    Muon_numberOfMatches = 0;
    Muon_Charge = 0;
    Muon_numberOfChambers = 0;
-
+   Electron_p4 = 0;
+   Electron_Poca = 0;
+   Electron_Charge = 0;
+   Electron_Gsf_deltaEtaEleClusterTrackAtCalo = 0;
+   Electron_Gsf_deltaEtaSeedClusterTrackAtCalo = 0;
+   Electron_Gsf_deltaEtaSuperClusterTrackAtVtx = 0;
+   Electron_Gsf_deltaPhiEleClusterTrackAtCalo = 0;
+   Electron_Gsf_deltaPhiSeedClusterTrackAtCalo = 0;
+   Electron_Gsf_deltaPhiSuperClusterTrackAtVtx = 0;
+   Electron_Gsf_dr03EcalRecHitSumE = 0;
+   Electron_Gsf_dr03HcalDepth1TowerSumEt = 0;
+   Electron_Gsf_dr03HcalDepth1TowerSumEtBc = 0;
+   Electron_Gsf_dr03HcalDepth2TowerSumEt = 0;
+   Electron_Gsf_dr03HcalDepth2TowerSumEtBc = 0;
+   Electron_Gsf_dr03HcalTowerSumEt = 0;
+   Electron_Gsf_dr03HcalTowerSumEtBc = 0;
+   Electron_Gsf_dr03TkSumPt = 0;
+   Electron_Gsf_passingCutBasedPreselection = 0;
+   Electron_Gsf_passingMvaPreselection = 0;
+   Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits = 0;
+   Electron_supercluster_e = 0;
+   Electron_supercluster_phi = 0;
+   Electron_supercluster_eta = 0;
+   Electron_supercluster_centroid_x = 0;
+   Electron_supercluster_centroid_y = 0;
+   Electron_supercluster_centroid_z = 0;
+   Electron_Track_idx = 0;
    PFTau_p4 = 0;
+   PFTau_Poca = 0;
    PFTau_isTightIsolation = 0;
    PFTau_isMediumIsolation = 0;
    PFTau_isLooseIsolation = 0;
-   PFTau_hpsDecayMode = 0;
-   PFTau_Charge = 0;
    PFTau_isTightIsolationDBSumPtCorr = 0;
    PFTau_isMediumIsolationDBSumPtCorr = 0;
    PFTau_isLooseIsolationDBSumPtCorr = 0;
    PFTau_isVLooseIsolationDBSumPtCorr = 0;
-   PFTau_isHPSAgainstElectronsLoose = 0; 
-   PFTau_isHPSAgainstElectronsMedium = 0;
-   PFTau_isHPSAgainstElectronsTight = 0; 
-   PFTau_isHPSAgainstMuonLoose = 0;	     
-   PFTau_isHPSAgainstMuonTight = 0;	     
-   PFTau_isHPSByDecayModeFinding = 0;    
-
-
+   PFTau_hpsDecayMode = 0;
+   PFTau_Charge = 0;
    PFTau_Track_idx = 0;
    KFTau_discriminatorByKFit = 0;
    KFTau_discriminatorByQC = 0;
@@ -501,12 +583,13 @@ void NtupleReader::Init(TTree *tree)
    KFTau_Fit_charge = 0;
    KFTau_Fit_csum = 0;
    KFTau_Fit_iterations = 0;
-   KFTau_Fit_TauEnergyFraction= 0; 
-   KFTau_Fit_RefitVisibleMass= 0;  
-   KFTau_Fit_Chi2= 0;	      
-   KFTau_Fit_PV_PV_significance= 0;
-   KFTau_Fit_SV_PV_significance= 0;
+   KFTau_Fit_TauEnergyFraction = 0;
+   KFTau_Fit_RefitVisibleMass = 0;
+   KFTau_Fit_Chi2 = 0;
+   KFTau_Fit_PV_PV_significance = 0;
+   KFTau_Fit_SV_PV_significance = 0;
    PFJet_p4 = 0;
+   PFJet_Poca = 0;
    PFJet_chargedEmEnergy = 0;
    PFJet_chargedHadronEnergy = 0;
    PFJet_chargedHadronMultiplicity = 0;
@@ -560,6 +643,18 @@ void NtupleReader::Init(TTree *tree)
    MCTauandProd_charge = 0;
    MCTau_JAK = 0;
    MCTau_DecayBitMask = 0;
+   HTLTriggerName = 0;
+   TriggerAccept = 0;
+   TriggerError = 0;
+   TriggerWasRun = 0;
+   HLTPrescale = 0;
+   NHLTL1GTSeeds = 0;
+   L1SEEDPrescale = 0;
+   L1SEEDInvalidPrescale = 0;
+   MuonTriggerMatch = 0;
+   ElectronTriggerMatch = 0;
+   JetTriggerMatch = 0;
+   TauTriggerMatch = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -608,25 +703,46 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Muon_hitPattern_numberOfValidMuonHits", &Muon_hitPattern_numberOfValidMuonHits, &b_Muon_hitPattern_numberOfValidMuonHits);
    fChain->SetBranchAddress("Muon_innerTrack_numberofValidHits", &Muon_innerTrack_numberofValidHits, &b_Muon_innerTrack_numberofValidHits);
    fChain->SetBranchAddress("Muon_numberOfMatches", &Muon_numberOfMatches, &b_Muon_numberOfMatches);
-   fChain->SetBranchAddress("Muon_numberOfChambers", &Muon_numberOfChambers, &b_Muon_numberOfChambers);
    fChain->SetBranchAddress("Muon_Charge", &Muon_Charge, &b_Muon_Charge);
+   fChain->SetBranchAddress("Muon_numberOfChambers", &Muon_numberOfChambers, &b_Muon_numberOfChambers);
+   fChain->SetBranchAddress("Electron_p4", &Electron_p4, &b_Electron_p4);
+   fChain->SetBranchAddress("Electron_Poca", &Electron_Poca, &b_Electron_Poca);
+   fChain->SetBranchAddress("Electron_Charge", &Electron_Charge, &b_Electron_Charge);
+   fChain->SetBranchAddress("Electron_Gsf_deltaEtaEleClusterTrackAtCalo", &Electron_Gsf_deltaEtaEleClusterTrackAtCalo, &b_Electron_Gsf_deltaEtaEleClusterTrackAtCalo);
+   fChain->SetBranchAddress("Electron_Gsf_deltaEtaSeedClusterTrackAtCalo", &Electron_Gsf_deltaEtaSeedClusterTrackAtCalo, &b_Electron_Gsf_deltaEtaSeedClusterTrackAtCalo);
+   fChain->SetBranchAddress("Electron_Gsf_deltaEtaSuperClusterTrackAtVtx", &Electron_Gsf_deltaEtaSuperClusterTrackAtVtx, &b_Electron_Gsf_deltaEtaSuperClusterTrackAtVtx);
+   fChain->SetBranchAddress("Electron_Gsf_deltaPhiEleClusterTrackAtCalo", &Electron_Gsf_deltaPhiEleClusterTrackAtCalo, &b_Electron_Gsf_deltaPhiEleClusterTrackAtCalo);
+   fChain->SetBranchAddress("Electron_Gsf_deltaPhiSeedClusterTrackAtCalo", &Electron_Gsf_deltaPhiSeedClusterTrackAtCalo, &b_Electron_Gsf_deltaPhiSeedClusterTrackAtCalo);
+   fChain->SetBranchAddress("Electron_Gsf_deltaPhiSuperClusterTrackAtVtx", &Electron_Gsf_deltaPhiSuperClusterTrackAtVtx, &b_Electron_Gsf_deltaPhiSuperClusterTrackAtVtx);
+   fChain->SetBranchAddress("Electron_Gsf_dr03EcalRecHitSumE", &Electron_Gsf_dr03EcalRecHitSumE, &b_Electron_Gsf_dr03EcalRecHitSumE);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalDepth1TowerSumEt", &Electron_Gsf_dr03HcalDepth1TowerSumEt, &b_Electron_Gsf_dr03HcalDepth1TowerSumEt);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalDepth1TowerSumEtBc", &Electron_Gsf_dr03HcalDepth1TowerSumEtBc, &b_Electron_Gsf_dr03HcalDepth1TowerSumEtBc);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalDepth2TowerSumEt", &Electron_Gsf_dr03HcalDepth2TowerSumEt, &b_Electron_Gsf_dr03HcalDepth2TowerSumEt);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalDepth2TowerSumEtBc", &Electron_Gsf_dr03HcalDepth2TowerSumEtBc, &b_Electron_Gsf_dr03HcalDepth2TowerSumEtBc);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalTowerSumEt", &Electron_Gsf_dr03HcalTowerSumEt, &b_Electron_Gsf_dr03HcalTowerSumEt);
+   fChain->SetBranchAddress("Electron_Gsf_dr03HcalTowerSumEtBc", &Electron_Gsf_dr03HcalTowerSumEtBc, &b_Electron_Gsf_dr03HcalTowerSumEtBc);
+   fChain->SetBranchAddress("Electron_Gsf_dr03TkSumPt", &Electron_Gsf_dr03TkSumPt, &b_Electron_Gsf_dr03TkSumPt);
+   fChain->SetBranchAddress("Electron_Gsf_passingCutBasedPreselection", &Electron_Gsf_passingCutBasedPreselection, &b_Electron_Gsf_passingCutBasedPreselection);
+   fChain->SetBranchAddress("Electron_Gsf_passingMvaPreselection", &Electron_Gsf_passingMvaPreselection, &b_Electron_Gsf_passingMvaPreselection);
+   fChain->SetBranchAddress("Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits", &Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits, &b_Electron_gsftrack_trackerExpectedHitsInner_numberOfLostHits);
+   fChain->SetBranchAddress("Electron_supercluster_e", &Electron_supercluster_e, &b_Electron_supercluster_e);
+   fChain->SetBranchAddress("Electron_supercluster_phi", &Electron_supercluster_phi, &b_Electron_supercluster_phi);
+   fChain->SetBranchAddress("Electron_supercluster_eta", &Electron_supercluster_eta, &b_Electron_supercluster_eta);
+   fChain->SetBranchAddress("Electron_supercluster_centroid_x", &Electron_supercluster_centroid_x, &b_Electron_supercluster_centroid_x);
+   fChain->SetBranchAddress("Electron_supercluster_centroid_y", &Electron_supercluster_centroid_y, &b_Electron_supercluster_centroid_y);
+   fChain->SetBranchAddress("Electron_supercluster_centroid_z", &Electron_supercluster_centroid_z, &b_Electron_supercluster_centroid_z);
+   fChain->SetBranchAddress("Electron_Track_idx", &Electron_Track_idx, &b_Electron_Track_idx);
    fChain->SetBranchAddress("PFTau_p4", &PFTau_p4, &b_PFTau_p4);
+   fChain->SetBranchAddress("PFTau_Poca", &PFTau_Poca, &b_PFTau_Poca);
    fChain->SetBranchAddress("PFTau_isTightIsolation", &PFTau_isTightIsolation, &b_PFTau_isTightIsolation);
    fChain->SetBranchAddress("PFTau_isMediumIsolation", &PFTau_isMediumIsolation, &b_PFTau_isMediumIsolation);
    fChain->SetBranchAddress("PFTau_isLooseIsolation", &PFTau_isLooseIsolation, &b_PFTau_isLooseIsolation);
-   fChain->SetBranchAddress("PFTau_hpsDecayMode", &PFTau_hpsDecayMode, &b_PFTau_hpsDecayMode);
-   fChain->SetBranchAddress("PFTau_Charge", &PFTau_Charge, &b_PFTau_Charge);
    fChain->SetBranchAddress("PFTau_isTightIsolationDBSumPtCorr", &PFTau_isTightIsolationDBSumPtCorr, &b_PFTau_isTightIsolationDBSumPtCorr);
    fChain->SetBranchAddress("PFTau_isMediumIsolationDBSumPtCorr", &PFTau_isMediumIsolationDBSumPtCorr, &b_PFTau_isMediumIsolationDBSumPtCorr);
    fChain->SetBranchAddress("PFTau_isLooseIsolationDBSumPtCorr", &PFTau_isLooseIsolationDBSumPtCorr, &b_PFTau_isLooseIsolationDBSumPtCorr);
    fChain->SetBranchAddress("PFTau_isVLooseIsolationDBSumPtCorr", &PFTau_isVLooseIsolationDBSumPtCorr, &b_PFTau_isVLooseIsolationDBSumPtCorr);
-   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsLoose", &PFTau_isHPSAgainstElectronsLoose, &b_PFTau_isHPSAgainstElectronsLoose);
-   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsMedium", &PFTau_isHPSAgainstElectronsMedium, &b_PFTau_isHPSAgainstElectronsMedium);
-   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsTight", &PFTau_isHPSAgainstElectronsTight, &b_PFTau_isHPSAgainstElectronsTight);
-   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonLoose", &PFTau_isHPSAgainstMuonLoose, &b_PFTau_isHPSAgainstMuonLoose);
-   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonTight", &PFTau_isHPSAgainstMuonTight, &b_PFTau_isHPSAgainstMuonTight);
-   fChain->SetBranchAddress("PFTau_isHPSByDecayModeFinding", &PFTau_isHPSByDecayModeFinding, &b_PFTau_isHPSByDecayModeFinding);
-
+   fChain->SetBranchAddress("PFTau_hpsDecayMode", &PFTau_hpsDecayMode, &b_PFTau_hpsDecayMode);
+   fChain->SetBranchAddress("PFTau_Charge", &PFTau_Charge, &b_PFTau_Charge);
    fChain->SetBranchAddress("PFTau_Track_idx", &PFTau_Track_idx, &b_PFTau_Track_idx);
    fChain->SetBranchAddress("KFTau_discriminatorByKFit", &KFTau_discriminatorByKFit, &b_KFTau_discriminatorByKFit);
    fChain->SetBranchAddress("KFTau_discriminatorByQC", &KFTau_discriminatorByQC, &b_KFTau_discriminatorByQC);
@@ -645,12 +761,13 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Fit_charge", &KFTau_Fit_charge, &b_KFTau_Fit_charge);
    fChain->SetBranchAddress("KFTau_Fit_csum", &KFTau_Fit_csum, &b_KFTau_Fit_csum);
    fChain->SetBranchAddress("KFTau_Fit_iterations", &KFTau_Fit_iterations, &b_KFTau_Fit_iterations);
-   fChain->SetBranchAddress("KFTau_Fit_TauEnergyFraction", &KFTau_Fit_TauEnergyFraction, &b_KFTau_Fit_TauEnergyFraction); 
-   fChain->SetBranchAddress("KFTau_Fit_RefitVisibleMass", &KFTau_Fit_RefitVisibleMass, &b_KFTau_Fit_RefitVisibleMass);  
-   fChain->SetBranchAddress("KFTau_Fit_Chi2", &KFTau_Fit_Chi2, &b_KFTau_Fit_Chi2);	      
+   fChain->SetBranchAddress("KFTau_Fit_TauEnergyFraction", &KFTau_Fit_TauEnergyFraction, &b_KFTau_Fit_TauEnergyFraction);
+   fChain->SetBranchAddress("KFTau_Fit_RefitVisibleMass", &KFTau_Fit_RefitVisibleMass, &b_KFTau_Fit_RefitVisibleMass);
+   fChain->SetBranchAddress("KFTau_Fit_Chi2", &KFTau_Fit_Chi2, &b_KFTau_Fit_Chi2);
    fChain->SetBranchAddress("KFTau_Fit_PV_PV_significance", &KFTau_Fit_PV_PV_significance, &b_KFTau_Fit_PV_PV_significance);
    fChain->SetBranchAddress("KFTau_Fit_SV_PV_significance", &KFTau_Fit_SV_PV_significance, &b_KFTau_Fit_SV_PV_significance);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
+   fChain->SetBranchAddress("PFJet_Poca", &PFJet_Poca, &b_PFJet_Poca);
    fChain->SetBranchAddress("PFJet_chargedEmEnergy", &PFJet_chargedEmEnergy, &b_PFJet_chargedEmEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronEnergy", &PFJet_chargedHadronEnergy, &b_PFJet_chargedHadronEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronMultiplicity", &PFJet_chargedHadronMultiplicity, &b_PFJet_chargedHadronMultiplicity);
@@ -722,6 +839,18 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MCTauandProd_charge", &MCTauandProd_charge, &b_MCTauandProd_charge);
    fChain->SetBranchAddress("MCTau_JAK", &MCTau_JAK, &b_MCTau_JAK);
    fChain->SetBranchAddress("MCTau_DecayBitMask", &MCTau_DecayBitMask, &b_MCTau_DecayBitMask);
+   fChain->SetBranchAddress("HTLTriggerName", &HTLTriggerName, &b_HTLTriggerName);
+   fChain->SetBranchAddress("TriggerAccept", &TriggerAccept, &b_TriggerAccept);
+   fChain->SetBranchAddress("TriggerError", &TriggerError, &b_TriggerError);
+   fChain->SetBranchAddress("TriggerWasRun", &TriggerWasRun, &b_TriggerWasRun);
+   fChain->SetBranchAddress("HLTPrescale", &HLTPrescale, &b_HLTPrescale);
+   fChain->SetBranchAddress("NHLTL1GTSeeds", &NHLTL1GTSeeds, &b_NHLTL1GTSeeds);
+   fChain->SetBranchAddress("L1SEEDPrescale", &L1SEEDPrescale, &b_L1SEEDPrescale);
+   fChain->SetBranchAddress("L1SEEDInvalidPrescale", &L1SEEDInvalidPrescale, &b_L1SEEDInvalidPrescale);
+   fChain->SetBranchAddress("MuonTriggerMatch", &MuonTriggerMatch, &b_MuonTriggerMatch);
+   fChain->SetBranchAddress("ElectronTriggerMatch", &ElectronTriggerMatch, &b_ElectronTriggerMatch);
+   fChain->SetBranchAddress("JetTriggerMatch", &JetTriggerMatch, &b_JetTriggerMatch);
+   fChain->SetBranchAddress("TauTriggerMatch", &TauTriggerMatch, &b_TauTriggerMatch);
    Notify();
 }
 
