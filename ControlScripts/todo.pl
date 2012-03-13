@@ -456,9 +456,21 @@ if( $ARGV[0] eq "--DCache" ){
 			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 			
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }
+		    ($a,$b,$c)=split('/',$file);
+		    $myfile=$file;
+		    if($a =~ m/root/){
+			$myfile=$a;
+		    }
+		    if($b =~ m/root/){
+                        $myfile=$b;
+                    }
+		    if($c =~ m/root/){
+                        $myfile=$c;
+                    }
+		    #printf("$myfile");
 		    system(sprintf("echo \"/opt/d-cache/dcap/bin/dccp  dcap://grid-dcap.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
-		    system(sprintf("echo \"File:  /user/scratch/$UserID/$file \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
-		    system(sprintf("echo \"rm -rf /user/scratch/$UserID/$file  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
+		    system(sprintf("echo \"File:  /user/scratch/$UserID/$myfile \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
+		    system(sprintf("echo \"rm -rf /user/scratch/$UserID/$myfile  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
 		    $A++;
 		}
 	    }
