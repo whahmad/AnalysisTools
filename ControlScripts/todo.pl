@@ -15,7 +15,8 @@ $CMSSWRel="4_4_0";
 $PileupVersion="V08-03-17";
 $tag="HEAD";
 $TauReco="4_4_Y_08_03_2012";
-
+$BTag="YES";
+$Cleaning ="YES";
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
     printf("\nPlease choose from the following options:\n");
@@ -27,6 +28,7 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                     --PileupVersion <Version # ie V08-03-17>");
     printf("\n                                                     --tag <tag for TauNuptle/SkimProduction/TiggerFiliter/...>");
     printf("\n                                                     --TauReco <tag for Recommended TauReco> current option: na or 4_4_Y_08_03_2012");
+    printf("\n                                                     --BTag <YES/NO> Default: YES");
     printf("\n./todo.pl --Local <Input.txt>                      INTENTED FOR SMALL SCALE TESTS ONLY");  
     printf("\n                                                   Configure a directory to run locally. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
@@ -79,6 +81,14 @@ for($l=2;$l<$numArgs; $l++){
         $l++;
         $TauReco=$ARGV[$l];
     }
+    if($ARGV[$l] eq "--BTag"){
+	$l++;
+	$BTag=$ARGV[$l];
+    }
+    if($ARGV[$l] eq "--Cleaning"){
+	$l++;
+	$Cleaning =$ARGV[$l];
+    }
 
 }
 
@@ -119,6 +129,10 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cvs co -d SkimProduction -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cvs co -d TriggerFilter  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter\" >> Setup_TauNtuple"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Setup_TauNtuple"));
+    if($BTag eq "YES"){
+	system(sprintf("echo \"cvs co -r V00-04-11 RecoBTag/PerformanceDB\" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs co -d TopAnalysis/TopUtils UserCode/Bromo/TopAnalysis/TopUtils\" >> Setup_TauNtuple"));
+    }
     if($TauReco eq "4_4_Y_08_03_2012"){
 	system(sprintf("echo \"cvs co -r V01-02-01 RecoTauTag/TauTagTools \" >> Setup_TauNtuple"));
 	system(sprintf("echo \"cvs co -r V01-02-16 RecoTauTag/RecoTau \" >> Setup_TauNtuple"));
@@ -132,6 +146,11 @@ if( $ARGV[0] eq "--TauNtuple"){
     }
     if($PileupVersion eq "V08-03-14"){
 	system(sprintf("echo \"$currentdir/subs \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_,PUOutputFile_\\\" \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_\\\" TauDataFormat/TauNtuple/src/TauNtuple.cc\" >> Setup_TauNtuple"));
+    }
+    if($Cleaning eq "YES"){
+	system(sprintf("echo \"cvs co -r lhx_12JAN2012_v1 DataFormats/METReco\" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs co -r lhx_08FEB2012_v2 RecoMET/METFilters\" >> Setup_TauNtuple"));
+	system(sprintf("echo \"cvs co -r V00-00-08 RecoMET/METAnalyzers\" >> Setup_TauNtuple"));
     }
 
     # Setup CRAB
