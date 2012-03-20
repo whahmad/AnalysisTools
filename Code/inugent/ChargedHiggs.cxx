@@ -5,13 +5,15 @@
 #include <iostream>
 
 #include "Tools.h"
+#include "PDG_Var.h"
 
 ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,channel(muontag)
+  ,tau_pt(20)
+  ,tau_eta(2.0)
+  ,jet_pt(45)
+  ,jet_eta(2.4)
 {
-  if(Name_.Contains("muon"))channel=muontag;
-  if(Name_.Contains("electron"))channel=electrontag;
 }
 
 ChargedHiggs::~ChargedHiggs(){
@@ -31,18 +33,21 @@ void  ChargedHiggs::Configure(){
     pass.push_back(false);
     if(i==TriggerOk)          cut.at(TriggerOk)=1;
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
-    if(i==hasTag)             cut.at(hasTag)=1;
-    if(i==TagPtmin)           cut.at(TagPtmin)=20;
-    if(i==TagPtmax)           cut.at(TagPtmax)=38;
-    if(i==TagIso)             cut.at(TagIso)=0.2;
-    if(i==NJets)              cut.at(NJets)=1;
-    if(i==JetPt)              cut.at(JetPt)=10;
-    if(i==deltaPhi)           cut.at(deltaPhi)=TMath::Pi()*7.0/8.0;
-    if(i==MET)                cut.at(MET)=40;
-    if(i==MT)                 cut.at(MT)=30;
-    if(i==ZMassmin)           cut.at(ZMassmin)=70;
-    if(i==ZMassmax)           cut.at(ZMassmax)=100;
-    if(i==charge)             cut.at(charge)=0;
+    if(i==N1Jets)             cut.at(N1Jets)=1;
+    if(i==N2Jets)             cut.at(N2Jets)=2;
+    if(i==N3Jets)             cut.at(N3Jets)=3;
+    if(i==NJets)              cut.at(NJets)=4;
+    if(i==NBJets)             cut.at(NBJets)=2;
+    if(i==MET)                cut.at(MET)=50;
+    if(i==HT)                 cut.at(HT)=200;
+    if(i==NTauKinFit)         cut.at(NTauKinFit)=1;
+    if(i==NTauPt)             cut.at(NTauPt)=20;
+    if(i==NTauEta)            cut.at(NTauEta)=2.0 ;
+    if(i==HadWMass)           cut.at(HadWMass)=30;
+    if(i==HadTopMass)         cut.at(HadTopMass)=50;
+    if(i==TauMETTopMT)        cut.at(TauMETTopMT)=50;
+    if(i==TauMETdphi)         cut.at(TauMETdphi)=-1/sqrt(2);
+    if(i==etaq)               cut.at(etaq)=0.1;
   }
 
   TString hlabel;
@@ -72,79 +77,90 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
     }
-    //-----------
-   else if(i==hasTag){
-      title.at(i)="has Tag";
+    else if(i==NJets){
+      title.at(i)="Number of Jets";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="has Tag (bool)";
-      if(channel==muontag){
-	title.at(i)="Number of Muons $=$";
-	title.at(i)+=cut.at(hasTag);
-	htitle=title.at(i);
-	htitle.ReplaceAll("$","");
-	htitle.ReplaceAll("\\","#");
-	hlabel="N_{Muons}";
-      }
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_hasTag_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_hasTag_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      hlabel="Number of Jets";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-   else if(i==TagPtmin){
-      title.at(i)="$P_{T}^{Tag}>$";
-      title.at(i)+=cut.at(TagPtmin);
+    else if(i==N1Jets){
+      title.at(i)="Number of Jets";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of Jets";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N1Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N1Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i==N2Jets){
+      title.at(i)="Number of Jets";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of Jets";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N2Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N2Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i==N3Jets){
+      title.at(i)="Number of Jets";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of Jets";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N3Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N3Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i==NBJets){
+      title.at(i)="Number of BJets";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of BJets";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NBJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NBJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i==NTauKinFit){
+      title.at(i)="$Number of Kin. Fit \\tau >$";
+      title.at(i)+=cut.at(NTauKinFit);
       title.at(i)+="(GeV)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="P_{T}^{Tag} (GeV)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TagPtmin_",htitle,50,0,100,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TagPtmin_",htitle,50,0,100,hlabel,"Events"));
+      hlabel="Number of Kin. Fit #tau";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauKinFit_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKinFit_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
-   else if(i==TagPtmax){
-     title.at(i)="$P_{T}^{Tag}<$";
-     title.at(i)+=cut.at(TagPtmax);
-     title.at(i)+="(GeV)";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="P_{T}^{Tag} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TagPtmax_",htitle,50,0,100,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TagPtmax_",htitle,50,0,100,hlabel,"Events"));
-   }
-   else if(i==TagIso){
-      title.at(i)="Relative Isolation (Tag) $<$";
-      title.at(i)+=cut.at(TagIso);
+    else if(i==NTauPt){
+      title.at(i)="$Number of \\tau with P_{T}^{\\tau}>$";
+      title.at(i)+=tau_pt;
+      title.at(i)+="(GeV)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="Relative Isolation (Tag)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TagIso_",htitle,40,0,1,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TagIso_",htitle,40,0,1,hlabel,"Events"));
+      hlabel="Number of #tau [Kin. Fit+P^{T}]";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      distindx.at(i)=true;
+      Nminus1dist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (N-1 Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events"));
+      Accumdist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events"));
     }
-   else if(i==NJets){
-     title.at(i)="$Number of Jet>$";
-     title.at(i)+=cut.at(NJets);
-     title.at(i)+="";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="N_{Jets}";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NJets_",htitle,11,-0.0,10.5,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
-   }
-   else if(i==JetPt){
-     title.at(i)="$P_{T}^{Jet}>$";
-     title.at(i)+=cut.at(JetPt);
-     title.at(i)+="(GeV)";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="P_{T}^{Jet} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_JetPt_",htitle,20,0,200,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_JetPt_",htitle,20,0,200,hlabel,"Events"));
-   }
-   else if(i==MET){
+    else if(i==NTauEta){
+      title.at(i)="$umber of \\tau with \\eta^{\\tau}>$";
+      title.at(i)+=tau_eta;
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of #tau [Kin. Fit+P^{T}+#eta]";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
+      distindx.at(i)=true;
+      Nminus1dist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta{#tau} (N-1 Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events"));
+      Accumdist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta_{#tau} (Accumulative Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events"));
+    }
+    else if(i==MET){
       title.at(i)="$E_{T}^{Miss} < $";
       title.at(i)+=cut.at(MET);
       title.at(i)+="(GeV)";
@@ -155,60 +171,74 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MET_",htitle,40,0,200,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MET_",htitle,40,0,200,hlabel,"Events"));
     } 
-   else if(i==MT){
-     title.at(i)="$M_{T} < $";
-     title.at(i)+=cut.at(MT);
+   else if(i==HT){
+     title.at(i)="$H_{T} < $";
+     title.at(i)+=cut.at(HT);
      title.at(i)+="(GeV)";
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
-     hlabel="M_{T} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,40,0,200,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,40,0,200,hlabel,"Events"));
+     hlabel="H_{T} (GeV)";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HT_",htitle,40,0,200,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HT_",htitle,40,0,200,hlabel,"Events"));
    }
-   else if(i==deltaPhi){
-      title.at(i)="$\\Delta\\phi(Tag,Jet) < $";
-      title.at(i)+=cut.at(deltaPhi);
+   else if(i==HadWMass){
+     title.at(i)="$M_{W,had} < $";
+     title.at(i)+=cut.at(HadWMass);
+     title.at(i)+="(GeV)";
+     htitle=title.at(i);
+     htitle.ReplaceAll("$","");
+     htitle.ReplaceAll("\\","#");
+     hlabel="M_{W,had} (GeV)";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadWMass_",htitle,75,0,250,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadWMass_",htitle,75,0,250,hlabel,"Events"));
+   }
+   else if(i==HadTopMass){
+    title.at(i)="$M_{Top,had} < $";
+    title.at(i)+=cut.at(HadTopMass);
+    title.at(i)+="(GeV)";
+    htitle=title.at(i);
+    htitle.ReplaceAll("$","");
+    htitle.ReplaceAll("\\","#");
+    hlabel="M_{Top,had} (GeV)";
+    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadTopMass_",htitle,100,0,500,hlabel,"Events"));
+    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadTopMass_",htitle,100,0,500,hlabel,"Events"));
+  }
+   else if(i==TauMETTopMT){
+    title.at(i)="$M_{T,Top,\\tau-side} < $";
+    title.at(i)+=cut.at(TauMETTopMT);
+    title.at(i)+="(GeV)";
+    htitle=title.at(i);
+    htitle.ReplaceAll("$","");
+    htitle.ReplaceAll("\\","#");
+    hlabel="M_{T,Top,#tau-side} (GeV)";
+    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETTopMT_",htitle,100,0,500,hlabel,"Events"));
+    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETTopMT_",htitle,100,0,500,hlabel,"Events"));
+   }
+   else if(i==TauMETdphi){
+      title.at(i)="$\\Delta\\phi(\\tau,MET) < $";
+      title.at(i)+=cut.at(TauMETdphi);
       title.at(i)+="(rad)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="#Delta#phi (rad)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_deltaPhi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_deltaPhi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
-    } 
-   else if(i==ZMassmin){
-      title.at(i)="$M_{Z}< $";
-      title.at(i)+=cut.at(ZMassmin);
-      title.at(i)+="(GeV)";
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="M_{Z} (GeV)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ZMassmin_",htitle,40,0,200,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ZMassmin_",htitle,40,0,200,hlabel,"Events"));
-    } 
-   else if(i==ZMassmax){
-     title.at(i)="$M_{Z}< $";
-     title.at(i)+=cut.at(ZMassmax);
-     title.at(i)+="(GeV)";
+      hlabel="#Delta#phi(#tau,MET) (rad)";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
+   } 
+   else if(i==etaq){
+     title.at(i)="$\\q_{\\mu}|\\eta|$";
+     char buffer[50];
+     sprintf(buffer,"%5.2f",cut.at(etaq));
+     title.at(i)+=buffer;
+     title.at(i)+="";
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
-     hlabel="M_{Z} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ZMassmax_",htitle,40,0,200,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ZMassmax_",htitle,40,0,200,hlabel,"Events"));
+     hlabel="q_{#mu}|#eta|";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
    }
-   else if(i==charge){
-      title.at(i)="$C_{\\mu}\\times 4\\sum_{i=0}^{ntracks}P_{i}C_{i}/\\sum_{i=0}^{ntracks}P_{i}$";
-      title.at(i)+=cut.at(charge);
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="C_{#mu}#times 4#sum_{i=0}^{ntracks}P_{i}C_{i}/#sum_{i=0}^{ntracks}P_{i}";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_charge_",htitle,110,-10.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_charge_",htitle,110,-10.5,10.5,hlabel,"Events"));
-    } 
 
     //-----------
   }
@@ -218,8 +248,8 @@ void  ChargedHiggs::Configure(){
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Vertex","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Good Vertex","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
+  ChargedHiggsMT=HConfig.GetTH1D(Name+"_ChargedHiggsMT","ChargedHiggsMT",100,0,250,"M_{T,#tau,MET}","Events");
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"#eta","P_{T}^{Tag}");
-
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
   for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -255,123 +285,193 @@ void  ChargedHiggs::doEvent(){
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
   if(verbose)std::cout << "void  ChargedHiggs::doEvent() B" << std::endl;
 
-  unsigned mu_idx(999),nmus(0);
-  double mu_pt(0);
-  if(channel==muontag){
-    for(unsigned int i=0;i<Ntp->NMuons();i++){
-      if(Ntp->isGoodMuon(i)){
-	if(mu_pt<Ntp->Muons_p4(i).Pt()){mu_idx=i;mu_pt=Ntp->Muons_p4(i).Pt();}
-	nmus++;
-      }
-    }
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() C" << std::endl;
-    value.at(hasTag)=nmus;
-    pass.at(hasTag)=(value.at(hasTag)==cut.at(hasTag));
-    std::cout << nmus << std::endl;    
-
-    value.at(TagPtmin)=mu_pt;
-    pass.at(TagPtmin)=(value.at(TagPtmin)>cut.at(TagPtmin));
-    value.at(TagPtmax)=mu_pt;
-    pass.at(TagPtmax)=(value.at(TagPtmax)<cut.at(TagPtmax));
-
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() C2 - " << mu_idx << " " << Ntp->NMuons() << std::endl;
-    if(mu_idx!=999){value.at(TagIso) = (Ntp->Muon_emEt05(mu_idx) + Ntp->Muon_hadEt05(mu_idx) + Ntp->Muon_sumPt05(mu_idx))/Ntp->Muons_p4(mu_idx).Pt();}
-    else{value.at(TagIso)=999;}
-    pass.at(TagIso)=(value.at(TagIso)<=cut.at(TagIso));
-    
+  ///////////////////////////////////////////////
+  //
+  // Tau Cuts
+  //
+  std::vector<unsigned int> GoodTaus;
+  for(unsigned i=0;i<Ntp->NKFTau();i++){
+    if(Ntp->isGoodKFTau(i))GoodTaus.push_back(i);
   }
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() d" << std::endl;
-  unsigned int jet_idx(999),njets(0);
-  double jet_pt(0);
+  value.at(NTauKinFit)=GoodTaus.size();
+  pass.at(NTauKinFit)=(value.at(NTauKinFit)>=cut.at(NTauKinFit));
+
+
+  for(unsigned i=0;i<GoodTaus.size();i++){
+    if(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt()>tau_pt){
+      dist.at(NTauPt).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
+    }
+    else{
+      GoodTaus.erase(GoodTaus.begin()+i);
+      i--;
+    }
+  }
+  value.at(NTauPt)=GoodTaus.size();
+  pass.at(NTauPt)=(value.at(NTauPt)>=cut.at(NTauPt));
+
+  for(unsigned i=0;i<GoodTaus.size();i++){
+    if(fabs(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta())<tau_eta){
+      dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
+    }
+    else{
+      GoodTaus.erase(GoodTaus.begin()+i);
+      i--;
+    }
+  }
+  value.at(NTauEta)=GoodTaus.size();
+  pass.at(NTauEta)=(value.at(NTauEta)==cut.at(NTauEta));
+  unsigned int tauidx(999);
+  if(GoodTaus.size()>0)tauidx=GoodTaus.at(0);
+
+  ///////////////////////////////////////////////
+  //
+  // Jet Cuts
+  //
+  std::vector<unsigned int> GoodJets;
   for(int i=0;i<Ntp->NPFJets();i++){
-    if(verbose)std::cout << "jet loop " << i << " " << Ntp->NPFJets() << std::endl;
-    if(Ntp->isGoodJet(i)){
-      if(verbose)std::cout << "jet loop is good" << std::endl;
-      if(jet_pt<Ntp->PFJet_p4(i).Pt()){jet_idx=i;jet_pt=Ntp->PFJet_p4(i).Pt();}
-      njets++;
-      if(verbose)std::cout << "jet loop is good end" << std::endl;
+    if(Ntp->isGoodJet(i) && Ntp->PFJet_p4(i).Pt()>jet_pt && fabs(Ntp->PFJet_p4(i).Eta())>jet_eta){
+      bool overlap=false;
+      for(unsigned j=0;j<GoodTaus.size();j++){
+	if(Tools::dr(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)),Ntp->PFJet_p4(i))<0.5) overlap=true;
+      }
+      if(!overlap)GoodJets.push_back(i);
     }
   }
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() e" << std::endl;
-  value.at(NJets)=njets;
+  value.at(N1Jets)=GoodJets.size();
+  pass.at(N1Jets)=(value.at(N1Jets)>=cut.at(N1Jets));
+
+  value.at(N2Jets)=GoodJets.size();
+  pass.at(N2Jets)=(value.at(N2Jets)>=cut.at(N2Jets));
+
+  value.at(N3Jets)=GoodJets.size();
+  pass.at(N3Jets)=(value.at(N3Jets)>=cut.at(N3Jets));
+
+  value.at(NJets)=GoodJets.size();
   pass.at(NJets)=(value.at(NJets)>=cut.at(NJets));
 
-  value.at(JetPt)=jet_pt;
-  pass.at(JetPt)=(value.at(JetPt)>=cut.at(JetPt));
-    
-
-  if(mu_idx!=999 && jet_idx!=999){
-    value.at(deltaPhi)=fabs(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx),Ntp->PFJet_p4(jet_idx)));
+  // not implemented yet just use highest 2 pt jets for GoodBJets
+  std::vector<unsigned int> GoodBJets(2,0);
+  for(unsigned i=0;i<GoodJets.size();i++){ 
+    if(Ntp->PFJet_p4(GoodJets.at(i)).Pt()>Ntp->PFJet_p4(GoodBJets.at(0)).Pt()){
+      GoodBJets.at(0)=GoodJets.at(i);
+      continue;
+    }
+    if(Ntp->PFJet_p4(GoodJets.at(i)).Pt()>Ntp->PFJet_p4(GoodBJets.at(1)).Pt())GoodBJets.at(1)=GoodJets.at(i);
   }
-  else { 
-    value.at(deltaPhi)=0;
+  value.at(NBJets)=GoodBJets.size();
+  pass.at(NBJets)=(value.at(NBJets)>=cut.at(NBJets));
+  
+  ///////////////////////////////////////////////
+  //
+  // Event Shape and Energy Cuts
+  //
+  double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
+  // correct for neutrino from taus
+  for(unsigned int i=0; i<GoodTaus.size();i++){
+    MET_Ex+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Px();
+    MET_Ey+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Py();
   }
-  pass.at(deltaPhi)=(fabs(value.at(deltaPhi))>=cut.at(deltaPhi));
-
-
-  value.at(MET)=Ntp->MET_et();
+  value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
   pass.at(MET)=(value.at(MET)<cut.at(MET));
 
-  if(mu_idx!=999){
-    value.at(MT)=sqrt(2*(Ntp->MET_et())*Ntp->Muons_p4(mu_idx).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx).Phi()-Ntp->MET_phi())));
+  value.at(HT)=0;
+  for(unsigned int i=0; i<GoodTaus.size();i++){
+    value.at(HT)+=Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Et();
   }
-  else{
-    value.at(MT)=999;
+  for(unsigned i=0;i<GoodJets.size();i++){
+    value.at(HT)+=Ntp->PFJet_p4(GoodJets.at(i)).Et();
   }
-  pass.at(MT)=(value.at(MT)<=cut.at(MT));
+  pass.at(HT)=(value.at(HT)>=cut.at(HT));
 
-  TLorentzVector Z_lv(0,0,0,0);
-  if(mu_idx!=999)Z_lv+=Ntp->Muons_p4(mu_idx);
-  if(jet_idx!=999)Z_lv+=Ntp->PFJet_p4(jet_idx);
-  value.at(ZMassmin)=Z_lv.M();
-  pass.at(ZMassmin)=(value.at(ZMassmin)>cut.at(ZMassmin));
-  value.at(ZMassmax)=Z_lv.M();
-  pass.at(ZMassmax)=(value.at(ZMassmax)<cut.at(ZMassmax));
-
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() g" << std::endl;
-
-  // Momentum weighted charge is slow only do if nminus1
-  // must be last cut
-  bool charge_nminus1(true);
-  for(unsigned int i=0;i<NCuts;i++){
-    if(!pass.at(i) && i!=charge) charge_nminus1=false;
-  }
-  double PWeightedCharge(0),PTracks(0);
-  if(charge_nminus1 && jet_idx!=999 && mu_idx!=999){
-    std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
-    for(int i=0; i<PFJet_Track_idx.size();i++){
-      unsigned int idx=PFJet_Track_idx.at(i);
-      if(idx<Ntp->NTracks()){
-	double pt=Ntp->Track_p4(idx).Pt();
-	PWeightedCharge+=pt*pt*Ntp->Track_charge(idx);
-	PTracks+=pt*pt;
+  ///////////////////////////////////////////////
+  //
+  // Top and W Masses
+  //
+  std::vector<unsigned int> WJetCand=GoodJets;
+  for(unsigned int i=0;i<WJetCand.size();i++){
+    for(unsigned int j=0;j<GoodBJets.size();j++){
+      if(WJetCand.at(i)==GoodBJets.at(i)){
+	WJetCand.erase(WJetCand.begin()+i);
+	i--;
+	break;
       }
     }
-    value.at(charge)=Ntp->Muon_Charge(mu_idx)*4.0*PWeightedCharge/PTracks;
-    pass.at(charge)=(value.at(charge)>cut.at(charge));
+  }
+
+  std::vector<unsigned int> WJets(2,0);
+  value.at(HadWMass)=999;
+  for(unsigned int i=0;i<WJetCand.size();i++){
+    for(unsigned int j=i+1;j<WJetCand.size();j++){
+      TLorentzVector W=Ntp->PFJet_p4(WJetCand.at(i));
+      W+=Ntp->PFJet_p4(WJetCand.at(j));
+      if(fabs(PDG_Var::W_mass()-W.M())<fabs(PDG_Var::W_mass()-value.at(HadWMass))){
+	WJets.at(0)=WJetCand.at(i);
+	WJets.at(1)=WJetCand.at(j);
+	value.at(HadWMass)=W.M();
+      }
+    }
+  }
+  pass.at(HadWMass)=(fabs(PDG_Var::W_mass()-value.at(HadWMass))<=cut.at(HadWMass));
+
+
+  unsigned int HadTopB(0);
+  value.at(HadTopMass)=999;
+  for(unsigned int i=0;i<GoodBJets.size();i++){
+    TLorentzVector Top=Ntp->PFJet_p4(GoodBJets.at(i));
+    Top+=Ntp->PFJet_p4(WJets.at(0));
+    Top+=Ntp->PFJet_p4(WJets.at(1));
+    if(fabs(PDG_Var::Top_mass()-Top.M())<fabs(PDG_Var::Top_mass()-value.at(HadTopMass))){
+      HadTopB=GoodBJets.at(i);
+      value.at(HadTopMass)=Top.M();
+    }
+  }
+  pass.at(HadWMass)=(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
+
+
+  TLorentzVector MET;
+  TLorentzVector Tau;
+  TLorentzVector BTau;
+  value.at(TauMETTopMT)=999;
+  for(unsigned int i=0;i<GoodBJets.size();i++){
+    if(GoodBJets.at(i)!=HadTopB){
+      BTau=Ntp->PFJet_p4(GoodBJets.at(i));
+      MET_Ex=Ntp->MET_ex();
+      MET_Ey=Ntp->MET_ey();
+      // correct for neutrino from taus   
+      if(GoodTaus.size()>0){
+	Tau=Ntp->KFTau_TauFit_p4(GoodTaus.at(0)).Pt();
+	BTau+=Tau;
+	MET_Ex+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(0)).Px();
+	MET_Ey+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(0)).Py();
+      }
+      TLorentzVector LV(MET_Ex,MET_Ey,0,sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey));
+      MET=LV;
+      value.at(TauMETTopMT)=sqrt(2*(MET.Pt())*BTau.Pt()*fabs(1-cos(BTau.Phi()-MET.Phi())));
+      break;
+    }
+  }
+  pass.at(TauMETTopMT)=true;//(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
+
+  value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,MET));
+  pass.at(TauMETdphi)=(value.at(TauMETdphi)<=cut.at(TauMETdphi));
+
+  ///////////////////////////////////////////////////////////
+  if(tauidx!=999){
+    value.at(etaq)=Ntp->KFTau_Fit_charge(tauidx)*fabs(Ntp->KFTau_TauFit_p4(tauidx).Eta());
+    pass.at(etaq)=value.at(etaq)>cut.at(etaq);
   }
   else{
-    value.at(charge)=0;
-    pass.at(charge)=false;
+    value.at(etaq)=0;
+    pass.at(etaq)=false;
   }
-  pass.at(charge)=true;
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() i" << std::endl;
-  /*
-  if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
-    value.at(charge) =Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));
-    
-    //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
-    pass.at(charge)=(Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex)) == -1);
-  }
-  */
+  pass.at(etaq)=true;
 
+  ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
-  /*
   if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
   }
   else{w=1;}
-  */
   std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
  
@@ -386,7 +486,6 @@ void  ChargedHiggs::doEvent(){
       if(Ntp->isVtxGood(i))nGoodVtx++;
     }
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
-    if(mu_idx)TagEtaPT.at(t).Fill(Ntp->Muons_p4(mu_idx).Eta(),Ntp->Muons_p4(mu_idx).Pt(),w);
 
   }
 }

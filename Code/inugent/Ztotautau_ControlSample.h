@@ -14,7 +14,6 @@ class Ztotautau_ControlSample : public Selection {
   virtual void  Configure();
 
   enum cuts {TriggerOk=0, 
-	     PrimeVtx,
 	     hasTag,
 	     TagPtmin,
              TagPtmax,
@@ -24,10 +23,11 @@ class Ztotautau_ControlSample : public Selection {
 	     deltaPhi,
 	     MET,
 	     MT,
-	     TauAvgMETPhi,
-	     PInBalance,
+	     etaq,
+	     sumcosdeltaphi,
 	     ZMassmax,
              ZMassmin,
+	     HT,
 	     charge,
 	     NCuts};
 
@@ -45,6 +45,6 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
   int channel;
-
+  double jeteta;
 };
 #endif

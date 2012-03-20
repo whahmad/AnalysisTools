@@ -15,21 +15,22 @@ class ChargedHiggs : public Selection {
 
   enum cuts {TriggerOk=0, 
 	     PrimeVtx,
-	     hasTag,
-	     TagPtmin,
-             TagPtmax,
-	     TagIso,
+	     NTauKinFit,
+	     NTauPt,
+	     NTauEta,
+             N1Jets,
+	     N2Jets,
+	     N3Jets,
 	     NJets,
-	     JetPt,
-	     deltaPhi,
-	     MET,
-	     MT,
-	     ZMassmax,
-             ZMassmin,
-	     charge,
+             NBJets,
+             MET,
+             HT,
+	     etaq,
+	     HadWMass,
+	     HadTopMass,
+	     TauMETTopMT,
+	     TauMETdphi,
 	     NCuts};
-
-  enum tagtype{muontag,electrontag};
 
  protected:
   virtual void doEvent();
@@ -42,7 +43,8 @@ class ChargedHiggs : public Selection {
   std::vector<TH1D> NGoodVtx;
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
-  int channel;
+  std::vector<TH1D> ChargedHiggsMT;
+  double tau_pt,tau_eta,jet_pt,jet_eta;
 
 };
 #endif
