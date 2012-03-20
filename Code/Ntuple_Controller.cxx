@@ -505,3 +505,34 @@ bool Ntuple_Controller::isGoodKFTau(unsigned int i){
   }
   return false;
 }
+
+
+bool Ntuple_Controller::TriggerAccept(TString n){
+  unsigned int i=0;
+  if(GetTriggerIndex(n,i))return TriggerAccept(i);
+  return false;
+}
+unsigned int Ntuple_Controller::HLTPrescale(TString n){
+  unsigned int i=0;
+  if(GetTriggerIndex(n,i))return HLTPrescale(i);
+  return 1;
+}
+unsigned int Ntuple_Controller::L1SEEDPrescale(TString n){
+  unsigned int i=0;
+  if(GetTriggerIndex(n,i))return L1SEEDPrescale(i);
+  return 1;
+}
+
+bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
+  for(i=0; i<Ntp->HTLTriggerName->size();i++){
+    TString name=HTLTriggerName(i);
+    if(name.Contains(n))return true;
+  }
+  return false;
+}
+
+bool Ntuple_Controller::hasKFTau_indexOfFitInfo(unsigned int i,unsigned int &idx){
+  idx=Ntp->KFTau_indexOfFitInfo->at(i); 
+  if(i>=0 && i<Ntp->KFTau_Fit_TauPrimVtx->size()) return true;
+  return false;
+}

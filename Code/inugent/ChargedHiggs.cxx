@@ -14,6 +14,7 @@ ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
   ,jet_pt(45)
   ,jet_eta(2.4)
 {
+
 }
 
 ChargedHiggs::~ChargedHiggs(){
@@ -56,6 +57,8 @@ void  ChargedHiggs::Configure(){
     title.push_back("");
     distindx.push_back(false);
     dist.push_back(std::vector<float>());
+    Accumdist.push_back(std::vector<TH1D>());
+    Nminus1dist.push_back(std::vector<TH1D>());
     TString c="_Cut_";
     if(i<10)c+="0";
     c+=i;
@@ -74,8 +77,8 @@ void  ChargedHiggs::Configure(){
     else if(i==TriggerOk){
       title.at(i)="Trigger ";
       hlabel="Trigger ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
     }
     else if(i==NJets){
       title.at(i)="Number of Jets";
@@ -144,8 +147,8 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
       distindx.at(i)=true;
-      Nminus1dist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (N-1 Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events"));
-      Accumdist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events"));
+      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (N-1 Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
+      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
     }
     else if(i==NTauEta){
       title.at(i)="$umber of \\tau with \\eta^{\\tau}>$";
@@ -157,8 +160,8 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
       distindx.at(i)=true;
-      Nminus1dist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta{#tau} (N-1 Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events"));
-      Accumdist.push_back(HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta_{#tau} (Accumulative Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events"));
+      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta{#tau} (N-1 Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events");
+      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NTauEta_","#eta_{#tau} (Accumulative Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events");
     }
     else if(i==MET){
       title.at(i)="$E_{T}^{Miss} < $";
@@ -227,7 +230,7 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
    } 
    else if(i==etaq){
-     title.at(i)="$\\q_{\\mu}|\\eta|$";
+     title.at(i)="$q_{\\mu}|\\eta|$";
      char buffer[50];
      sprintf(buffer,"%5.2f",cut.at(etaq));
      title.at(i)+=buffer;
@@ -273,9 +276,13 @@ void  ChargedHiggs::doEvent(){
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
   if(verbose)std::cout << "void  ChargedHiggs::doEvent() A" << std::endl;
-  value.at(TriggerOk)=1;
-  pass.at(TriggerOk)=true;
-  
+
+  value.at(TriggerOk)=0;
+  if(Ntp->TriggerAccept("HLT_QuadJet40_IsoPFTau40"))value.at(TriggerOk)+=1;
+  if(Ntp->TriggerAccept("HLT_QuadJet45_IsoPFTau45"))value.at(TriggerOk)+=2;
+  if(Ntp->TriggerAccept("HLT_QuadJet50_IsoPFTau50"))value.at(TriggerOk)+=4;
+  pass.at(TriggerOk)=value.at(TriggerOk)>=cut.at(TriggerOk);
+
   // Apply Selection
   unsigned int nGoodVtx=0;
   for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -322,7 +329,7 @@ void  ChargedHiggs::doEvent(){
   pass.at(NTauEta)=(value.at(NTauEta)==cut.at(NTauEta));
   unsigned int tauidx(999);
   if(GoodTaus.size()>0)tauidx=GoodTaus.at(0);
-
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() C " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Jet Cuts
@@ -360,7 +367,7 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(NBJets)=GoodBJets.size();
   pass.at(NBJets)=(value.at(NBJets)>=cut.at(NBJets));
-  
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() D " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Event Shape and Energy Cuts
@@ -382,7 +389,7 @@ void  ChargedHiggs::doEvent(){
     value.at(HT)+=Ntp->PFJet_p4(GoodJets.at(i)).Et();
   }
   pass.at(HT)=(value.at(HT)>=cut.at(HT));
-
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() E " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Top and W Masses
@@ -413,7 +420,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::W_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
-
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() F " << tauidx << std::endl;
   unsigned int HadTopB(0);
   value.at(HadTopMass)=999;
   for(unsigned int i=0;i<GoodBJets.size();i++){
@@ -427,6 +434,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() G " << tauidx << std::endl;
 
   TLorentzVector MET;
   TLorentzVector Tau;
@@ -454,27 +462,31 @@ void  ChargedHiggs::doEvent(){
 
   value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,MET));
   pass.at(TauMETdphi)=(value.at(TauMETdphi)<=cut.at(TauMETdphi));
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() H " << tauidx << std::endl;
 
   ///////////////////////////////////////////////////////////
+  value.at(etaq)=0;
+  pass.at(etaq)=false;
   if(tauidx!=999){
-    value.at(etaq)=Ntp->KFTau_Fit_charge(tauidx)*fabs(Ntp->KFTau_TauFit_p4(tauidx).Eta());
-    pass.at(etaq)=value.at(etaq)>cut.at(etaq);
-  }
-  else{
-    value.at(etaq)=0;
-    pass.at(etaq)=false;
+    unsigned int KF_Info_idx;
+    if(Ntp->hasKFTau_indexOfFitInfo(tauidx,KF_Info_idx)){
+      value.at(etaq)=Ntp->KFTau_Fit_charge(KF_Info_idx)*fabs(Ntp->KFTau_TauFit_p4(KF_Info_idx).Eta());
+      pass.at(etaq)=value.at(etaq)>cut.at(etaq);
+    }
   }
   pass.at(etaq)=true;
-
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() I" << std::endl;
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
+    if(verbose)std::cout << "void  ChargedHiggs::doEvent() J" << std::endl;
     w*=Ntp->EvtWeight3D();
+    if(verbose)std::cout << "void  ChargedHiggs::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}
-  std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
+  if(verbose) std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
- 
+  if(verbose)std::cout << "void  ChargedHiggs::doEvent() L" << std::endl;
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){

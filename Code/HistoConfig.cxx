@@ -140,6 +140,7 @@ TString HistoConfig::GetLeg(unsigned int i){
 
 std::vector<TH1D> HistoConfig::GetTH1D(TString name,TString title, int nbins, double min, double max, TString xaxis, TString yaxis){
   std::vector<TH1D> histos;
+  std::cout << "Adding TH1D " << name << " " << title << std::endl;
   for(int i=0;i<HistoName.size();i++){
     histos.push_back(TH1D(name+HistoName.at(i),HistoLegend.at(i),nbins,min,max));
     histos.at(i).Sumw2();
@@ -152,6 +153,7 @@ std::vector<TH1D> HistoConfig::GetTH1D(TString name,TString title, int nbins, do
 std::vector<TH2D> HistoConfig::GetTH2D(TString name,TString title,int nbinsx, double minx, double maxx, 
 				       int nbinsy, double miny, double maxy, TString xaxis, TString yaxis){
   std::vector<TH2D> histos;
+  std::cout << "Adding TH2D " << name << " " << title << std::endl;
   for(int i=0;i<HistoName.size();i++){
     histos.push_back(TH2D(name+HistoName.at(i),HistoLegend.at(i),nbinsx,minx,maxx, nbinsy,miny,maxy));
     histos.at(i).Sumw2();

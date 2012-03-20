@@ -237,14 +237,15 @@ class Ntuple_Controller{
    unsigned int     KFTau_MatchedHPS_idx(unsigned int i){return Ntp->KFTau_MatchedHPS_idx->at(i);}
    std::vector<int> KFTau_Track_idx(unsigned int i){return Ntp->KFTau_Track_idx->at(i);}
    int      KFTau_indexOfFitInfo(unsigned int i){return Ntp->KFTau_indexOfFitInfo->at(i);}
-   TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return TVector3(Ntp->KFTau_Fit_TauPrimVtx->at(i).at(0),
-								 Ntp->KFTau_Fit_TauPrimVtx->at(i).at(1),
-								 Ntp->KFTau_Fit_TauPrimVtx->at(i).at(2));}
+   bool     hasKFTau_indexOfFitInfo(unsigned int i,unsigned int &idx);
+
+   // Kinematic Fit Info (access using KFTau_indexOfFitInfo)
+   TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return TVector3(Ntp->KFTau_Fit_TauPrimVtx->at(i).at(0),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(1),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(2));}
    int      KFTau_Fit_IndexToPrimVertexVector(unsigned int i){return Ntp->KFTau_Fit_IndexToPrimVertexVector->at(i);}
    float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
    float    KFTau_Fit_ndf(unsigned int i){return Ntp->KFTau_Fit_ndf->at(i);}
    int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
-   int      KFTau_Fit_charge(unsigned int i){return Ntp->KFTau_Fit_charge->at(i);}
+   int      KFTau_Fit_charge(unsigned int i){std::cout << i << " " << Ntp->KFTau_Fit_charge->size() << std::endl; return Ntp->KFTau_Fit_charge->at(i);}
    int      KFTau_Fit_csum(unsigned int i){return Ntp->KFTau_Fit_csum->at(i);}
    int      KFTau_Fit_iterations(unsigned int i){return Ntp->KFTau_Fit_iterations->at(i);}
    double   KFTau_Fit_TauEnergyFraction(unsigned int i){return Ntp->KFTau_Fit_TauEnergyFraction->at(i);}
@@ -376,6 +377,10 @@ class Ntuple_Controller{
 
 
    // Trigger
+   bool         TriggerAccept(TString n);
+   unsigned int HLTPrescale(TString n);
+   unsigned int L1SEEDPrescale(TString n);
+   bool         GetTriggerIndex(TString n, unsigned int &i);
    unsigned int NHLTTriggers(){return Ntp->HTLTriggerName->size();}
    std::string  HTLTriggerName(unsigned int i){return Ntp->HTLTriggerName->at(i);}
    bool         TriggerAccept(unsigned int i){return Ntp->TriggerAccept->at(i);}
@@ -389,9 +394,6 @@ class Ntuple_Controller{
    float        ElectronTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->ElectronTriggerMatch->at(i).size()) return Ntp->ElectronTriggerMatch->at(i).at(j);return 999;}
    float        JetTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->JetTriggerMatch->at(i).size()) return Ntp->JetTriggerMatch->at(i).at(j);return 999;}
    float        TauTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TauTriggerMatch->at(i).size()) return Ntp->TauTriggerMatch->at(i).at(j);return 999;}
-
-
-
 
 };
 
