@@ -23,7 +23,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("tau_momentum_calculation"))s=new Tau_momentum_calculation(Analysis,UncertType);
   else if(Analysis.Contains("ztotautau_controlsample"))s=new Ztotautau_ControlSample(Analysis,UncertType);
   else if(Analysis.Contains("tauspinexample"))s=new TauSpinExample(Analysis,UncertType);
-  else if(Analysis.Contains("ChargedHiggs"))s=new ChargedHiggs(Analysis,UncertType);
+  else if(Analysis.Contains("chargedhiggs"))s=new ChargedHiggs(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);
