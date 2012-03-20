@@ -496,3 +496,12 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 
+bool Ntuple_Controller::isGoodKFTau(unsigned int i){
+  //if(Ntp->KFTau_discriminatorByQC(i)==1){                                                                                                                                                                                                  
+  if(KFTau_discriminatorByKFit(i)==1){
+    if(PFTau_isMediumIsolation(KFTau_MatchedHPS_idx(i))){
+      return true;
+    }
+  }
+  return false;
+}

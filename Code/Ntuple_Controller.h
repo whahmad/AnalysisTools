@@ -227,6 +227,7 @@ class Ntuple_Controller{
 
    // Kinematic Fit Tau Information
    unsigned int     NKFTau(){return Ntp->KFTau_TauVis_p4->size();}
+   bool             isGoodKFTau(unsigned int i);
    TLorentzVector   KFTau_TauVis_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_TauVis_p4->at(i).at(1),Ntp->KFTau_TauVis_p4->at(i).at(2),Ntp->KFTau_TauVis_p4->at(i).at(3),Ntp->KFTau_TauVis_p4->at(i).at(0));}
    TLorentzVector   KFTau_TauFit_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_TauFit_p4->at(i).at(1),Ntp->KFTau_TauFit_p4->at(i).at(2),Ntp->KFTau_TauFit_p4->at(i).at(3),Ntp->KFTau_TauFit_p4->at(i).at(0));}
    TLorentzVector   KFTau_Neutrino_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_Neutrino_p4->at(i).at(1),Ntp->KFTau_Neutrino_p4->at(i).at(2),Ntp->KFTau_Neutrino_p4->at(i).at(3),Ntp->KFTau_Neutrino_p4->at(i).at(0));}
@@ -297,6 +298,8 @@ class Ntuple_Controller{
    double             MET_et(){return Ntp->MET_et;}
    double             MET_phi(){return Ntp->MET_phi;}
    double             MET_sumET(){return Ntp->MET_sumET;}
+   double             MET_ex(){return Ntp->MET_et*cos(Ntp->MET_phi);}
+   double             MET_ey(){return Ntp->MET_et*sin(Ntp->MET_phi);}
 
    //Track Information
    unsigned int      NTracks(){return Ntp->Track_p4->size();}
@@ -386,6 +389,7 @@ class Ntuple_Controller{
    float        ElectronTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->ElectronTriggerMatch->at(i).size()) return Ntp->ElectronTriggerMatch->at(i).at(j);return 999;}
    float        JetTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->JetTriggerMatch->at(i).size()) return Ntp->JetTriggerMatch->at(i).at(j);return 999;}
    float        TauTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TauTriggerMatch->at(i).size()) return Ntp->TauTriggerMatch->at(i).at(j);return 999;}
+
 
 
 
