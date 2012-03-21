@@ -42,8 +42,8 @@ void  ChargedHiggs::Configure(){
     if(i==MET)                cut.at(MET)=50;
     if(i==HT)                 cut.at(HT)=200;
     if(i==NTauKinFit)         cut.at(NTauKinFit)=1;
-    if(i==NTauPt)             cut.at(NTauPt)=20;
-    if(i==NTauEta)            cut.at(NTauEta)=2.0 ;
+    if(i==NTauPt)             cut.at(NTauPt)=1;
+    if(i==NTauEta)            cut.at(NTauEta)=1 ;
     if(i==HadWMass)           cut.at(HadWMass)=30;
     if(i==HadTopMass)         cut.at(HadTopMass)=50;
     if(i==TauMETTopMT)        cut.at(TauMETTopMT)=50;
@@ -126,7 +126,7 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NBJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==NTauKinFit){
-      title.at(i)="$Number of Kin. Fit \\tau >$";
+      title.at(i)="Number of Kin. Fit $\\tau >$";
       title.at(i)+=cut.at(NTauKinFit);
       title.at(i)+="(GeV)";
       htitle=title.at(i);
@@ -137,7 +137,7 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKinFit_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
     else if(i==NTauPt){
-      title.at(i)="$Number of \\tau with P_{T}^{\\tau}>$";
+      title.at(i)="Number of $\\tau$ with $P_{T}^{\\tau}>$";
       title.at(i)+=tau_pt;
       title.at(i)+="(GeV)";
       htitle=title.at(i);
@@ -151,7 +151,7 @@ void  ChargedHiggs::Configure(){
       Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
     }
     else if(i==NTauEta){
-      title.at(i)="$umber of \\tau with \\eta^{\\tau}>$";
+      title.at(i)="Number of $\\tau$ with $\\eta^{\\tau}>$";
       title.at(i)+=tau_eta;
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
@@ -219,15 +219,15 @@ void  ChargedHiggs::Configure(){
     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETTopMT_",htitle,100,0,500,hlabel,"Events"));
    }
    else if(i==TauMETdphi){
-      title.at(i)="$\\Delta\\phi(\\tau,MET) < $";
+      title.at(i)="$cos(\\phi(\\tau,MET)) < $";
       title.at(i)+=cut.at(TauMETdphi);
       title.at(i)+="(rad)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="#Delta#phi(#tau,MET) (rad)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,0,TMath::Pi(),hlabel,"Events"));
+      hlabel="cos(#phi(#tau,MET)) (rad)";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,32,-1,1,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,-1,1,hlabel,"Events"));
    } 
    else if(i==etaq){
      title.at(i)="$q_{\\mu}|\\eta|$";
@@ -318,7 +318,7 @@ void  ChargedHiggs::doEvent(){
 
   for(unsigned i=0;i<GoodTaus.size();i++){
     if(fabs(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta())<tau_eta){
-      dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
+      dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta());
     }
     else{
       GoodTaus.erase(GoodTaus.begin()+i);
