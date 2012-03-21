@@ -17,6 +17,9 @@ $tag="HEAD";
 $TauReco="4_4_Y_08_03_2012";
 $BTag="YES";
 $Cleaning ="YES";
+$maxdata=100;
+$maxmc=100;
+
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
     printf("\nPlease choose from the following options:\n");
@@ -36,14 +39,21 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                     --InputDir <InputDir>   Default value: $InputDir"); 
     printf("\n                                                     --OutputDir <OutputDir> Default value: $OutputDir");
     printf("\n                                                     --CodeDir  <CodeDir>    Default value: $CodeDir");
-    printf("\n                                                     --SetName <SetName>     Default value: $set \n");
+    printf("\n                                                     --SetName <SetName>     Default value: $set ");
+    printf("\n                                                     --NMaxData <Max Number of data files per job >     Default value: $maxdata ");
+    printf("\n                                                     --NMaxMC <Max Number of MC files per job >     Default value: $maxmc ");
     printf("\n./todo.pl --DCache <Input.txt> <ListofDS.txt>      INTENTED FOR REGULAR USE (DEFAULT)");
     printf("\n                                                   Configure a directory to run from. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
     printf("\n                                                   <ListoDS.txt> list of DCache Dataset directories you want to run on.");
-    printf("\n                                                   Optional commands:   --OutputDir <OutputDir> --CodeDir <CodeDir>");
-    printf("\n                                                                        --SetName <SetName> \n\n");
-    exit(0); 
+    printf("\n                                                   Optional commands:  ");
+    printf("\n                                                     --OutputDir <OutputDir> ");
+    printf("\n                                                     --CodeDir <CodeDir>");
+    printf("\n                                                     --SetName <SetName> "); 
+    printf("\n                                                     --NMaxData <Max Number of data files per job >     Default value: $maxdata ");
+    printf("\n                                                     --NMaxMC <Max Number of MC files per job >     Default value: $maxmc ");
+    printf("\n  ");
+    exit(0);  
 } 
 
 ######################################
@@ -89,7 +99,14 @@ for($l=2;$l<$numArgs; $l++){
 	$l++;
 	$Cleaning =$ARGV[$l];
     }
-
+    if($ARGV[$l] eq  "--NMaxData" ){
+	$l++;
+	$maxdata=$ARGV[$l];
+    }
+    if($ARGV[$l] eq  "--NMaxMC" ){
+	$l++;
+	$maxmc=$ARGV[$l];
+    }
 }
 
 if( $ARGV[0] eq "--TauNtuple"){
@@ -235,8 +252,6 @@ if( $ARGV[0] eq "--Local" ){
     
     $B=0;
     $max=1;
-    $maxdata=100;
-    $maxmc=100;
     for($l=0;$l<2; $l++){
 	printf("\n\nStarting Loop $l \n");
 	$A=$maxdata+$maxmc+10;
@@ -387,8 +402,6 @@ if( $ARGV[0] eq "--DCache" ){
     for($l=0;$l<2; $l++){
 	$B=0;
 	$max=1;
-	$maxdata=100;
-	$maxmc=100;
 	foreach $DS (@DataSets){
 	    if(($l==0 && ($DS =~ m/data/)) || ($l==1 && !($DS =~ m/data/))){
 		if($l==0){
