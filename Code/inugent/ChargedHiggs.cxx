@@ -81,7 +81,8 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
     }
     else if(i==NJets){
-      title.at(i)="Number of Jets";
+      title.at(i)="Number of Jets $>=$";
+      title.at(i)+=cut.at(NJets);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -90,7 +91,8 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==N1Jets){
-      title.at(i)="Number of Jets";
+      title.at(i)="Number of Jets $>=$";
+      title.at(i)+=cut.at(N1Jets);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -99,7 +101,8 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N1Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==N2Jets){
-      title.at(i)="Number of Jets";
+      title.at(i)="Number of Jets $>=$";
+      title.at(i)+=cut.at(N2Jets);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -108,8 +111,9 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N2Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==N3Jets){
-      title.at(i)="Number of Jets";
+      title.at(i)="Number of Jets $>=$";
       htitle=title.at(i);
+      title.at(i)+=cut.at(N3Jets);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="Number of Jets";
@@ -117,7 +121,8 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N3Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==NBJets){
-      title.at(i)="Number of BJets";
+      title.at(i)="Number of BJets $>=$";
+      title.at(i)+=cut.at(NBJets);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -126,7 +131,7 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NBJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==NTauKinFit){
-      title.at(i)="Number of Kin. Fit $\\tau >$";
+      title.at(i)="Number of Kin. Fit $\\tau >=$";
       title.at(i)+=cut.at(NTauKinFit);
       title.at(i)+="(GeV)";
       htitle=title.at(i);
@@ -137,9 +142,10 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKinFit_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
     else if(i==NTauPt){
-      title.at(i)="Number of $\\tau$ with $P_{T}^{\\tau}>$";
+      title.at(i)="Number of $\\tau$ [$P_{T}^{\\tau}>$";
       title.at(i)+=tau_pt;
-      title.at(i)+="(GeV)";
+      title.at(i)+="(GeV)] $>=$";
+      title.at(i)+=cut.at(NTauPt);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -151,8 +157,10 @@ void  ChargedHiggs::Configure(){
       Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
     }
     else if(i==NTauEta){
-      title.at(i)="Number of $\\tau$ with $\\eta^{\\tau}>$";
+      title.at(i)="Number of $\\tau$ [$|\\eta^{\\tau}|<$";
       title.at(i)+=tau_eta;
+      title.at(i)+="] $>=$";
+      title.at(i)+=cut.at(NTauPt);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
@@ -220,7 +228,9 @@ void  ChargedHiggs::Configure(){
    }
    else if(i==TauMETdphi){
       title.at(i)="$cos(\\phi(\\tau,MET)) < $";
-      title.at(i)+=cut.at(TauMETdphi);
+      char buffer[50];
+      sprintf(buffer,"%5.2f",cut.at(TauMETdphi));
+      title.at(i)+=buffer;
       title.at(i)+="(rad)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
@@ -230,7 +240,7 @@ void  ChargedHiggs::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,-1,1,hlabel,"Events"));
    } 
    else if(i==etaq){
-     title.at(i)="$q_{\\mu}|\\eta|$";
+     title.at(i)="$q_{\\tau}|\\eta_{\\tau}|$";
      char buffer[50];
      sprintf(buffer,"%5.2f",cut.at(etaq));
      title.at(i)+=buffer;
@@ -238,7 +248,7 @@ void  ChargedHiggs::Configure(){
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
-     hlabel="q_{#mu}|#eta|";
+     hlabel="q_{#tau}|#eta_{#tau}|";
      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
    }
