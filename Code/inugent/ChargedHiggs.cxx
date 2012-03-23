@@ -315,22 +315,18 @@ void  ChargedHiggs::doEvent(){
 
 
   for(unsigned i=0;i<GoodTaus.size();i++){
-    if(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt()>tau_pt){
-      dist.at(NTauPt).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
-    }
-    else{
+    dist.at(NTauPt).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
+    if(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt()<tau_pt){
       GoodTaus.erase(GoodTaus.begin()+i);
       i--;
     }
   }
   value.at(NTauPt)=GoodTaus.size();
   pass.at(NTauPt)=(value.at(NTauPt)>=cut.at(NTauPt));
-
+  if( GoodTaus.size()==0) return;
   for(unsigned i=0;i<GoodTaus.size();i++){
-    if(fabs(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta())<tau_eta){
-      dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta());
-    }
-    else{
+    dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta());
+    if(fabs(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta())>tau_eta){
       GoodTaus.erase(GoodTaus.begin()+i);
       i--;
     }
@@ -346,10 +342,10 @@ void  ChargedHiggs::doEvent(){
   //
   std::vector<unsigned int> GoodJets;
   for(int i=0;i<Ntp->NPFJets();i++){
-    if(Ntp->isGoodJet(i) && Ntp->PFJet_p4(i).Pt()>jet_pt && fabs(Ntp->PFJet_p4(i).Eta())>jet_eta){
+    if(Ntp->isGoodJet(i) && Ntp->PFJet_p4(i).Pt()>jet_pt && fabs(Ntp->PFJet_p4(i).Eta())<jet_eta){
       bool overlap=false;
       for(unsigned j=0;j<GoodTaus.size();j++){
-	if(Tools::dr(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)),Ntp->PFJet_p4(i))<0.5) overlap=true;
+	if(Tools::dr(Ntp->KFTau_TauFit_p4(GoodTaus.at(j)),Ntp->PFJet_p4(i))<0.5) overlap=true;
       }
       if(!overlap)GoodJets.push_back(i);
     }
@@ -407,7 +403,7 @@ void  ChargedHiggs::doEvent(){
   std::vector<unsigned int> WJetCand=GoodJets;
   for(unsigned int i=0;i<WJetCand.size();i++){
     for(unsigned int j=0;j<GoodBJets.size();j++){
-      if(WJetCand.at(i)==GoodBJets.at(i)){
+      if(WJetCand.at(i)==GoodBJets.at(j)){
 	WJetCand.erase(WJetCand.begin()+i);
 	i--;
 	break;
@@ -486,6 +482,15 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(etaq)=true;
   if(verbose)std::cout << "void  ChargedHiggs::doEvent() I" << std::endl;
+
+  pass.at(HT)=true;
+  pass.at(etaq)=true;
+  pass.at(HadWMass)=true;
+  pass.at(HadTopMass)=true;
+  pass.at(TauMETTopMT)=true;
+  pass.at(TauMETdphi)=true;
+
+
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
