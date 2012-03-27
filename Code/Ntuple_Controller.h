@@ -245,7 +245,7 @@ class Ntuple_Controller{
    float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
    float    KFTau_Fit_ndf(unsigned int i){return Ntp->KFTau_Fit_ndf->at(i);}
    int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
-   int      KFTau_Fit_charge(unsigned int i){std::cout << i << " " << Ntp->KFTau_Fit_charge->size() << std::endl; return Ntp->KFTau_Fit_charge->at(i);}
+   int      KFTau_Fit_charge(unsigned int i){return Ntp->KFTau_Fit_charge->at(i);}
    int      KFTau_Fit_csum(unsigned int i){return Ntp->KFTau_Fit_csum->at(i);}
    int      KFTau_Fit_iterations(unsigned int i){return Ntp->KFTau_Fit_iterations->at(i);}
    double   KFTau_Fit_TauEnergyFraction(unsigned int i){return Ntp->KFTau_Fit_TauEnergyFraction->at(i);}

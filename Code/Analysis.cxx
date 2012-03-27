@@ -164,7 +164,7 @@ int main() {
       }
       EventsReadFromFile[k]++;
       num++;
-      if(num>=10){
+      if(num>=1000){
 	cout << "Starting event:" << i << " out of " << nentries << endl;
 	num=0;
       }
@@ -188,6 +188,7 @@ int main() {
     }
     time (&afterLoop);
     if(skim) Ntp.SaveCloneTree();
+    if(ListOfFilesRead.at(0)==ListOfFilesRead.at(ListOfFilesRead.size()-1)) ListOfFilesRead.pop_back();
     if(i==nentries && Files.size()==ListOfFilesRead.size()) 
       cout << " Number of events Read: " << i << " out of " << nentries << " SUCCESSFULL" <<  endl;
     else 

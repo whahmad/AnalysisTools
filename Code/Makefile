@@ -61,7 +61,8 @@ TARGETS       =	Ntuple_Controller \
 		ChargedHiggs \
 		TauSpinExample \
                 Tau_momentum_calculation \
-		TauSpinerInterface
+		TauSpinerInterface \
+		ZDouble3prong
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx

@@ -323,7 +323,6 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(NTauPt)=GoodTaus.size();
   pass.at(NTauPt)=(value.at(NTauPt)>=cut.at(NTauPt));
-  if( GoodTaus.size()==0) return;
   for(unsigned i=0;i<GoodTaus.size();i++){
     dist.at(NTauEta).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta());
     if(fabs(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Eta())>tau_eta){
