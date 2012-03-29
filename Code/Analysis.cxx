@@ -164,7 +164,7 @@ int main() {
       }
       EventsReadFromFile[k]++;
       num++;
-      if(num>=1000){
+      if(num>=10000){
 	cout << "Starting event:" << i << " out of " << nentries << endl;
 	num=0;
       }
@@ -173,7 +173,7 @@ int main() {
 	if(!DER.CheckDoubleEvents(Ntp.RunNumber(), Ntp.EventNumber())) continue;
 	if(RunNumber!=Ntp.RunNumber()){
 	  RunNumber=Ntp.RunNumber();
-	  cout << "RunNumber: " << RunNumber << endl;
+	  //cout << "RunNumber: " << RunNumber << endl;
 	}
       }
       bool passed=false;

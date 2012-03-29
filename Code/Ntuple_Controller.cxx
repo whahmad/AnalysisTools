@@ -315,10 +315,14 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   //  corrected pT 30 GeV 30 GeV    
   //  residual correction (data) applied applied
   //  abs(eta) < 2.5 < 2.4                      
-  //  jet ID applied applied                    
+  //  jet ID applied applied     
+  std::cout << "isGoodJet_nooverlapremoval" << std::endl;               
   if(isJetID(i)){
+    std::cout << "isJetID(" << std::endl;
     if(PFJet_p4(i).Pt()>15.0){
+      std::cout << "PFJet_p4(i).Pt(" << std::endl;
       if(fabs(PFJet_p4(i).Eta())<2.4){
+	std::cout << "PFJet_p4.Eta" << std::endl;
 	return true;
       }
     }
@@ -342,7 +346,7 @@ bool Ntuple_Controller::isJetID(unsigned int i){
   if(PFJet_numberOfDaughters(i)>1){
     if(PFJet_chargedEmEnergyFraction(i)<0.99){
       if(PFJet_neutralHadronEnergyFraction(i)<0.99){
-	if(PFJet_PFJet_neutralEmEnergyFraction(i)<0.99){
+	if(PFJet_neutralEmEnergyFraction(i)<0.99){
 	  if(fabs(PFJet_p4(i).Eta())<2.4){
 	    if(PFJet_chargedHadronEnergyFraction(i)>0){
 	      if(PFJet_chargedMultiplicity(i)>0){
@@ -497,9 +501,8 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 bool Ntuple_Controller::isGoodKFTau(unsigned int i){
-  //if(Ntp->KFTau_discriminatorByQC(i)==1){                                                                                                                                                                                                  
-  if(KFTau_discriminatorByKFit(i)==1){
-    if(PFTau_isMediumIsolation(KFTau_MatchedHPS_idx(i))){
+  if(KFTau_discriminatorByKFit(i)){
+    if(KFTau_discriminatorByQC(i)){
       return true;
     }
   }
@@ -532,7 +535,10 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
 }
 
 bool Ntuple_Controller::hasKFTau_indexOfFitInfo(unsigned int i,unsigned int &idx){
-  idx=Ntp->KFTau_indexOfFitInfo->at(i); 
-  if(i>=0 && i<Ntp->KFTau_Fit_TauPrimVtx->size()) return true;
+  if(i>=0 && i<Ntp->KFTau_Fit_TauPrimVtx->size()) {
+    idx=Ntp->KFTau_indexOfFitInfo->at(i); 
+    return true;
+  }
   return false;
 }
+

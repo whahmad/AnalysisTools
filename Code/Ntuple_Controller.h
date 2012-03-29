@@ -241,7 +241,7 @@ class Ntuple_Controller{
 
    // Kinematic Fit Info (access using KFTau_indexOfFitInfo)
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return TVector3(Ntp->KFTau_Fit_TauPrimVtx->at(i).at(0),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(1),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(2));}
-   int      KFTau_Fit_IndexToPrimVertexVector(unsigned int i){return Ntp->KFTau_Fit_IndexToPrimVertexVector->at(i);}
+   int      KFTau_Fit_IndexToPrimVertexVector(unsigned int i){return Ntp->KFTau_Fit_IndexToPrimeVertice->at(i);}
    float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
    float    KFTau_Fit_ndf(unsigned int i){return Ntp->KFTau_Fit_ndf->at(i);}
    int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
@@ -250,7 +250,7 @@ class Ntuple_Controller{
    int      KFTau_Fit_iterations(unsigned int i){return Ntp->KFTau_Fit_iterations->at(i);}
    double   KFTau_Fit_TauEnergyFraction(unsigned int i){return Ntp->KFTau_Fit_TauEnergyFraction->at(i);}
    double   KFTau_Fit_RefitVisibleMass(unsigned int i){return Ntp->KFTau_Fit_RefitVisibleMass->at(i);}
-   double   KFTau_Fit_Chi2(unsigned int i){return Ntp->KFTau_Fit_Chi2->at(i);}
+   double   KFTau_Fit_Chi2Prob(unsigned int i){return Ntp->KFTau_Fit_Chi2->at(i);}
    double   KFTau_Fit_PV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_PV_PV_significance->at(i);}
    double   KFTau_Fit_SV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_SV_PV_significance->at(i);}
    
@@ -289,7 +289,7 @@ class Ntuple_Controller{
    float              PFJet_chargedEmEnergyFraction(unsigned int i){return Ntp->PFJet_chargedEmEnergyFraction->at(i);}
    float              PFJet_chargedHadronEnergyFraction(unsigned int i){return Ntp->PFJet_chargedHadronEnergyFraction->at(i);}
    float              PFJet_neutralHadronEnergyFraction(unsigned int i){return Ntp->PFJet_neutralHadronEnergyFraction->at(i);}
-   float              PFJet_PFJet_neutralEmEnergyFraction(unsigned int i){return Ntp->PFJet_PFJet_neutralEmEnergyFraction->at(i);}
+   float              PFJet_neutralEmEnergyFraction(unsigned int i){return Ntp->PFJet_neutralEmEnergyFraction->at(i);}
    bool               isGoodJet(unsigned int i);
    bool               isGoodJet_nooverlapremoval(unsigned int i);
    bool               isJetID(unsigned int i);

@@ -128,13 +128,8 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo,float Lumi,std::vector<
 	      }
 	    }
 	    if(nevents.at(i)>0){
-	      if(Lumi>0){
+	      if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>0){
 		histo.at(j).at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
-	      }
-	      else {
-		if(histo.at(j).at(0).Integral()>0 && histo.at(j).at(i).Integral()>0) {
-		  histo.at(j).at(i).Scale(histo.at(j).at(0).Integral()/histo.at(j).at(i).Integral());
-		}
 	      }
 	      if(histo.at(j).at(i).Integral()>0 ){
 		MCHistoStack.Add(&histo.at(j).at(i));
@@ -258,7 +253,7 @@ void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt,bool lt,float Lu
     histo.at(0).Reset();
     if(histo.size()>0){
      for(int i=0; i<histo.size();i++){ 
-       if(nevents.at(i)>0){
+       if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>0){
 	 histo.at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
 	 
        }
@@ -334,7 +329,7 @@ void Plots::Plot1Dsigtobkg(std::vector<TH1D> histo, bool gt,bool lt,float Lumi,s
     histo.at(0).Reset();
     if(histo.size()>2){
      for(int i=0; i<histo.size();i++){ 
-       if(nevents.at(i)>0){
+       if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>0){
 	 histo.at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
        }
      }
@@ -427,7 +422,7 @@ void Plots::Plot1D_DataMC_Compare(std::vector<TH1D> histo, float Lumi,std::vecto
 
     if(histo.size()>4){
       for(int i=0; i<histo.size();i++){ 
-	if(nevents.at(i)>0 && CrossSectionandAcceptance.at(i)>=0){
+	if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>=0){
 	  histo.at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
 	}
 	if(i>1){
@@ -588,7 +583,7 @@ void Plots::Plot2D(std::vector<TH2D>  histo,float Lumi,std::vector<float> CrossS
     for(int i=0; i<histo.size();i++){
       if(nevents.at(i)>0 && i!=0){
 	if(ntypes>1){
-	  if(Lumi>0){
+	  if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>0){
 	    histo.at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
 	  }
 	}

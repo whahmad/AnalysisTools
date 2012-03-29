@@ -242,7 +242,8 @@ void  Selection::Finish(){
       std::cout << i << " CrossSectionandAcceptance " << CrossSectionandAcceptance.at(i) << " " << nevents.at(i) << " " << nevents_noweight.at(i) << std::endl;
     }
 
-
+    ///Now make the plots
+    system("rm EPS/*.eps");
     Plots P;
     P.Plot1D(Nminus1,Lumi,CrossSectionandAcceptance,nevents,colour,legend);
     for(unsigned int i=0; i<Nminus1.size();i++){

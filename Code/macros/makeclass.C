@@ -1,5 +1,5 @@
 void makeclass(){
    TChain c("t");
-   c.Add("../Set_1/TauNtuple_123_1_t4m.root");
+   c.Add("/user/scratch/nugent/TauNtuple_115_1_4P9.root");
    c.MakeClass("NtupleReader");
 }

@@ -494,7 +494,7 @@ void  ChargedHiggs::doEvent(){
   double wobs(1),w(1);
   if(!Ntp->isData()){
     if(verbose)std::cout << "void  ChargedHiggs::doEvent() J" << std::endl;
-    w*=Ntp->EvtWeight3D();
+    // w*=Ntp->EvtWeight3D();
     if(verbose)std::cout << "void  ChargedHiggs::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}

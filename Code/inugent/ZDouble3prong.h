@@ -18,6 +18,8 @@ class ZDouble3prong : public Selection {
 	     NTauKinFit,
 	     NTauPt,
 	     NTauEta,
+	     TauIso,
+	     TauTauVertex,
 	     NJets,
              MET,
 	     deltaPhi,
@@ -38,6 +40,18 @@ class ZDouble3prong : public Selection {
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
   std::vector<TH1D> ZDouble3prongMT;
+
+  std::vector<TH1D> KFTau_Fit_chiprob;
+  std::vector<TH1D> KFTau_Fit_a1mass;
+  std::vector<TH1D> KFTau_Fit_chi2;
+  std::vector<TH1D> KFTau_Fit_ndf;
+  std::vector<TH1D> KFTau_Fit_ambiguity;
+  std::vector<TH1D> KFTau_Fit_csum;
+  std::vector<TH1D> KFTau_Fit_iterations;
+  std::vector<TH1D> KFTau_Fit_TauEnergyFraction;
+  std::vector<TH1D> KFTau_Fit_PV_PV_significance;
+  std::vector<TH1D> KFTau_Fit_SV_PV_significance;
+
   double tau_pt,tau_eta,jet_pt,jet_eta;
 
 };

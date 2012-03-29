@@ -6,15 +6,16 @@
 
 #include "Tools.h"
 #include "PDG_Var.h"
+#include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
 ZDouble3prong::ZDouble3prong(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,tau_pt(30)
+  ,tau_pt(22)
   ,tau_eta(2.0)
   ,jet_pt(20)
   ,jet_eta(2.4)
 {
-
+  //  verbose=true;
 }
 
 ZDouble3prong::~ZDouble3prong(){
@@ -39,6 +40,8 @@ void  ZDouble3prong::Configure(){
     if(i==NTauKinFit)         cut.at(NTauKinFit)=2;
     if(i==NTauPt)             cut.at(NTauPt)=2;
     if(i==NTauEta)            cut.at(NTauEta)=2 ;
+    if(i==TauIso)             cut.at(TauIso)=0.4 ;
+    if(i==TauTauVertex)       cut.at(TauTauVertex)=1;
     if(i==deltaPhi)           cut.at(deltaPhi)=-1/sqrt(2);
     if(i==charge)             cut.at(charge)=0;
     if(i==ZMassmax)           cut.at(ZMassmax)=PDG_Var::Z_mass()+30;
@@ -53,6 +56,7 @@ void  ZDouble3prong::Configure(){
     dist.push_back(std::vector<float>());
     Accumdist.push_back(std::vector<TH1D>());
     Nminus1dist.push_back(std::vector<TH1D>());
+
     TString c="_Cut_";
     if(i<10)c+="0";
     c+=i;
@@ -71,8 +75,8 @@ void  ZDouble3prong::Configure(){
     else if(i==TriggerOk){
       title.at(i)="Trigger ";
       hlabel="Trigger ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,17,-0.5,16.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,17,-0.5,16.5,hlabel,"Events"));
     }
     else if(i==NJets){
       title.at(i)="Number of Jets $>=$";
@@ -136,48 +140,45 @@ void  ZDouble3prong::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MET_",htitle,40,0,200,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MET_",htitle,40,0,200,hlabel,"Events"));
     } 
-    if(i==ZMassmax)           cut.at(ZMassmax)=-30;
-    if(i==ZMassmin)           cut.at(ZMassmin)=+30;
-
-   else if(i==charge){
-     title.at(i)="$\\tau-\\tau$ Charge = ";
-     title.at(i)+=cut.at(charge);
-     title.at(i)+="";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="#tau-#tau Charge ";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HT_",htitle,21,-5.5,5.5,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HT_",htitle,21,-5.5,5.5,hlabel,"Events"));
-   }
-   else if(i==deltaPhi){
-    title.at(i)="$cos(\\phi_{\\tau-\\tau}) > $";
-    char buffer[50];
-    sprintf(buffer,"%5.2f",cut.at(deltaPhi));
-    title.at(i)+=buffer;
-    title.at(i)+="";
-    htitle=title.at(i);
-    htitle.ReplaceAll("$","");
-    htitle.ReplaceAll("\\","#");
-    hlabel="cos(#phi_{#tau-#tau}";
-    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadTopMass_",htitle,40,-1,1,hlabel,"Events"));
-    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadTopMass_",htitle,40,-1,1,hlabel,"Events"));
-  }
-   else if(i==ZMassmax){
-    title.at(i)="$M_{\\tau-\\tau} < $";
-    char buffer[50];
-    sprintf(buffer,"%5.2f",cut.at(ZMassmax));
-    title.at(i)+=buffer;
-    title.at(i)+="(GeV)";
-    htitle=title.at(i);
-    htitle.ReplaceAll("$","");
-    htitle.ReplaceAll("\\","#");
-    hlabel="M_{#tau,#tau} (GeV)";
-    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETTopMT_",htitle,40,0,200,hlabel,"Events"));
-    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETTopMT_",htitle,40,0,200,hlabel,"Events"));
-   }
-   else if(i==ZMassmin){
+    else if(i==charge){
+      title.at(i)="$\\tau-\\tau$ Charge = ";
+      title.at(i)+=cut.at(charge);
+      title.at(i)+="";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="#tau-#tau Charge ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HT_",htitle,21,-5.5,5.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HT_",htitle,21,-5.5,5.5,hlabel,"Events"));
+    }
+    else if(i==deltaPhi){
+      title.at(i)="$cos(\\phi_{\\tau-\\tau}) < $";
+      char buffer[50];
+      sprintf(buffer,"%5.2f",cut.at(deltaPhi));
+      title.at(i)+=buffer;
+      title.at(i)+="";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="cos(#phi_{#tau-#tau}";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadTopMass_",htitle,40,-1,1,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadTopMass_",htitle,40,-1,1,hlabel,"Events"));
+    }
+    else if(i==ZMassmax){
       title.at(i)="$M_{\\tau-\\tau} > $";
+      char buffer[50];
+      sprintf(buffer,"%5.2f",cut.at(ZMassmax));
+      title.at(i)+=buffer;
+      title.at(i)+="(GeV)";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="M_{#tau,#tau} (GeV)";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETTopMT_",htitle,60,0,300,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETTopMT_",htitle,60,0,300,hlabel,"Events"));
+    }
+    else if(i==ZMassmin){
+      title.at(i)="$M_{\\tau-\\tau} < $";
       char buffer[50];
       sprintf(buffer,"%5.2f",cut.at(ZMassmin));
       title.at(i)+=buffer;
@@ -186,10 +187,31 @@ void  ZDouble3prong::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="M_{#tau,#tau} (GeV)";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,60,0,300,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,60,0,300,hlabel,"Events"));
+   } 
+    else if(i==TauIso){
+      title.at(i)="$dr(\\tau,Jet) > $";
+      char buffer[50];
+      sprintf(buffer,"%5.2f",cut.at(TauIso));
+      title.at(i)+=buffer;
+      title.at(i)+="";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="dr(#tau,Jet) ";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,40,0,200,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,40,0,200,hlabel,"Events"));
-   } 
-
+    }
+    else if(i==TauTauVertex){
+      title.at(i)="has $\\tau-\\tau$ vertex";
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="has #tau-#tau vertex ";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauTauVertex_",htitle,2,-0.5,1.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauTauVertex_",htitle,2,-0.5,1.5,hlabel,"Events"));
+    }
     //-----------
   }
   // Setup NPassed Histogams
@@ -200,6 +222,20 @@ void  ZDouble3prong::Configure(){
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
   ZDouble3prongMT=HConfig.GetTH1D(Name+"_ZDouble3prongMT","ZDouble3prongMT",100,0,250,"M_{T,#tau,MET}","Events");
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"#eta","P_{T}^{Tag}");
+
+
+  KFTau_Fit_chiprob=HConfig.GetTH1D(Name+"_KFTau_Fit_prob","KFTau_Fit_prob",25,0,1,"Kinematic Fit Probability","Events");
+  KFTau_Fit_a1mass=HConfig.GetTH1D(Name+"_KFTau_Fit_a1mass","KFTau_Fit_a1mass",25,0,2.5,"Kinematic Fit a_{1} Mass","Events");
+  KFTau_Fit_chi2=HConfig.GetTH1D(Name+"_KFTau_Fit_chi2","KFTau_Fit_chi",25,0,25,"Kinematic Fit #chi^{2}","Events");
+  KFTau_Fit_ndf=HConfig.GetTH1D(Name+"_KFTau_Fit_ndf","KFTau_Fit_ndf",25,0,25,"Kinematic Fit ndf","Events");
+  KFTau_Fit_ambiguity=HConfig.GetTH1D(Name+"_KFTau_Fit_ambiguity","KFTau_Fit_ambiguity",5,-2.5,2.5,"Kinematic Fit Ambiguity","Events");
+  KFTau_Fit_csum=HConfig.GetTH1D(Name+"_KFTau_Fit_csum","KFTau_Fit_csum",100,0,1.0,"Kinematic Fit csum","Events");
+  KFTau_Fit_iterations=HConfig.GetTH1D(Name+"_KFTau_Fit_iterations","KFTau_Fit_iterations",25,0,25,"Kinematic Fit Iterations","Events");
+  KFTau_Fit_TauEnergyFraction=HConfig.GetTH1D(Name+"_KFTau_Fit_TauEnergyFraction","KFTau_Fit_TauEnergyFraction",50,0,5.0,"Transverse Energy Fration,","Events");
+  KFTau_Fit_PV_PV_significance=HConfig.GetTH1D(Name+"_ KFTau_Fit_PV_PV_significance"," KFTau_Fit_PV_PV_significance",50,0,10,"Kinematic Fit PV-PV_{Rotated} Significance","Events");
+  KFTau_Fit_SV_PV_significance=HConfig.GetTH1D(Name+"_ KFTau_Fit_SV_PV_significance","KFTau_Fit_SV_PV_significance",50,0,10,"Kinematic Fit SV-PV_{Rotated} Significance","Events");
+
+
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
   for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -215,6 +251,18 @@ void  ZDouble3prong::Store_ExtraDist(){
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
+
+ Extradist1d.push_back(&KFTau_Fit_chiprob);
+ Extradist1d.push_back(&KFTau_Fit_a1mass);
+ Extradist1d.push_back(&KFTau_Fit_chi2);
+ Extradist1d.push_back(&KFTau_Fit_ndf);
+ Extradist1d.push_back(&KFTau_Fit_ambiguity);
+ Extradist1d.push_back(&KFTau_Fit_csum);
+ Extradist1d.push_back(&KFTau_Fit_iterations);
+ Extradist1d.push_back(&KFTau_Fit_TauEnergyFraction);
+ Extradist1d.push_back(&KFTau_Fit_PV_PV_significance);
+ Extradist1d.push_back(&KFTau_Fit_SV_PV_significance);
+
 }
 
 void  ZDouble3prong::doEvent(){
@@ -226,7 +274,10 @@ void  ZDouble3prong::doEvent(){
 
   value.at(TriggerOk)=0;
   if(Ntp->TriggerAccept("HLT_DoubleIsoPFTau20"))value.at(TriggerOk)+=1;
-  pass.at(TriggerOk)=value.at(TriggerOk)>=cut.at(TriggerOk);
+  if(Ntp->TriggerAccept("HLT_DoubleIsoPFTau35"))value.at(TriggerOk)+=2;
+  if(Ntp->TriggerAccept("HLT_DoubleIsoPFTau40"))value.at(TriggerOk)+=4;
+  if(Ntp->TriggerAccept("HLT_DoubleIsoPFTau45"))value.at(TriggerOk)+=8;
+  pass.at(TriggerOk)=value.at(TriggerOk)==cut.at(TriggerOk);
 
   // Apply Selection
   unsigned int nGoodVtx=0;
@@ -247,15 +298,16 @@ void  ZDouble3prong::doEvent(){
   }
   value.at(NTauKinFit)=GoodTaus.size();
   pass.at(NTauKinFit)=(value.at(NTauKinFit)>=cut.at(NTauKinFit));
-
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() C" << std::endl;
 
   for(unsigned i=0;i<GoodTaus.size();i++){
-    dist.at(NTauPt).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
-    if(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt()<tau_pt){
+    dist.at(NTauPt).push_back(Ntp->KFTau_TauVis_p4(GoodTaus.at(i)).Pt());
+    if(Ntp->KFTau_TauVis_p4(GoodTaus.at(i)).Pt()<tau_pt){
       GoodTaus.erase(GoodTaus.begin()+i);
       i--;
     }
   }
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() D" << std::endl;
   value.at(NTauPt)=GoodTaus.size();
   pass.at(NTauPt)=(value.at(NTauPt)>=cut.at(NTauPt));
   for(unsigned i=0;i<GoodTaus.size();i++){
@@ -270,14 +322,16 @@ void  ZDouble3prong::doEvent(){
   unsigned int tauidx1(999),tauidx2(999),tauInfoidx1(999),tauInfoidx2(999);
   if(GoodTaus.size()>=1){tauidx1=GoodTaus.at(0);Ntp->hasKFTau_indexOfFitInfo(tauidx1,tauInfoidx1);}
   if(GoodTaus.size()>=2){tauidx2=GoodTaus.at(1);Ntp->hasKFTau_indexOfFitInfo(tauidx2,tauInfoidx2);}
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() E " << tauidx1 <<" "<< tauInfoidx1 << " " << tauidx2 << " "  << tauInfoidx2 << std::endl;
 
   // tau-tau Charge
-  value.at(charge)=-10;
+  value.at(charge)=-5;
   if(tauInfoidx1!=999 && tauInfoidx2!=999){
     value.at(charge)=Ntp->KFTau_Fit_charge(tauInfoidx1)+Ntp->KFTau_Fit_charge(tauInfoidx2);
   }
-  pass.at(charge)=(value.at(charge)==cut.at(charge));
-
+  pass.at(charge)=(value.at(charge)==0);
+ 
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F" << std::endl;
   value.at(deltaPhi)=1;
   if(tauidx1!=999 && tauidx2!=999){
     TLorentzVector Tau1=Ntp->KFTau_TauFit_p4(tauidx1);
@@ -287,21 +341,41 @@ void  ZDouble3prong::doEvent(){
     value.at(ZMassmax)=Z.M();
     value.at(ZMassmin)=Z.M();
   }
-  pass.at(deltaPhi)=(value.at(deltaPhi)==cut.at(deltaPhi));
+  pass.at(deltaPhi)=(value.at(deltaPhi)<cut.at(deltaPhi));
   pass.at(ZMassmax)=(value.at(ZMassmax)<cut.at(ZMassmax));
   pass.at(ZMassmin)=(value.at(ZMassmin)>cut.at(ZMassmin));
-
-  if(verbose)std::cout << "void  ZDouble3prong::doEvent() C " << tauidx1 << " " << tauidx2 << std::endl;
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F0" << std::endl;
+  value.at(TauIso)=5;
+  int overlap1(0), overlap2(0);
+  for(int i=0;i<Ntp->NPFJets();i++){
+    double dR=5;
+    if(tauidx1!=999) dR=Tools::dr(Ntp->KFTau_TauFit_p4(tauidx1),Ntp->PFJet_p4(i));
+    if(dR<cut.at(TauIso))overlap1++;
+    if(tauidx2!=999) dR=Tools::dr(Ntp->KFTau_TauFit_p4(tauidx2),Ntp->PFJet_p4(i));
+    if(dR<cut.at(TauIso))overlap2++;
+  }
+  pass.at(TauIso)=(2==overlap1+overlap2);
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F1" << std::endl;
+  pass.at(TauTauVertex)=false;
+  value.at(TauTauVertex)=0;
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F2" << std::endl;
+  if(tauInfoidx1!=999 && tauInfoidx2!=999) pass.at(TauTauVertex)=Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1)==Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2);
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F3" << std::endl;
+  if( pass.at(TauTauVertex))value.at(TauTauVertex)=1;
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F4" << std::endl;
+  if(tauInfoidx1!=999 && tauInfoidx2!=999){std::cout << "void  ZDouble3prong::doEvent() C " << tauInfoidx1 << " " <<  tauInfoidx2 << std::endl;
+    std::cout << "Vertex " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1) << " " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2) << std::endl;
+  }
   ///////////////////////////////////////////////
   //
   // Jet Cuts
   //
   std::vector<unsigned int> GoodJets;
   for(int i=0;i<Ntp->NPFJets();i++){
-    if(Ntp->isGoodJet(i) && Ntp->PFJet_p4(i).Pt()>jet_pt && fabs(Ntp->PFJet_p4(i).Eta())<jet_eta){
+    if(/*Ntp->isGoodJet(i) &&*/ Ntp->PFJet_p4(i).Pt()>jet_pt && fabs(Ntp->PFJet_p4(i).Eta())<jet_eta){
       bool overlap=false;
       for(unsigned j=0;j<GoodTaus.size();j++){
-	if(Tools::dr(Ntp->KFTau_TauFit_p4(GoodTaus.at(j)),Ntp->PFJet_p4(i))<0.5) overlap=true;
+	//	if(Tools::dr(Ntp->KFTau_TauFit_p4(GoodTaus.at(j)),Ntp->PFJet_p4(i))<0.5) overlap=true;
       }
       if(!overlap)GoodJets.push_back(i);
     }
@@ -310,7 +384,7 @@ void  ZDouble3prong::doEvent(){
   value.at(NJets)=GoodJets.size();
   //pass.at(NJets)=(value.at(NJets)>=cut.at(NJets));
   pass.at(NJets)=true;
-
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() G" << std::endl;
   ///////////////////////////////////////////////
   //
   // Event Shape and Energy Cuts
@@ -323,15 +397,23 @@ void  ZDouble3prong::doEvent(){
   }
   value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
   pass.at(MET)=(value.at(MET)<cut.at(MET));
-
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() H" << std::endl;
   ///////////////////////////////////////////////////////////
+  //Do QCD bkg
+  /*  if(!pass.at(charge)){
+    if(Ntp->isData()){
+      if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+      pass.at(charge)=true;
+    }
+    }*/
+  //////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
     if(verbose)std::cout << "void  ZDouble3prong::doEvent() J" << std::endl;
-    w*=Ntp->EvtWeight3D();
+    //w*=Ntp->EvtWeight3D();
     if(verbose)std::cout << "void  ZDouble3prong::doEvent() k" << w << " " << wobs << std::endl;
   }
-  else{w=1;}
+  else{w=1;wobs=1;}
   if(verbose) std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() L" << std::endl;
@@ -347,6 +429,32 @@ void  ZDouble3prong::doEvent(){
     }
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
 
+    if(tauInfoidx1!=999 && tauInfoidx2!=999){
+      if(verbose)std::cout << "void  ZDouble3prong::doEvent() J" << std::endl;
+      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauInfoidx1),w);
+      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauInfoidx1),w);
+      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauInfoidx1),w);
+      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauInfoidx1),w);
+      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauInfoidx1),w);
+      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauInfoidx1),w);
+      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauInfoidx1),w);
+      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauInfoidx1),w);
+      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauInfoidx1),w);
+      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauInfoidx1),w);
+
+
+      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauInfoidx2),w);
+      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauInfoidx2),w);
+      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauInfoidx2),w);
+      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauInfoidx2),w);
+      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauInfoidx2),w);
+      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauInfoidx2),w);
+      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauInfoidx2),w);
+      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauInfoidx2),w);
+      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauInfoidx2),w);
+      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauInfoidx2),w);
+      if(verbose)std::cout << "void  ZDouble3prong::doEvent() K" << std::endl;
+    }
   }
 }
 

@@ -1,12 +1,15 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Tue Mar 13 10:13:59 2012 by ROOT version 5.26/00c
+// Wed Mar 28 14:40:53 2012 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleReader_h
 #define NtupleReader_h
 
+#include <TROOT.h>
+#include <TChain.h>
+#include <TFile.h>
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -31,8 +34,9 @@ public :
    std::vector<std::vector<std::vector<float> > > *Vtx_Cov;
    std::vector<std::vector<int> > *Vtx_Track_idx;
    std::vector<float>   *Vtx_isFake;
+   Bool_t          isPatMuon;
    std::vector<std::vector<float> > *Muon_p4;
-   std::vector<std::vector<double> > *Muon_Poca;
+   std::vector<std::vector<float> > *Muon_Poca;
    std::vector<bool>    *Muon_isGlobalMuon;
    std::vector<bool>    *Muon_isStandAloneMuon;
    std::vector<bool>    *Muon_isTrackerMuon;
@@ -65,8 +69,9 @@ public :
    std::vector<float>   *Muon_numberOfMatches;
    std::vector<int>     *Muon_Charge;
    std::vector<int>     *Muon_numberOfChambers;
+   Bool_t          isPatElectron;
    std::vector<std::vector<float> > *Electron_p4;
-   std::vector<std::vector<double> > *Electron_Poca;
+   std::vector<std::vector<float> > *Electron_Poca;
    std::vector<float>   *Electron_Charge;
    std::vector<float>   *Electron_Gsf_deltaEtaEleClusterTrackAtCalo;
    std::vector<float>   *Electron_Gsf_deltaEtaSeedClusterTrackAtCalo;
@@ -93,7 +98,7 @@ public :
    std::vector<float>   *Electron_supercluster_centroid_z;
    std::vector<unsigned int> *Electron_Track_idx;
    std::vector<std::vector<float> > *PFTau_p4;
-   std::vector<std::vector<double> > *PFTau_Poca;
+   std::vector<std::vector<float> > *PFTau_Poca;
    std::vector<bool>    *PFTau_isTightIsolation;
    std::vector<bool>    *PFTau_isMediumIsolation;
    std::vector<bool>    *PFTau_isLooseIsolation;
@@ -101,6 +106,12 @@ public :
    std::vector<bool>    *PFTau_isMediumIsolationDBSumPtCorr;
    std::vector<bool>    *PFTau_isLooseIsolationDBSumPtCorr;
    std::vector<bool>    *PFTau_isVLooseIsolationDBSumPtCorr;
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsLoose;
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsMedium;
+   std::vector<bool>    *PFTau_isHPSAgainstElectronsTight;
+   std::vector<bool>    *PFTau_isHPSAgainstMuonLoose;
+   std::vector<bool>    *PFTau_isHPSAgainstMuonTight;
+   std::vector<bool>    *PFTau_isHPSByDecayModeFinding;
    std::vector<int>     *PFTau_hpsDecayMode;
    std::vector<int>     *PFTau_Charge;
    std::vector<std::vector<int> > *PFTau_Track_idx;
@@ -114,20 +125,21 @@ public :
    std::vector<std::vector<int> > *KFTau_Track_idx;
    std::vector<int>     *KFTau_indexOfFitInfo;
    std::vector<std::vector<float> > *KFTau_Fit_TauPrimVtx;
-   std::vector<int>     *KFTau_Fit_IndexToPrimVertexVector;
+   std::vector<int>     *KFTau_Fit_IndexToPrimeVertice;
    std::vector<float>   *KFTau_Fit_chi2;
    std::vector<float>   *KFTau_Fit_ndf;
    std::vector<int>     *KFTau_Fit_ambiguity;
    std::vector<int>     *KFTau_Fit_charge;
    std::vector<int>     *KFTau_Fit_csum;
    std::vector<int>     *KFTau_Fit_iterations;
-   std::vector<double>  *KFTau_Fit_TauEnergyFraction;
-   std::vector<double>  *KFTau_Fit_RefitVisibleMass;
-   std::vector<double>  *KFTau_Fit_Chi2;
-   std::vector<double>  *KFTau_Fit_PV_PV_significance;
-   std::vector<double>  *KFTau_Fit_SV_PV_significance;
+   std::vector<float>   *KFTau_Fit_TauEnergyFraction;
+   std::vector<float>   *KFTau_Fit_RefitVisibleMass;
+   std::vector<float>   *KFTau_Fit_Chi2;
+   std::vector<float>   *KFTau_Fit_PV_PV_significance;
+   std::vector<float>   *KFTau_Fit_SV_PV_significance;
+   Bool_t          isPatJet;
    std::vector<std::vector<float> > *PFJet_p4;
-   std::vector<std::vector<double> > *PFJet_Poca;
+   std::vector<std::vector<float> > *PFJet_Poca;
    std::vector<float>   *PFJet_chargedEmEnergy;
    std::vector<float>   *PFJet_chargedHadronEnergy;
    std::vector<float>   *PFJet_chargedHadronMultiplicity;
@@ -158,10 +170,20 @@ public :
    std::vector<float>   *PFJet_chargedEmEnergyFraction;
    std::vector<float>   *PFJet_chargedHadronEnergyFraction;
    std::vector<float>   *PFJet_neutralHadronEnergyFraction;
-   std::vector<float>   *PFJet_PFJet_neutralEmEnergyFraction;
-   Double_t        MET_et;
-   Double_t        MET_phi;
-   Double_t        MET_sumET;
+   std::vector<float>   *PFJet_neutralEmEnergyFraction;
+   std::vector<float>   *PFJet_partonFlavour;
+   std::vector<float>   *PFJet_bDiscriminator;
+   std::vector<std::vector<float> > *PFJet_BTagWeight;
+   Bool_t          isPatMET;
+   Float_t         MET_et;
+   Float_t         MET_phi;
+   Float_t         MET_sumET;
+   Float_t         MET_metSignificance;
+   Float_t         MET_MuonEtFraction;
+   Float_t         MET_NeutralEMFraction;
+   Float_t         MET_NeutralHadEtFraction;
+   Float_t         MET_Type6EtFraction;
+   Float_t         MET_Type7EtFraction;
    UInt_t          Event_EventNumber;
    UInt_t          Event_RunNumber;
    Int_t           Event_bunchCrossing;
@@ -171,9 +193,9 @@ public :
    Int_t           PileupInfo_NumInteractions_nm1;
    Int_t           PileupInfo_NumInteractions_n0;
    Int_t           PileupInfo_NumInteractions_np1;
-   Double_t        EvtWeight3D;
+   Float_t         EvtWeight3D;
    std::vector<std::vector<float> > *Track_p4;
-   std::vector<std::vector<double> > *Track_Poca;
+   std::vector<std::vector<float> > *Track_Poca;
    std::vector<int>     *Track_charge;
    std::vector<float>   *Track_chi2;
    std::vector<float>   *Track_ndof;
@@ -191,7 +213,7 @@ public :
    std::vector<std::vector<float> > *MCSignalParticle_p4;
    std::vector<int>     *MCSignalParticle_pdgid;
    std::vector<int>     *MCSignalParticle_charge;
-   std::vector<std::vector<double> > *MCSignalParticle_Poca;
+   std::vector<std::vector<float> > *MCSignalParticle_Poca;
    std::vector<std::vector<unsigned int> > *MCSignalParticle_Tauidx;
    std::vector<std::vector<std::vector<float> > > *MCTauandProd_p4;
    std::vector<std::vector<int> > *MCTauandProd_pdgid;
@@ -223,6 +245,7 @@ public :
    TBranch        *b_Vtx_Cov;   //!
    TBranch        *b_Vtx_Track_idx;   //!
    TBranch        *b_Vtx_isFake;   //!
+   TBranch        *b_isPatMuon;   //!
    TBranch        *b_Muon_p4;   //!
    TBranch        *b_Muon_Poca;   //!
    TBranch        *b_Muon_isGlobalMuon;   //!
@@ -257,6 +280,7 @@ public :
    TBranch        *b_Muon_numberOfMatches;   //!
    TBranch        *b_Muon_Charge;   //!
    TBranch        *b_Muon_numberOfChambers;   //!
+   TBranch        *b_isPatElectron;   //!
    TBranch        *b_Electron_p4;   //!
    TBranch        *b_Electron_Poca;   //!
    TBranch        *b_Electron_Charge;   //!
@@ -293,6 +317,12 @@ public :
    TBranch        *b_PFTau_isMediumIsolationDBSumPtCorr;   //!
    TBranch        *b_PFTau_isLooseIsolationDBSumPtCorr;   //!
    TBranch        *b_PFTau_isVLooseIsolationDBSumPtCorr;   //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsLoose;   //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsMedium;   //!
+   TBranch        *b_PFTau_isHPSAgainstElectronsTight;   //!
+   TBranch        *b_PFTau_isHPSAgainstMuonLoose;   //!
+   TBranch        *b_PFTau_isHPSAgainstMuonTight;   //!
+   TBranch        *b_PFTau_isHPSByDecayModeFinding;   //!
    TBranch        *b_PFTau_hpsDecayMode;   //!
    TBranch        *b_PFTau_Charge;   //!
    TBranch        *b_PFTau_Track_idx;   //!
@@ -306,7 +336,7 @@ public :
    TBranch        *b_KFTau_Track_idx;   //!
    TBranch        *b_KFTau_indexOfFitInfo;   //!
    TBranch        *b_KFTau_Fit_TauPrimVtx;   //!
-   TBranch        *b_KFTau_Fit_IndexToPrimVertexVector;   //!
+   TBranch        *b_KFTau_Fit_IndexToPrimeVertice;   //!
    TBranch        *b_KFTau_Fit_chi2;   //!
    TBranch        *b_KFTau_Fit_ndf;   //!
    TBranch        *b_KFTau_Fit_ambiguity;   //!
@@ -318,6 +348,7 @@ public :
    TBranch        *b_KFTau_Fit_Chi2;   //!
    TBranch        *b_KFTau_Fit_PV_PV_significance;   //!
    TBranch        *b_KFTau_Fit_SV_PV_significance;   //!
+   TBranch        *b_isPatJet;   //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_Poca;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
@@ -350,10 +381,20 @@ public :
    TBranch        *b_PFJet_chargedEmEnergyFraction;   //!
    TBranch        *b_PFJet_chargedHadronEnergyFraction;   //!
    TBranch        *b_PFJet_neutralHadronEnergyFraction;   //!
-   TBranch        *b_PFJet_PFJet_neutralEmEnergyFraction;   //!
+   TBranch        *b_PFJet_neutralEmEnergyFraction;   //!
+   TBranch        *b_PFJet_partonFlavour;   //!
+   TBranch        *b_PFJet_bDiscriminator;   //!
+   TBranch        *b_PFJet_BTagWeight;   //!
+   TBranch        *b_isPatMET;   //!
    TBranch        *b_MET_et;   //!
    TBranch        *b_MET_phi;   //!
    TBranch        *b_MET_sumET;   //!
+   TBranch        *b_MET_metSignificance;   //!
+   TBranch        *b_MET_MuonEtFraction;   //!
+   TBranch        *b_MET_NeutralEMFraction;   //!
+   TBranch        *b_MET_NeutralHadEtFraction;   //!
+   TBranch        *b_MET_Type6EtFraction;   //!
+   TBranch        *b_MET_Type7EtFraction;   //!
    TBranch        *b_Event_EventNumber;   //!
    TBranch        *b_Event_RunNumber;   //!
    TBranch        *b_Event_bunchCrossing;   //!
@@ -439,7 +480,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("../Set_1/TauNtuple_123_1_t4m.root/t");
+      chain->Add("/user/scratch/nugent/TauNtuple_115_1_4P9.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -564,6 +605,12 @@ void NtupleReader::Init(TTree *tree)
    PFTau_isMediumIsolationDBSumPtCorr = 0;
    PFTau_isLooseIsolationDBSumPtCorr = 0;
    PFTau_isVLooseIsolationDBSumPtCorr = 0;
+   PFTau_isHPSAgainstElectronsLoose = 0;
+   PFTau_isHPSAgainstElectronsMedium = 0;
+   PFTau_isHPSAgainstElectronsTight = 0;
+   PFTau_isHPSAgainstMuonLoose = 0;
+   PFTau_isHPSAgainstMuonTight = 0;
+   PFTau_isHPSByDecayModeFinding = 0;
    PFTau_hpsDecayMode = 0;
    PFTau_Charge = 0;
    PFTau_Track_idx = 0;
@@ -576,7 +623,7 @@ void NtupleReader::Init(TTree *tree)
    KFTau_Track_idx = 0;
    KFTau_indexOfFitInfo = 0;
    KFTau_Fit_TauPrimVtx = 0;
-   KFTau_Fit_IndexToPrimVertexVector = 0;
+   KFTau_Fit_IndexToPrimeVertice = 0;
    KFTau_Fit_chi2 = 0;
    KFTau_Fit_ndf = 0;
    KFTau_Fit_ambiguity = 0;
@@ -620,7 +667,10 @@ void NtupleReader::Init(TTree *tree)
    PFJet_chargedEmEnergyFraction = 0;
    PFJet_chargedHadronEnergyFraction = 0;
    PFJet_neutralHadronEnergyFraction = 0;
-   PFJet_PFJet_neutralEmEnergyFraction = 0;
+   PFJet_neutralEmEnergyFraction = 0;
+   PFJet_partonFlavour = 0;
+   PFJet_bDiscriminator = 0;
+   PFJet_BTagWeight = 0;
    Track_p4 = 0;
    Track_Poca = 0;
    Track_charge = 0;
@@ -671,6 +721,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Vtx_Cov", &Vtx_Cov, &b_Vtx_Cov);
    fChain->SetBranchAddress("Vtx_Track_idx", &Vtx_Track_idx, &b_Vtx_Track_idx);
    fChain->SetBranchAddress("Vtx_isFake", &Vtx_isFake, &b_Vtx_isFake);
+   fChain->SetBranchAddress("isPatMuon", &isPatMuon, &b_isPatMuon);
    fChain->SetBranchAddress("Muon_p4", &Muon_p4, &b_Muon_p4);
    fChain->SetBranchAddress("Muon_Poca", &Muon_Poca, &b_Muon_Poca);
    fChain->SetBranchAddress("Muon_isGlobalMuon", &Muon_isGlobalMuon, &b_Muon_isGlobalMuon);
@@ -705,6 +756,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Muon_numberOfMatches", &Muon_numberOfMatches, &b_Muon_numberOfMatches);
    fChain->SetBranchAddress("Muon_Charge", &Muon_Charge, &b_Muon_Charge);
    fChain->SetBranchAddress("Muon_numberOfChambers", &Muon_numberOfChambers, &b_Muon_numberOfChambers);
+   fChain->SetBranchAddress("isPatElectron", &isPatElectron, &b_isPatElectron);
    fChain->SetBranchAddress("Electron_p4", &Electron_p4, &b_Electron_p4);
    fChain->SetBranchAddress("Electron_Poca", &Electron_Poca, &b_Electron_Poca);
    fChain->SetBranchAddress("Electron_Charge", &Electron_Charge, &b_Electron_Charge);
@@ -741,6 +793,12 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_isMediumIsolationDBSumPtCorr", &PFTau_isMediumIsolationDBSumPtCorr, &b_PFTau_isMediumIsolationDBSumPtCorr);
    fChain->SetBranchAddress("PFTau_isLooseIsolationDBSumPtCorr", &PFTau_isLooseIsolationDBSumPtCorr, &b_PFTau_isLooseIsolationDBSumPtCorr);
    fChain->SetBranchAddress("PFTau_isVLooseIsolationDBSumPtCorr", &PFTau_isVLooseIsolationDBSumPtCorr, &b_PFTau_isVLooseIsolationDBSumPtCorr);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsLoose", &PFTau_isHPSAgainstElectronsLoose, &b_PFTau_isHPSAgainstElectronsLoose);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsMedium", &PFTau_isHPSAgainstElectronsMedium, &b_PFTau_isHPSAgainstElectronsMedium);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstElectronsTight", &PFTau_isHPSAgainstElectronsTight, &b_PFTau_isHPSAgainstElectronsTight);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonLoose", &PFTau_isHPSAgainstMuonLoose, &b_PFTau_isHPSAgainstMuonLoose);
+   fChain->SetBranchAddress("PFTau_isHPSAgainstMuonTight", &PFTau_isHPSAgainstMuonTight, &b_PFTau_isHPSAgainstMuonTight);
+   fChain->SetBranchAddress("PFTau_isHPSByDecayModeFinding", &PFTau_isHPSByDecayModeFinding, &b_PFTau_isHPSByDecayModeFinding);
    fChain->SetBranchAddress("PFTau_hpsDecayMode", &PFTau_hpsDecayMode, &b_PFTau_hpsDecayMode);
    fChain->SetBranchAddress("PFTau_Charge", &PFTau_Charge, &b_PFTau_Charge);
    fChain->SetBranchAddress("PFTau_Track_idx", &PFTau_Track_idx, &b_PFTau_Track_idx);
@@ -754,7 +812,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Track_idx", &KFTau_Track_idx, &b_KFTau_Track_idx);
    fChain->SetBranchAddress("KFTau_indexOfFitInfo", &KFTau_indexOfFitInfo, &b_KFTau_indexOfFitInfo);
    fChain->SetBranchAddress("KFTau_Fit_TauPrimVtx", &KFTau_Fit_TauPrimVtx, &b_KFTau_Fit_TauPrimVtx);
-   fChain->SetBranchAddress("KFTau_Fit_IndexToPrimVertexVector", &KFTau_Fit_IndexToPrimVertexVector, &b_KFTau_Fit_IndexToPrimVertexVector);
+   fChain->SetBranchAddress("KFTau_Fit_IndexToPrimeVertice", &KFTau_Fit_IndexToPrimeVertice, &b_KFTau_Fit_IndexToPrimeVertice);
    fChain->SetBranchAddress("KFTau_Fit_chi2", &KFTau_Fit_chi2, &b_KFTau_Fit_chi2);
    fChain->SetBranchAddress("KFTau_Fit_ndf", &KFTau_Fit_ndf, &b_KFTau_Fit_ndf);
    fChain->SetBranchAddress("KFTau_Fit_ambiguity", &KFTau_Fit_ambiguity, &b_KFTau_Fit_ambiguity);
@@ -766,6 +824,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Fit_Chi2", &KFTau_Fit_Chi2, &b_KFTau_Fit_Chi2);
    fChain->SetBranchAddress("KFTau_Fit_PV_PV_significance", &KFTau_Fit_PV_PV_significance, &b_KFTau_Fit_PV_PV_significance);
    fChain->SetBranchAddress("KFTau_Fit_SV_PV_significance", &KFTau_Fit_SV_PV_significance, &b_KFTau_Fit_SV_PV_significance);
+   fChain->SetBranchAddress("isPatJet", &isPatJet, &b_isPatJet);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
    fChain->SetBranchAddress("PFJet_Poca", &PFJet_Poca, &b_PFJet_Poca);
    fChain->SetBranchAddress("PFJet_chargedEmEnergy", &PFJet_chargedEmEnergy, &b_PFJet_chargedEmEnergy);
@@ -798,10 +857,20 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFJet_chargedEmEnergyFraction", &PFJet_chargedEmEnergyFraction, &b_PFJet_chargedEmEnergyFraction);
    fChain->SetBranchAddress("PFJet_chargedHadronEnergyFraction", &PFJet_chargedHadronEnergyFraction, &b_PFJet_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("PFJet_neutralHadronEnergyFraction", &PFJet_neutralHadronEnergyFraction, &b_PFJet_neutralHadronEnergyFraction);
-   fChain->SetBranchAddress("PFJet_PFJet_neutralEmEnergyFraction", &PFJet_PFJet_neutralEmEnergyFraction, &b_PFJet_PFJet_neutralEmEnergyFraction);
+   fChain->SetBranchAddress("PFJet_neutralEmEnergyFraction", &PFJet_neutralEmEnergyFraction, &b_PFJet_neutralEmEnergyFraction);
+   fChain->SetBranchAddress("PFJet_partonFlavour", &PFJet_partonFlavour, &b_PFJet_partonFlavour);
+   fChain->SetBranchAddress("PFJet_bDiscriminator", &PFJet_bDiscriminator, &b_PFJet_bDiscriminator);
+   fChain->SetBranchAddress("PFJet_BTagWeight", &PFJet_BTagWeight, &b_PFJet_BTagWeight);
+   fChain->SetBranchAddress("isPatMET", &isPatMET, &b_isPatMET);
    fChain->SetBranchAddress("MET_et", &MET_et, &b_MET_et);
    fChain->SetBranchAddress("MET_phi", &MET_phi, &b_MET_phi);
    fChain->SetBranchAddress("MET_sumET", &MET_sumET, &b_MET_sumET);
+   fChain->SetBranchAddress("MET_metSignificance", &MET_metSignificance, &b_MET_metSignificance);
+   fChain->SetBranchAddress("MET_MuonEtFraction", &MET_MuonEtFraction, &b_MET_MuonEtFraction);
+   fChain->SetBranchAddress("MET_NeutralEMFraction", &MET_NeutralEMFraction, &b_MET_NeutralEMFraction);
+   fChain->SetBranchAddress("MET_NeutralHadEtFraction", &MET_NeutralHadEtFraction, &b_MET_NeutralHadEtFraction);
+   fChain->SetBranchAddress("MET_Type6EtFraction", &MET_Type6EtFraction, &b_MET_Type6EtFraction);
+   fChain->SetBranchAddress("MET_Type7EtFraction", &MET_Type7EtFraction, &b_MET_Type7EtFraction);
    fChain->SetBranchAddress("Event_EventNumber", &Event_EventNumber, &b_Event_EventNumber);
    fChain->SetBranchAddress("Event_RunNumber", &Event_RunNumber, &b_Event_RunNumber);
    fChain->SetBranchAddress("Event_bunchCrossing", &Event_bunchCrossing, &b_Event_bunchCrossing);
