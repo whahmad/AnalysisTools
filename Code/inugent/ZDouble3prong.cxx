@@ -41,7 +41,7 @@ void  ZDouble3prong::Configure(){
     if(i==NTauPt)             cut.at(NTauPt)=2;
     if(i==NTauEta)            cut.at(NTauEta)=2 ;
     if(i==TauIso)             cut.at(TauIso)=0.4 ;
-    if(i==TauTauVertex)       cut.at(TauTauVertex)=1;
+    if(i==TauTauVertex)       cut.at(TauTauVertex)=2;
     if(i==deltaPhi)           cut.at(deltaPhi)=-1/sqrt(2);
     if(i==charge)             cut.at(charge)=0;
     if(i==ZMassmax)           cut.at(ZMassmax)=PDG_Var::Z_mass()+30;
@@ -209,8 +209,8 @@ void  ZDouble3prong::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="has #tau-#tau vertex ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauTauVertex_",htitle,2,-0.5,1.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauTauVertex_",htitle,2,-0.5,1.5,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauTauVertex_",htitle,100,-25,25,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauTauVertex_",htitle,100,-25,25,hlabel,"Events"));
     }
     //-----------
   }
@@ -360,12 +360,24 @@ void  ZDouble3prong::doEvent(){
   value.at(TauTauVertex)=0;
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() F2" << std::endl;
   if(tauInfoidx1!=999 && tauInfoidx2!=999) pass.at(TauTauVertex)=Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1)==Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2);
+
+
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() F3" << std::endl;
   if( pass.at(TauTauVertex))value.at(TauTauVertex)=1;
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() F4" << std::endl;
   if(tauInfoidx1!=999 && tauInfoidx2!=999){std::cout << "void  ZDouble3prong::doEvent() C " << tauInfoidx1 << " " <<  tauInfoidx2 << std::endl;
     std::cout << "Vertex " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1) << " " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2) << std::endl;
   }
+  pass.at(TauTauVertex)=false;
+  if(tauInfoidx1!=999 && tauInfoidx2!=999) {
+    unsigned int vx1(Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1)), vx2(Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2));
+    if(vx1<Ntp->NVtx() && vx2<Ntp->NVtx()){
+      value.at(TauTauVertex)=Ntp->Vtx(vx1).Z()-Ntp->Vtx(vx2).Z();
+      pass.at(TauTauVertex)=fabs(value.at(TauTauVertex))<cut.at(TauTauVertex);
+    }
+  }
+
+
   ///////////////////////////////////////////////
   //
   // Jet Cuts

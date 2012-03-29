@@ -8,6 +8,7 @@
 #include "TauSpinExample.h"
 #include "inugent/ChargedHiggs.h"
 #include "inugent/ZDouble3prong.h"
+#include "inugent/Ztomumu_ControlSample.h"
 
 Selection_Factory::Selection_Factory(){
 }
@@ -26,6 +27,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("tauspinexample"))s=new TauSpinExample(Analysis,UncertType);
   else if(Analysis.Contains("chargedhiggs"))s=new ChargedHiggs(Analysis,UncertType);
   else if(Analysis.Contains("zdouble3prong"))s=new ZDouble3prong(Analysis,UncertType);
+  else if(Analysis.Contains("ztomumu_controlsample"))s=new Ztomumu_ControlSample(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);

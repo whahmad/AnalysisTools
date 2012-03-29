@@ -279,8 +279,10 @@ void  Ztotautau_ControlSample::doEvent(){
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() A" << std::endl;
-  value.at(TriggerOk)=1;
-  pass.at(TriggerOk)=true;
+
+  value.at(TriggerOk)=0;
+  if(Ntp->TriggerAccept("IsoMu24"))value.at(TriggerOk)+=1;
+  pass.at(TriggerOk)=value.at(TriggerOk)==cut.at(TriggerOk);
   
   // Apply Selection
   unsigned mu_idx(999),nmus(0);
