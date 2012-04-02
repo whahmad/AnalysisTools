@@ -412,12 +412,12 @@ void  ZDouble3prong::doEvent(){
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() H" << std::endl;
   ///////////////////////////////////////////////////////////
   //Do QCD bkg
-  /*  if(!pass.at(charge)){
+  if(!pass.at(charge)){
     if(Ntp->isData()){
       if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
       pass.at(charge)=true;
     }
-    }*/
+  }
   //////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){

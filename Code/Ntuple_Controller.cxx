@@ -316,13 +316,9 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   //  residual correction (data) applied applied
   //  abs(eta) < 2.5 < 2.4                      
   //  jet ID applied applied     
-  std::cout << "isGoodJet_nooverlapremoval" << std::endl;               
   if(isJetID(i)){
-    std::cout << "isJetID(" << std::endl;
     if(PFJet_p4(i).Pt()>15.0){
-      std::cout << "PFJet_p4(i).Pt(" << std::endl;
       if(fabs(PFJet_p4(i).Eta())<2.4){
-	std::cout << "PFJet_p4.Eta" << std::endl;
 	return true;
       }
     }

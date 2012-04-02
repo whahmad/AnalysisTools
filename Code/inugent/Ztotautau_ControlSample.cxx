@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Tools.h"
+#include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
 Ztotautau_ControlSample::Ztotautau_ControlSample(TString Name_, TString id_):
   Selection(Name_,id_)
@@ -45,10 +46,12 @@ void  Ztotautau_ControlSample::Configure(){
     if(i==MT)                 cut.at(MT)=30;
     if(i==etaq)               cut.at(etaq)=0.1;
     if(i==sumcosdeltaphi)     cut.at(sumcosdeltaphi)=0.75;
-    if(i==ZMassmin)           cut.at(ZMassmin)=70;
-    if(i==ZMassmax)           cut.at(ZMassmax)=100;
+    if(i==ZMassmin)           cut.at(ZMassmin)=60;
+    if(i==ZMassmax)           cut.at(ZMassmax)=90;
     if(i==HT)                 cut.at(HT)=200;
-    if(i==charge)             cut.at(charge)=-1.0;
+    if(i==charge)             cut.at(charge)=0.0;
+    if(i==MaxTracksinJet)     cut.at(MaxTracksinJet)=5.0;
+    if(i==MinTracksinJet)     cut.at(MinTracksinJet)=1.0;
   }
 
   TString hlabel;
@@ -57,6 +60,10 @@ void  Ztotautau_ControlSample::Configure(){
     title.push_back("");
     distindx.push_back(false);
     dist.push_back(std::vector<float>());
+    Accumdist.push_back(std::vector<TH1D>());
+    Nminus1dist.push_back(std::vector<TH1D>());
+
+
     TString c="_Cut_";
     if(i<10)c+="0";
     c+=i;
@@ -127,8 +134,8 @@ void  Ztotautau_ControlSample::Configure(){
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
      hlabel="N_{Jets}";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NJets_",htitle,11,-0.0,10.5,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NJets_",htitle,21,-0.0,20.5,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,21,-0.5,20.5,hlabel,"Events"));
    }
    else if(i==JetPt){
      title.at(i)="$P_{T}^{Jet}>$";
@@ -242,9 +249,32 @@ void  Ztotautau_ControlSample::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="C_{#mu}#times #sum_{i=0}^{3}C_{i}|_{P_{T}^{max}}";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_charge_",htitle,11,-10.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_charge_",htitle,11,-10.5,10.5,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_charge_",htitle,21,-10.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_charge_",htitle,21,-10.5,10.5,hlabel,"Events"));
     } 
+   else if(MaxTracksinJet){
+     title.at(i)="$N_{Tracks}^{Jet}<$";
+     title.at(i)+=cut.at(MaxTracksinJet);
+     htitle=title.at(i);
+     htitle.ReplaceAll("$","");
+     htitle.ReplaceAll("\\","#");
+     hlabel="N_{Tracks}^{Jet}";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MaxTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MaxTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+   }
+   else if(MinTracksinJet){
+     title.at(i)="$N_{Tracks}^{Jet}>$";
+     title.at(i)+=cut.at(MinTracksinJet);
+     htitle=title.at(i);
+     htitle.ReplaceAll("$","");
+     htitle.ReplaceAll("\\","#");
+     hlabel="N_{Tracks}^{Jet}";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MinTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MinTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     distindx.at(i)=true;
+     Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_MinTracksinJet_","P_{T,Track} (N-1 Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
+     Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_MinTracksinJet_","P_{T,Track} (Accumulative Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
+   }
 
     //-----------
   }
@@ -297,8 +327,7 @@ void  Ztotautau_ControlSample::doEvent(){
     if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() C" << std::endl;
     value.at(hasTag)=nmus;
     pass.at(hasTag)=(value.at(hasTag)==cut.at(hasTag));
-    std::cout << nmus << std::endl;    
-
+   
     value.at(TagPtmin)=mu_pt;
     pass.at(TagPtmin)=(value.at(TagPtmin)>cut.at(TagPtmin));
     value.at(TagPtmax)=mu_pt;
@@ -394,14 +423,22 @@ void  Ztotautau_ControlSample::doEvent(){
     }
   }
   pass.at(HT)=value.at(HT)<cut.at(HT);
+  ///////////////////////////////////////
+  if(jet_idx!=999){
+    value.at(MaxTracksinJet)=Ntp->PFJet_Track_idx(jet_idx).size();
+    pass.at(MaxTracksinJet)=cut.at(MaxTracksinJet)>value.at(MaxTracksinJet); 
+    value.at(MinTracksinJet)=Ntp->PFJet_Track_idx(jet_idx).size();
+    pass.at(MinTracksinJet)=cut.at(MinTracksinJet)>value.at(MinTracksinJet);
+    std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      dist.at(MinTracksinJet).push_back(Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt());
+    }
+  }
+
   // Momentum weighted charge is slow only do if nminus1
   // must be last cut
-  int charge_nminus1(0);
-  for(unsigned int i=0;i<NCuts;i++){
-    if(!pass.at(i) && i!=charge) charge_nminus1++;
-  }
   value.at(charge)=0;
-  if(charge_nminus1<=1 && jet_idx!=999 && mu_idx!=999){
+  if(jet_idx!=999 && mu_idx!=999){
     std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
     std::vector<TLorentzVector> track_p4;
     std::vector<float> track_charge;
@@ -420,26 +457,34 @@ void  Ztotautau_ControlSample::doEvent(){
 	  JetCharge+=track_charge.at(j);
 	}
       }
-      if(ntracks==3){
-	value.at(charge)=JetCharge*Ntp->Muon_Charge(mu_idx);
+      if((ntracks==3 && track_p4.size()>=3) || (ntracks==track_p4.size() && track_p4.size()<3)){
+	value.at(charge)=JetCharge+Ntp->Muon_Charge(mu_idx);
 	break;
       }
     }
     pass.at(charge)=(fabs(value.at(charge)-cut.at(charge))<0.5);
   }  
   else{
-    value.at(charge)=0;
+    value.at(charge)=-10.0;
     pass.at(charge)=false;
   }
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() i" << std::endl;
 
+  //////////////////////////////////////////////////////////////////////////////////
+  // QCD Control sample
+  if(!pass.at(charge) && fabs(value.at(charge))==1){
+    if(Ntp->isData()){
+      if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+      pass.at(charge)=true;
+    }
+  }
 
   double wobs(1),w(1);
   if(!Ntp->isData()){
     w*=Ntp->EvtWeight3D();
   }
   else{w=1;}
-  std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
+  if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
  
   ///////////////////////////////////////////////////////////

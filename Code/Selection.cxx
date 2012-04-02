@@ -29,7 +29,7 @@ Selection::~Selection(){
 
   //Check the number of files read
   std::cout << Get_Name() << " NGoodFile= " <<  NGoodFiles << " NBadFiles=" << NBadFiles << std::endl;
-  if(ListofBadFiles.size()>0)std::cout <<  " List of Bad Files:" << std::endl;
+  if(ListofBadFiles.size()>0)std::cout <<  "WARNING: Output could be comprimised!!! \nList of Bad Files:" << std::endl;
   for(int i=0; i< ListofBadFiles.size(); i++){
     std::cout <<  ListofBadFiles.at(i) << std::endl;
   }
@@ -79,51 +79,58 @@ void Selection::LoadResults(std::vector<TString> files){
 	}
       }
     }
-    TFile *f=TFile::Open(file,"READ");
-    std::cout << "Selection::LoadResults " << file << std::endl;
-    TString hname;
-    if(f->IsOpen()){
-      for(unsigned int i=0; i<Nminus1.size(); i++){
-	for(unsigned int j=0; j<Nminus1.at(i).size();j++){
-	  hname=(Nminus1.at(i).at(j)).GetName();
-	  Nminus1.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
-	  hname=(Nminus0.at(i).at(j)).GetName();
-	  Nminus0.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
-	  if(distindx.at(i)){
-	    hname=(Nminus1dist.at(i).at(j)).GetName();
-	    Nminus1dist.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
-	    hname=(Accumdist.at(i).at(j)).GetName();
-	    Accumdist.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
-	  }
-	  if(i==0){
-	    hname=((Npassed.at(j)).GetName());
-	    TH1* temp=(TH1*)f->Get(hname);
-	    Npassed.at(j).Add(temp,1.000);
-	    hname=((Npassed_noweight.at(j)).GetName());
-	    TH1* tempnw=(TH1*)f->Get(hname);
-	    Npassed_noweight.at(j).Add(tempnw,1.000);
-	    for(unsigned int k=0; k<Extradist1d.size();k++){
-	      hname=(Extradist1d.at(k)->at(j)).GetName();
-	      Extradist1d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
+    if(file.Contains("root")){
+      TFile *f=TFile::Open(file,"READ");
+      std::cout << "Selection::LoadResults " << file << std::endl;
+      TString hname;
+      if(f->IsOpen()){
+	for(unsigned int i=0; i<Nminus1.size(); i++){
+	  for(unsigned int j=0; j<Nminus1.at(i).size();j++){
+	    hname=(Nminus1.at(i).at(j)).GetName();
+	    Nminus1.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
+	    hname=(Nminus0.at(i).at(j)).GetName();
+	    Nminus0.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
+	    if(distindx.at(i)){
+	      hname=(Nminus1dist.at(i).at(j)).GetName();
+	      Nminus1dist.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
+	      hname=(Accumdist.at(i).at(j)).GetName();
+	      Accumdist.at(i).at(j).Add((TH1*)f->Get(hname),1.000);
 	    }
-	    for(unsigned int k=0; k<Extradist2d.size();k++){
-	      TString n=Extradist2d.at(k)->at(j).GetName();
-	      if(!n.Contains("egammaMap")){
-		hname=(Extradist2d.at(k)->at(j)).GetName();
-		Extradist2d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
+	    if(i==0){
+	      hname=((Npassed.at(j)).GetName());
+	      TH1* temp=(TH1*)f->Get(hname);
+	      Npassed.at(j).Add(temp,1.000);
+	      hname=((Npassed_noweight.at(j)).GetName());
+	      TH1* tempnw=(TH1*)f->Get(hname);
+	      Npassed_noweight.at(j).Add(tempnw,1.000);
+	      for(unsigned int k=0; k<Extradist1d.size();k++){
+		hname=(Extradist1d.at(k)->at(j)).GetName();
+		Extradist1d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
+	      }
+	      for(unsigned int k=0; k<Extradist2d.size();k++){
+		TString n=Extradist2d.at(k)->at(j).GetName();
+		if(!n.Contains("egammaMap")){
+		  hname=(Extradist2d.at(k)->at(j)).GetName();
+		  Extradist2d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
+		}
 	      }
 	    }
 	  }
 	}
+	NGoodFiles++;
       }
-      NGoodFiles++;
+      else{
+	NBadFiles++;
+	std::cout << "WARNING: " << file << " NOT OPENED" << std::endl;
+	ListofBadFiles.push_back(file);
+      }
+      f->Close();
     }
     else{
       NBadFiles++;
-      std::cout << "WARNING: " << file << " NOT OPENED" << std::endl;
+      std::cout << "WARNING: File missing in: "  << file << std::endl;
       ListofBadFiles.push_back(file);
     }
-    f->Close();
   }
 }
 

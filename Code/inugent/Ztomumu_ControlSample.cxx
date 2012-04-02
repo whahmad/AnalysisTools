@@ -41,7 +41,7 @@ void  Ztomumu_ControlSample::Configure(){
     if(i==NMuPt)              cut.at(NMuPt)=2;
     if(i==NMuEta)             cut.at(NMuEta)=2 ;
     if(i==MuIso)              cut.at(MuIso)=0.4 ;
-    if(i==MuMuVertex)         cut.at(MuMuVertex)=2;
+    if(i==MuMuVertex)         cut.at(MuMuVertex)=0.5;
     if(i==deltaPhi)           cut.at(deltaPhi)=-1/sqrt(2);
     if(i==charge)             cut.at(charge)=0;
     if(i==ZMassmax)           cut.at(ZMassmax)=PDG_Var::Z_mass()+30;
@@ -209,8 +209,8 @@ void  Ztomumu_ControlSample::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="has #mu-#mu vertex ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuMuVertex_",htitle,100,-25,25,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuMuVertex_",htitle,100,-25,25,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuMuVertex_",htitle,100,-5,5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuMuVertex_",htitle,100,-5,5,hlabel,"Events"));
     }
     //-----------
   }
@@ -291,8 +291,8 @@ void  Ztomumu_ControlSample::doEvent(){
   value.at(NMuEta)=GoodMuons.size();
   pass.at(NMuEta)=(value.at(NMuEta)==cut.at(NMuEta));
   unsigned int muidx1(999),muidx2(999),muInfoidx1(999),muInfoidx2(999);
-  if(GoodMuons.size()>=1){muidx1=GoodMuons.at(0);muInfoidx1=muInfoidx1;}
-  if(GoodMuons.size()>=2){muidx2=GoodMuons.at(1);muInfoidx2=muInfoidx2;}
+  if(GoodMuons.size()>=1){muidx1=GoodMuons.at(0);muInfoidx1=muidx1;}
+  if(GoodMuons.size()>=2){muidx2=GoodMuons.at(1);muInfoidx2=muidx2;}
   if(verbose)std::cout << "void  Ztomumu_ControlSample::doEvent() E " << muidx1 <<" "<< muInfoidx1 << " " << muidx2 << " "  << muInfoidx2 << std::endl;
 
   // mu-mu Charge
@@ -330,6 +330,7 @@ void  Ztomumu_ControlSample::doEvent(){
   pass.at(MuMuVertex)=false;
   value.at(MuMuVertex)=0;
   if(verbose)std::cout << "void  Ztomumu_ControlSample::doEvent() F2" << std::endl;
+  
   if(muInfoidx1!=999 && muInfoidx2!=999){
     value.at(MuMuVertex)=Ntp->Muon_Poca(muInfoidx1).Z()-Ntp->Muon_Poca(muInfoidx2).Z();
     pass.at(MuMuVertex)=fabs(value.at(MuMuVertex))<cut.at(MuMuVertex);
@@ -380,7 +381,7 @@ void  Ztomumu_ControlSample::doEvent(){
     if(verbose)std::cout << "void  Ztomumu_ControlSample::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;wobs=1;}
-  if(verbose) std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
+  if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
   if(verbose)std::cout << "void  Ztomumu_ControlSample::doEvent() L" << std::endl;
   ///////////////////////////////////////////////////////////

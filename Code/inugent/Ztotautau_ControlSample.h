@@ -19,16 +19,18 @@ class Ztotautau_ControlSample : public Selection {
              TagPtmax,
 	     TagIso,
 	     NJets,
-	     JetPt,
+	     MaxTracksinJet,
+	     MinTracksinJet,
+	     charge,
 	     deltaPhi,
-	     MET,
 	     MT,
+	     MET,
+	     JetPt,
 	     etaq,
 	     sumcosdeltaphi,
 	     ZMassmax,
              ZMassmin,
 	     HT,
-	     charge,
 	     NCuts};
 
   enum Channel{muontag,electontag,rhotag,threepiontag,NChannels};
