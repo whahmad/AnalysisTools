@@ -41,7 +41,7 @@ void  ZDouble3prong::Configure(){
     if(i==NTauPt)             cut.at(NTauPt)=2;
     if(i==NTauEta)            cut.at(NTauEta)=2 ;
     if(i==TauIso)             cut.at(TauIso)=0.4 ;
-    if(i==TauTauVertex)       cut.at(TauTauVertex)=2;
+    if(i==TauTauVertex)       cut.at(TauTauVertex)=3;
     if(i==deltaPhi)           cut.at(deltaPhi)=-1/sqrt(2);
     if(i==charge)             cut.at(charge)=0;
     if(i==ZMassmax)           cut.at(ZMassmax)=PDG_Var::Z_mass()+30;
@@ -319,15 +319,15 @@ void  ZDouble3prong::doEvent(){
   }
   value.at(NTauEta)=GoodTaus.size();
   pass.at(NTauEta)=(value.at(NTauEta)==cut.at(NTauEta));
-  unsigned int tauidx1(999),tauidx2(999),tauInfoidx1(999),tauInfoidx2(999);
-  if(GoodTaus.size()>=1){tauidx1=GoodTaus.at(0);Ntp->hasKFTau_indexOfFitInfo(tauidx1,tauInfoidx1);}
-  if(GoodTaus.size()>=2){tauidx2=GoodTaus.at(1);Ntp->hasKFTau_indexOfFitInfo(tauidx2,tauInfoidx2);}
-  if(verbose)std::cout << "void  ZDouble3prong::doEvent() E " << tauidx1 <<" "<< tauInfoidx1 << " " << tauidx2 << " "  << tauInfoidx2 << std::endl;
+  unsigned int tauidx1(999),tauidx2(999);
+  if(GoodTaus.size()>=1)tauidx1=GoodTaus.at(0);
+  if(GoodTaus.size()>=2)tauidx2=GoodTaus.at(1);
+  if(verbose)std::cout << "void  ZDouble3prong::doEvent() E " << tauidx1 <<" "<< tauidx1 << " " << tauidx2 << " "  << tauidx2 << std::endl;
 
   // tau-tau Charge
   value.at(charge)=-5;
-  if(tauInfoidx1!=999 && tauInfoidx2!=999){
-    value.at(charge)=Ntp->KFTau_Fit_charge(tauInfoidx1)+Ntp->KFTau_Fit_charge(tauInfoidx2);
+  if(tauidx1!=999 && tauidx2!=999){
+    value.at(charge)=Ntp->KFTau_Fit_charge(tauidx1)+Ntp->KFTau_Fit_charge(tauidx2);
   }
   pass.at(charge)=(value.at(charge)==0);
  
@@ -355,28 +355,37 @@ void  ZDouble3prong::doEvent(){
     if(dR<cut.at(TauIso))overlap2++;
   }
   pass.at(TauIso)=(2==overlap1+overlap2);
-  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F1" << std::endl;
+
   pass.at(TauTauVertex)=false;
   value.at(TauTauVertex)=0;
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() F2" << std::endl;
-  if(tauInfoidx1!=999 && tauInfoidx2!=999) pass.at(TauTauVertex)=Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1)==Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2);
-
-
-  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F3" << std::endl;
-  if( pass.at(TauTauVertex))value.at(TauTauVertex)=1;
-  if(verbose)std::cout << "void  ZDouble3prong::doEvent() F4" << std::endl;
-  if(tauInfoidx1!=999 && tauInfoidx2!=999){std::cout << "void  ZDouble3prong::doEvent() C " << tauInfoidx1 << " " <<  tauInfoidx2 << std::endl;
-    std::cout << "Vertex " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1) << " " << Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2) << std::endl;
-  }
-  pass.at(TauTauVertex)=false;
-  if(tauInfoidx1!=999 && tauInfoidx2!=999) {
-    unsigned int vx1(Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx1)), vx2(Ntp->KFTau_Fit_IndexToPrimVertexVector(tauInfoidx2));
-    if(vx1<Ntp->NVtx() && vx2<Ntp->NVtx()){
-      value.at(TauTauVertex)=Ntp->Vtx(vx1).Z()-Ntp->Vtx(vx2).Z();
-      pass.at(TauTauVertex)=fabs(value.at(TauTauVertex))<cut.at(TauTauVertex);
+  if(tauidx1!=999 && tauidx2!=999) {
+    unsigned int dim=3;
+    TVector3 tau1_vtx=Ntp->KFTau_RotatedVtx(tauidx1);
+    TMatrixF tau1_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx1);
+    TVector3 tautau_vtx=Ntp->KFTau_RotatedVtx(tauidx2);
+    TMatrixF tautau_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx2);
+    tautau_vtx+=tau1_vtx;
+    tautau_cov+=tau1_cov;
+    double det=0;
+    tautau_cov.Invert(&det);
+    if(det!=0){
+      std::vector<float> dist;
+      dist.push_back(tautau_vtx.X());
+      dist.push_back(tautau_vtx.Y());
+      dist.push_back(tautau_vtx.Z());
+      float sig=0;
+      for(unsigned int i=0;i<dim;i++){
+	for(unsigned int j=0;j<dim;j++){
+	  sig+=dist.at(i)*dist.at(j)*tautau_cov[i][j];
+	}
+      }
+      value.at(TauTauVertex)=sig;
+      pass.at(TauTauVertex)=value.at(TauTauVertex)<cut.at(TauTauVertex);
     }
   }
-
+  pass.at(TauTauVertex)=false;
+ 
 
   ///////////////////////////////////////////////
   //
@@ -412,12 +421,12 @@ void  ZDouble3prong::doEvent(){
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() H" << std::endl;
   ///////////////////////////////////////////////////////////
   //Do QCD bkg
-  if(!pass.at(charge)){
+  /*  if(!pass.at(charge)){
     if(Ntp->isData()){
       if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
       pass.at(charge)=true;
     }
-  }
+    }*/
   //////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
@@ -441,30 +450,30 @@ void  ZDouble3prong::doEvent(){
     }
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
 
-    if(tauInfoidx1!=999 && tauInfoidx2!=999){
+    if(tauidx1!=999 && tauidx2!=999){
       if(verbose)std::cout << "void  ZDouble3prong::doEvent() J" << std::endl;
-      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauInfoidx1),w);
-      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauInfoidx1),w);
-      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauInfoidx1),w);
-      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauInfoidx1),w);
-      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauInfoidx1),w);
-      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauInfoidx1),w);
-      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauInfoidx1),w);
-      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauInfoidx1),w);
-      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauInfoidx1),w);
-      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauInfoidx1),w);
+      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx1),w);
+      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx1),w);
+      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx1),w);
+      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx1),w);
+      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx1),w);
+      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx1),w);
+      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx1),w);
+      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx1),w);
+      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauidx1),w);
+      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauidx1),w);
 
 
-      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauInfoidx2),w);
-      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauInfoidx2),w);
-      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauInfoidx2),w);
-      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauInfoidx2),w);
-      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauInfoidx2),w);
-      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauInfoidx2),w);
-      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauInfoidx2),w);
-      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauInfoidx2),w);
-      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauInfoidx2),w);
-      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauInfoidx2),w);
+      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx2),w);
+      KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx2),w);
+      KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx2),w);
+      KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx2),w);
+      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx2),w);
+      KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx2),w);
+      KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx2),w);
+      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx2),w);
+      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauidx2),w);
+      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauidx2),w);
       if(verbose)std::cout << "void  ZDouble3prong::doEvent() K" << std::endl;
     }
   }

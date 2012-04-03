@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Mar 28 14:40:53 2012 by ROOT version 5.26/00c
+// Mon Apr  2 22:56:06 2012 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -17,6 +17,7 @@
 #include <vector.h>
 #include <string.h>
 #include <iostream>
+
 
 class NtupleReader {
 public :
@@ -125,7 +126,6 @@ public :
    std::vector<std::vector<int> > *KFTau_Track_idx;
    std::vector<int>     *KFTau_indexOfFitInfo;
    std::vector<std::vector<float> > *KFTau_Fit_TauPrimVtx;
-   std::vector<int>     *KFTau_Fit_IndexToPrimeVertice;
    std::vector<float>   *KFTau_Fit_chi2;
    std::vector<float>   *KFTau_Fit_ndf;
    std::vector<int>     *KFTau_Fit_ambiguity;
@@ -137,6 +137,22 @@ public :
    std::vector<float>   *KFTau_Fit_Chi2;
    std::vector<float>   *KFTau_Fit_PV_PV_significance;
    std::vector<float>   *KFTau_Fit_SV_PV_significance;
+   std::vector<std::vector<int> > *KFTau_Daughter_pdgid;
+   std::vector<std::vector<int> > *KFTau_Daughter_charge;
+   std::vector<std::vector<float> > *KFTau_Daughter_ambiguity;
+   std::vector<std::vector<std::vector<float> > > *KFTau_Daughter_par;
+   std::vector<std::vector<std::vector<float> > > *KFTau_Daughter_parCov;
+   std::vector<std::vector<std::vector<float> > > *KFTau_Daughter_inputpar;
+   std::vector<std::vector<std::vector<float> > > *KFTau_Daughter_inputparCov;
+   std::vector<float>   *ReducedVtx_chi2;
+   std::vector<float>   *ReducedVtx_nTrk;
+   std::vector<float>   *ReducedVtx_ndof;
+   std::vector<float>   *ReducedVtx_x;
+   std::vector<float>   *ReducedVtx_y;
+   std::vector<float>   *ReducedVtx_z;
+   std::vector<std::vector<std::vector<float> > > *ReducedVtx_Cov;
+   std::vector<std::vector<int> > *ReducedVtx_Track_idx;
+   std::vector<float>   *ReducedVtx_isFake;
    Bool_t          isPatJet;
    std::vector<std::vector<float> > *PFJet_p4;
    std::vector<std::vector<float> > *PFJet_Poca;
@@ -336,7 +352,6 @@ public :
    TBranch        *b_KFTau_Track_idx;   //!
    TBranch        *b_KFTau_indexOfFitInfo;   //!
    TBranch        *b_KFTau_Fit_TauPrimVtx;   //!
-   TBranch        *b_KFTau_Fit_IndexToPrimeVertice;   //!
    TBranch        *b_KFTau_Fit_chi2;   //!
    TBranch        *b_KFTau_Fit_ndf;   //!
    TBranch        *b_KFTau_Fit_ambiguity;   //!
@@ -348,6 +363,22 @@ public :
    TBranch        *b_KFTau_Fit_Chi2;   //!
    TBranch        *b_KFTau_Fit_PV_PV_significance;   //!
    TBranch        *b_KFTau_Fit_SV_PV_significance;   //!
+   TBranch        *b_KFTau_Daughter_pdgid;   //!
+   TBranch        *b_KFTau_Daughter_charge;   //!
+   TBranch        *b_KFTau_Daughter_ambiguity;   //!
+   TBranch        *b_KFTau_Daughter_par;   //!
+   TBranch        *b_KFTau_Daughter_parCov;   //!
+   TBranch        *b_KFTau_Daughter_inputpar;   //!
+   TBranch        *b_KFTau_Daughter_inputparCov;   //!
+   TBranch        *b_ReducedVtx_chi2;   //!
+   TBranch        *b_ReducedVtx_nTrk;   //!
+   TBranch        *b_ReducedVtx_ndof;   //!
+   TBranch        *b_ReducedVtx_x;   //!
+   TBranch        *b_ReducedVtx_y;   //!
+   TBranch        *b_ReducedVtx_z;   //!
+   TBranch        *b_ReducedVtx_Cov;   //!
+   TBranch        *b_ReducedVtx_Track_idx;   //!
+   TBranch        *b_ReducedVtx_isFake;   //!
    TBranch        *b_isPatJet;   //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_Poca;   //!
@@ -480,7 +511,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/user/scratch/nugent/TauNtuple_115_1_4P9.root/t");
+      chain->Add("/net/scratch_cms/institut_3b/nugent/workdirV1/TauNtuple_27_1_I2n.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -623,7 +654,6 @@ void NtupleReader::Init(TTree *tree)
    KFTau_Track_idx = 0;
    KFTau_indexOfFitInfo = 0;
    KFTau_Fit_TauPrimVtx = 0;
-   KFTau_Fit_IndexToPrimeVertice = 0;
    KFTau_Fit_chi2 = 0;
    KFTau_Fit_ndf = 0;
    KFTau_Fit_ambiguity = 0;
@@ -635,6 +665,22 @@ void NtupleReader::Init(TTree *tree)
    KFTau_Fit_Chi2 = 0;
    KFTau_Fit_PV_PV_significance = 0;
    KFTau_Fit_SV_PV_significance = 0;
+   KFTau_Daughter_pdgid = 0;
+   KFTau_Daughter_charge = 0;
+   KFTau_Daughter_ambiguity = 0;
+   KFTau_Daughter_par = 0;
+   KFTau_Daughter_parCov = 0;
+   KFTau_Daughter_inputpar = 0;
+   KFTau_Daughter_inputparCov = 0;
+   ReducedVtx_chi2 = 0;
+   ReducedVtx_nTrk = 0;
+   ReducedVtx_ndof = 0;
+   ReducedVtx_x = 0;
+   ReducedVtx_y = 0;
+   ReducedVtx_z = 0;
+   ReducedVtx_Cov = 0;
+   ReducedVtx_Track_idx = 0;
+   ReducedVtx_isFake = 0;
    PFJet_p4 = 0;
    PFJet_Poca = 0;
    PFJet_chargedEmEnergy = 0;
@@ -812,7 +858,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Track_idx", &KFTau_Track_idx, &b_KFTau_Track_idx);
    fChain->SetBranchAddress("KFTau_indexOfFitInfo", &KFTau_indexOfFitInfo, &b_KFTau_indexOfFitInfo);
    fChain->SetBranchAddress("KFTau_Fit_TauPrimVtx", &KFTau_Fit_TauPrimVtx, &b_KFTau_Fit_TauPrimVtx);
-   fChain->SetBranchAddress("KFTau_Fit_IndexToPrimeVertice", &KFTau_Fit_IndexToPrimeVertice, &b_KFTau_Fit_IndexToPrimeVertice);
    fChain->SetBranchAddress("KFTau_Fit_chi2", &KFTau_Fit_chi2, &b_KFTau_Fit_chi2);
    fChain->SetBranchAddress("KFTau_Fit_ndf", &KFTau_Fit_ndf, &b_KFTau_Fit_ndf);
    fChain->SetBranchAddress("KFTau_Fit_ambiguity", &KFTau_Fit_ambiguity, &b_KFTau_Fit_ambiguity);
@@ -824,6 +869,22 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("KFTau_Fit_Chi2", &KFTau_Fit_Chi2, &b_KFTau_Fit_Chi2);
    fChain->SetBranchAddress("KFTau_Fit_PV_PV_significance", &KFTau_Fit_PV_PV_significance, &b_KFTau_Fit_PV_PV_significance);
    fChain->SetBranchAddress("KFTau_Fit_SV_PV_significance", &KFTau_Fit_SV_PV_significance, &b_KFTau_Fit_SV_PV_significance);
+   fChain->SetBranchAddress("KFTau_Daughter_pdgid", &KFTau_Daughter_pdgid, &b_KFTau_Daughter_pdgid);
+   fChain->SetBranchAddress("KFTau_Daughter_charge", &KFTau_Daughter_charge, &b_KFTau_Daughter_charge);
+   fChain->SetBranchAddress("KFTau_Daughter_ambiguity", &KFTau_Daughter_ambiguity, &b_KFTau_Daughter_ambiguity);
+   fChain->SetBranchAddress("KFTau_Daughter_par", &KFTau_Daughter_par, &b_KFTau_Daughter_par);
+   fChain->SetBranchAddress("KFTau_Daughter_parCov", &KFTau_Daughter_parCov, &b_KFTau_Daughter_parCov);
+   fChain->SetBranchAddress("KFTau_Daughter_inputpar", &KFTau_Daughter_inputpar, &b_KFTau_Daughter_inputpar);
+   fChain->SetBranchAddress("KFTau_Daughter_inputparCov", &KFTau_Daughter_inputparCov, &b_KFTau_Daughter_inputparCov);
+   fChain->SetBranchAddress("ReducedVtx_chi2", &ReducedVtx_chi2, &b_ReducedVtx_chi2);
+   fChain->SetBranchAddress("ReducedVtx_nTrk", &ReducedVtx_nTrk, &b_ReducedVtx_nTrk);
+   fChain->SetBranchAddress("ReducedVtx_ndof", &ReducedVtx_ndof, &b_ReducedVtx_ndof);
+   fChain->SetBranchAddress("ReducedVtx_x", &ReducedVtx_x, &b_ReducedVtx_x);
+   fChain->SetBranchAddress("ReducedVtx_y", &ReducedVtx_y, &b_ReducedVtx_y);
+   fChain->SetBranchAddress("ReducedVtx_z", &ReducedVtx_z, &b_ReducedVtx_z);
+   fChain->SetBranchAddress("ReducedVtx_Cov", &ReducedVtx_Cov, &b_ReducedVtx_Cov);
+   fChain->SetBranchAddress("ReducedVtx_Track_idx", &ReducedVtx_Track_idx, &b_ReducedVtx_Track_idx);
+   fChain->SetBranchAddress("ReducedVtx_isFake", &ReducedVtx_isFake, &b_ReducedVtx_isFake);
    fChain->SetBranchAddress("isPatJet", &isPatJet, &b_isPatJet);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
    fChain->SetBranchAddress("PFJet_Poca", &PFJet_Poca, &b_PFJet_Poca);

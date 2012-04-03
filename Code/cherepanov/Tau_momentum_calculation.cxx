@@ -295,11 +295,11 @@ std::cout<<" Tau momentum calculation "<<std::endl;
   value.at(TauIsIso) =   Ntp->PFTau_isMediumIsolation(Ntp->KFTau_MatchedHPS_idx(HighestPtTauIndex));
   pass.at(TauIsIso)=(value.at(TauIsIso) ==cut.at(TauIsIso));
 
-    if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
-      value.at(charge) =Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));
+    if( HighestPtTauIndex!=-1 && Ntp->NTracks() >= Ntp->Muon_Track_idx(HighestPtMuonIndex)){
+      value.at(charge) =Ntp->KFTau_Fit_charge(HighestPtTauIndex)*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex));
 
       //  pass.at(TauPt)=(value.at(TauPt)>=cut.at(TauPt));
-      pass.at(charge)=(Ntp->KFTau_Fit_charge(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex))*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex)) == -1);
+      pass.at(charge)=(Ntp->KFTau_Fit_charge(HighestPtTauIndex)*Ntp->Track_charge(Ntp->Muon_Track_idx(HighestPtMuonIndex)) == -1);
     }
     
 

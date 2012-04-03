@@ -111,6 +111,8 @@ class Ntuple_Controller{
   };
   enum TrackPar{i_qoverp = 0, i_lambda, i_phi, i_dxy,i_dsz};
 
+  enum KFTauPar{KFTau_vx = 0, KFTau_vy, KFTau_vz, KFTau_px, KFTau_py, KFTau_pz, KFTau_m, NKFTau_par};
+
   // Ntuple Access Functions 
   virtual Int_t Get_Entries();
   virtual void Get_Event(int _jentry);
@@ -236,12 +238,8 @@ class Ntuple_Controller{
    int              KFTau_nKinTaus(){return Ntp->KFTau_nKinTaus;}
    unsigned int     KFTau_MatchedHPS_idx(unsigned int i){return Ntp->KFTau_MatchedHPS_idx->at(i);}
    std::vector<int> KFTau_Track_idx(unsigned int i){return Ntp->KFTau_Track_idx->at(i);}
-   int      KFTau_indexOfFitInfo(unsigned int i){return Ntp->KFTau_indexOfFitInfo->at(i);}
-   bool     hasKFTau_indexOfFitInfo(unsigned int i,unsigned int &idx);
-
-   // Kinematic Fit Info (access using KFTau_indexOfFitInfo)
+ 
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return TVector3(Ntp->KFTau_Fit_TauPrimVtx->at(i).at(0),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(1),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(2));}
-   int      KFTau_Fit_IndexToPrimVertexVector(unsigned int i){return Ntp->KFTau_Fit_IndexToPrimeVertice->at(i);}
    float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
    float    KFTau_Fit_ndf(unsigned int i){return Ntp->KFTau_Fit_ndf->at(i);}
    int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
@@ -253,8 +251,29 @@ class Ntuple_Controller{
    double   KFTau_Fit_Chi2Prob(unsigned int i){return Ntp->KFTau_Fit_Chi2->at(i);}
    double   KFTau_Fit_PV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_PV_PV_significance->at(i);}
    double   KFTau_Fit_SV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_SV_PV_significance->at(i);}
-   
+ 
+   unsigned int KFTau_NDaughter(unsigned int i){return Ntp->KFTau_Daughter_pdgid->size();}
+   int KFTau_Daughter_pdgid(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_pdgid->at(i).at(j);}
+   int KFTau_Daughter_charge(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_charge->at(i).at(j);}
+   float KFTau_Daughter_ambiguity(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_ambiguity->at(i).at(j);}
+   float KFTau_Daughter_par(unsigned int i, unsigned int j,int par){return Ntp->KFTau_Daughter_par->at(i).at(j).at(par);}
+   float KFTau_Daughter_parCov(unsigned int i, unsigned int j,int par1,int par2);
+   float KFTau_Daughter_inputpar(unsigned int i, unsigned int j,int par){return Ntp->KFTau_Daughter_par->at(i).at(j).at(par);}
+   float KFTau_Daughter_inputparCov(unsigned int i, unsigned int j,int par1,int par2);
 
+   TVector3  KFTau_RotatedVtx(unsigned int i);
+   TMatrixF  KFTau_RotatedVtx_Cov(unsigned int i);
+
+   TVector3     KFTau_ReducedVtx(unsigned int i){
+     return TVector3(Ntp->ReducedVtx_x->at(i),Ntp->ReducedVtx_y->at(i),Ntp->ReducedVtx_z->at(i));
+   }
+   float   KFTau_ReducedVtx_chi2(unsigned int i){return Ntp->ReducedVtx_chi2->at(i);}
+   float   KFTau_ReducedVtx_nTrk(unsigned int i){return Ntp->ReducedVtx_nTrk->at(i);}
+   float   KFTau_ReducedVtx_ndof(unsigned int i){return Ntp->ReducedVtx_ndof->at(i);}
+   TMatrixF  KFTau_ReducedVtx_Cov(unsigned int i);
+   std::vector<int> KFTau_ReducedVtx_Track_idx(unsigned int i){return Ntp->ReducedVtx_Track_idx->at(i);}
+   float   KFTau_ReducedVtx_isFake(unsigned int i){return Ntp->ReducedVtx_isFake->at(i);}
+  
    // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}
    TLorentzVector     PFJet_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));}

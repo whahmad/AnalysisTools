@@ -473,11 +473,8 @@ void  ChargedHiggs::doEvent(){
   value.at(etaq)=0;
   pass.at(etaq)=false;
   if(tauidx!=999){
-    unsigned int KF_Info_idx;
-    if(Ntp->hasKFTau_indexOfFitInfo(tauidx,KF_Info_idx)){
-      value.at(etaq)=Ntp->KFTau_Fit_charge(KF_Info_idx)*fabs(Ntp->KFTau_TauFit_p4(KF_Info_idx).Eta());
-      pass.at(etaq)=value.at(etaq)>cut.at(etaq);
-    }
+    value.at(etaq)=Ntp->KFTau_Fit_charge(tauidx)*fabs(Ntp->KFTau_TauFit_p4(tauidx).Eta());
+    pass.at(etaq)=value.at(etaq)>cut.at(etaq);
   }
   pass.at(etaq)=true;
   if(verbose)std::cout << "void  ChargedHiggs::doEvent() I" << std::endl;

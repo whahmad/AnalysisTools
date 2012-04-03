@@ -408,10 +408,10 @@ void  Validation::doEvent(){
       discrQC.at(t).Fill(Ntp->KFTau_discriminatorByQC(iTau));       
       discrFT.at(t).Fill(Ntp->KFTau_discriminatorByKFit(iTau));             
 
-      if( Ntp->KFTau_indexOfFitInfo(iTau)!=-1){
-	KFTau_Fit_iterations_hist.at(t).Fill(Ntp->KFTau_Fit_iterations(Ntp->KFTau_indexOfFitInfo(iTau)),w);
-	KFTau_Fit_chi2_hist.at(t).Fill(Ntp->KFTau_Fit_chi2(Ntp->KFTau_indexOfFitInfo(iTau)),w);
-	KFTau_Fit_csum_hist.at(t).Fill(Ntp->KFTau_Fit_csum(Ntp->KFTau_indexOfFitInfo(iTau)),w);
+      if( iTau!=-1){
+	KFTau_Fit_iterations_hist.at(t).Fill(Ntp->KFTau_Fit_iterations(iTau),w);
+	KFTau_Fit_chi2_hist.at(t).Fill(Ntp->KFTau_Fit_chi2(iTau),w);
+	KFTau_Fit_csum_hist.at(t).Fill(Ntp->KFTau_Fit_csum(iTau),w);
        }
   
       //  if(Ntp->KFTau_discriminatorByKFit(iTau) and Ntp->KFTau_discriminatorByQC(iTau) )
@@ -505,8 +505,8 @@ void  Validation::doEvent(){
    
  	GlobMuonEta.at(t).Fill(MuoGlo.Eta(),w);
  	TauEta.at(t).Fill(TauFit.Eta(),w);
-      if( Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)!=-1){
-	DeltaVtxZ.at(t).Fill(Ntp->KFTau_Fit_TauPrimVtx(Ntp->KFTau_indexOfFitInfo(HighestPtTauIndex)).Z() - Ntp->Muon_Poca(HighestPtMuonIndex).Z(),w);
+      if( HighestPtTauIndex!=-1){
+	DeltaVtxZ.at(t).Fill(Ntp->KFTau_Fit_TauPrimVtx(HighestPtTauIndex).Z() - Ntp->Muon_Poca(HighestPtMuonIndex).Z(),w);
       }
 	
   
