@@ -39,6 +39,8 @@ class Selection : public Selection_Base {
   void SetDataIdx(unsigned int d){data=d;}
   unsigned int DataIdx(){return data;}
   virtual void ResetEvent();
+  virtual void ScaleAllHistOfType(unsigned int t,float);
+
   HistoConfig HConfig;
 
 

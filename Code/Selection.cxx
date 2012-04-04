@@ -359,3 +359,23 @@ void Selection::ResetEvent(){
     dist.at(i).clear();
   }
 }
+
+void Selection::ScaleAllHistOfType(unsigned int t,float w){
+  for(unsigned int i=0; i<Nminus1.size(); i++){
+    if(Nminus1.at(i).size()>t)Nminus1.at(i).at(t).Scale(w);
+    if(Nminus0.at(i).size()>t)Nminus0.at(i).at(t).Scale(w);
+    if(distindx.at(i)){
+      if(Nminus1dist.at(i).size()>t)Nminus1dist.at(i).at(t).Scale(w);
+      if(Accumdist.at(i).size()>t)Accumdist.at(i).at(t).Scale(w);
+    }
+  }
+  if(Npassed.size()>t)Npassed.at(t).Scale(w);
+  if(Npassed_noweight.size()>t)Npassed_noweight.at(t).Scale(w);
+  for(unsigned int k=0; k<Extradist1d.size();k++){
+    if(Extradist1d.at(k)->size()>t)Extradist1d.at(k)->at(t).Scale(w);
+  }
+  for(unsigned int k=0; k<Extradist2d.size();k++){
+    if(Extradist2d.at(k)->size()>t)Extradist2d.at(k)->at(t).Scale(w);
+  }
+}
+
