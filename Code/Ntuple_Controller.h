@@ -273,6 +273,10 @@ class Ntuple_Controller{
    TMatrixF  KFTau_ReducedVtx_Cov(unsigned int i);
    std::vector<int> KFTau_ReducedVtx_Track_idx(unsigned int i){return Ntp->ReducedVtx_Track_idx->at(i);}
    float   KFTau_ReducedVtx_isFake(unsigned int i){return Ntp->ReducedVtx_isFake->at(i);}
+   TVector3  KFTau_SecondayVtx(unsigned int i);
+   TMatrixF  KFTau_SecondaryVtx_Cov(unsigned int i);
+
+
   
    // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}

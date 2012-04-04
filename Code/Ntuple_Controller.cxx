@@ -499,6 +499,7 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 bool Ntuple_Controller::isGoodKFTau(unsigned int i){
+  return true;
   if(KFTau_discriminatorByKFit(i)){
     if(KFTau_discriminatorByQC(i)){
       return true;
@@ -536,12 +537,14 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
 
 float Ntuple_Controller::KFTau_Daughter_parCov(unsigned int i, unsigned int j,int par1,int par2){
   TMatrixF M(NKFTau_par,NKFTau_par);
+  unsigned int idx(0);
   for(unsigned int k=0;k<NKFTau_par;k++){
     for(unsigned int l=0;l<=k;l++){
-      if(k*NKFTau_par+l<Ntp->KFTau_Daughter_parCov->at(i).at(j).size()){
-        M[l][k]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(k*NKFTau_par+l);
-	M[k][l]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(k*NKFTau_par+l);
+      if(idx<Ntp->KFTau_Daughter_parCov->at(i).at(j).size()){
+        M[l][k]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(idx);
+	M[k][l]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(idx);
       }
+      idx++;
     }
   }
   return  M[par1][par2];
@@ -549,12 +552,14 @@ float Ntuple_Controller::KFTau_Daughter_parCov(unsigned int i, unsigned int j,in
 
 float Ntuple_Controller::KFTau_Daughter_inputparCov(unsigned int i, unsigned int j,int par1,int par2){
   TMatrixF M(NKFTau_par,NKFTau_par);
+  unsigned int idx(0);
   for(unsigned int k=0;k<NKFTau_par;k++){
     for(unsigned int l=0;l<=k;l++){
-      if(k*NKFTau_par+l<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
-        M[l][k]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(k*NKFTau_par+l);
-        M[k][l]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(k*NKFTau_par+l);
+      if(idx<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
+        M[l][k]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(idx);
+        M[k][l]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(idx);
       }
+      idx++;
     }
   }
   return  M[par1][par2];
@@ -577,7 +582,7 @@ TMatrixF  Ntuple_Controller::KFTau_RotatedVtx_Cov(unsigned int i){
   for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
     if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
       for(unsigned int k=0;k<dim;k++){
-	for(unsigned int l=0;l<k;l++){
+	for(unsigned int l=0;l<=k;l++){
 	  if(k*NKFTau_par+l<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
 	    M[k][l]=KFTau_Daughter_inputparCov(i,j,k,l);
 	    M[l][k]=KFTau_Daughter_inputparCov(i,j,k,l);
@@ -599,6 +604,37 @@ TMatrixF  Ntuple_Controller::KFTau_ReducedVtx_Cov(unsigned int i){
       M[k][j]=Ntp->ReducedVtx_Cov->at(i).at(j).at(k);
     }
   }
+  return M;
 }
 
 
+TVector3  Ntuple_Controller::KFTau_SecondayVtx(unsigned int i){
+  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
+    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
+      return TVector3(Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vx),
+		      Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vy),
+		      Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vz));
+    }
+  }
+  return TVector3(0,0,0);
+}
+
+
+TMatrixF  Ntuple_Controller::KFTau_SecondaryVtx_Cov(unsigned int i){
+  unsigned int dim=3;
+  TMatrixF M(dim,dim);
+  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
+    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
+      for(unsigned int k=0;k<dim;k++){
+        for(unsigned int l=0;l<=k;l++){
+          if(k*NKFTau_par+l<Ntp->KFTau_Daughter_parCov->at(i).at(j).size()){
+            M[k][l]=KFTau_Daughter_parCov(i,j,k,l);
+            M[l][k]=KFTau_Daughter_parCov(i,j,k,l);
+          }
+        }
+      }
+      return M;
+    }
+  }
+  return M;
+}
