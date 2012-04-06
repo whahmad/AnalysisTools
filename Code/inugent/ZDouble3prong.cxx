@@ -24,7 +24,7 @@ ZDouble3prong::~ZDouble3prong(){
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "ZDouble3prong::~ZDouble3prong()" << std::endl;
+  //  std::cout << "ZDouble3prong::~ZDouble3prong()" << std::endl;
 }
 
 void  ZDouble3prong::Configure(){
@@ -393,8 +393,8 @@ void  ZDouble3prong::doEvent(){
     unsigned int dim=3;
     TVector3 tau1_vtx=Ntp->KFTau_RotatedVtx(tauidx1);
     TMatrixF tau1_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx1);
-    TVector3 tautau_vtx=Ntp->KFTau_ReducedVtx(0);
-    TMatrixF tautau_cov=Ntp->KFTau_ReducedVtx_Cov(0);
+    TVector3 tautau_vtx=Ntp->KFTau_ReducedVtx();
+    TMatrixF tautau_cov=Ntp->KFTau_ReducedVtx_Cov();
     std::cout << "Rotated: " << tau1_vtx.X() << " " << tau1_vtx.Y() << " " << tau1_vtx.Z() << std::endl;
     std::cout << "Reduced: " << tautau_vtx.X() << " " << tautau_vtx.Y() << " " << tautau_vtx.Z() << std::endl;
 

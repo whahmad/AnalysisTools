@@ -60,6 +60,7 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> TauCandPiMass;
   std::vector<TH1D> TauCandNuMass;
 
+  std::vector<TH1D> TauSolutionResult;
   std::vector<TH1D> EstimatedTauE;
   std::vector<TH1D> EstimatedTauPhi;
   std::vector<TH1D> EstimatedTauEta;

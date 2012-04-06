@@ -314,13 +314,9 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   //  residual correction (data) applied applied
   //  abs(eta) < 2.5 < 2.4                      
   //  jet ID applied applied     
-  std::cout << "isGoodJet_nooverlapremoval" << std::endl;               
   if(isJetID(i)){
-    std::cout << "isJetID(" << std::endl;
     if(PFJet_p4(i).Pt()>15.0){
-      std::cout << "PFJet_p4(i).Pt(" << std::endl;
       if(fabs(PFJet_p4(i).Eta())<2.4){
-	std::cout << "PFJet_p4.Eta" << std::endl;
 	return true;
       }
     }
@@ -499,8 +495,8 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 bool Ntuple_Controller::isGoodKFTau(unsigned int i){
-  return true;
   if(KFTau_discriminatorByKFit(i)){
+    return true;
     if(KFTau_discriminatorByQC(i)){
       return true;
     }
@@ -595,7 +591,8 @@ TMatrixF  Ntuple_Controller::KFTau_RotatedVtx_Cov(unsigned int i){
   return M;
 }
 
-TMatrixF  Ntuple_Controller::KFTau_ReducedVtx_Cov(unsigned int i){
+TMatrixF  Ntuple_Controller::KFTau_ReducedVtx_Cov(){
+  unsigned int i=0;
   unsigned int dim=3;
   TMatrixF M(dim,dim);
   for(unsigned int j=0;j<dim;j++){

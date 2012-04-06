@@ -252,7 +252,7 @@ class Ntuple_Controller{
    double   KFTau_Fit_PV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_PV_PV_significance->at(i);}
    double   KFTau_Fit_SV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_SV_PV_significance->at(i);}
 
-   unsigned int KFTau_NDaughter(unsigned int i){return Ntp->KFTau_Daughter_pdgid->size();}
+   unsigned int KFTau_NDaughter(unsigned int i){return Ntp->KFTau_Daughter_pdgid->at(i).size();}
    int KFTau_Daughter_pdgid(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_pdgid->at(i).at(j);}
    int KFTau_Daughter_charge(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_charge->at(i).at(j);}
    float KFTau_Daughter_ambiguity(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_ambiguity->at(i).at(j);}
@@ -264,16 +264,15 @@ class Ntuple_Controller{
    TVector3  KFTau_RotatedVtx(unsigned int i);
    TMatrixF  KFTau_RotatedVtx_Cov(unsigned int i);
 
-   unsigned int KFTau_NReducedVtx(){return Ntp->ReducedVtx_isFake->size();}
-   TVector3     KFTau_ReducedVtx(unsigned int i){
+   TVector3     KFTau_ReducedVtx(){unsigned int i=0;// only 1 reduced vertex for now
      return TVector3(Ntp->ReducedVtx_x->at(i),Ntp->ReducedVtx_y->at(i),Ntp->ReducedVtx_z->at(i));
    }
-   float   KFTau_ReducedVtx_chi2(unsigned int i){return Ntp->ReducedVtx_chi2->at(i);}
-   float   KFTau_ReducedVtx_nTrk(unsigned int i){return Ntp->ReducedVtx_nTrk->at(i);}
-   float   KFTau_ReducedVtx_ndof(unsigned int i){return Ntp->ReducedVtx_ndof->at(i);}
-   TMatrixF  KFTau_ReducedVtx_Cov(unsigned int i);
-   std::vector<int> KFTau_ReducedVtx_Track_idx(unsigned int i){return Ntp->ReducedVtx_Track_idx->at(i);}
-   float   KFTau_ReducedVtx_isFake(unsigned int i){return Ntp->ReducedVtx_isFake->at(i);}
+   float   KFTau_ReducedVtx_chi2(){unsigned int i=0;return Ntp->ReducedVtx_chi2->at(i);}
+   float   KFTau_ReducedVtx_nTrk(){unsigned int i=0;return Ntp->ReducedVtx_nTrk->at(i);}
+   float   KFTau_ReducedVtx_ndof(){unsigned int i=0;return Ntp->ReducedVtx_ndof->at(i);}
+   TMatrixF  KFTau_ReducedVtx_Cov();
+   std::vector<int> KFTau_ReducedVtx_Track_idx(){unsigned int i=0;return Ntp->ReducedVtx_Track_idx->at(i);}
+   float   KFTau_ReducedVtx_isFake(){unsigned int i=0;return Ntp->ReducedVtx_isFake->at(i);}
 
    TVector3  KFTau_SecondayVtx(unsigned int i);
    TMatrixF  KFTau_SecondaryVtx_Cov(unsigned int i);
