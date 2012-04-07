@@ -288,12 +288,12 @@ void  Ztotautau_ControlSample::Configure(){
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"|#eta|","P_{T}^{Tag}");
 
   TauCandFound =HConfig.GetTH1D(Name+"_TauCandFound","TauCandFound",2,-0.5,1.5,"Found #tau Candidate (bool)","Events");
-  TauCandEtaPhi =HConfig.GetTH2D(Name+"_TauCandPtEta","TauCandPtEta",25,0,2.5,32,-TMath::Pi(),TMath::Pi(),"|#eta|","#phi (rad)");
+  TauCandEtaPhi =HConfig.GetTH2D(Name+"_TauCandPtEta","TauCandPtEta",25,0,2.5,40,0,200,"|#eta|","#phi (rad)");
 
   TauCandPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
   TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",64,-TMath::Pi(),TMath::Pi(),"#sigma(#phi_{KF-#tau}) (rad)","Events");
-  TauCandEta =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,0,2.5,"#eta_{KF-#tau}","Events");
-  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",25,0,2.5,"#sigma(#eta_{KF-#tau}) ","Events");
+  TauCandEta =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{KF-#tau}","Events");
+  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,2.5,2.5,"#sigma(#eta_{KF-#tau}) ","Events");
   TauCandE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{KF-#tau} (GeV)","Events");
   TauCandERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",50,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
 
@@ -304,11 +304,14 @@ void  Ztotautau_ControlSample::Configure(){
   TauSolutionResult = HConfig.GetTH1D(Name+"_TauSolutionResult","TauSolutionResult",3,-1.5,1.5,"Solution: -:R<0:+","Events");
   EstimatedTauE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{Est-#tau} (GeV)","Events");
   EstimatedTauPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{Est-#tau} (rad)","Events");
-  EstimatedTauEta  =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-25,2.5,"#eta_{Est-#tau}","Events");
+  EstimatedTauEta  =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{Est-#tau}","Events");
 
-  EstimatedTauERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",50,-50,50,"#sigma(E_{Est-#tau}) (GeV)","Events");
-  EstimatedTauPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",64,-TMath::Pi(),TMath::Pi(),"#sigma(#phi_{Est-#tau}) (rad)","Events");
-  EstimatedTauEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,2.5,2.5,"#sigma(#eta_{Est-#tau}) ","Events");
+  EstimatedTauERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",40,-20,20,"#sigma(E_{Est-#tau}) (GeV)","Events");
+  EstimatedTauPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",100,-0.2,0.2,"#sigma(#phi_{Est-#tau}) (rad)","Events");
+  EstimatedTauEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",100,-0.2,0.2,"#sigma(#eta_{Est-#tau}) ","Events");
+
+  EstimatedTauDirPhiRes=HConfig.GetTH1D(Name+"_TauCandDirPhiRes","TauCandDirPhiRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
+  EstimatedTauDirEtaRes=HConfig.GetTH1D(Name+"_TauCandDirEtaRes","TauCandDirEtaRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
 
   KFTau_Fit_chiprob=HConfig.GetTH1D(Name+"_KFTau_Fit_prob","KFTau_Fit_prob",25,0,1,"Kinematic Fit Probability","Events");
   KFTau_Fit_a1mass=HConfig.GetTH1D(Name+"_KFTau_Fit_a1mass","KFTau_Fit_a1mass",25,0,2.5,"Kinematic Fit a_{1} Mass","Events");
@@ -360,6 +363,9 @@ void  Ztotautau_ControlSample::Store_ExtraDist(){
  Extradist1d.push_back(&EstimatedTauERes);
  Extradist1d.push_back(&EstimatedTauPhiRes);
  Extradist1d.push_back(&EstimatedTauEtaRes);
+
+ Extradist1d.push_back(&EstimatedTauDirEtaRes);
+ Extradist1d.push_back(&EstimatedTauDirPhiRes);
 
  Extradist1d.push_back(&KFTau_Fit_chiprob); 
  Extradist1d.push_back(&KFTau_Fit_a1mass);
@@ -739,16 +745,19 @@ void  Ztotautau_ControlSample::doEvent(){
 	  if(verbose)std::cout << "MC Tau 4-vector: Px=" << MCTau_LV.Px() << " Py=" << MCTau_LV.Py() <<" Pz=" << MCTau_LV.Pz() 
 			       <<" Pm=" << MCTau_LV.M() << std::endl; 
 	  if(verbose)std::cout << "Tau Resolution dphi=" 
-			       << Ntp->KFTau_TauFit_p4(tau_idx).Phi()-MCTau_LV.Phi() 
-			       << " deta" << Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta() 
-			       << " dE=" << Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E() << std::endl;    
-          TauCandPhiRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi()-MCTau_LV.Phi(),w);
+		    << Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()) 
+		    << " deta" << Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta() 
+		    << " dE=" << Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E() << std::endl;    
+	  TauCandERes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E(),w);
+          TauCandPhiRes.at(t).Fill(Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()),w);
           TauCandEtaRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta(),w);
-          TauCandERes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E(),w);
 	  
-          EstimatedTauERes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi()-MCTau_LV.Phi(),w);
-          EstimatedTauPhiRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi()-MCTau_LV.Phi(),w);
-          EstimatedTauEtaRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi()-MCTau_LV.Phi(),w);
+          EstimatedTauERes.at(t).Fill(TauSolution.Phi()-MCTau_LV.Phi(),w);
+          EstimatedTauPhiRes.at(t).Fill(Tools::DeltaPhi(TauSolution.Phi(),MCTau_LV.Phi()),w);
+          EstimatedTauEtaRes.at(t).Fill(TauSolution.Eta()-MCTau_LV.Eta(),w);
+
+	  EstimatedTauDirPhiRes.at(t).Fill(Tools::DeltaPhi(TauDirection.Phi(),MCTau_LV.Phi()),w);
+	  EstimatedTauDirEtaRes.at(t).Fill(TauDirection.Eta()-MCTau_LV.Eta(),w);
         }
       }
     }

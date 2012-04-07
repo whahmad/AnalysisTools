@@ -69,6 +69,9 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> EstimatedTauPhiRes;
   std::vector<TH1D> EstimatedTauEtaRes;
 
+  std::vector<TH1D> EstimatedTauDirPhiRes;
+  std::vector<TH1D> EstimatedTauDirEtaRes;
+
   std::vector<TH1D> KFTau_Fit_chiprob;
   std::vector<TH1D> KFTau_Fit_a1mass;
   std::vector<TH1D> KFTau_Fit_chi2;

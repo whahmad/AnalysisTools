@@ -496,7 +496,6 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 bool Ntuple_Controller::isGoodKFTau(unsigned int i){
   if(KFTau_discriminatorByKFit(i)){
-    return true;
     if(KFTau_discriminatorByQC(i)){
       return true;
     }
