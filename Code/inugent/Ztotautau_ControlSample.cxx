@@ -291,9 +291,9 @@ void  Ztotautau_ControlSample::Configure(){
   TauCandEtaPhi =HConfig.GetTH2D(Name+"_TauCandPtEta","TauCandPtEta",25,0,2.5,40,0,200,"|#eta|","#phi (rad)");
 
   TauCandPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
-  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",64,-TMath::Pi(),TMath::Pi(),"#sigma(#phi_{KF-#tau}) (rad)","Events");
+  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",64,-0.2,0.2,"#sigma(#phi_{KF-#tau}) (rad)","Events");
   TauCandEta =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{KF-#tau}","Events");
-  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,2.5,2.5,"#sigma(#eta_{KF-#tau}) ","Events");
+  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,-0.2,0.2,"#sigma(#eta_{KF-#tau}) ","Events");
   TauCandE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{KF-#tau} (GeV)","Events");
   TauCandERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",50,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
 
@@ -306,12 +306,12 @@ void  Ztotautau_ControlSample::Configure(){
   EstimatedTauPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{Est-#tau} (rad)","Events");
   EstimatedTauEta  =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{Est-#tau}","Events");
 
-  EstimatedTauERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",40,-20,20,"#sigma(E_{Est-#tau}) (GeV)","Events");
-  EstimatedTauPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",100,-0.2,0.2,"#sigma(#phi_{Est-#tau}) (rad)","Events");
-  EstimatedTauEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",100,-0.2,0.2,"#sigma(#eta_{Est-#tau}) ","Events");
+  EstimatedTauERes =HConfig.GetTH1D(Name+"_TauEstimatedERes","TauEstimatedERes",40,-50,50,"#sigma(E_{Est-#tau}) (GeV)","Events");
+  EstimatedTauPhiRes =HConfig.GetTH1D(Name+"_TauEstimatedPhiRes","TauEstimatedPhiRes",100,-0.2,0.2,"#sigma(#phi_{Est-#tau}) (rad)","Events");
+  EstimatedTauEtaRes =HConfig.GetTH1D(Name+"_TauEstimatedEtaRes","TauEstimatedEtaRes",100,-0.2,0.2,"#sigma(#eta_{Est-#tau}) ","Events");
 
   EstimatedTauDirPhiRes=HConfig.GetTH1D(Name+"_TauCandDirPhiRes","TauCandDirPhiRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
-  EstimatedTauDirEtaRes=HConfig.GetTH1D(Name+"_TauCandDirEtaRes","TauCandDirEtaRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
+  EstimatedTauDirEtaRes=HConfig.GetTH1D(Name+"_TauCandDirEtaRes","TauCandDirEtaRes",100,-0.2,0.2,"#sigma(#eta_{Direction-#tau}) (rad)","Events");
 
   KFTau_Fit_chiprob=HConfig.GetTH1D(Name+"_KFTau_Fit_prob","KFTau_Fit_prob",25,0,1,"Kinematic Fit Probability","Events");
   KFTau_Fit_a1mass=HConfig.GetTH1D(Name+"_KFTau_Fit_a1mass","KFTau_Fit_a1mass",25,0,2.5,"Kinematic Fit a_{1} Mass","Events");
@@ -613,7 +613,7 @@ void  Ztotautau_ControlSample::doEvent(){
 	KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_SV_PV_significance(tau_idx),w);
       }
       else{
-	TauCandFound.at(t).Fill(1,w);
+	TauCandFound.at(t).Fill(0.0,w);
       }
     }
   }
@@ -638,6 +638,7 @@ void  Ztotautau_ControlSample::doEvent(){
       if(tau_idx!=999 ){
         TLorentzVector TauVisInput;
         TLorentzVector TauSolution;
+	double Enu1(-999),Enu2(-999);
         TVector3 TauDirection=Ntp->KFTau_InitialSecondaryVtx(tau_idx)-Ntp->KFTau_ReducedVtx(); 
 	unsigned int npi=0;
 	
@@ -664,6 +665,8 @@ void  Ztotautau_ControlSample::doEvent(){
 	if(verbose)std::cout << "npi: " << npi << std::endl;
         if(npi==3){
 	  double phi(TauDirection.Phi()),theta(TauDirection.Theta());
+	  TLorentzVector TauVis1=TauVisInput;
+	  TLorentzVector TauVis2=TauVisInput;
           TauVisInput.RotateZ(-phi);
           TauVisInput.RotateY(-theta);
 	  double Enu(0),pz(0);
@@ -677,65 +680,46 @@ void  Ztotautau_ControlSample::doEvent(){
               pt*=0.999;
             }
             // solution 1
-            double E(E3pi),Pt(pt),Pz(pz3pi);
-            double R=-2 * E * E * mtau * mtau * Pt * Pt - 2 * (int) pow((double) E, (double) 4) * Pt * Pt - 2 * (int) pow((double) E, (double) 4) * mtau * mtau - 2 * (int) pow((double) E, (double) 4) * Pz * Pz + 2 * Pz * Pz * Pt * Pt * E * E + 2 * Pz * Pz * mtau * mtau * E * E + (int) pow((double) E, (double) 6) + (int) pow((double) Pz, (double) 4) * E * E + E * E * (int) pow((double) Pt, (double) 4) + E * E * (int) pow((double) mtau, (double) 4);
-
-	      //oldversion?= 10 * Pz * Pz * Pt * Pt * E * E + 2 * Pz * Pz * mtau * mtau * E * E + 6 * E * E * mtau * mtau * Pt * Pt - 10 * (int) pow((double) E, (double) 4) * Pt * Pt - 2 * (int) pow((double) E, (double) 4) * mtau * mtau - 2 * (int) pow((double) E, (double) 4) * Pz * Pz + (int) pow((double) Pz, (double) 4) * E * E + E * E * (int) pow((double) mtau, (double) 4) + 9 * E * E * (int) pow((double) Pt, (double) 4) + (int) pow((double) E, (double) 6);
-
+            double Ea1(E3pi),Pt(pt),Pz(pz3pi),ma1(TauVisInput.M());
+            double R=(4.0*Pz*Pz*ma1*ma1*Pt*Pt + Pz*Pz*Pz*Pz*Pt*Pt + Pz*Pz*mtau*mtau*mtau*mtau - 2.0*Pz*Pz*mtau*mtau*ma1*ma1 - 4.0*Pz*Pz*mtau*mtau*Pt*Pt + Pz*Pz*ma1*ma1*ma1*ma1 + 4.0*Pz*Pz*Pt*Pt*Pt*Pt - 4.0*Ea1* Ea1*Pt*Pt*Pz*Pz);
 	    
             if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
 	    if(verbose)std::cout << "E3pi " << E3pi << " Pt " << Pt << " pz3pi " << pz3pi << std::endl;
-            double Enu1= -(-mtau * mtau + E * E - Pz * Pz + Pz * (-pow(Pz, 0.3e1) - mtau * mtau * Pz + E * E * Pz + Pz * Pt * Pt - sqrt(R)) / (-Pz * Pz + E * E) + Pt * Pt) / E / 0.2e1;
- //-(-mtau * mtau + E * E - Pz * Pz + Pz * (-pow(Pz, 0.3e1) - mtau * mtau * Pz + E * E * Pz - 0.3e1 * Pz * Pt * Pt - sqrt(R)) / (-Pz * Pz + E * E) - 0.3e1 * Pt * Pt) / E / 0.2e1;
-            double Enu2= -(-mtau * mtau + E * E - Pz * Pz + Pz * (-pow(Pz, 0.3e1) - mtau * mtau * Pz + E * E * Pz + Pz * Pt * Pt + sqrt(R)) / (-Pz * Pz + E * E) + Pt * Pt) / E / 0.2e1;
-	      //-(-mtau * mtau + E * E - Pz * Pz + Pz * (-pow(Pz, 0.3e1) - mtau * mtau * Pz + E * E * Pz - 0.3e1 * Pz * Pt * Pt + sqrt(R)) / (-Pz * Pz + E * E) - 0.3e1 * Pt * Pt) / E / 0.2e1;
-            
-            Enu=0;
-            if(Enu1>pt && Enu1<4000){
-              Enu=Enu1;
-            }
-            if(Enu2>pt && Enu2<4000){
-              if(Enu==0 || Enu2<Enu1)Enu=Enu2;
-            }
-	    if(loop==0){
-	      if(R<0)TauSolutionResult.at(t).Fill(0.0,w);
-	      else if(Enu=Enu1)TauSolutionResult.at(t).Fill(-1.0,w);
-	      else if(Enu==Enu2)TauSolutionResult.at(t).Fill(1.0,w);
+            Enu1= -(-2.0*Ea1*mtau*mtau + 4.0*Ea1*Pt*Pt + 2*Ea1*ma1*ma1 - sqrt(R)) / (-Pz*Pz+4.0*Ea1*Ea1);
+            Enu2= -(-2.0*Ea1*mtau*mtau + 4.0*Ea1*Pt*Pt + 2*Ea1*ma1*ma1 - sqrt(R)) / (-Pz*Pz+4.0*Ea1*Ea1);
+	    
+	    TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
+	    Neutrino1.RotateY(theta);
+	    Neutrino1.RotateZ(phi);
+	    TLorentzVector TauSolution1=TauVis1+Neutrino1;
+
+            TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
+            Neutrino2.RotateY(theta);
+            Neutrino2.RotateZ(phi);
+            TLorentzVector TauSolution2=TauVis2+Neutrino2;
+
+	    if(R=0){
+	      TauSolution=TauSolution1; // TauSolution1=TauSolution2
+              TauSolutionResult.at(t).Fill(0.0,w);
+              break;
 	    }
-	    if(verbose)std::cout << "Enu " << Enu << " " << Enu1 << " " << Enu2 << std::endl;   
-	    if(R>0 || loop==10){
-	      Enu=true;
+	    else if(fabs(MCTau_LV.E()-TauSolution1.E())<fabs(MCTau_LV.E()-TauSolution2.E())){
+	      TauSolution=TauSolution1;
+	      TauSolutionResult.at(t).Fill(-1.0,w);
 	      break;
-            }
-            // Method 2: Numerical scan
-	    /*            double scanmax=100;
-            unsigned int nscan=1000000;
-            for(unsigned int scan=0;scan<nscan;scan++){
-              double pz=scanmax*((double)scan)/((double)nscan);
-              double pz1=pz;;
-              double val1= mtau * mtau - pow(E3pi + sqrt(pz * pz + pt * pt), 2) + pow(pt+pt,2.0)-pow(pz3pi + pz,2.0);
-              pz=scanmax*((double)(scan+1))/((double)nscan);
-              double val2= mtau * mtau - pow(E3pi + sqrt(pz * pz + pt * pt), 2) + pow(pt+pt,2.0)-pow(pz3pi + pz,2.0);
-              double pz2=pz;
-	      if((val1>0 && val2<0) || (val1<0 && val2>0)){
-		double slope = (val2-val1)/(pz2-pz1);
-		double b=val2-slope*pz2;
-		pz=-b/slope;
-		Enu=sqrt(pz*pz+pt*pt);
-	      }
-	      }*/
 	    }
+	    else{
+	      TauSolution=TauSolution2;
+	      TauSolutionResult.at(t).Fill(1.0,w);
+	      break;
+	    }
+
+	  }
 	  if(verbose)std::cout << "Tau 4-vector: Px=" << Ntp->KFTau_TauFit_p4(tau_idx).Px()
 			       << " Py=" << Ntp->KFTau_TauFit_p4(tau_idx).Py()
 			       << " Pz=" << Ntp->KFTau_TauFit_p4(tau_idx).Pz()
 			       << " M=" << Ntp->KFTau_TauFit_p4(tau_idx).M() <<std::endl;         
-          TLorentzVector Neutrino(TauVisInput.Px(),TauVisInput.Py(),sqrt(Enu*Enu-pt*pt),Enu);
-          // now rotate back
-          TauVisInput.RotateY(theta);
-          TauVisInput.RotateZ(phi);
-          Neutrino.RotateY(theta);
-          Neutrino.RotateZ(phi);
-          TauSolution=TauVisInput+Neutrino;
+       
           EstimatedTauE.at(t).Fill(TauSolution.E(),w);
           EstimatedTauPhi.at(t).Fill(TauSolution.Phi(),w);
           EstimatedTauEta.at(t).Fill(TauSolution.Eta(),w);
@@ -744,15 +728,25 @@ void  Ztotautau_ControlSample::doEvent(){
 	  if(verbose)std::cout << "MC Tau direction: phi= " << MCTau_LV.Phi() << " theta=" << MCTau_LV.Theta() << std::endl; 
 	  if(verbose)std::cout << "MC Tau 4-vector: Px=" << MCTau_LV.Px() << " Py=" << MCTau_LV.Py() <<" Pz=" << MCTau_LV.Pz() 
 			       <<" Pm=" << MCTau_LV.M() << std::endl; 
-	  if(verbose)std::cout << "Tau Resolution dphi=" 
-		    << Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()) 
-		    << " deta" << Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta() 
-		    << " dE=" << Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E() << std::endl;    
+	  if(verbose)std::cout << "Tau KF Resolution dphi=" 
+			       << Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()) 
+			       << " deta" << Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta() 
+			       << " dE=" << Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E() << std::endl;
+	  //	  if(verbose)
+          std::cout << "Tau Solution Energy  Resolution Solution dE="
+                               << Enu+E3pi-MCTau_LV.E()
+                               << " Enu1 dE=" << Enu1+E3pi-MCTau_LV.E() 
+                               << " Enu2 dE=" << Enu2+E3pi-MCTau_LV.E() << std::endl;
+	  //      if(verbose)
+	  std::cout << "Tau Estimate vs direction check dphi="
+				<< Tools::DeltaPhi(TauSolution.Phi(),TauDirection.Phi())
+				<< " deta" << TauSolution.Eta()- TauDirection.Eta() << std::endl;
+
 	  TauCandERes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E(),w);
           TauCandPhiRes.at(t).Fill(Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()),w);
           TauCandEtaRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta(),w);
 	  
-          EstimatedTauERes.at(t).Fill(TauSolution.Phi()-MCTau_LV.Phi(),w);
+          EstimatedTauERes.at(t).Fill(TauSolution.E()-MCTau_LV.E(),w);
           EstimatedTauPhiRes.at(t).Fill(Tools::DeltaPhi(TauSolution.Phi(),MCTau_LV.Phi()),w);
           EstimatedTauEtaRes.at(t).Fill(TauSolution.Eta()-MCTau_LV.Eta(),w);
 
