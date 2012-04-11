@@ -291,9 +291,9 @@ void  Ztotautau_ControlSample::Configure(){
   TauCandEtaPhi =HConfig.GetTH2D(Name+"_TauCandPtEta","TauCandPtEta",25,0,2.5,40,0,200,"|#eta|","#phi (rad)");
 
   TauCandPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
-  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",64,-0.2,0.2,"#sigma(#phi_{KF-#tau}) (rad)","Events");
+  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",100,-0.2,0.2,"#sigma(#phi_{KF-#tau}) (rad)","Events");
   TauCandEta =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{KF-#tau}","Events");
-  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,-0.2,0.2,"#sigma(#eta_{KF-#tau}) ","Events");
+  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",100,-0.2,0.2,"#sigma(#eta_{KF-#tau}) ","Events");
   TauCandE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{KF-#tau} (GeV)","Events");
   TauCandERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",50,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
 
@@ -584,11 +584,12 @@ void  Ztotautau_ControlSample::doEvent(){
     //
     unsigned int tau_idx(999);
     if(jet_idx!=999){
+      double mydr=0.5;
       for(unsigned i=0;i<Ntp->NKFTau();i++){
         if(Ntp->isGoodKFTau(i)){
-          if(Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx))>0.4){
+          if(Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx))<mydr){
             tau_idx=i;
-            break;
+	    mydr=Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx));
           }
         }
       }
@@ -620,25 +621,39 @@ void  Ztotautau_ControlSample::doEvent(){
   if(id==DataMCType::Signal){
     unsigned int mcBoson_idx,mctau_idx;
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,mcBoson_idx,TauDecay::JAK_A1_3PI,mctau_idx)){
-      TLorentzVector MCTau_LV(0,0,0,0);
+      TLorentzVector MCTau_LV(0,0,0,0),X_LV(0,0,0,0);
       for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(mctau_idx);i++){
 	if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::tau_minus) && Ntp->MCTau_JAK(mctau_idx)==TauDecay::JAK_A1_3PI){
 	  MCTau_LV=Ntp->MCTauandProd_p4(mctau_idx,i);
 	}
+	else if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::pi_plus) ||
+		abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::pi0)
+		){
+	  X_LV+=Ntp->MCTauandProd_p4(mctau_idx,i);
+	  if(verbose)std::cout << "MC pi: " << Ntp->MCTauandProd_pdgid(mctau_idx,i) << " 4-vec: " << Ntp->MCTauandProd_p4(mctau_idx,i).E()
+			       << " " << Ntp->MCTauandProd_p4(mctau_idx,i).Phi() 
+			       << " " << Ntp->MCTauandProd_p4(mctau_idx,i).Theta() 
+			       << " " << Ntp->MCTauandProd_p4(mctau_idx,i).M() << std::endl;
+	}
+      
       }
       unsigned int tau_idx(999);
+      double mydr=4.0;
       for(unsigned i=0;i<Ntp->NKFTau();i++){
-	if(Ntp->isGoodKFTau(i)){
-	  if(Tools::dr(Ntp->KFTau_TauVis_p4(i),MCTau_LV)<0.4){
+	//if(Ntp->isGoodKFTau(i)){
+	  if(Tools::dr(Ntp->KFTau_TauVis_p4(i),MCTau_LV)<mydr){
 	    tau_idx=i;
-	    break;
+	    mydr=Tools::dr(Ntp->KFTau_TauVis_p4(i),MCTau_LV);
 	  }
-	}
+	  //}
       }
       if(tau_idx!=999 ){
-        TLorentzVector TauVisInput;
-        TLorentzVector TauSolution;
-	double Enu1(-999),Enu2(-999);
+        TLorentzVector TauVisInput(0,0,0,0);
+        TLorentzVector TauSolution(0,0,0,0);
+	TLorentzVector TauSolution1;
+	TLorentzVector TauSolution2;
+
+	double Enu1(-999),Enu2(-999),R(0);
         TVector3 TauDirection=Ntp->KFTau_InitialSecondaryVtx(tau_idx)-Ntp->KFTau_ReducedVtx(); 
 	unsigned int npi=0;
 	
@@ -658,63 +673,176 @@ void  Ztotautau_ControlSample::doEvent(){
 				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),2.0)+
 				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),2.0)+
 				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),2.0)));
+	    if(verbose)std::cout << "pi 4-vec E " << pi.E() << " Phi " <<pi.Phi() << " Theta " << pi.Theta() << " M " << pi.M() << std::endl;
             TauVisInput+=pi;
 	    npi++;
           }
         }
 	if(verbose)std::cout << "npi: " << npi << std::endl;
         if(npi==3){
+	  TauVisInput=X_LV;
+	  TauDirection=MCTau_LV.Vect();
 	  double phi(TauDirection.Phi()),theta(TauDirection.Theta());
 	  TLorentzVector TauVis1=TauVisInput;
 	  TLorentzVector TauVis2=TauVisInput;
           TauVisInput.RotateZ(-phi);
           TauVisInput.RotateY(-theta);
-	  double Enu(0),pz(0);
-          double E3pi(TauVisInput.E()),pz3pi(TauVisInput.Pz()),mtau(PDG_Var::Tau_mass()),pt(TauVisInput.Pt());
+	  double Enu(0), Ea1(TauVisInput.E()),Pz(TauVisInput.Pz()),mtau(PDG_Var::Tau_mass()),pt(TauVisInput.Pt()),ma1(TauVisInput.M());
           unsigned loop(0);
           bool Enuok=false;
           for(unsigned int loop=0;loop<10;loop++){
             if(loop>0){
               double factor=0.999;
-              E3pi=E3pi*E3pi-pt*pt+factor*factor*pt*pt;
+              Ea1=Ea1*Ea1-pt*pt+factor*factor*pt*pt;
               pt*=0.999;
             }
-            // solution 1
-            double Ea1(E3pi),Pt(pt),Pz(pz3pi),ma1(TauVisInput.M());
-            double R=(4.0*Pz*Pz*ma1*ma1*Pt*Pt + Pz*Pz*Pz*Pz*Pt*Pt + Pz*Pz*mtau*mtau*mtau*mtau - 2.0*Pz*Pz*mtau*mtau*ma1*ma1 - 4.0*Pz*Pz*mtau*mtau*Pt*Pt + Pz*Pz*ma1*ma1*ma1*ma1 + 4.0*Pz*Pz*Pt*Pt*Pt*Pt - 4.0*Ea1* Ea1*Pt*Pt*Pz*Pz);
 	    
-            if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
-	    if(verbose)std::cout << "E3pi " << E3pi << " Pt " << Pt << " pz3pi " << pz3pi << std::endl;
-            Enu1= -(-2.0*Ea1*mtau*mtau + 4.0*Ea1*Pt*Pt + 2*Ea1*ma1*ma1 - sqrt(R)) / (-Pz*Pz+4.0*Ea1*Ea1);
-            Enu2= -(-2.0*Ea1*mtau*mtau + 4.0*Ea1*Pt*Pt + 2*Ea1*ma1*ma1 - sqrt(R)) / (-Pz*Pz+4.0*Ea1*Ea1);
-	    
-	    TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
-	    Neutrino1.RotateY(theta);
-	    Neutrino1.RotateZ(phi);
-	    TLorentzVector TauSolution1=TauVis1+Neutrino1;
+	  	    
+	    std::cout << "Tau E " <<  MCTau_LV.E() << "Tau phi " << MCTau_LV.Phi() << " Tau Theta " <<MCTau_LV.Theta() << std::endl; 
+	    std::cout << "Tau Dir  phi " << phi << " theta " << theta << std::endl;
+	    std::cout << "TauVis E " <<  TauVisInput.E() << "Tau phi " << TauVis1.Phi() << " Tau Theta " <<TauVis1.Theta() << std::endl;
+	    std::cout << "True Vis " << X_LV.E() << " phi " << X_LV.Phi() << " Theta " << X_LV.Theta() << std::endl;  
 
-            TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
-            Neutrino2.RotateY(theta);
-            Neutrino2.RotateZ(phi);
-            TLorentzVector TauSolution2=TauVis2+Neutrino2;
-
-	    if(R=0){
-	      TauSolution=TauSolution1; // TauSolution1=TauSolution2
-              TauSolutionResult.at(t).Fill(0.0,w);
-              break;
+	    unsigned int method=2;
+	    // Method 1: Solve for neutrino Pz by rotation
+	    if(method==1){
+	      double a=1-Pz*Pz/(Ea1*Ea1);
+	      double K=(mtau*mtau-ma1*ma1-2.0*pt*pt);
+	      double b=-K*Pz/(Ea1*Ea1);
+	      double c=pt*pt-K*K/(4.0*Ea1*Ea1);
+	      R=b*b-4.0*a*c;
+	      std::cout << "R: " << R << std::endl;
+	      if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
+	      double Pnuz1=(-b-sqrt(R))/(2.0*a);
+	      double Pnuz2=(-b+sqrt(R))/(2.0*a);
+	      Enu1=sqrt(Pnuz1*Pnuz1+pt*pt);
+	      Enu2=sqrt(Pnuz2*Pnuz2+pt*pt);
+	      if(Pnuz1<0)Enu1=pt;
+	      if(Pnuz2<0)Enu2=pt;
+	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
+	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
+	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
+	      TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
+	      Neutrino1.RotateY(theta);
+	      Neutrino1.RotateZ(phi);
+	      TauSolution1=TauVis1+Neutrino1;
+              TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
+              Neutrino2.RotateY(theta);
+              Neutrino2.RotateZ(phi);
+              TauSolution2=TauVis2+Neutrino2;
 	    }
-	    else if(fabs(MCTau_LV.E()-TauSolution1.E())<fabs(MCTau_LV.E()-TauSolution2.E())){
+
+	    // Method 2: Solve for neutrino E by rotation
+	    if(method==2){
+	      double a=1-Ea1*Ea1/(Pz*Pz);
+	      double K=(mtau*mtau-ma1*ma1-2*pt*pt);
+	      double b=K*Ea1/(Pz*Pz);
+	      double c=-(pt*pt+K*K/(4*Pz*Pz));
+	      R=b*b-4*a*c;
+	      std::cout << "R: " << R << std::endl;
+	      if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
+	      Enu1=(-b-sqrt(R))/(2.0*a);
+	      Enu2=(-b+sqrt(R))/(2.0*a);
+	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
+	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
+	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
+              TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
+              Neutrino1.RotateY(theta);
+              Neutrino1.RotateZ(phi);
+	      TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
+	      Neutrino2.RotateY(theta);
+	      Neutrino2.RotateZ(phi);
+	      TauSolution2=TauVis2+Neutrino2;
+	    }
+	    // Method 3: Solve for neutrino Pz without rotating frames
+            if(method==3){
+	      TVector3 ntau=TauDirection;
+	      if(ntau.Mag()!=0)ntau*=1/ntau.Mag();
+	      Pz=ntau.Dot(TauVis1.Vect());
+	      TVector3 Pz_vec=ntau;
+	      Pz_vec*=Pz;
+	      TVector3 Pt_vec=TauVis1.Vect();
+	      Pt_vec-=Pz_vec;
+	      pt=Pt_vec.Mag();
+	      ///////////////////////////////////////////////////////////////////////////////////////////////////////
+              double a=1-Pz*Pz/(Ea1*Ea1);
+              double K=(mtau*mtau-ma1*ma1-2.0*pt*pt);
+              double b=-K*Pz/(Ea1*Ea1);
+              double c=pt*pt-K*K/(4.0*Ea1*Ea1);
+              R=b*b-4.0*a*c;
+	      std::cout << "R: " << R << std::endl;
+              if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
+              double Pnuz1=(-b-sqrt(R))/(2.0*a);
+              double Pnuz2=(-b+sqrt(R))/(2.0*a);
+              Enu1=sqrt(Pnuz1*Pnuz1+pt*pt);
+              Enu2=sqrt(Pnuz2*Pnuz2+pt*pt);
+	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
+	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
+	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
+	      ///////////////////////////////////////////////////////////////////////////////////////////////////////
+              TLorentzVector Neutrino1(Pnuz1*ntau.Px()-Pt_vec.Px(),Pnuz1*ntau.Py()-Pt_vec.Py(),Pnuz1*ntau.Pz()-Pt_vec.Pz(),Enu1);
+              TauSolution1=TauVis1+Neutrino1;
+	      TLorentzVector Neutrino2(Pnuz2*ntau.Px()-Pt_vec.Px(),Pnuz2*ntau.Py()-Pt_vec.Py(),Pnuz2*ntau.Pz()-Pt_vec.Pz(),Enu2);
+              TauSolution1=TauVis2+Neutrino2;
+            }
+            // Method 4: Solve for neutrino E without rotating frames
+            if(method==2){
+              TVector3 ntau=TauDirection;
+              if(ntau.Mag()!=0)ntau*=1/ntau.Mag();
+              Pz=ntau.Dot(TauVis1.Vect());
+              TVector3 Pz_vec=ntau;
+              Pz_vec*=Pz;
+              TVector3 Pt_vec=TauVis1.Vect();
+              Pt_vec-=Pz_vec;
+              pt=Pt_vec.Mag();
+              ///////////////////////////////////////////////////////////////////////////////////////////////////////
+              double a=1-Ea1*Ea1/(Pz*Pz);
+              double K=(mtau*mtau-ma1*ma1-2*pt*pt);
+              double b=K*Ea1/(Pz*Pz);
+              double c=-(pt*pt+K*K/(4*Pz*Pz));
+              R=b*b-4*a*c;
+	      std::cout << "R: " << R << std::endl;
+              if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
+              Enu1=(-b-sqrt(R))/(2.0*a);
+              Enu2=(-b+sqrt(R))/(2.0*a);
+	      double Pnuz1=0;if(Enu1>pt)Pnuz1=sqrt(Enu1*Enu1-pt*pt);
+	      double Pnuz2=0;if(Enu2>pt)Pnuz2=sqrt(Enu2*Enu2-pt*pt);
+	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
+	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
+	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
+              ///////////////////////////////////////////////////////////////////////////////////////////////////////
+              TLorentzVector Neutrino1(Pnuz1*ntau.Px()-Pt_vec.Px(),Pnuz1*ntau.Py()-Pt_vec.Py(),Pnuz1*ntau.Pz()-Pt_vec.Pz(),Enu1);
+              TauSolution1=TauVis1+Neutrino1;
+              TLorentzVector Neutrino2(Pnuz2*ntau.Px()-Pt_vec.Px(),Pnuz2*ntau.Py()-Pt_vec.Py(),Pnuz2*ntau.Pz()-Pt_vec.Pz(),Enu2);
+              TauSolution2=TauVis2+Neutrino2;
+            }
+
+
+
+	    // Summary output
+	    /*	    std::cout << "Sol1 4-vector: " 
+		      << -TauVisInput.Px() << " " << -TauVisInput.Py() << " " << sqrt(Enu1*Enu1-pt*pt) << " " << Enu1 <<std::endl;	    
+	    std::cout << "Sol1 lab 4-vector: "
+                      << Neutrino1.Px() << " " << Neutrino1.Py() << " " << Neutrino1.Pz() << " " << Neutrino1.E() <<std::endl;
+	    std::cout << "Sol2 4-vector: "
+                      << -TauVisInput.Px() << " " << -TauVisInput.Py() << " " << sqrt(Enu2*Enu2-pt*pt) << " " << Enu2 <<std::endl;
+	    std::cout << "Sol2 lab 4-vector: "
+                      << Neutrino2.Px() << " " << Neutrino2.Py() << " " << Neutrino2.Pz() << " " << Neutrino2.E() <<std::endl;
+	    */
+	    if(fabs(MCTau_LV.E()-TauSolution1.E())<fabs(MCTau_LV.E()-TauSolution2.E()) && TauSolution1.E()>0){
+	      Enu=Enu1;
 	      TauSolution=TauSolution1;
 	      TauSolutionResult.at(t).Fill(-1.0,w);
 	      break;
 	    }
 	    else{
+	      Enu=Enu2;
 	      TauSolution=TauSolution2;
 	      TauSolutionResult.at(t).Fill(1.0,w);
 	      break;
 	    }
 
-	  }
+	}
 	  if(verbose)std::cout << "Tau 4-vector: Px=" << Ntp->KFTau_TauFit_p4(tau_idx).Px()
 			       << " Py=" << Ntp->KFTau_TauFit_p4(tau_idx).Py()
 			       << " Pz=" << Ntp->KFTau_TauFit_p4(tau_idx).Pz()
@@ -734,9 +862,9 @@ void  Ztotautau_ControlSample::doEvent(){
 			       << " dE=" << Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E() << std::endl;
 	  //	  if(verbose)
           std::cout << "Tau Solution Energy  Resolution Solution dE="
-                               << Enu+E3pi-MCTau_LV.E()
-                               << " Enu1 dE=" << Enu1+E3pi-MCTau_LV.E() 
-                               << " Enu2 dE=" << Enu2+E3pi-MCTau_LV.E() << std::endl;
+		    << TauSolution.E()-MCTau_LV.E()
+		    << " Enu1 dE=" << TauSolution1.E()-MCTau_LV.E() 
+		    << " Enu2 dE=" << TauSolution2.E()-MCTau_LV.E() << std::endl;
 	  //      if(verbose)
 	  std::cout << "Tau Estimate vs direction check dphi="
 				<< Tools::DeltaPhi(TauSolution.Phi(),TauDirection.Phi())

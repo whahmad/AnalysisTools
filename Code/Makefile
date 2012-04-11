@@ -63,7 +63,8 @@ TARGETS       =	Ntuple_Controller \
                 Tau_momentum_calculation \
 		TauSpinerInterface \
 		ZDouble3prong \
-		Ztomumu_ControlSample
+		Ztomumu_ControlSample \
+		TauSolver 
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
