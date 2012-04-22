@@ -20,7 +20,7 @@ class ZDouble3prong : public Selection {
 	     NTauEta,
 	     TauIso,
 	     TauTauVertex,
-	     NJets,
+	     TauChiProb,
              MET,
 	     deltaPhi,
 	     charge,
@@ -52,7 +52,7 @@ class ZDouble3prong : public Selection {
   std::vector<TH1D> KFTau_Fit_PV_PV_significance;
   std::vector<TH1D> KFTau_Fit_SV_PV_significance;
 
-  double tau_pt,tau_eta,jet_pt,jet_eta;
+  double tau_pt,tau_eta,jet_pt,jet_eta,Iso_dr;
 
 };
 #endif
