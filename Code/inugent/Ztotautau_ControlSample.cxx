@@ -7,17 +7,20 @@
 #include "Tools.h"
 #include "PDG_Var.h"
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
+#include "TauSolver.h"
 
 Ztotautau_ControlSample::Ztotautau_ControlSample(TString Name_, TString id_):
   Selection(Name_,id_)
   ,channel(muontag)
-  ,jeteta(2.4)
+  ,muoneta(2.1)
+  ,jeteta(2.3)
+  ,TauTrackPtThreshold(5.0)
 {
   if(Get_Name().Contains("muontag")) channel=muontag;
   if(Get_Name().Contains("electrontag")) channel=muontag;  // not implemented yet
   if(Get_Name().Contains("rhotag")) channel=muontag;       // not implemented yet
   if(Get_Name().Contains("threepiontag")) channel=muontag; // not implemented yet
-  //  verbose=true;
+  //verbose=true;
 }
 
 Ztotautau_ControlSample::~Ztotautau_ControlSample(){
@@ -46,13 +49,13 @@ void  Ztotautau_ControlSample::Configure(){
     if(i==MET)                cut.at(MET)=40;
     if(i==MT)                 cut.at(MT)=30;
     if(i==etaq)               cut.at(etaq)=0.1;
-    if(i==sumcosdeltaphi)     cut.at(sumcosdeltaphi)=0.75;
-    if(i==ZMassmin)           cut.at(ZMassmin)=60;
-    if(i==ZMassmax)           cut.at(ZMassmax)=90;
+    if(i==JetTrackPtMax)      cut.at(JetTrackPtMax)=TauTrackPtThreshold;
+    if(i==ZMassmin)           cut.at(ZMassmin)=20;
+    if(i==ZMassmax)           cut.at(ZMassmax)=80;
     if(i==HT)                 cut.at(HT)=200;
     if(i==charge)             cut.at(charge)=0.0;
     if(i==MaxTracksinJet)     cut.at(MaxTracksinJet)=5.0;
-    if(i==MinTracksinJet)     cut.at(MinTracksinJet)=1.0;
+    if(i==MinTracksinJet)     cut.at(MinTracksinJet)=0.0;
   }
 
   TString hlabel;
@@ -128,7 +131,7 @@ void  Ztotautau_ControlSample::Configure(){
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TagIso_",htitle,40,0,1,hlabel,"Events"));
     }
    else if(i==NJets){
-     title.at(i)="$Number of Jet>$";
+     title.at(i)="$Number of Jet>=$";
      title.at(i)+=cut.at(NJets);
      title.at(i)+="";
      htitle=title.at(i);
@@ -195,18 +198,18 @@ void  Ztotautau_ControlSample::Configure(){
      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
    }
-   else if(i==sumcosdeltaphi){
-     title.at(i)="$\\sum cos(\\delta\\phi)$";
+   else if(i==JetTrackPtMax){
+     title.at(i)="$P_{T}^{max\\ Track\\ from\\ Jet} $";
      char buffer[50];
-     sprintf(buffer,"%5.2f",cut.at(sumcosdeltaphi));
+     sprintf(buffer,"%5.2f",cut.at(JetTrackPtMax));
      title.at(i)+=buffer;
      title.at(i)+="(GeV)";
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
-     hlabel="#sum cos(#delta#phi)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_sumcosdeltaphi_",htitle,20,-2,2,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_sumcosdeltaphi_",htitle,20,-2,2,hlabel,"Events"));
+     hlabel="P_{T}^{Max Track from Jet}";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_JetTrackPtMax_",htitle,20,0,50,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_JetTrackPtMax_",htitle,20,0,50,hlabel,"Events"));
    }
    else if(i==deltaPhi){
       title.at(i)="$\\Delta\\phi(Tag,Jet) < $";
@@ -260,8 +263,11 @@ void  Ztotautau_ControlSample::Configure(){
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
      hlabel="N_{Tracks}^{Jet}";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MaxTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MaxTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MaxTracksinJet_",htitle,21,-0.5,20.5,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MaxTracksinJet_",htitle,21,-0.5,20.5,hlabel,"Events"));
+     distindx.at(i)=true;
+     Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_MaxTracksinJet_","P_{T,Track} (N-1 Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
+     Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_MaxTracksinJet_","P_{T,Track} (Accumulative Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
    }
    else if(i==MinTracksinJet){
      title.at(i)="$N_{Tracks}^{Jet}>$";
@@ -270,8 +276,8 @@ void  Ztotautau_ControlSample::Configure(){
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
      hlabel="N_{Tracks}^{Jet}";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MinTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MinTracksinJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MinTracksinJet_",htitle,21,-0.5,20.5,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MinTracksinJet_",htitle,21,-0.5,20.5,hlabel,"Events"));
      distindx.at(i)=true;
      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_MinTracksinJet_","P_{T,Track} (N-1 Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_MinTracksinJet_","P_{T,Track} (Accumulative Distribution)",100,0,200,"P_{T,Track} (GeV)","Events");
@@ -281,6 +287,12 @@ void  Ztotautau_ControlSample::Configure(){
   }
   // Setup NPassed Histogams
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
+
+  MinTauTrackPt=HConfig.GetTH1D(Name+"_MinTauTrackPt_","P_{T,Track}",100,0,25,"P_{T,Track}^{Min} (GeV)","Events");
+  MaxTauTrackPt=HConfig.GetTH1D(Name+"_MaxTauTrackPt_","P_{T,Track}",100,0.0,50,"P_{T,Track}^{Max} (GeV)","Events");
+  TauTrackdphitheta=HConfig.GetTH1D(Name+"_TauTrackdphitheta_","Track anagle",100,0,4,"#delta(#phi,#theta) (rad)","Events");
+
+
   // Setup Extra Histograms
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Vertex","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Good Vertex","Events");
@@ -291,11 +303,16 @@ void  Ztotautau_ControlSample::Configure(){
   TauCandEtaPhi =HConfig.GetTH2D(Name+"_TauCandPtEta","TauCandPtEta",25,0,2.5,40,0,200,"|#eta|","#phi (rad)");
 
   TauCandPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
-  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",100,-0.2,0.2,"#sigma(#phi_{KF-#tau}) (rad)","Events");
+  TauCandPhiRes =HConfig.GetTH1D(Name+"_TauCandPhiRes","TauCandPhiRes",20,-0.02,0.02,"#sigma(#phi_{KF-#tau}) (rad)","Events");
   TauCandEta =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{KF-#tau}","Events");
-  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",100,-0.2,0.2,"#sigma(#eta_{KF-#tau}) ","Events");
+  TauCandEtaRes =HConfig.GetTH1D(Name+"_TauCandEtaRes","TauCandEtaRes",50,-0.05,0.05,"#sigma(#eta_{KF-#tau}) ","Events");
   TauCandE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{KF-#tau} (GeV)","Events");
-  TauCandERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",50,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
+  TauCandERes =HConfig.GetTH1D(Name+"_TauCandERes","TauCandERes",20,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
+  TauCandP =HConfig.GetTH1D(Name+"_TauCandP","TauCandP",40,0,200,"E_{KF-#tau} (GeV)","Events");
+  TauCandPRes =HConfig.GetTH1D(Name+"_TauCandPRes","TauCandPRes",20,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
+  TauCandPT =HConfig.GetTH1D(Name+"_TauCandPT","TauCandPT",40,0,200,"E_{KF-#tau} (GeV)","Events");
+  TauCandPTRes =HConfig.GetTH1D(Name+"_TauCandPTRes","TauCandPTRes",20,-50,50,"#sigma(E_{KF-#tau}) (GeV)","Events");
+
 
   TauCandMass =HConfig.GetTH1D(Name+"_TauCandMass","TauCandMass",100,0,2,"M(KF-#tau) (GeV)","Events");
   TauCandPiMass =HConfig.GetTH1D(Name+"_TauCandPiMass","TauCandPiMass",100,0,1,"M(#pi) (GeV)","Events");
@@ -341,6 +358,11 @@ void  Ztotautau_ControlSample::Store_ExtraDist(){
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
 
+ Extradist1d.push_back(&MaxTauTrackPt);
+ Extradist1d.push_back(&MinTauTrackPt);
+ Extradist1d.push_back(&TauTrackdphitheta);
+
+
  Extradist1d.push_back(&TauCandFound);
  Extradist2d.push_back(&TauCandEtaPhi); 
 
@@ -350,6 +372,10 @@ void  Ztotautau_ControlSample::Store_ExtraDist(){
  Extradist1d.push_back(&TauCandEtaRes);
  Extradist1d.push_back(&TauCandE);
  Extradist1d.push_back(&TauCandERes);
+ Extradist1d.push_back(&TauCandP);
+ Extradist1d.push_back(&TauCandPRes);
+ Extradist1d.push_back(&TauCandPT);
+ Extradist1d.push_back(&TauCandPTRes);
 
  Extradist1d.push_back(&TauCandMass);
  Extradist1d.push_back(&TauCandPiMass);
@@ -396,7 +422,7 @@ void  Ztotautau_ControlSample::doEvent(){
   double mu_pt(0);
   if(channel==muontag){
     for(unsigned int i=0;i<Ntp->NMuons();i++){
-      if(Ntp->isGoodMuon(i)){
+      if(Ntp->isGoodMuon(i) && fabs(Ntp->Muons_p4(i).Eta())<muoneta){
 	if(mu_pt<Ntp->Muons_p4(i).Pt()){mu_idx=i;mu_pt=Ntp->Muons_p4(i).Pt();}
 	nmus++;
       }
@@ -418,13 +444,23 @@ void  Ztotautau_ControlSample::doEvent(){
   }
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() d" << std::endl;
   unsigned int jet_idx(999),njets(0);
+  std::vector<unsigned int> jet_list;
   double jet_pt(0);
   if(mu_idx!=999){
     for(int i=0;i<Ntp->NPFJets();i++){
       if(Tools::dr(Ntp->Muons_p4(mu_idx),Ntp->PFJet_p4(i))>0.4){
 	if(jeteta>fabs(Ntp->PFJet_p4(i).Eta())){
-	  if(jet_pt<Ntp->PFJet_p4(i).Pt()){jet_idx=i;jet_pt=Ntp->PFJet_p4(i).Pt();}
-	  njets++;
+	  double TrackMaxPt=0;
+	  std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(i);
+	  for(int j=0; j<PFJet_Track_idx.size();j++){
+	    if(PFJet_Track_idx.at(j)<Ntp->NTracks() && PFJet_Track_idx.at(j)>=0){
+	      if(Ntp->Track_p4(PFJet_Track_idx.at(j)).Pt()>TrackMaxPt) TrackMaxPt=Ntp->Track_p4(PFJet_Track_idx.at(j)).Pt();
+	    }
+	  }
+	  if(TrackMaxPt>TauTrackPtThreshold){
+	    if(jet_pt<Ntp->PFJet_p4(i).Pt()){jet_idx=i;jet_pt=Ntp->PFJet_p4(i).Pt();}
+	    njets++;
+	  }
 	}
       }
     }
@@ -435,7 +471,23 @@ void  Ztotautau_ControlSample::doEvent(){
 
   value.at(JetPt)=jet_pt;
   pass.at(JetPt)=(value.at(JetPt)>=cut.at(JetPt));
-    
+
+
+  if(jet_idx!=999){
+    std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
+    value.at(JetTrackPtMax)=0;
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      if(PFJet_Track_idx.at(i)<Ntp->NTracks() && PFJet_Track_idx.at(i)>=0){
+	if(Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt()>value.at(JetTrackPtMax)) value.at(JetTrackPtMax)=Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt();
+      }
+    }
+    pass.at(JetTrackPtMax)=value.at(JetTrackPtMax)>cut.at(JetTrackPtMax);
+  }
+  else{
+    value.at(JetTrackPtMax)=0;
+    pass.at(JetTrackPtMax)=false;
+  }
+  pass.at(JetTrackPtMax)=true;
 
   if(mu_idx!=999 && jet_idx!=999){
     value.at(deltaPhi)=fabs(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx),Ntp->PFJet_p4(jet_idx)));
@@ -458,8 +510,17 @@ void  Ztotautau_ControlSample::doEvent(){
   pass.at(MT)=(value.at(MT)<=cut.at(MT));
 
   TLorentzVector Z_lv(0,0,0,0);
-  if(mu_idx!=999)Z_lv+=Ntp->Muons_p4(mu_idx);
-  if(jet_idx!=999)Z_lv+=Ntp->PFJet_p4(jet_idx);
+  if(jet_idx!=999 && mu_idx!=999){
+    std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
+    TLorentzVector track_p4(1,1,1,1);
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      if(PFJet_Track_idx.at(i)<Ntp->NTracks() && PFJet_Track_idx.at(i)>=0){
+        if(track_p4.Pt()<Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt())track_p4=Ntp->Track_p4(PFJet_Track_idx.at(i));
+      }
+    }
+    Z_lv+=Ntp->Muons_p4(mu_idx);
+    Z_lv+=track_p4;
+  }
   value.at(ZMassmin)=Z_lv.M();
   pass.at(ZMassmin)=(value.at(ZMassmin)>cut.at(ZMassmin));
   value.at(ZMassmax)=Z_lv.M();
@@ -468,15 +529,6 @@ void  Ztotautau_ControlSample::doEvent(){
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() g" << std::endl;
 
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() h" << std::endl;
-  if(jet_idx!=999 && mu_idx!=999){
-    value.at(sumcosdeltaphi)=cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx),Ntp->PFJet_p4(jet_idx)))+cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx),Ntp->MET_phi()));
-    pass.at(sumcosdeltaphi)=(fabs(value.at(sumcosdeltaphi))>cut.at(sumcosdeltaphi));
-  }
-  else{
-    value.at(sumcosdeltaphi)=0;
-    pass.at(sumcosdeltaphi)=false;
-  }
-  pass.at(sumcosdeltaphi)=true;
 
   if(mu_idx!=999){
     value.at(etaq)=Ntp->Muon_Charge(mu_idx)*fabs(Ntp->Muons_p4(mu_idx).Eta());
@@ -501,9 +553,68 @@ void  Ztotautau_ControlSample::doEvent(){
   }
   pass.at(HT)=value.at(HT)<cut.at(HT);
   ///////////////////////////////////////
+  std::vector<unsigned int> TauTracks;
   if(jet_idx!=999){
+    std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
+    double ptmin(9999), ptmax(0);
+    unsigned int ptmaxidx(0);
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      if(ptmax<Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt()){ptmax=Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt();ptmaxidx=PFJet_Track_idx.at(i);}
+    }
+    dist.at(MaxTracksinJet).push_back(ptmax);
+    TauTracks.push_back(ptmaxidx);
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      if(PFJet_Track_idx.at(i)!=ptmaxidx){
+        if(sqrt(pow(Ntp->Track_p4(PFJet_Track_idx.at(i)).DeltaPhi(Ntp->Track_p4(ptmaxidx)),2.0)+
+                pow(Ntp->Track_p4(PFJet_Track_idx.at(i)).Theta()-Ntp->Track_p4(ptmaxidx).Theta(),2.0))<0.2){
+          TauTracks.push_back(PFJet_Track_idx.at(i));
+	  if(ptmin>Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt()) ptmin=Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt();
+        }
+      }
+    }
+    dist.at(MinTracksinJet).push_back(ptmin);
+
+    value.at(MaxTracksinJet)=TauTracks.size();
+    pass.at(MaxTracksinJet)=cut.at(MaxTracksinJet)>value.at(MaxTracksinJet);                                                                                                                                                          
+    value.at(MinTracksinJet)=TauTracks.size();
+    pass.at(MinTracksinJet)=cut.at(MinTracksinJet)<value.at(MinTracksinJet);
+  }
+
+  value.at(charge)=0;
+  if(jet_idx!=999 && mu_idx!=999){
+    std::vector<unsigned int> PFJet_Track_idx=TauTracks;//Ntp->PFJet_Track_idx(jet_idx);                                                                                                                                                     
+    std::vector<TLorentzVector> track_p4;
+    std::vector<float> track_charge;
+    for(int i=0; i<PFJet_Track_idx.size();i++){
+      if(PFJet_Track_idx.at(i)<Ntp->NTracks() && PFJet_Track_idx.at(i)>=0){
+        track_p4.push_back(Ntp->Track_p4(PFJet_Track_idx.at(i)));
+        track_charge.push_back(Ntp->Track_charge(PFJet_Track_idx.at(i)));
+      }
+    }
+    for(int i=0; i<track_p4.size();i++){
+      double JetCharge(0);
+      int ntracks(0);
+      for(int j=0; j<track_p4.size();j++){
+        if(track_p4.at(i).Pt()<=track_p4.at(j).Pt()){
+          ntracks++;
+          JetCharge+=track_charge.at(j);
+        }
+      }
+      if((ntracks==3 && track_p4.size()>=3) || (ntracks==track_p4.size() && track_p4.size()<3)){
+        value.at(charge)=JetCharge+Ntp->Muon_Charge(mu_idx);
+        break;
+      }
+    }
+    pass.at(charge)=(fabs(value.at(charge)-cut.at(charge))<0.5);
+  }
+  else{
+    value.at(charge)=-10.0;
+    pass.at(charge)=false;
+  }
+
+  /*  if(jet_idx!=999){
     value.at(MaxTracksinJet)=Ntp->PFJet_Track_idx(jet_idx).size();
-    pass.at(MaxTracksinJet)=true;//cut.at(MaxTracksinJet)>value.at(MaxTracksinJet); 
+    pass.at(MaxTracksinJet)=cut.at(MaxTracksinJet)>value.at(MaxTracksinJet); 
     value.at(MinTracksinJet)=Ntp->PFJet_Track_idx(jet_idx).size();
     pass.at(MinTracksinJet)=cut.at(MinTracksinJet)<value.at(MinTracksinJet);
     std::vector<int> PFJet_Track_idx=Ntp->PFJet_Track_idx(jet_idx);
@@ -534,7 +645,7 @@ void  Ztotautau_ControlSample::doEvent(){
 	  JetCharge+=track_charge.at(j);
 	}
       }
-      if((ntracks==3 && track_p4.size()>=3) || (ntracks==track_p4.size() && track_p4.size()<3)){
+      if((ntracks==3 && track_p4.size()>=3) || (ntracks==1 && track_p4.size()<3)){
 	value.at(charge)=JetCharge+Ntp->Muon_Charge(mu_idx);
 	break;
       }
@@ -545,6 +656,8 @@ void  Ztotautau_ControlSample::doEvent(){
     value.at(charge)=-10.0;
     pass.at(charge)=false;
   }
+
+  */
   if(verbose)std::cout << "void  Ztotautau_ControlSample::doEvent() i" << std::endl;
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -566,6 +679,36 @@ void  Ztotautau_ControlSample::doEvent(){
  
   ///////////////////////////////////////////////////////////
   // Add plots
+
+  if(!Ntp->isData()){
+    for(unsigned int tau_idx=0;tau_idx<Ntp->NMCTaus();tau_idx++){
+      double ptmin(9999);
+      double ptmax(0);
+      unsigned int ptmaxidx(0);
+      if((Ntp->MCTau_JAK(0)==2 || Ntp->MCTau_JAK(1)==2) && Ntp->MCTau_p4(1).Pt()>20 && Ntp->MCTau_p4(0).Pt()>20){
+ 
+       for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::K_plus)){
+            if(ptmin>Ntp->MCTauandProd_p4(tau_idx,i).Pt()) ptmin=Ntp->MCTauandProd_p4(tau_idx,i).Pt();
+            if(ptmax<Ntp->MCTauandProd_p4(tau_idx,i).Pt()){ ptmax=Ntp->MCTauandProd_p4(tau_idx,i).Pt(); ptmaxidx=i;}
+          }
+        }
+        for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::K_plus)){
+            if(i!=ptmaxidx && Ntp->MCTauandProd_p4(tau_idx,i).DeltaR(Ntp->MCTauandProd_p4(tau_idx,ptmaxidx))<0.5){
+              TauTrackdphitheta.at(t).Fill(sqrt(pow(Ntp->MCTauandProd_p4(tau_idx,i).DeltaPhi(Ntp->MCTauandProd_p4(tau_idx,ptmaxidx)),2.0)+
+						pow(Ntp->MCTauandProd_p4(tau_idx,i).Theta()-Ntp->MCTauandProd_p4(tau_idx,ptmaxidx).Theta(),2.0)),w);
+            }
+          }
+        }
+        MinTauTrackPt.at(t).Fill(ptmin,w);
+	MaxTauTrackPt.at(t).Fill(ptmax,w);
+      }
+    }
+  }
+
+
+
   if(status){
     if(verbose)std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
     NVtx.at(t).Fill(Ntp->NVtx(),w);
@@ -601,6 +744,8 @@ void  Ztotautau_ControlSample::doEvent(){
         TauCandPhi.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),w);
         TauCandEta.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Eta(),w);
         TauCandE.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E(),w);
+	TauCandP.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).P(),w);
+	TauCandPT.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Pt(),w);
 	
 	KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tau_idx),w);
 	KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tau_idx),w);
@@ -640,12 +785,12 @@ void  Ztotautau_ControlSample::doEvent(){
       unsigned int tau_idx(999);
       double mydr=4.0;
       for(unsigned i=0;i<Ntp->NKFTau();i++){
-	//if(Ntp->isGoodKFTau(i)){
+	if(Ntp->isGoodKFTau(i)){
 	  if(Tools::dr(Ntp->KFTau_TauVis_p4(i),MCTau_LV)<mydr){
 	    tau_idx=i;
 	    mydr=Tools::dr(Ntp->KFTau_TauVis_p4(i),MCTau_LV);
 	  }
-	  //}
+	}
       }
       if(tau_idx!=999 ){
         TLorentzVector TauVisInput(0,0,0,0);
@@ -653,7 +798,6 @@ void  Ztotautau_ControlSample::doEvent(){
 	TLorentzVector TauSolution1;
 	TLorentzVector TauSolution2;
 
-	double Enu1(-999),Enu2(-999),R(0);
         TVector3 TauDirection=Ntp->KFTau_InitialSecondaryVtx(tau_idx)-Ntp->KFTau_ReducedVtx(); 
 	unsigned int npi=0;
 	
@@ -682,167 +826,21 @@ void  Ztotautau_ControlSample::doEvent(){
         if(npi==3){
 	  TauVisInput=X_LV;
 	  TauDirection=MCTau_LV.Vect();
-	  double phi(TauDirection.Phi()),theta(TauDirection.Theta());
-	  TLorentzVector TauVis1=TauVisInput;
-	  TLorentzVector TauVis2=TauVisInput;
-          TauVisInput.RotateZ(-phi);
-          TauVisInput.RotateY(-theta);
-	  double Enu(0), Ea1(TauVisInput.E()),Pz(TauVisInput.Pz()),mtau(PDG_Var::Tau_mass()),pt(TauVisInput.Pt()),ma1(TauVisInput.M());
-          unsigned loop(0);
-          bool Enuok=false;
-          for(unsigned int loop=0;loop<10;loop++){
-            if(loop>0){
-              double factor=0.999;
-              Ea1=Ea1*Ea1-pt*pt+factor*factor*pt*pt;
-              pt*=0.999;
-            }
-	    
-	  	    
-	    std::cout << "Tau E " <<  MCTau_LV.E() << "Tau phi " << MCTau_LV.Phi() << " Tau Theta " <<MCTau_LV.Theta() << std::endl; 
-	    std::cout << "Tau Dir  phi " << phi << " theta " << theta << std::endl;
-	    std::cout << "TauVis E " <<  TauVisInput.E() << "Tau phi " << TauVis1.Phi() << " Tau Theta " <<TauVis1.Theta() << std::endl;
-	    std::cout << "True Vis " << X_LV.E() << " phi " << X_LV.Phi() << " Theta " << X_LV.Theta() << std::endl;  
 
-	    unsigned int method=2;
-	    // Method 1: Solve for neutrino Pz by rotation
-	    if(method==1){
-	      double a=1-Pz*Pz/(Ea1*Ea1);
-	      double K=(mtau*mtau-ma1*ma1-2.0*pt*pt);
-	      double b=-K*Pz/(Ea1*Ea1);
-	      double c=pt*pt-K*K/(4.0*Ea1*Ea1);
-	      R=b*b-4.0*a*c;
-	      std::cout << "R: " << R << std::endl;
-	      if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
-	      double Pnuz1=(-b-sqrt(R))/(2.0*a);
-	      double Pnuz2=(-b+sqrt(R))/(2.0*a);
-	      Enu1=sqrt(Pnuz1*Pnuz1+pt*pt);
-	      Enu2=sqrt(Pnuz2*Pnuz2+pt*pt);
-	      if(Pnuz1<0)Enu1=pt;
-	      if(Pnuz2<0)Enu2=pt;
-	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
-	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
-	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
-	      TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
-	      Neutrino1.RotateY(theta);
-	      Neutrino1.RotateZ(phi);
-	      TauSolution1=TauVis1+Neutrino1;
-              TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
-              Neutrino2.RotateY(theta);
-              Neutrino2.RotateZ(phi);
-              TauSolution2=TauVis2+Neutrino2;
-	    }
+	  TLorentzVector Neutrino1;
+	  TLorentzVector Neutrino2;
+	  TauSolver TS(TauDirection,TauVisInput);
+	  TS.SolvebyRotation(TauSolution1,TauSolution2,Neutrino1,Neutrino2,TauSolver::E);
 
-	    // Method 2: Solve for neutrino E by rotation
-	    if(method==2){
-	      double a=1-Ea1*Ea1/(Pz*Pz);
-	      double K=(mtau*mtau-ma1*ma1-2*pt*pt);
-	      double b=K*Ea1/(Pz*Pz);
-	      double c=-(pt*pt+K*K/(4*Pz*Pz));
-	      R=b*b-4*a*c;
-	      std::cout << "R: " << R << std::endl;
-	      if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
-	      Enu1=(-b-sqrt(R))/(2.0*a);
-	      Enu2=(-b+sqrt(R))/(2.0*a);
-	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
-	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
-	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
-              TLorentzVector Neutrino1(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu1*Enu1-pt*pt),Enu1);
-              Neutrino1.RotateY(theta);
-              Neutrino1.RotateZ(phi);
-	      TLorentzVector Neutrino2(-TauVisInput.Px(),-TauVisInput.Py(),sqrt(Enu2*Enu2-pt*pt),Enu2);
-	      Neutrino2.RotateY(theta);
-	      Neutrino2.RotateZ(phi);
-	      TauSolution2=TauVis2+Neutrino2;
-	    }
-	    // Method 3: Solve for neutrino Pz without rotating frames
-            if(method==3){
-	      TVector3 ntau=TauDirection;
-	      if(ntau.Mag()!=0)ntau*=1/ntau.Mag();
-	      Pz=ntau.Dot(TauVis1.Vect());
-	      TVector3 Pz_vec=ntau;
-	      Pz_vec*=Pz;
-	      TVector3 Pt_vec=TauVis1.Vect();
-	      Pt_vec-=Pz_vec;
-	      pt=Pt_vec.Mag();
-	      ///////////////////////////////////////////////////////////////////////////////////////////////////////
-              double a=1-Pz*Pz/(Ea1*Ea1);
-              double K=(mtau*mtau-ma1*ma1-2.0*pt*pt);
-              double b=-K*Pz/(Ea1*Ea1);
-              double c=pt*pt-K*K/(4.0*Ea1*Ea1);
-              R=b*b-4.0*a*c;
-	      std::cout << "R: " << R << std::endl;
-              if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
-              double Pnuz1=(-b-sqrt(R))/(2.0*a);
-              double Pnuz2=(-b+sqrt(R))/(2.0*a);
-              Enu1=sqrt(Pnuz1*Pnuz1+pt*pt);
-              Enu2=sqrt(Pnuz2*Pnuz2+pt*pt);
-	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
-	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
-	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
-	      ///////////////////////////////////////////////////////////////////////////////////////////////////////
-              TLorentzVector Neutrino1(Pnuz1*ntau.Px()-Pt_vec.Px(),Pnuz1*ntau.Py()-Pt_vec.Py(),Pnuz1*ntau.Pz()-Pt_vec.Pz(),Enu1);
-              TauSolution1=TauVis1+Neutrino1;
-	      TLorentzVector Neutrino2(Pnuz2*ntau.Px()-Pt_vec.Px(),Pnuz2*ntau.Py()-Pt_vec.Py(),Pnuz2*ntau.Pz()-Pt_vec.Pz(),Enu2);
-              TauSolution1=TauVis2+Neutrino2;
-            }
-            // Method 4: Solve for neutrino E without rotating frames
-            if(method==2){
-              TVector3 ntau=TauDirection;
-              if(ntau.Mag()!=0)ntau*=1/ntau.Mag();
-              Pz=ntau.Dot(TauVis1.Vect());
-              TVector3 Pz_vec=ntau;
-              Pz_vec*=Pz;
-              TVector3 Pt_vec=TauVis1.Vect();
-              Pt_vec-=Pz_vec;
-              pt=Pt_vec.Mag();
-              ///////////////////////////////////////////////////////////////////////////////////////////////////////
-              double a=1-Ea1*Ea1/(Pz*Pz);
-              double K=(mtau*mtau-ma1*ma1-2*pt*pt);
-              double b=K*Ea1/(Pz*Pz);
-              double c=-(pt*pt+K*K/(4*Pz*Pz));
-              R=b*b-4*a*c;
-	      std::cout << "R: " << R << std::endl;
-              if(R<0){if(verbose)std::cout << "R is negative " << R << "setting R to 0." << std::endl;R=0;}
-              Enu1=(-b-sqrt(R))/(2.0*a);
-              Enu2=(-b+sqrt(R))/(2.0*a);
-	      double Pnuz1=0;if(Enu1>pt)Pnuz1=sqrt(Enu1*Enu1-pt*pt);
-	      double Pnuz2=0;if(Enu2>pt)Pnuz2=sqrt(Enu2*Enu2-pt*pt);
-	      std::cout << " Ea1 " << Ea1 << " Pz " << Pz << " ma1 " << ma1 << " pt " << pt << " K " << K << " mtau " << mtau << std::endl;
-	      std::cout << "a " << a << " b " << b << " c " << c << std::endl;
-	      std::cout << "R: " << R << " -b/2a " << (-b)/(2*a) << std::endl;
-              ///////////////////////////////////////////////////////////////////////////////////////////////////////
-              TLorentzVector Neutrino1(Pnuz1*ntau.Px()-Pt_vec.Px(),Pnuz1*ntau.Py()-Pt_vec.Py(),Pnuz1*ntau.Pz()-Pt_vec.Pz(),Enu1);
-              TauSolution1=TauVis1+Neutrino1;
-              TLorentzVector Neutrino2(Pnuz2*ntau.Px()-Pt_vec.Px(),Pnuz2*ntau.Py()-Pt_vec.Py(),Pnuz2*ntau.Pz()-Pt_vec.Pz(),Enu2);
-              TauSolution2=TauVis2+Neutrino2;
-            }
+	  if(fabs(MCTau_LV.E()-TauSolution1.E())<fabs(MCTau_LV.E()-TauSolution2.E()) && TauSolution1.E()>0){
+	    TauSolution=TauSolution1;
+	    TauSolutionResult.at(t).Fill(-1.0,w);
+	  }
+	  else{
+	    TauSolution=TauSolution2;
+	    TauSolutionResult.at(t).Fill(1.0,w);
+	  }
 
-
-
-	    // Summary output
-	    /*	    std::cout << "Sol1 4-vector: " 
-		      << -TauVisInput.Px() << " " << -TauVisInput.Py() << " " << sqrt(Enu1*Enu1-pt*pt) << " " << Enu1 <<std::endl;	    
-	    std::cout << "Sol1 lab 4-vector: "
-                      << Neutrino1.Px() << " " << Neutrino1.Py() << " " << Neutrino1.Pz() << " " << Neutrino1.E() <<std::endl;
-	    std::cout << "Sol2 4-vector: "
-                      << -TauVisInput.Px() << " " << -TauVisInput.Py() << " " << sqrt(Enu2*Enu2-pt*pt) << " " << Enu2 <<std::endl;
-	    std::cout << "Sol2 lab 4-vector: "
-                      << Neutrino2.Px() << " " << Neutrino2.Py() << " " << Neutrino2.Pz() << " " << Neutrino2.E() <<std::endl;
-	    */
-	    if(fabs(MCTau_LV.E()-TauSolution1.E())<fabs(MCTau_LV.E()-TauSolution2.E()) && TauSolution1.E()>0){
-	      Enu=Enu1;
-	      TauSolution=TauSolution1;
-	      TauSolutionResult.at(t).Fill(-1.0,w);
-	      break;
-	    }
-	    else{
-	      Enu=Enu2;
-	      TauSolution=TauSolution2;
-	      TauSolutionResult.at(t).Fill(1.0,w);
-	      break;
-	    }
-
-	}
 	  if(verbose)std::cout << "Tau 4-vector: Px=" << Ntp->KFTau_TauFit_p4(tau_idx).Px()
 			       << " Py=" << Ntp->KFTau_TauFit_p4(tau_idx).Py()
 			       << " Pz=" << Ntp->KFTau_TauFit_p4(tau_idx).Pz()
@@ -873,7 +871,10 @@ void  Ztotautau_ControlSample::doEvent(){
 	  TauCandERes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E()-MCTau_LV.E(),w);
           TauCandPhiRes.at(t).Fill(Tools::DeltaPhi(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),MCTau_LV.Phi()),w);
           TauCandEtaRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Eta()-MCTau_LV.Eta(),w);
-	  
+	  TauCandPRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).P()-MCTau_LV.P(),w);
+	  TauCandPTRes.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Pt()-MCTau_LV.Pt(),w);
+
+  
           EstimatedTauERes.at(t).Fill(TauSolution.E()-MCTau_LV.E(),w);
           EstimatedTauPhiRes.at(t).Fill(Tools::DeltaPhi(TauSolution.Phi(),MCTau_LV.Phi()),w);
           EstimatedTauEtaRes.at(t).Fill(TauSolution.Eta()-MCTau_LV.Eta(),w);
