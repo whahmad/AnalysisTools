@@ -41,13 +41,13 @@ $(SHAREDLIB): $(OBJS)
 	@echo "======================================================="
 
 VPATH = utilities:OBJECTS
-#	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
+vpath %.cc TauDataFormat/TauNtuple/src/
 
 ##########################################################
 ###                                                    ###
 ##########################################################
 
-$(OBJS): %.o: $(SRCS)
+$(OBJS): %.o: %.cc
 	$(CXX) $(CXXFLAGS) $(DEFS) -fpic $< -o OBJECTS/$@
 
 .PHONY: clean install 
