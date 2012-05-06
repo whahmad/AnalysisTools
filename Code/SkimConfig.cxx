@@ -251,7 +251,7 @@ bool SkimConfig::CovertToHistoFormat(){
     if(SkimIDs_new.at(i)==DataMCType::Signal){
       for(unsigned int j=0;j<SkimIDs.size();j++){
 	std::cout << "SkimConfig::CovertToHistoFormat() Found Signal Match " << SkimIDs.at(j) << std::endl;
-	if(SkimIDs.at(j)==DataMCType::DY_Signal){
+	if(SkimIDs.at(j)==DataMCType::DY_ll_Signal){
 	  IDFlag.at(j)=true;
 	  NEvents_new.at(i)=NEvents.at(j);
 	  NEventsErr_new.at(i)=NEventsErr.at(j);
