@@ -27,7 +27,7 @@ class Ztotautau_ControlSample : public Selection {
 	     MET,
 	     JetPt,
 	     etaq,
-	     sumcosdeltaphi,
+	     JetTrackPtMax,
 	     ZMassmax,
              ZMassmin,
 	     HT,
@@ -56,6 +56,11 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> TauCandE;
   std::vector<TH1D> TauCandERes;
 
+  std::vector<TH1D> TauCandP;
+  std::vector<TH1D> TauCandPRes;
+  std::vector<TH1D> TauCandPT;
+  std::vector<TH1D> TauCandPTRes;
+
   std::vector<TH1D> TauCandMass;
   std::vector<TH1D> TauCandPiMass;
   std::vector<TH1D> TauCandNuMass;
@@ -83,7 +88,12 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> KFTau_Fit_PV_PV_significance;
   std::vector<TH1D> KFTau_Fit_SV_PV_significance;
 
+  std::vector<TH1D> MaxTauTrackPt;
+  std::vector<TH1D> MinTauTrackPt;
+  std::vector<TH1D> TauTrackdphitheta;
+
   int channel;
-  double jeteta;
+  double jeteta,muoneta,TauTrackPtThreshold;
+
 };
 #endif

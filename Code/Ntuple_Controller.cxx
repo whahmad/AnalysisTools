@@ -192,8 +192,10 @@ int Ntuple_Controller::GetMCID(){
     }
     return Ntp->DataMC_Type;
   }
+  if(NMCTaus()>0 && (Ntp->DataMC_Type%100)==DataMCType::DY_ll){
+    return DataMCType::DY_tautau;
+  }
   if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;
-  return (Ntp->DataMC_Type%100); 
 }
 
 TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
@@ -261,15 +263,15 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
   //  muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() not applied
   //  numberOfMatchedStations() not applied                              
   if(Muon_isGlobalMuon(i) && Muon_isStandAloneMuon(i)){
-    //if(Muons_p4(i).Pt()>15.0){
-    if(fabs(Muons_p4(i).Eta())<2.4){
-      if(Muon_normChi2(i)<10.0){
-	if(Muon_innerTrack_numberofValidHits(i)>10){
-	  if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
-	    //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
-	    return true;
-	    //}
+    if(Muons_p4(i).Pt()>15.0){
+      if(fabs(Muons_p4(i).Eta())<2.4){
+	if(Muon_normChi2(i)<10.0){
+	  if(Muon_innerTrack_numberofValidHits(i)>10){
+	    if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
+	      //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
+	      return true;
 	      //}
+	    }
 	  }
 	}
       }
@@ -497,13 +499,18 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 bool Ntuple_Controller::isGoodKFTau(unsigned int i){
   if(KFTau_discriminatorByKFit(i)){
     if(KFTau_discriminatorByQC(i)){
-      return true;
+      if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
+	if(PFTau_isMediumIsolation(KFTau_MatchedHPS_idx(i))){
+	  return true;
+	}
+      }
     }
   }
   return false;
 }
 
 
+ 
 bool Ntuple_Controller::TriggerAccept(TString n){
   unsigned int i=0;
   if(GetTriggerIndex(n,i))return TriggerAccept(i);
