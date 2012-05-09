@@ -81,3 +81,88 @@ void TauSolver::PzSolver(double &Enu1,double &Enu2,double Ea1,double ma1, double
   if(Pnuz1<0)Enu1=Pt;
   if(Pnuz2<0)Enu2=Pt;
 }
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+//
+// Computed Euler Angles for Tau: See Kuhn and Mirkes Phys. Lett. B286 (1992) pg 381
+//  
+//
+bool TauSolver::EulerAnglesfor3prong(std::vector<TLorentzVector> Particle, std::vector<float> Charge,float &cosbeta, float &gamma, bool sortbymass){
+  TLorentzVector Q_LV(0,0,0,0),q1_LV(0,0,0,0),q2_LV(0,0,0,0),q3_LV(0,0,0,0);
+  // Begin sorting input parameters q1 and q2 are sorted in s' frame
+  if(Particle.size()!=Charge.size() || Charge.size()!=3){
+    return false;
+  }
+  double chargesum=0;
+  for(Int_t i=0; i<Charge.size();i++){
+    chargesum+=Charge.at(i);
+  }
+  bool foundq1=false;
+  for(Int_t i=0; i<Charge.size();i++){
+    Q_LV+=Particle.at(i);
+    if(chargesum!=Charge.at(i)){ q3_LV=Particle.at(i);}
+    else if(!foundq1){q1_LV=Particle.at(i);foundq1=true;}
+    else{ q2_LV=Particle.at(i);}
+  }
+  
+  if(Q_LV.M()>=PDG_Var::Tau_mass())return false;
+  // Rotate and boost system  to enter s' frame
+  double phi(Q_LV.Phi()),theta(Q_LV.Theta());
+  Q_LV.RotateZ(-phi);
+  Q_LV.RotateY(-theta);
+  q1_LV.RotateZ(-phi);
+  q1_LV.RotateY(-theta);
+  q2_LV.RotateZ(-phi);
+  q2_LV.RotateY(-theta);
+  q3_LV.RotateZ(-phi);
+  q3_LV.RotateY(-theta);
+  q1_LV.Boost(-Q_LV.BoostVector());
+  q2_LV.Boost(-Q_LV.BoostVector());
+  q3_LV.Boost(-Q_LV.BoostVector());
+    
+  // sort q1 and q2 either by mass or track by momentum in hhh system
+  if(sortbymass){
+    TLorentzVector q13_LV=q3_LV;q13_LV+=q1_LV;
+    TLorentzVector q23_LV=q3_LV;q23_LV+=q2_LV;
+    TLorentzVector tmp;
+    if(q13_LV.M()<q23_LV.M()){
+      tmp=q1_LV;
+      q1_LV=q2_LV;
+      q2_LV=tmp;
+    }
+  }
+  else{
+    if(q1_LV.P()>q2_LV.P()){
+      TLorentzVector tmp;
+      tmp=q1_LV;
+      q1_LV=q2_LV;
+      q2_LV=tmp;
+    }
+  }
+  
+  // now compute nl,np
+  TVector3 nl(-Q_LV.Px(),-Q_LV.Py(),-Q_LV.Pz()); 
+  TVector3 q1(q1_LV.Px(),q1_LV.Py(),q1_LV.Pz()); 
+  TVector3 q2(q2_LV.Px(),q2_LV.Py(),q2_LV.Pz()); 
+  TVector3 q3(q3_LV.Px(),q3_LV.Py(),q3_LV.Pz()); 
+  if(nl.Mag()>0 && q1.Mag()>0 &&q2.Mag()>0 && q3.Mag()>0 ){
+    nl*=1/nl.Mag();
+    q1*=1/q1.Mag();
+    q2*=1/q2.Mag();
+    q3*=1/q3.Mag();
+    TVector3 nperp=q1.Cross(q2);
+    nperp*=1/nperp.Mag();
+    TVector3 nlcrossnperp=nl.Cross(nperp);
+    
+    cosbeta=nl.Dot(nperp);
+    double sine_gamma=nlcrossnperp.Dot(q3)/nlcrossnperp.Mag();
+    double cosine_gamma=-nl.Dot(q3)/nlcrossnperp.Mag();
+    gamma=atan2(sine_gamma,cosine_gamma);
+    return true;
+  }
+ return false;
+}

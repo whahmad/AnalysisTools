@@ -14,7 +14,7 @@ class TauSolver {
 
   void SolvebyRotation(TLorentzVector &Tau1,TLorentzVector &Tau2,TLorentzVector &nu1,TLorentzVector &nu2, int mode);
   void SolvebyProjection(TLorentzVector &Tau1,TLorentzVector &Tau2,TLorentzVector &nu1,TLorentzVector &nu2, int mode);
-
+  bool EulerAnglesfor3prong(std::vector<TLorentzVector> Particle, std::vector<float> Charge,float &cosbeta, float &gamma, bool sortbymass=false);
 
   enum SolutionType{E,PZ};
 
