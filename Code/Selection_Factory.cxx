@@ -29,7 +29,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("chargedhiggs"))s=new ChargedHiggs(Analysis,UncertType);
   else if(Analysis.Contains("zdouble3prong"))s=new ZDouble3prong(Analysis,UncertType);
   else if(Analysis.Contains("ztomumu_controlsample"))s=new Ztomumu_ControlSample(Analysis,UncertType);
-  else if(Analysis.Contains("TriggerStudy"))s=new TriggerStudy(Analysis,UncertType);
+  else if(Analysis.Contains("triggerstudy"))s=new TriggerStudy(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);
