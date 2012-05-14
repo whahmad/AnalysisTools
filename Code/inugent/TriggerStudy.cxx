@@ -59,15 +59,17 @@ void  TriggerStudy::Configure(){
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
   // Setup Extra Histograms
   for(unsigned int h=0;h<4;h++){
-    TString NP="SumNprongs";
-    NP +=2*(h);
-    if(h=0)NP="All";
+    TString NP;
+    if(h==0)NP="All";
+    if(h==1)NP="1prong1prong";
+    if(h==2)NP="1prong3prong";
+    if(h==3)NP="3prong3prong";
     N_pt.push_back(HConfig.GetTH1D(Name+NP+"_N_pt","N_pt",40,0,200,"P_{T} (GeV)","Events"));
     n_pt.push_back(HConfig.GetTH1D(Name+NP+"_n_pt","n_pt",40,0,200,"P_{T} (GeV)","Events"));
     Eff_pt.push_back(HConfig.GetTH1D(Name+NP+"_Eff_pt","Eff_pt",40,0,200,"P_{T} (GeV)","Efficiency"));
     N_eta.push_back(HConfig.GetTH1D(Name+NP+"_N_eta","N_eta",40,-2.0,2.0,"#eta","Events"));
     n_eta.push_back(HConfig.GetTH1D(Name+NP+"_n_eta","n_eta",40,-2.0,2.0,"#eta","Events"));
-    Eff_eta.push_back(HConfig.GetTH1D(Name+NP+"_Eff_eta","Eff_eta",40,-2.0,2.0,"#eta","Events"));
+    Eff_eta.push_back(HConfig.GetTH1D(Name+NP+"_Eff_eta","Eff_eta",40,-2.0,2.0,"#eta","Efficiency"));
   }
 
   Selection::ConfigureHistograms();
@@ -82,6 +84,10 @@ void  TriggerStudy::Configure(){
 
 void  TriggerStudy::Store_ExtraDist(){
   for(unsigned int h=0;h<Eff_pt.size();h++){
+    Extradist1d.push_back(&N_pt.at(h));
+    Extradist1d.push_back(&N_eta.at(h));
+    Extradist1d.push_back(&n_pt.at(h));
+    Extradist1d.push_back(&n_eta.at(h));
     Extradist1d.push_back(&Eff_pt.at(h));
     Extradist1d.push_back(&Eff_eta.at(h));
   }
@@ -89,18 +95,23 @@ void  TriggerStudy::Store_ExtraDist(){
 
 void  TriggerStudy::doEvent(){
   unsigned int t;
-  int id(Ntp->GetMCID());
-  if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
+  int id(2);
+  if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" << id <<std::endl; return;}
 
   if(verbose)std::cout << "void  TriggerStudy::doEvent() A" << std::endl;
 
+  // cout << "ntaus" <<Ntp->NMCTaus() << endl;
   value.at(isSignal)=0;
-  if(id==DataMCType::H_tautau && Ntp->NMCTaus()==2){
+  if(Ntp->NMCTaus()==2){
+    //cout<< Ntp->MCTau_JAK(0) <<  " " << Ntp->MCTau_JAK(1) << endl;
     if(Ntp->MCTau_JAK(0)!=TauDecay::JAK_ELECTRON && Ntp->MCTau_JAK(1)!=TauDecay::JAK_ELECTRON &&
-       Ntp->MCTau_JAK(0)!=TauDecay::JAK_MUON && Ntp->MCTau_JAK(0)!=TauDecay::JAK_MUON){
+       Ntp->MCTau_JAK(0)!=TauDecay::JAK_MUON && Ntp->MCTau_JAK(1)!=TauDecay::JAK_MUON){
       pass.at(isSignal)=true;
       value.at(isSignal)=1;
     }
+  }
+  for(unsigned p=0;p<Ntp->NHLTTriggers();p++){
+    cout << Ntp->HTLTriggerName(p) <<  " Prescale: " << Ntp->HLTPrescale(p) << " " << Ntp->L1SEEDPrescale(p) <<endl;
   }
 
   //////////////////////////////////////////////////////////
@@ -130,7 +141,7 @@ void  TriggerStudy::doEvent(){
     else if( TD.nProng(taubit1)==3 && TD.nProng(taubit2)==3){
       idx=3;
     }
-    bool flag=Ntp->TriggerAccept("IsoMu24");
+    bool flag=Ntp->TriggerAccept("HLT_DoubleMediumIsoPFTau35_Trk5_eta2p1_v2");
     for(unsigned int tau=0;tau<Ntp->NMCTaus();tau++){
       double tau_pt=Ntp->MCTau_p4(tau).Pt();
       double tau_eta=Ntp->MCTau_p4(tau).Eta(); 
@@ -152,10 +163,10 @@ void  TriggerStudy::doEvent(){
 void TriggerStudy::Finish(){
   for(unsigned int i=0;i<N_pt.size();i++){
     for(unsigned int j=0;j<N_pt.at(i).size();j++){
-      Eff_pt.at(i).at(j)=n_pt.at(i).at(j);
-      Eff_pt.at(i).at(j).Divide(&N_pt.at(i).at(j));
-      Eff_eta.at(i).at(j)=n_eta.at(i).at(j);
-      Eff_eta.at(i).at(j).Divide(&N_eta.at(i).at(j));
+      Eff_pt.at(i).at(j).Reset();
+      Eff_pt.at(i).at(j).Divide(&n_pt.at(i).at(j),&N_pt.at(i).at(j),1.0,1.0,"B");
+      Eff_eta.at(i).at(j).Reset();
+      Eff_eta.at(i).at(j).Divide(&n_eta.at(i).at(j),&N_eta.at(i).at(j),1.0,1.0,"B");
     }
   }
   Selection::Finish();
