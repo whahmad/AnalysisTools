@@ -4,6 +4,7 @@
 #include "HistoConfig.h"
 #include <iostream>
 #include "TF1.h"
+#include "TauSolver.h"
 
 TauSpinExample::TauSpinExample(TString Name_, TString id_):
   Selection(Name_,id_)
@@ -88,6 +89,9 @@ void  TauSpinExample::Configure(){
   a1_PtRatio_hplus=HConfig.GetTH1D(Name+"_a1_PtRatio_hplus","PtRatio_hplus",20,0.0,1.0,"P_{t,a_{1}(1260)}/P_{t,#tau}|_{h^{+}}","Events");
   a1_PtRatio_hminus=HConfig.GetTH1D(Name+"_a1_PtRatio_hminus","PtRatio_hminus",20,0.0,1.0,"P_{t,a_{1}(1260)}/P_{t,#tau}|_{h^{-}}","Events");
 
+  a1_cosbeta_hminus=HConfig.GetTH1D(Name+"_a1_cosbeta_hminus","cosbeta_hminus",20,0.0,1.0,"cos#beta|_{h^{-}}","Events");
+  a1_cosbeta_hplus=HConfig.GetTH1D(Name+"_a1_cosbeta_hplus","cosbeta_hplus",20,0.0,1.0,"cos#beta|_{h^{+}}","Events");
+
   //rhonu
   rho_ExoverEtau=HConfig.GetTH1D(Name+"_rho_ExoverEtau","ExoverEtau",20,0.0,1.0,"E_{#rho}/E_{#tau}","Events");
   rho_ExoverEtau_hplus=HConfig.GetTH1D(Name+"_rho_ExoverEtau_hplus","ExoverEtau_hplus",20,0.0,1.0,"E_{#rho}/E_{#tau}|_{h^{+}}","Events");
@@ -155,6 +159,9 @@ void  TauSpinExample::Store_ExtraDist(){
  Extradist1d.push_back(&a1_WT_FlipSpin);
  Extradist1d.push_back(&a1_PtRatio_hplus);
  Extradist1d.push_back(&a1_PtRatio_hminus);
+
+ Extradist1d.push_back(&a1_cosbeta_hplus);
+ Extradist1d.push_back(&a1_cosbeta_hminus);
  
  Extradist1d.push_back(&rho_ExoverEtau);
  Extradist1d.push_back(&rho_ExoverEtau_hplus);
@@ -273,6 +280,8 @@ void  TauSpinExample::doEvent(){
       TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
       TLorentzVector Tau_LV(0,0,0,0);
       TLorentzVector X_LV(0,0,0,0);
+      std::vector<TLorentzVector> pions;
+      std::vector<float> pions_charge;
       for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
         if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::tau_minus)){
           Tau_LV=Ntp->MCTauandProd_p4(tau_idx,i);
@@ -281,6 +290,8 @@ void  TauSpinExample::doEvent(){
                 abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi0)
                 ){
           X_LV+=Ntp->MCTauandProd_p4(tau_idx,i);
+	  pions.push_back(Ntp->MCTauandProd_p4(tau_idx,i));
+	  pions_charge.push_back(Ntp->MCTauandProd_charge(tau_idx,i));
         }
       }
       if(Tau_LV.E()>0){
@@ -301,6 +312,11 @@ void  TauSpinExample::doEvent(){
 	a1_WT_Spin.at(t).Fill(Spin_WT,w);
 	a1_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	a1_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
+	TauSolver TS(Tau_LV.Vect(),X_LV);
+	float cosbeta, gamma;
+	TS.EulerAnglesfor3prong(pions,pions_charge,cosbeta,gamma,true,true);
+	a1_cosbeta_hplus.at(t).Fill(cosbeta,w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
+	a1_cosbeta_hminus.at(t).Fill(cosbeta,w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
       }
     }
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_RHO_PIPI0,tau_idx)){

@@ -73,5 +73,10 @@ class TauSpinExample : public Selection {
   std::vector<TH1D> rho_WT_FlipSpin;
   std::vector<TH1D> rho_PtRatio_hplus;
   std::vector<TH1D> rho_PtRatio_hminus;
+
+  std::vector<TH1D> a1_cosbeta_hminus;
+  std::vector<TH1D> a1_cosbeta_hplus;
+
+
 };
 #endif
