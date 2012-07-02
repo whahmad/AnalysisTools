@@ -58,7 +58,8 @@ TARGETS       =	Ntuple_Controller \
 		Validation \
 		Ztotautau_hadmu_ControlSample \
 		Ztotautau_ControlSample \
-		ChargedHiggs \
+		ChargedHiggs_tauplusjet \
+		ChargedHiggs_dilepontic \
 		TauSpinExample \
                 Tau_momentum_calculation \
 		TauSpinerInterface \

@@ -1,4 +1,4 @@
-#include "ChargedHiggs.h"
+#include "ChargedHiggs_tauplusjet.h"
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
@@ -7,7 +7,7 @@
 #include "Tools.h"
 #include "PDG_Var.h"
 
-ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
+ChargedHiggs_tauplusjet::ChargedHiggs_tauplusjet(TString Name_, TString id_):
   Selection(Name_,id_)
   ,tau_pt(20)
   ,tau_eta(2.0)
@@ -17,16 +17,16 @@ ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
 
 }
 
-ChargedHiggs::~ChargedHiggs(){
+ChargedHiggs_tauplusjet::~ChargedHiggs_tauplusjet(){
   for(int j=0; j<Npassed.size(); j++){
-    std::cout << "ChargedHiggs::~ChargedHiggs Selection Summary before: " 
+    std::cout << "ChargedHiggs_tauplusjet::~ChargedHiggs_tauplusjet Selection Summary before: " 
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "ChargedHiggs::~ChargedHiggs()" << std::endl;
+  std::cout << "ChargedHiggs_tauplusjet::~ChargedHiggs_tauplusjet()" << std::endl;
 }
 
-void  ChargedHiggs::Configure(){
+void  ChargedHiggs_tauplusjet::Configure(){
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
     cut.push_back(0);
@@ -273,19 +273,19 @@ void  ChargedHiggs::Configure(){
 
 
 
-void  ChargedHiggs::Store_ExtraDist(){
+void  ChargedHiggs_tauplusjet::Store_ExtraDist(){
  Extradist1d.push_back(&NVtx);
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
 }
 
-void  ChargedHiggs::doEvent(){
+void  ChargedHiggs_tauplusjet::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() A" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() A" << std::endl;
 
   value.at(TriggerOk)=0;
   if(Ntp->TriggerAccept("HLT_QuadJet40_IsoPFTau40"))value.at(TriggerOk)+=1;
@@ -300,7 +300,7 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(PrimeVtx)=nGoodVtx;
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() B" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() B" << std::endl;
 
   ///////////////////////////////////////////////
   //
@@ -334,7 +334,7 @@ void  ChargedHiggs::doEvent(){
   pass.at(NTauEta)=(value.at(NTauEta)==cut.at(NTauEta));
   unsigned int tauidx(999);
   if(GoodTaus.size()>0)tauidx=GoodTaus.at(0);
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() C " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() C " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Jet Cuts
@@ -372,7 +372,7 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(NBJets)=GoodBJets.size();
   pass.at(NBJets)=(value.at(NBJets)>=cut.at(NBJets));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() D " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() D " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Event Shape and Energy Cuts
@@ -394,7 +394,7 @@ void  ChargedHiggs::doEvent(){
     value.at(HT)+=Ntp->PFJet_p4(GoodJets.at(i)).Et();
   }
   pass.at(HT)=(value.at(HT)>=cut.at(HT));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() E " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() E " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Top and W Masses
@@ -425,7 +425,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::W_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() F " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() F " << tauidx << std::endl;
   unsigned int HadTopB(0);
   value.at(HadTopMass)=999;
   for(unsigned int i=0;i<GoodBJets.size();i++){
@@ -439,7 +439,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() G " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() G " << tauidx << std::endl;
 
   TLorentzVector MET;
   TLorentzVector Tau;
@@ -467,7 +467,7 @@ void  ChargedHiggs::doEvent(){
 
   value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,MET));
   pass.at(TauMETdphi)=(value.at(TauMETdphi)<=cut.at(TauMETdphi));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() H " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() H " << tauidx << std::endl;
 
   ///////////////////////////////////////////////////////////
   value.at(etaq)=0;
@@ -477,7 +477,7 @@ void  ChargedHiggs::doEvent(){
     pass.at(etaq)=value.at(etaq)>cut.at(etaq);
   }
   pass.at(etaq)=true;
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() I" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() I" << std::endl;
 
   pass.at(HT)=true;
   pass.at(etaq)=true;
@@ -490,14 +490,14 @@ void  ChargedHiggs::doEvent(){
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() J" << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() J" << std::endl;
     // w*=Ntp->EvtWeight3D();
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() k" << w << " " << wobs << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}
   if(verbose) std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() L" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() L" << std::endl;
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){

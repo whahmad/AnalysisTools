@@ -1,15 +1,15 @@
-#ifndef ChargedHiggs_h
-#define ChargedHiggs_h
+#ifndef ChargedHiggs_tauplusjet_h
+#define ChargedHiggs_tauplusjet_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 
-class ChargedHiggs : public Selection {
+class ChargedHiggs_tauplusjet : public Selection {
 
  public:
-  ChargedHiggs(TString Name_, TString id_);
-  virtual ~ChargedHiggs();
+  ChargedHiggs_tauplusjet(TString Name_, TString id_);
+  virtual ~ChargedHiggs_tauplusjet();
 
   virtual void  Configure();
 

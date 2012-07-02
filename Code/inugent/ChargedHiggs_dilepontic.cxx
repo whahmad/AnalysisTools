@@ -1,4 +1,4 @@
-#include "ChargedHiggs.h"
+#include "ChargedHiggs_dilepontic.h"
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
@@ -7,26 +7,28 @@
 #include "Tools.h"
 #include "PDG_Var.h"
 
-ChargedHiggs::ChargedHiggs(TString Name_, TString id_):
+ChargedHiggs_dilepontic::ChargedHiggs_dilepontic(TString Name_, TString id_):
   Selection(Name_,id_)
   ,tau_pt(20)
   ,tau_eta(2.0)
   ,jet_pt(45)
   ,jet_eta(2.4)
+  ,muon_pt(26)
+  ,muon_eta(2.4)
 {
 
 }
 
-ChargedHiggs::~ChargedHiggs(){
+ChargedHiggs_dilepontic::~ChargedHiggs_dilepontic(){
   for(int j=0; j<Npassed.size(); j++){
-    std::cout << "ChargedHiggs::~ChargedHiggs Selection Summary before: " 
+    std::cout << "ChargedHiggs_dilepontic::~ChargedHiggs_dilepontic Selection Summary before: " 
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "ChargedHiggs::~ChargedHiggs()" << std::endl;
+  std::cout << "ChargedHiggs_dilepontic::~ChargedHiggs_dilepontic()" << std::endl;
 }
 
-void  ChargedHiggs::Configure(){
+void  ChargedHiggs_dilepontic::Configure(){
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
     cut.push_back(0);
@@ -34,10 +36,11 @@ void  ChargedHiggs::Configure(){
     pass.push_back(false);
     if(i==TriggerOk)          cut.at(TriggerOk)=1;
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
+    if(i==NMuons)             cut.at(NMuons)=1;
     if(i==N1Jets)             cut.at(N1Jets)=1;
     if(i==N2Jets)             cut.at(N2Jets)=2;
-    if(i==N3Jets)             cut.at(N3Jets)=3;
-    if(i==NJets)              cut.at(NJets)=4;
+    if(i==ElectronVeto)       cut.at(ElectronVeto)=0;
+    if(i==MuonVeto)           cut.at(MuonVeto)=0;
     if(i==NBJets)             cut.at(NBJets)=2;
     if(i==MET)                cut.at(MET)=50;
     if(i==HT)                 cut.at(HT)=200;
@@ -80,15 +83,15 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,9,-0.5,8.5,hlabel,"Events"));
     }
-    else if(i==NJets){
-      title.at(i)="Number of Jets $>=$";
-      title.at(i)+=cut.at(NJets);
+    else if(i==NMuons){
+      title.at(i)="Number of Muons $>=$";
+      title.at(i)+=cut.at(NMuons);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="Number of Jets";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NJets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      hlabel="Number of NMuons";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuons_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuons_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==N1Jets){
       title.at(i)="Number of Jets $>=$";
@@ -110,15 +113,25 @@ void  ChargedHiggs::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N2Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N2Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i==N3Jets){
-      title.at(i)="Number of Jets $>=$";
+    else if(i==ElectronVeto){
+      title.at(i)="Number of extra Electrons $>=$";
       htitle=title.at(i);
-      title.at(i)+=cut.at(N3Jets);
+      title.at(i)+=cut.at(ElectronVeto);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="Number of Jets";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N3Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N3Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      hlabel="Number of extra Electrons";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ElectronVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ElectronVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i==MuonVeto){
+      title.at(i)="Number of extra Muons $>=$";
+      htitle=title.at(i);
+      title.at(i)+=cut.at(MuonVeto);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="Number of extra Muons";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuonVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuonVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i==NBJets){
       title.at(i)="Number of BJets $>=$";
@@ -273,24 +286,22 @@ void  ChargedHiggs::Configure(){
 
 
 
-void  ChargedHiggs::Store_ExtraDist(){
+void  ChargedHiggs_dilepontic::Store_ExtraDist(){
  Extradist1d.push_back(&NVtx);
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
 }
 
-void  ChargedHiggs::doEvent(){
+void  ChargedHiggs_dilepontic::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() A" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() A" << std::endl;
 
   value.at(TriggerOk)=0;
-  if(Ntp->TriggerAccept("HLT_QuadJet40_IsoPFTau40"))value.at(TriggerOk)+=1;
-  if(Ntp->TriggerAccept("HLT_QuadJet45_IsoPFTau45"))value.at(TriggerOk)+=2;
-  if(Ntp->TriggerAccept("HLT_QuadJet50_IsoPFTau50"))value.at(TriggerOk)+=4;
+  if(Ntp->TriggerAccept("IsoMu24"))value.at(TriggerOk)+=1;
   pass.at(TriggerOk)=value.at(TriggerOk)>=cut.at(TriggerOk);
 
   // Apply Selection
@@ -300,7 +311,7 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(PrimeVtx)=nGoodVtx;
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() B" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() B" << std::endl;
 
   ///////////////////////////////////////////////
   //
@@ -334,7 +345,25 @@ void  ChargedHiggs::doEvent(){
   pass.at(NTauEta)=(value.at(NTauEta)==cut.at(NTauEta));
   unsigned int tauidx(999);
   if(GoodTaus.size()>0)tauidx=GoodTaus.at(0);
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() C " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() C " << tauidx << std::endl;
+
+  ////////////////////////////////////////////////
+  //
+  // Muons
+  //
+  std::vector<unsigned int> mu_idx;
+  for(unsigned int i=0; i<Ntp->NMuons(); i++){
+    if(Ntp->isGoodMuon(i) && Ntp->Muons_p4(i).Pt()>muon_pt && fabs(Ntp->Muons_p4(i).Eta())<muon_eta)mu_idx.push_back(i);
+  }
+  value.at(NMuons)=mu_idx.size();
+  pass.at(NMuons)=(value.at(NMuons)==cut.at(NMuons));
+
+  value.at(ElectronVeto)=0;
+  pass.at(ElectronVeto)=0;
+
+  value.at(MuonVeto)=0;
+  pass.at(MuonVeto)=0;
+
   ///////////////////////////////////////////////
   //
   // Jet Cuts
@@ -355,12 +384,6 @@ void  ChargedHiggs::doEvent(){
   value.at(N2Jets)=GoodJets.size();
   pass.at(N2Jets)=(value.at(N2Jets)>=cut.at(N2Jets));
 
-  value.at(N3Jets)=GoodJets.size();
-  pass.at(N3Jets)=(value.at(N3Jets)>=cut.at(N3Jets));
-
-  value.at(NJets)=GoodJets.size();
-  pass.at(NJets)=(value.at(NJets)>=cut.at(NJets));
-
   // not implemented yet just use highest 2 pt jets for GoodBJets
   std::vector<unsigned int> GoodBJets(2,0);
   for(unsigned i=0;i<GoodJets.size();i++){ 
@@ -372,7 +395,7 @@ void  ChargedHiggs::doEvent(){
   }
   value.at(NBJets)=GoodBJets.size();
   pass.at(NBJets)=(value.at(NBJets)>=cut.at(NBJets));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() D " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() D " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Event Shape and Energy Cuts
@@ -394,7 +417,7 @@ void  ChargedHiggs::doEvent(){
     value.at(HT)+=Ntp->PFJet_p4(GoodJets.at(i)).Et();
   }
   pass.at(HT)=(value.at(HT)>=cut.at(HT));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() E " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() E " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
   // Top and W Masses
@@ -425,7 +448,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::W_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() F " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() F " << tauidx << std::endl;
   unsigned int HadTopB(0);
   value.at(HadTopMass)=999;
   for(unsigned int i=0;i<GoodBJets.size();i++){
@@ -439,7 +462,7 @@ void  ChargedHiggs::doEvent(){
   }
   pass.at(HadWMass)=(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() G " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() G " << tauidx << std::endl;
 
   TLorentzVector MET;
   TLorentzVector Tau;
@@ -467,7 +490,7 @@ void  ChargedHiggs::doEvent(){
 
   value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,MET));
   pass.at(TauMETdphi)=(value.at(TauMETdphi)<=cut.at(TauMETdphi));
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() H " << tauidx << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() H " << tauidx << std::endl;
 
   ///////////////////////////////////////////////////////////
   value.at(etaq)=0;
@@ -477,7 +500,7 @@ void  ChargedHiggs::doEvent(){
     pass.at(etaq)=value.at(etaq)>cut.at(etaq);
   }
   pass.at(etaq)=true;
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() I" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() I" << std::endl;
 
   pass.at(HT)=true;
   pass.at(etaq)=true;
@@ -490,14 +513,14 @@ void  ChargedHiggs::doEvent(){
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
   if(!Ntp->isData()){
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() J" << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() J" << std::endl;
     // w*=Ntp->EvtWeight3D();
-    if(verbose)std::cout << "void  ChargedHiggs::doEvent() k" << w << " " << wobs << std::endl;
+    if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}
   if(verbose) std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs); 
-  if(verbose)std::cout << "void  ChargedHiggs::doEvent() L" << std::endl;
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() L" << std::endl;
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){

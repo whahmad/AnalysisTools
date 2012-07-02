@@ -1,15 +1,15 @@
-#ifndef ChargedHiggs_h
-#define ChargedHiggs_h
+#ifndef ChargedHiggs_dilepontic_h
+#define ChargedHiggs_dilepontic_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 
-class ChargedHiggs : public Selection {
+class ChargedHiggs_dilepontic : public Selection {
 
  public:
-  ChargedHiggs(TString Name_, TString id_);
-  virtual ~ChargedHiggs();
+  ChargedHiggs_dilepontic(TString Name_, TString id_);
+  virtual ~ChargedHiggs_dilepontic();
 
   virtual void  Configure();
 
@@ -18,10 +18,11 @@ class ChargedHiggs : public Selection {
 	     NTauKinFit,
 	     NTauPt,
 	     NTauEta,
+	     NMuons,
+	     ElectronVeto,
+	     MuonVeto,
              N1Jets,
 	     N2Jets,
-	     N3Jets,
-	     NJets,
              NBJets,
              MET,
              HT,
@@ -44,7 +45,7 @@ class ChargedHiggs : public Selection {
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
   std::vector<TH1D> ChargedHiggsMT;
-  double tau_pt,tau_eta,jet_pt,jet_eta;
+  double tau_pt,tau_eta,jet_pt,jet_eta,muon_pt,muon_eta;
 
 };
 #endif

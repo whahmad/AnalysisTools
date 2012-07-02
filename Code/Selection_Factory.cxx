@@ -6,7 +6,8 @@
 #include "cherepanov/Tau_momentum_calculation.h"
 #include "inugent/Ztotautau_ControlSample.h"
 #include "TauSpinExample.h"
-#include "inugent/ChargedHiggs.h"
+#include "inugent/ChargedHiggs_dilepontic.h"
+#include "inugent/ChargedHiggs_tauplusjet.h"
 #include "inugent/ZDouble3prong.h"
 #include "inugent/Ztomumu_ControlSample.h"
 #include "inugent/TriggerStudy.h"
@@ -26,7 +27,8 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("tau_momentum_calculation"))s=new Tau_momentum_calculation(Analysis,UncertType);
   else if(Analysis.Contains("ztotautau_controlsample"))s=new Ztotautau_ControlSample(Analysis,UncertType);
   else if(Analysis.Contains("tauspinexample"))s=new TauSpinExample(Analysis,UncertType);
-  else if(Analysis.Contains("chargedhiggs"))s=new ChargedHiggs(Analysis,UncertType);
+  else if(Analysis.Contains("chargedhiggs") || Analysis.Contains("chargedhiggs_dilepton"))s=new ChargedHiggs_dilepontic(Analysis,UncertType);
+  else if(Analysis.Contains("chargedhiggs_tauplusjet"))s=new ChargedHiggs_tauplusjet(Analysis,UncertType);
   else if(Analysis.Contains("zdouble3prong"))s=new ZDouble3prong(Analysis,UncertType);
   else if(Analysis.Contains("ztomumu_controlsample"))s=new Ztomumu_ControlSample(Analysis,UncertType);
   else if(Analysis.Contains("triggerstudy"))s=new TriggerStudy(Analysis,UncertType);
