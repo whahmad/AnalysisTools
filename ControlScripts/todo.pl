@@ -113,7 +113,8 @@ for($l=2;$l<$numArgs; $l++){
 }
 
 $time= strftime("%h_%d_%Y",localtime);
-$set+=$time;
+$temp= $set . $time;
+$set=$temp;
 
 if( $ARGV[0] eq "--TauNtuple"){
     $currentdir=getcwd;
