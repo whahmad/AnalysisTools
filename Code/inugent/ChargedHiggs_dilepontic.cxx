@@ -37,21 +37,20 @@ void  ChargedHiggs_dilepontic::Configure(){
     if(i==TriggerOk)          cut.at(TriggerOk)=1;
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
     if(i==NMuons)             cut.at(NMuons)=1;
-    if(i==N1Jets)             cut.at(N1Jets)=1;
     if(i==N2Jets)             cut.at(N2Jets)=2;
     if(i==ElectronVeto)       cut.at(ElectronVeto)=0;
     if(i==MuonVeto)           cut.at(MuonVeto)=0;
+    if(i==MuRelIso)           cut.at(MuRelIso)=0.2;
     if(i==NBJets)             cut.at(NBJets)=2;
-    if(i==MET)                cut.at(MET)=50;
+    if(i==MET)                cut.at(MET)=40;
     if(i==HT)                 cut.at(HT)=200;
     if(i==NTauKinFit)         cut.at(NTauKinFit)=1;
     if(i==NTauPt)             cut.at(NTauPt)=1;
     if(i==NTauEta)            cut.at(NTauEta)=1 ;
-    if(i==HadWMass)           cut.at(HadWMass)=30;
-    if(i==HadTopMass)         cut.at(HadTopMass)=50;
-    if(i==TauMETTopMT)        cut.at(TauMETTopMT)=50;
+    if(i==MT)                 cut.at(MT)=30;
+    if(i==MuMETdphi)          cut.at(MuMETdphi)=0.5;
     if(i==TauMETdphi)         cut.at(TauMETdphi)=-1/sqrt(2);
-    if(i==etaq)               cut.at(etaq)=0.1;
+    if(i==Charge)             cut.at(Charge)=0.0;
   }
 
   TString hlabel;
@@ -93,15 +92,15 @@ void  ChargedHiggs_dilepontic::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuons_",htitle,11,-0.5,10.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuons_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i==N1Jets){
-      title.at(i)="Number of Jets $>=$";
-      title.at(i)+=cut.at(N1Jets);
+    else if(i==MuRelIso){
+      title.at(i)="Relative Muon Isolation $<$";
+      title.at(i)+=cut.at(MuRelIso);
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
-      hlabel="Number of Jets";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_N1Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_N1Jets_",htitle,11,-0.5,10.5,hlabel,"Events"));
+      hlabel="Relative Muon Isolation";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuRelIso_",htitle,20,0.0,1.0,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuRelIso_",htitle,20,0.0,1.0,hlabel,"Events"));
     }
     else if(i==N2Jets){
       title.at(i)="Number of Jets $>=$";
@@ -181,64 +180,65 @@ void  ChargedHiggs_dilepontic::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
       distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta{#tau} (N-1 Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NTauEta_","#eta_{#tau} (Accumulative Distribution)",100,0,200,"#eta_{#tau} (GeV)","Events");
+      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauEta_","#eta{#tau} (N-1 Distribution)",20,-5,5,"#eta_{#tau} (GeV)","Events");
+      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NTauEta_","#eta_{#tau} (Accumulative Distribution)",20,-5,5,"#eta_{#tau} (GeV)","Events");
+    }
+    else if(i==Charge){
+      title.at(i)="$\\tau-\\mu$ charge =";
+      title.at(i)+=cut.at(Charge);
+      htitle=title.at(i);
+      htitle.ReplaceAll("$","");
+      htitle.ReplaceAll("\\","#");
+      hlabel="#tau-#mu Charge";
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_Charge_",htitle,7,-3.5,3.5,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_Charge_",htitle,7,-3.5,3.5,hlabel,"Events"));
     }
     else if(i==MET){
-      title.at(i)="$E_{T}^{Miss} < $";
+      title.at(i)="$E_{T}^{Miss} > $";
       title.at(i)+=cut.at(MET);
       title.at(i)+="(GeV)";
       htitle=title.at(i);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="E_{T}^{Miss} (GeV)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MET_",htitle,40,0,200,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MET_",htitle,40,0,200,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MET_",htitle,15,0,300,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MET_",htitle,15,0,300,hlabel,"Events"));
     } 
    else if(i==HT){
-     title.at(i)="$H_{T} < $";
+     title.at(i)="$H_{T} > $";
      title.at(i)+=cut.at(HT);
      title.at(i)+="(GeV)";
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
      hlabel="H_{T} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HT_",htitle,40,0,200,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HT_",htitle,40,0,200,hlabel,"Events"));
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HT_",htitle,25,0,750,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HT_",htitle,25,0,750,hlabel,"Events"));
    }
-   else if(i==HadWMass){
-     title.at(i)="$M_{W,had} < $";
-     title.at(i)+=cut.at(HadWMass);
+   else if(i==MT){
+     title.at(i)="$M_{T} > $";
+     title.at(i)+=cut.at(MT);
      title.at(i)+="(GeV)";
      htitle=title.at(i);
      htitle.ReplaceAll("$","");
      htitle.ReplaceAll("\\","#");
-     hlabel="M_{W,had} (GeV)";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadWMass_",htitle,75,0,250,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadWMass_",htitle,75,0,250,hlabel,"Events"));
+     hlabel="M_{T} (GeV)";
+     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,15,0,300,hlabel,"Events"));
+     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,15,0,300,hlabel,"Events"));
    }
-   else if(i==HadTopMass){
-    title.at(i)="$M_{Top,had} < $";
-    title.at(i)+=cut.at(HadTopMass);
-    title.at(i)+="(GeV)";
+   else if(i==MuMETdphi){
+    title.at(i)="$cos(\\phi(\\mu,MET)) < $";
+    char buffer[50];
+    sprintf(buffer,"%5.2f",cut.at(MuMETdphi));
+    title.at(i)+=buffer;
+    title.at(i)+="(rad)";
     htitle=title.at(i);
     htitle.ReplaceAll("$","");
     htitle.ReplaceAll("\\","#");
-    hlabel="M_{Top,had} (GeV)";
-    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_HadTopMass_",htitle,100,0,500,hlabel,"Events"));
-    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_HadTopMass_",htitle,100,0,500,hlabel,"Events"));
+    hlabel="cos(#phi(#mu,MET)) (rad)";
+    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuMETdphi_",htitle,10,-1,1,hlabel,"Events"));
+    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuMETdphi_",htitle,10,-1,1,hlabel,"Events"));
   }
-   else if(i==TauMETTopMT){
-    title.at(i)="$M_{T,Top,\\tau-side} < $";
-    title.at(i)+=cut.at(TauMETTopMT);
-    title.at(i)+="(GeV)";
-    htitle=title.at(i);
-    htitle.ReplaceAll("$","");
-    htitle.ReplaceAll("\\","#");
-    hlabel="M_{T,Top,#tau-side} (GeV)";
-    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETTopMT_",htitle,100,0,500,hlabel,"Events"));
-    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETTopMT_",htitle,100,0,500,hlabel,"Events"));
-   }
    else if(i==TauMETdphi){
       title.at(i)="$cos(\\phi(\\tau,MET)) < $";
       char buffer[50];
@@ -249,22 +249,9 @@ void  ChargedHiggs_dilepontic::Configure(){
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="cos(#phi(#tau,MET)) (rad)";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,32,-1,1,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,32,-1,1,hlabel,"Events"));
+      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauMETdphi_",htitle,10,-1,1,hlabel,"Events"));
+      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauMETdphi_",htitle,10,-1,1,hlabel,"Events"));
    } 
-   else if(i==etaq){
-     title.at(i)="$q_{\\tau}|\\eta_{\\tau}|$";
-     char buffer[50];
-     sprintf(buffer,"%5.2f",cut.at(etaq));
-     title.at(i)+=buffer;
-     title.at(i)+="";
-     htitle=title.at(i);
-     htitle.ReplaceAll("$","");
-     htitle.ReplaceAll("\\","#");
-     hlabel="q_{#tau}|#eta_{#tau}|";
-     Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
-     Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_etaq_",htitle,40,-2.0,2.0,hlabel,"Events"));
-   }
 
     //-----------
   }
@@ -324,7 +311,6 @@ void  ChargedHiggs_dilepontic::doEvent(){
   value.at(NTauKinFit)=GoodTaus.size();
   pass.at(NTauKinFit)=(value.at(NTauKinFit)>=cut.at(NTauKinFit));
 
-
   for(unsigned i=0;i<GoodTaus.size();i++){
     dist.at(NTauPt).push_back(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt());
     if(Ntp->KFTau_TauFit_p4(GoodTaus.at(i)).Pt()<tau_pt){
@@ -353,16 +339,25 @@ void  ChargedHiggs_dilepontic::doEvent(){
   //
   std::vector<unsigned int> mu_idx;
   for(unsigned int i=0; i<Ntp->NMuons(); i++){
-    if(Ntp->isGoodMuon(i) && Ntp->Muons_p4(i).Pt()>muon_pt && fabs(Ntp->Muons_p4(i).Eta())<muon_eta)mu_idx.push_back(i);
+    if(Ntp->isGoodMuon(i) && Ntp->Muons_p4(i).Pt()>muon_pt && fabs(Ntp->Muons_p4(i).Eta())<muon_eta){mu_idx.push_back(i);}
   }
   value.at(NMuons)=mu_idx.size();
   pass.at(NMuons)=(value.at(NMuons)==cut.at(NMuons));
 
+  float max_mu_pt=0;
+  value.at(MuRelIso)=1.1;
+  for(unsigned int i=0; i<mu_idx.size();i++){
+    if(Ntp->Muons_p4(mu_idx.at(i)).Pt()>max_mu_pt){
+      value.at(MuRelIso)=Ntp->Muon_RelIso(mu_idx.at(i));
+    }
+  }
+  pass.at(MuRelIso)=(value.at(MuRelIso)<cut.at(MuRelIso));
+
   value.at(ElectronVeto)=0;
-  pass.at(ElectronVeto)=0;
+  pass.at(ElectronVeto)=true;
 
   value.at(MuonVeto)=0;
-  pass.at(MuonVeto)=0;
+  pass.at(MuonVeto)=true;
 
   ///////////////////////////////////////////////
   //
@@ -378,8 +373,6 @@ void  ChargedHiggs_dilepontic::doEvent(){
       if(!overlap)GoodJets.push_back(i);
     }
   }
-  value.at(N1Jets)=GoodJets.size();
-  pass.at(N1Jets)=(value.at(N1Jets)>=cut.at(N1Jets));
 
   value.at(N2Jets)=GoodJets.size();
   pass.at(N2Jets)=(value.at(N2Jets)>=cut.at(N2Jets));
@@ -399,7 +392,9 @@ void  ChargedHiggs_dilepontic::doEvent(){
   ///////////////////////////////////////////////
   //
   // Event Shape and Energy Cuts
-  //
+  // 1) compute variables
+  // 2) run cuts
+
   double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
   // correct for neutrino from taus
   for(unsigned int i=0; i<GoodTaus.size();i++){
@@ -407,7 +402,15 @@ void  ChargedHiggs_dilepontic::doEvent(){
     MET_Ey+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Py();
   }
   value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
-  pass.at(MET)=(value.at(MET)<cut.at(MET));
+  pass.at(MET)=(value.at(MET)>=cut.at(MET));
+
+
+  TLorentzVector Met(MET_Ex,MET_Ey,0,sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey));
+
+  TLorentzVector Tau(0,0,0,0);
+  if(GoodTaus.size()>0){
+    Tau=Ntp->KFTau_TauFit_p4(GoodTaus.at(0));
+  }
 
   value.at(HT)=0;
   for(unsigned int i=0; i<GoodTaus.size();i++){
@@ -418,97 +421,36 @@ void  ChargedHiggs_dilepontic::doEvent(){
   }
   pass.at(HT)=(value.at(HT)>=cut.at(HT));
   if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() E " << tauidx << std::endl;
-  ///////////////////////////////////////////////
-  //
-  // Top and W Masses
-  //
-  std::vector<unsigned int> WJetCand=GoodJets;
-  for(unsigned int i=0;i<WJetCand.size();i++){
-    for(unsigned int j=0;j<GoodBJets.size();j++){
-      if(WJetCand.at(i)==GoodBJets.at(j)){
-	WJetCand.erase(WJetCand.begin()+i);
-	i--;
-	break;
-      }
-    }
+
+  value.at(MT)=0;
+  if(mu_idx.size()>0){
+    value.at(MT)=sqrt(2*(Ntp->MET_et())*Ntp->Muons_p4(mu_idx.at(0)).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx.at(0)).Phi()-Ntp->MET_phi())));
+    pass.at(MT)=(value.at(MT)>cut.at(MT));
   }
+  pass.at(MT)=true;
 
-  std::vector<unsigned int> WJets(2,0);
-  value.at(HadWMass)=999;
-  for(unsigned int i=0;i<WJetCand.size();i++){
-    for(unsigned int j=i+1;j<WJetCand.size();j++){
-      TLorentzVector W=Ntp->PFJet_p4(WJetCand.at(i));
-      W+=Ntp->PFJet_p4(WJetCand.at(j));
-      if(fabs(PDG_Var::W_mass()-W.M())<fabs(PDG_Var::W_mass()-value.at(HadWMass))){
-	WJets.at(0)=WJetCand.at(i);
-	WJets.at(1)=WJetCand.at(j);
-	value.at(HadWMass)=W.M();
-      }
-    }
-  }
-  pass.at(HadWMass)=(fabs(PDG_Var::W_mass()-value.at(HadWMass))<=cut.at(HadWMass));
-
-  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() F " << tauidx << std::endl;
-  unsigned int HadTopB(0);
-  value.at(HadTopMass)=999;
-  for(unsigned int i=0;i<GoodBJets.size();i++){
-    TLorentzVector Top=Ntp->PFJet_p4(GoodBJets.at(i));
-    Top+=Ntp->PFJet_p4(WJets.at(0));
-    Top+=Ntp->PFJet_p4(WJets.at(1));
-    if(fabs(PDG_Var::Top_mass()-Top.M())<fabs(PDG_Var::Top_mass()-value.at(HadTopMass))){
-      HadTopB=GoodBJets.at(i);
-      value.at(HadTopMass)=Top.M();
-    }
-  }
-  pass.at(HadWMass)=(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
-
-  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() G " << tauidx << std::endl;
-
-  TLorentzVector MET;
-  TLorentzVector Tau;
-  TLorentzVector BTau;
-  value.at(TauMETTopMT)=999;
-  for(unsigned int i=0;i<GoodBJets.size();i++){
-    if(GoodBJets.at(i)!=HadTopB){
-      BTau=Ntp->PFJet_p4(GoodBJets.at(i));
-      MET_Ex=Ntp->MET_ex();
-      MET_Ey=Ntp->MET_ey();
-      // correct for neutrino from taus   
-      if(GoodTaus.size()>0){
-	Tau=Ntp->KFTau_TauFit_p4(GoodTaus.at(0)).Pt();
-	BTau+=Tau;
-	MET_Ex+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(0)).Px();
-	MET_Ey+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(0)).Py();
-      }
-      TLorentzVector LV(MET_Ex,MET_Ey,0,sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey));
-      MET=LV;
-      value.at(TauMETTopMT)=sqrt(2*(MET.Pt())*BTau.Pt()*fabs(1-cos(BTau.Phi()-MET.Phi())));
-      break;
-    }
-  }
-  pass.at(TauMETTopMT)=true;//(fabs(PDG_Var::Top_mass()-value.at(HadWMass))<=cut.at(HadWMass));
-
-  value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,MET));
+  value.at(TauMETdphi)=cos(Tools::DeltaPhi(Tau,Met));
   pass.at(TauMETdphi)=(value.at(TauMETdphi)<=cut.at(TauMETdphi));
+
+  value.at(MuMETdphi)=0;
+  if(mu_idx.size()>0){
+    value.at(MuMETdphi)=cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx.at(0)),Met));
+  }
+  pass.at(MuMETdphi)=(value.at(MuMETdphi)<=cut.at(MuMETdphi));
   if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() H " << tauidx << std::endl;
 
   ///////////////////////////////////////////////////////////
-  value.at(etaq)=0;
-  pass.at(etaq)=false;
-  if(tauidx!=999){
-    value.at(etaq)=Ntp->KFTau_Fit_charge(tauidx)*fabs(Ntp->KFTau_TauFit_p4(tauidx).Eta());
-    pass.at(etaq)=value.at(etaq)>cut.at(etaq);
+  value.at(Charge)=0;
+  pass.at(Charge)=false;
+  if(tauidx!=999 && mu_idx.size()>0){
+    value.at(Charge)=Ntp->KFTau_Fit_charge(tauidx)+Ntp->Muon_Charge(mu_idx.at(0));
+    pass.at(Charge)=value.at(Charge)==cut.at(Charge);
   }
-  pass.at(etaq)=true;
   if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() I" << std::endl;
 
   pass.at(HT)=true;
-  pass.at(etaq)=true;
-  pass.at(HadWMass)=true;
-  pass.at(HadTopMass)=true;
-  pass.at(TauMETTopMT)=true;
   pass.at(TauMETdphi)=true;
-
+  pass.at(MuMETdphi)=true;
 
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);

@@ -200,7 +200,8 @@ class Ntuple_Controller{
   int            Muon_Charge(unsigned int i){return Ntp->Muon_Charge->at(i);}
   bool           isGoodMuon(unsigned int i);
   bool           isGoodMuon_nooverlapremoval(unsigned int i);
-  
+  float           Muon_RelIso(unsigned int i);
+
   //Base Tau Information (PF)
    unsigned int      NPFTaus(){return Ntp->PFTau_p4->size();}
    TLorentzVector    PFTau_p4(unsigned int i){return TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));}
@@ -215,14 +216,14 @@ class Ntuple_Controller{
    bool              PFTau_isMediumIsolationDBSumPtCorr(unsigned int i){return Ntp->PFTau_isMediumIsolationDBSumPtCorr->at(i);}
    bool              PFTau_isLooseIsolationDBSumPtCorr(unsigned int i){return Ntp->PFTau_isLooseIsolationDBSumPtCorr->at(i);}
    bool              PFTau_isVLooseIsolationDBSumPtCorr(unsigned int i){return Ntp->PFTau_isVLooseIsolationDBSumPtCorr->at(i);}
-   /*
+   
    bool              PFTau_isHPSAgainstElectronsLoose(unsigned int i){return Ntp->PFTau_isHPSAgainstElectronsLoose->at(i);}
    bool              PFTau_isHPSAgainstElectronsMedium(unsigned int i){return Ntp->PFTau_isHPSAgainstElectronsMedium->at(i);}
    bool              PFTau_isHPSAgainstElectronsTight(unsigned int i){return Ntp->PFTau_isHPSAgainstElectronsTight->at(i);}
    bool              PFTau_isHPSAgainstMuonLoose(unsigned int i){return Ntp->PFTau_isHPSAgainstMuonLoose->at(i);}
    bool              PFTau_isHPSAgainstMuonTight(unsigned int i){return Ntp->PFTau_isHPSAgainstMuonTight->at(i);}
    bool              PFTau_isHPSByDecayModeFinding(unsigned int i){return Ntp->PFTau_isHPSByDecayModeFinding->at(i);}
-   */
+   
 
 
    std::vector<int>  PFTau_Track_idx(unsigned int i){return Ntp->PFTau_Track_idx->at(i);}

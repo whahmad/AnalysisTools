@@ -268,9 +268,7 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 	if(Muon_normChi2(i)<10.0){
 	  if(Muon_innerTrack_numberofValidHits(i)>10){
 	    if(Muon_hitPattern_numberOfValidMuonHits(i)>0){
-	      //if((Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt()<0.2){
 	      return true;
-	      //}
 	    }
 	  }
 	}
@@ -281,6 +279,10 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 }
 
 
+
+float Ntuple_Controller::Muon_RelIso(unsigned int i){
+  return (Muon_emEt03(i)+Muon_hadEt03(i)+Muon_sumPt03(i))/Muons_p4(i).Pt();
+}
 
 
 
@@ -500,7 +502,7 @@ bool Ntuple_Controller::isGoodKFTau(unsigned int i){
   if(KFTau_discriminatorByKFit(i)){
     if(KFTau_discriminatorByQC(i)){
       if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
-	if(PFTau_isMediumIsolation(KFTau_MatchedHPS_idx(i))){
+	if(PFTau_isMediumIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
 	  return true;
 	}
       }
