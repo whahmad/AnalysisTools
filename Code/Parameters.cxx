@@ -76,7 +76,7 @@ void Parameters::GetVectorString(TString p, std::vector<TString> &v, TString dv)
   unsigned int a=0;
   while(getline(input_file, s)){
     a++;
-    if(a>250) break;
+    if(a>10000){std::cout << "Error More than 10000 line in file??? Breaking" << std::endl; break;}
     std::stringstream line(s);
     TString par;
     TString val;
@@ -121,7 +121,7 @@ void Parameters::GetParameter(TString p, T &v,T dv){
   unsigned int a=0;
   while(getline(input_file, s)){
     a++;
-    if(a>250) break;
+    if(a>10000){std::cout << "Error More than 10000 line in file??? Breaking" << std::endl; break;}
     std::stringstream line(s); 
     TString par;
     T val;
@@ -158,7 +158,7 @@ void Parameters::GetVectorStringDouble(TString p, std::vector<TString> &v1, std:
   unsigned int a=0;
   while(getline(input_file, s)){
     a++;
-    if(a>250) break;
+    if(a>10000){std::cout << "Error More than 10000 line in file??? Breaking" << std::endl; break;}
     std::stringstream line(s);
     TString par;
     TString val1;

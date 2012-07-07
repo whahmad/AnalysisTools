@@ -263,7 +263,7 @@ void  ChargedHiggs_dilepontic::Configure(){
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
   ChargedHiggsMT=HConfig.GetTH1D(Name+"_ChargedHiggsMT","ChargedHiggsMT",100,0,250,"M_{T,#tau,MET}","Events");
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"#eta","P_{T}^{Tag}");
-  METvsMT=HConfig.GetTH2D(Name+"_MTvsMuMETdphi","MTvsMuMETdphi",15,0,300,15,0,300,"M_{T} (GeV)","E_{T}^{Miss} (GeV)");
+  METvsMT=HConfig.GetTH2D(Name+"_METvsMT","METvsMT",15,0,300,15,0,300,"M_{T} (GeV)","E_{T}^{Miss} (GeV)");
   MTvsMuMETdphi=HConfig.GetTH2D(Name+"_MTvsMuMETdphi","MTvsMuMETdphi",10,-1,1,15,0,300,"cos(\\phi(\\mu,MET))","M_{T} (GeV)");
 
 
