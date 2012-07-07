@@ -165,8 +165,8 @@ void  ChargedHiggs_dilepontic::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
       distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (N-1 Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",100,0,200,"P_{T,#tau} (GeV)","Events");
+      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NTauPt_","P_{T,#tau} (N-1 Distribution)",20,0,200,"P_{T,#tau} (GeV)","Events");
+      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NTauPt_","P_{T,#tau} (Accumulative Distribution)",20,0,200,"P_{T,#tau} (GeV)","Events");
     }
     else if(i==NTauEta){
       title.at(i)="Number of $\\tau$ [$|\\eta^{\\tau}|<$";
@@ -260,7 +260,7 @@ void  ChargedHiggs_dilepontic::Configure(){
   // Setup Extra Histograms
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"Number of Vertex","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of Good Vertex","Events");
-  NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
+  NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",30,-0.5,150.5,"Number of Track per Vertex","Events");
   ChargedHiggsMT=HConfig.GetTH1D(Name+"_ChargedHiggsMT","ChargedHiggsMT",100,0,250,"M_{T,#tau,MET}","Events");
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"#eta","P_{T}^{Tag}");
   METvsMT=HConfig.GetTH2D(Name+"_METvsMT","METvsMT",15,0,300,15,0,300,"M_{T} (GeV)","E_{T}^{Miss} (GeV)");

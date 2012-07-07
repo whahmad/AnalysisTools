@@ -276,7 +276,7 @@ void  Selection::Finish(){
       }
     }
     for(unsigned int i=0; i<Extradist2d.size();i++){
-      // P.Plot2D((*Extradist2d.at(i)),Lumi,CrossSectionandAcceptance,nevents,colour,legend);
+      P.Plot2D((*Extradist2d.at(i)),Lumi,CrossSectionandAcceptance,nevents,colour,legend);
     }
     
     std::cout << "Writing out "<< Name << ".tex" << std::endl;

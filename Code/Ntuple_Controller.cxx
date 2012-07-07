@@ -182,7 +182,8 @@ void Ntuple_Controller::doMET(){
 
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
-  if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal){
+
+  if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal && HistoC.hasID(DataMCType::DY_ll_Signal)){
     for(int i=0;i<NMCSignalParticles();i++){
       if(abs(MCSignalParticle_pdgid(i))==PdtPdgMini::Z0){
 	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
@@ -192,8 +193,10 @@ int Ntuple_Controller::GetMCID(){
     }
     return Ntp->DataMC_Type;
   }
-  if(NMCTaus()>0 && (Ntp->DataMC_Type%100)==DataMCType::DY_ll){
-    return DataMCType::DY_tautau;
+  if(Ntp->DataMC_Type>100){
+    if(HistoC.hasID(Ntp->DataMC_Type%100)){
+      return Ntp->DataMC_Type%100;
+    }
   }
   if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;
 }

@@ -31,6 +31,7 @@
 #include "TauSpinerInterface.h"
 #include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 #include "TauDataFormat/TauNtuple/interface/TauDecay.h"
+#include "HistoConfig.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
@@ -93,6 +94,7 @@ class Ntuple_Controller{
 
   // Interfaces
   TauSpinerInterface TauSpinerInt;
+  HistoConfig HistoC;
 
  public:
   // Constructor
