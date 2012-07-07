@@ -263,6 +263,10 @@ void  ChargedHiggs_dilepontic::Configure(){
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
   ChargedHiggsMT=HConfig.GetTH1D(Name+"_ChargedHiggsMT","ChargedHiggsMT",100,0,250,"M_{T,#tau,MET}","Events");
   TagEtaPT=HConfig.GetTH2D(Name+"_TagEtaPT","TagEtaPT",25,0,2.5,50,0,50,"#eta","P_{T}^{Tag}");
+  METvsMT=HConfig.GetTH2D(Name+"_MTvsMuMETdphi","MTvsMuMETdphi",15,0,300,15,0,300,"M_{T} (GeV)","E_{T}^{Miss} (GeV)");
+  MTvsMuMETdphi=HConfig.GetTH2D(Name+"_MTvsMuMETdphi","MTvsMuMETdphi",10,-1,1,15,0,300,"cos(\\phi(\\mu,MET))","M_{T} (GeV)");
+
+
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
   for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -278,6 +282,8 @@ void  ChargedHiggs_dilepontic::Store_ExtraDist(){
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&NTrackperVtx);
  Extradist2d.push_back(&TagEtaPT);
+ Extradist2d.push_back(&METvsMT);
+ Extradist2d.push_back(&MTvsMuMETdphi);
 }
 
 void  ChargedHiggs_dilepontic::doEvent(){
@@ -398,8 +404,8 @@ void  ChargedHiggs_dilepontic::doEvent(){
   double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
   // correct for neutrino from taus
   for(unsigned int i=0; i<GoodTaus.size();i++){
-    MET_Ex+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Px();
-    MET_Ey+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Py();
+    MET_Ex-=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Px();
+    MET_Ey-=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Py();
   }
   value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
   pass.at(MET)=(value.at(MET)>=cut.at(MET));
@@ -456,7 +462,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
   double wobs(1),w(1);
   if(!Ntp->isData()){
     if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() J" << std::endl;
-    // w*=Ntp->EvtWeight3D();
+    w*=Ntp->EvtWeight3D();
     if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}
@@ -467,15 +473,21 @@ void  ChargedHiggs_dilepontic::doEvent(){
   // Add plots
   if(status){
     if(verbose)std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
-    NVtx.at(t).Fill(Ntp->NVtx(),w);
+    NVtx.at(t).Fill(Ntp->NVtx(),w*wobs);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
-      NTrackperVtx.at(t).Fill(Ntp->Vtx_Track_idx(i).size(),w);
+      NTrackperVtx.at(t).Fill(Ntp->Vtx_Track_idx(i).size(),w*wobs);
       if(Ntp->isVtxGood(i))nGoodVtx++;
     }
-    NGoodVtx.at(t).Fill(nGoodVtx,w);;
+    NGoodVtx.at(t).Fill(nGoodVtx,w*wobs);;
 
   }
+  if(NMinus2(MT,MET)){
+    METvsMT.at(t).Fill(value.at(MT),value.at(MET),w*wobs);
+    MTvsMuMETdphi.at(t).Fill(value.at(MuMETdphi),value.at(MT),w*wobs);
+  }
+
+
 }
 
 

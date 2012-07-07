@@ -18,6 +18,9 @@ class Selection : public Selection_Base {
   virtual void  LoadResults(std::vector<TString> files);
 
   virtual bool Passed();
+  virtual bool NminusL(int a, int b=-1, int c=-1, int d=-1, int e=-1);
+  virtual bool NMinus1(int a);
+  virtual bool NMinus2(int a, int b);
 
   std::vector<TH1D>&                 Get_Npassed(){return Npassed;}
   std::vector<TH1D>&                 Get_Npassed_noweight(){return Npassed_noweight;}

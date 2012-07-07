@@ -296,6 +296,24 @@ bool Selection::Passed(){
   return true;
 }
 
+bool Selection::NminusL(int a, int b, int c, int d, int e){
+  bool good=true;
+  for(int i=0; i<(int)(pass.size()); i++){
+    if(i!=a && i!=b && i!=c && i!=d && i!=e){
+      if(!pass.at(i)) good=false;
+    }
+  }
+  return good;
+}
+
+bool Selection::NMinus1(int a){
+  return Selection::NminusL(a);
+}
+bool Selection::NMinus2(int a, int b){
+  return Selection::NminusL(a,b);
+}
+
+
 
 double Selection::Compute(double thisdata,double thissignal, double thissignalTotal, double thisbkg, 
 			  double data,double signal,double signalTotal, double bkg){

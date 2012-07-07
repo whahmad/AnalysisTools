@@ -44,6 +44,10 @@ class ChargedHiggs_dilepontic : public Selection {
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
   std::vector<TH1D> ChargedHiggsMT;
+  std::vector<TH2D> METvsMT;
+  std::vector<TH2D> MTvsMuMETdphi;
+
+
   double tau_pt,tau_eta,jet_pt,jet_eta,muon_pt,muon_eta;
 
 };
