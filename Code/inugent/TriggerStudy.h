@@ -13,7 +13,7 @@ class TriggerStudy : public Selection {
 
   virtual void  Configure();
 
-  enum cuts {isSignal=0,NCuts};
+  enum cuts {TriggerOk=0,NTau,TriggerMatch,NCuts};
 
   virtual void Finish();
 
@@ -25,11 +25,10 @@ class TriggerStudy : public Selection {
   // Selection Variables
 
   std::vector<std::vector<TH1D> > N_pt;
-  std::vector<std::vector<TH1D> > n_pt;
-  std::vector<std::vector<TH1D> > Eff_pt;
   std::vector<std::vector<TH1D> > N_eta;
-  std::vector<std::vector<TH1D> > n_eta;
-  std::vector<std::vector<TH1D> > Eff_eta;
+  std::vector<std::vector<TH1D> > HpsMode;\
+  std::vector<std::vector<TH2D> > N_2d;
+  std::vector<TH1D> Mtautau;
 
 };
 #endif

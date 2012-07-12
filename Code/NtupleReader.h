@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Apr  2 22:56:06 2012 by ROOT version 5.26/00c
+// Thu May 31 15:33:50 2012 by ROOT version 5.26/00c
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -245,10 +245,18 @@ public :
    std::vector<unsigned int> *NHLTL1GTSeeds;
    std::vector<unsigned int> *L1SEEDPrescale;
    std::vector<bool>    *L1SEEDInvalidPrescale;
+   std::vector<unsigned int> *L1SEEDisTechBit;
    std::vector<std::vector<float> > *MuonTriggerMatch;
    std::vector<std::vector<float> > *ElectronTriggerMatch;
    std::vector<std::vector<float> > *JetTriggerMatch;
    std::vector<std::vector<float> > *TauTriggerMatch;
+   std::vector<std::vector<float> > *HLTTrigger_objs_Pt;
+   std::vector<std::vector<float> > *HLTTrigger_objs_Eta;
+   std::vector<std::vector<float> > *HLTTrigger_objs_Phi;
+   std::vector<std::string>  *L1TriggerName;
+   std::vector<bool>    *L1TriggerDecision;
+   std::vector<int>     *L1ErrorCode;
+   std::vector<unsigned int> *L1Prescale;
 
    // List of branches
    TBranch        *b_DataMC_Type;   //!
@@ -471,10 +479,18 @@ public :
    TBranch        *b_NHLTL1GTSeeds;   //!
    TBranch        *b_L1SEEDPrescale;   //!
    TBranch        *b_L1SEEDInvalidPrescale;   //!
+   TBranch        *b_L1SEEDisTechBit;   //!
    TBranch        *b_MuonTriggerMatch;   //!
    TBranch        *b_ElectronTriggerMatch;   //!
    TBranch        *b_JetTriggerMatch;   //!
    TBranch        *b_TauTriggerMatch;   //!
+   TBranch        *b_HLTTrigger_objs_Pt;   //!
+   TBranch        *b_HLTTrigger_objs_Eta;   //!
+   TBranch        *b_HLTTrigger_objs_Phi;   //!
+   TBranch        *b_L1TriggerName;   //!
+   TBranch        *b_L1TriggerDecision;   //!
+   TBranch        *b_L1ErrorCode;   //!
+   TBranch        *b_L1Prescale;   //!
 
    NtupleReader(TTree *tree=0);
    virtual ~NtupleReader();
@@ -511,7 +527,7 @@ NtupleReader::NtupleReader(TTree *tree)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/net/scratch_cms/institut_3b/nugent/workdirV1/TauNtuple_27_1_I2n.root/t");
+      chain->Add("../TauNtuple_177_1_b8z.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -747,10 +763,18 @@ void NtupleReader::Init(TTree *tree)
    NHLTL1GTSeeds = 0;
    L1SEEDPrescale = 0;
    L1SEEDInvalidPrescale = 0;
+   L1SEEDisTechBit = 0;
    MuonTriggerMatch = 0;
    ElectronTriggerMatch = 0;
    JetTriggerMatch = 0;
    TauTriggerMatch = 0;
+   HLTTrigger_objs_Pt = 0;
+   HLTTrigger_objs_Eta = 0;
+   HLTTrigger_objs_Phi = 0;
+   L1TriggerName = 0;
+   L1TriggerDecision = 0;
+   L1ErrorCode = 0;
+   L1Prescale = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -977,10 +1001,18 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("NHLTL1GTSeeds", &NHLTL1GTSeeds, &b_NHLTL1GTSeeds);
    fChain->SetBranchAddress("L1SEEDPrescale", &L1SEEDPrescale, &b_L1SEEDPrescale);
    fChain->SetBranchAddress("L1SEEDInvalidPrescale", &L1SEEDInvalidPrescale, &b_L1SEEDInvalidPrescale);
+   fChain->SetBranchAddress("L1SEEDisTechBit", &L1SEEDisTechBit, &b_L1SEEDisTechBit);
    fChain->SetBranchAddress("MuonTriggerMatch", &MuonTriggerMatch, &b_MuonTriggerMatch);
    fChain->SetBranchAddress("ElectronTriggerMatch", &ElectronTriggerMatch, &b_ElectronTriggerMatch);
    fChain->SetBranchAddress("JetTriggerMatch", &JetTriggerMatch, &b_JetTriggerMatch);
    fChain->SetBranchAddress("TauTriggerMatch", &TauTriggerMatch, &b_TauTriggerMatch);
+   fChain->SetBranchAddress("HLTTrigger_objs_Pt", &HLTTrigger_objs_Pt, &b_HLTTrigger_objs_Pt);
+   fChain->SetBranchAddress("HLTTrigger_objs_Eta", &HLTTrigger_objs_Eta, &b_HLTTrigger_objs_Eta);
+   fChain->SetBranchAddress("HLTTrigger_objs_Phi", &HLTTrigger_objs_Phi, &b_HLTTrigger_objs_Phi);
+   fChain->SetBranchAddress("L1TriggerName", &L1TriggerName, &b_L1TriggerName);
+   fChain->SetBranchAddress("L1TriggerDecision", &L1TriggerDecision, &b_L1TriggerDecision);
+   fChain->SetBranchAddress("L1ErrorCode", &L1ErrorCode, &b_L1ErrorCode);
+   fChain->SetBranchAddress("L1Prescale", &L1Prescale, &b_L1Prescale);
    Notify();
 }
 

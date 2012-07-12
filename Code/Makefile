@@ -66,7 +66,8 @@ TARGETS       =	Ntuple_Controller \
 		ZDouble3prong \
 		Ztomumu_ControlSample \
 		TauSolver \
-		TriggerStudy
+		TriggerStudy \
+		TriggerStudyMC
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
