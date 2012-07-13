@@ -5,6 +5,7 @@
 #include "TString.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TH3F.h"
 #include "TString.h"
 
 class HistoConfig {
@@ -20,6 +21,11 @@ class HistoConfig {
   std::vector<TH1D> GetTH1D(TString name,TString title, int nbins, double min, double max, TString xaxis="",TString yaxis="Events");
   std::vector<TH2D> GetTH2D(TString name,TString title, int nbinsx, double minx, double maxx, 
 			    int nbinsy,double miny, double maxy, TString xaxis="", TString yaxis="");
+
+  std::vector<TH3F> GetTH3F(TString name,TString title, int nbinsx, double minx, double maxx,
+                            int nbinsy,double miny, double maxy,int nbinsz,double minz,double maxz, 
+			    TString xaxis="", TString yaxis="",TString zaxis="");
+
   bool GetHisto(bool isdata,int id,unsigned int &histo);
   unsigned int GetNHisto();
   TString GetName(unsigned int i);

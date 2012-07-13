@@ -304,7 +304,7 @@ bool Ntuple_Controller::isGoodJet(unsigned int i){
 
 bool Ntuple_Controller::jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx){
   for(unsigned int j=0;j<NMuons();j++){
-    if(isGoodMuon_nooverlapremoval(j)){
+    if(isGoodMuon_nooverlapremoval(j) && Muon_RelIso(j)){
       if(Tools::dr(Muons_p4(j),PFJet_p4(jet_idx))<0.4){ muon_idx=j;return true;}
     }
   }
@@ -505,7 +505,8 @@ bool Ntuple_Controller::isGoodKFTau(unsigned int i){
   if(KFTau_discriminatorByKFit(i)){
     if(KFTau_discriminatorByQC(i)){
       if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
-	if(PFTau_isMediumIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
+	if(PFTau_isVLooseIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
+	  //if(PFTau_isMediumIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
 	  return true;
 	}
       }

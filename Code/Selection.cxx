@@ -114,6 +114,12 @@ void Selection::LoadResults(std::vector<TString> files){
 		  Extradist2d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
 		}
 	      }
+              for(unsigned int k=0; k<Extradist3d.size();k++){
+                TString n=Extradist3d.at(k)->at(j).GetName();
+		hname=(Extradist3d.at(k)->at(j)).GetName();
+		Extradist3d.at(k)->at(j).Add((TH1*)f->Get(hname),1.000);
+              }
+
 	    }
 	  }
 	}
@@ -227,6 +233,10 @@ void  Selection::Finish(){
 	for(unsigned int i=0; i<Extradist2d.size();i++){
 	  Extradist2d.at(i)->at(j).Write((Extradist2d.at(i)->at(j)).GetName());
 	}
+        for(unsigned int i=0; i<Extradist3d.size();i++){
+          Extradist3d.at(i)->at(j).Write((Extradist3d.at(i)->at(j)).GetName());
+        }
+
       }
     }
   }
@@ -278,6 +288,10 @@ void  Selection::Finish(){
     for(unsigned int i=0; i<Extradist2d.size();i++){
       P.Plot2D((*Extradist2d.at(i)),Lumi,CrossSectionandAcceptance,nevents,colour,legend);
     }
+    for(unsigned int i=0; i<Extradist3d.size();i++){
+      P.Plot3D((*Extradist3d.at(i)),Lumi,CrossSectionandAcceptance,nevents,colour,legend);
+    }
+
     
     std::cout << "Writing out "<< Name << ".tex" << std::endl;
     Tables T(Name);
@@ -296,7 +310,7 @@ bool Selection::Passed(){
   return true;
 }
 
-bool Selection::NminusL(int a, int b, int c, int d, int e){
+bool Selection::NMinusL(int a, int b, int c, int d, int e){
   bool good=true;
   for(int i=0; i<(int)(pass.size()); i++){
     if(i!=a && i!=b && i!=c && i!=d && i!=e){
@@ -307,10 +321,10 @@ bool Selection::NminusL(int a, int b, int c, int d, int e){
 }
 
 bool Selection::NMinus1(int a){
-  return Selection::NminusL(a);
+  return Selection::NMinusL(a);
 }
 bool Selection::NMinus2(int a, int b){
-  return Selection::NminusL(a,b);
+  return Selection::NMinusL(a,b);
 }
 
 

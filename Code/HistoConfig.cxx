@@ -163,6 +163,24 @@ std::vector<TH2D> HistoConfig::GetTH2D(TString name,TString title,int nbinsx, do
   return histos;
 }
 
+std::vector<TH3F> HistoConfig::GetTH3F(TString name,TString title, int nbinsx, double minx, double maxx,
+			  int nbinsy,double miny, double maxy,int nbinsz,double minz,double maxz,
+			  TString xaxis, TString yaxis,TString zaxis){
+
+  std::vector<TH3F> histos;
+  std::cout << "Adding TH2D " << name << " " << title << std::endl;
+  for(int i=0;i<HistoName.size();i++){
+    histos.push_back(TH3F(name+HistoName.at(i),HistoLegend.at(i),nbinsx,minx,maxx,nbinsy,miny,maxy,nbinsz,minz,maxz));
+    histos.at(i).Sumw2();
+    histos.at(i).SetXTitle(xaxis);
+    histos.at(i).SetYTitle(yaxis);
+    histos.at(i).SetZTitle(zaxis);
+  }
+  return histos;
+}
+
+
+
 bool HistoConfig::hasID(int id_){
   for(unsigned int i=0; i<ID.size();i++){
     if(ID.at(i)==id_) return true;

@@ -19,17 +19,19 @@ class ChargedHiggs_dilepontic : public Selection {
 	     NTauPt,
 	     NTauEta,
 	     NMuons,
+	     MuonTrigMatch,
 	     MuRelIso,
 	     ElectronVeto,
 	     MuonVeto,
 	     N2Jets,
+	     MaxJetPT,
              NBJets,
              MET,
-             HT,
+             MTplusMET,
 	     Charge,
 	     MT,
 	     MuMETdphi,
-	     TauMETdphi,
+	     MTandMuMETdphi,
 	     NCuts};
 
  protected:
@@ -43,11 +45,16 @@ class ChargedHiggs_dilepontic : public Selection {
   std::vector<TH1D> NGoodVtx;
   std::vector<TH1D> NTrackperVtx;
   std::vector<TH2D> TagEtaPT;
+  std::vector<TH2D> Jet1stEtaPT;
+  std::vector<TH2D> Jet2ndEtaPT;
   std::vector<TH1D> ChargedHiggsMT;
   std::vector<TH2D> METvsMT;
+  std::vector<TH2D> METWHypvsMT;
   std::vector<TH2D> MTvsMuMETdphi;
+  std::vector<TH2D> METvsMuMETdphi;
+  std::vector<TH3F> METvsMTvsMuMETdphi;
 
-
+  TString mutrigname;
   double tau_pt,tau_eta,jet_pt,jet_eta,muon_pt,muon_eta;
 
 };

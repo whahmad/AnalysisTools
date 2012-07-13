@@ -6,6 +6,7 @@
 #include "TLatex.h"
 #include "TFile.h"
 #include "TGaxis.h"
+#include "TView.h"
 #include "TMath.h"
 #include <cmath>
 #include <iostream>
@@ -822,6 +823,78 @@ void Plots::Plot2D(std::vector<TH2D>  histo,float Lumi,std::vector<float> CrossS
   }
 }
 
+
+
+void Plots::Plot3D(std::vector<TH3F>  histo,float Lumi,std::vector<float> CrossSectionandAcceptance,std::vector<float> nevents,std::vector<int> colour,std::vector<TString> legend){
+  std::cout << "Plots::Plot3D" << std::endl;
+  gStyle->SetPadTopMargin(0.10);
+  gStyle->SetPadBottomMargin(0.22);
+  gStyle->SetPadLeftMargin(0.180);
+  gStyle->SetPadRightMargin(0.175);
+  gStyle->SetTitleXOffset(2.4);
+  gStyle->SetTitleYOffset(2.4);
+
+  TCanvas c("c","c",200,10,750,750);
+  if(histo.size()>0){
+    if(verbose)std::cout << "Starting Plot3D" << histo.size() << " " << CrossSectionandAcceptance.size() << " " << colour.size() << " " << legend.size() << std::endl;
+    c.Clear();
+    c.Divide(2,2);
+    int type=0;
+    int index=0;
+    for(int i=0; i<histo.size();i++){
+      if(nevents.at(i)>0 && i!=0){
+	if(nevents.at(i)>0 && Lumi>0 && CrossSectionandAcceptance.at(i)>0){
+	  histo.at(i).Scale(Lumi*CrossSectionandAcceptance.at(i)/nevents.at(i));
+	}
+      }
+    }
+    std::cout << "A" << std::endl;
+    TLegend leg(0.1,0.4,0.9,0.9);
+    leg.SetBorderSize(0);
+    leg.SetFillStyle(4000);
+    leg.SetFillColor(0);
+    leg.SetTextSize(0.03);
+    leg.SetMargin(0.15);
+    leg.SetNColumns(1);
+    leg.SetColumnSeparation(0.05);
+    for(unsigned int p=0;p<4;p++){
+      for(int i=0; i<histo.size();i++){
+	histo.at(i).SetMarkerSize(0.25);
+	histo.at(i).SetMarkerColor(colour.at(i));
+	histo.at(i).GetXaxis()->SetTitleOffset(2.0);
+	histo.at(i).GetYaxis()->SetTitleOffset(2.0);
+	histo.at(i).GetZaxis()->SetTitleOffset(2.0);
+	if(p==0)gPad->SetPhi(30);
+        if(p==1)gPad->SetPhi(150);
+        if(p==2)gPad->SetPhi(240);
+	if(colour.at(i)==10)histo.at(i).SetMarkerColor(16);
+	if(colour.at(i)==414)histo.at(i).SetMarkerColor(3);
+	if(p!=3){
+	  c.cd(p+1);
+
+	  if(i==0){ histo.at(i).Draw();  }
+	  else{histo.at(i).Draw("same");}
+	}
+	else{
+	  leg.AddEntry(&histo.at(i),legend.at(i),"pe");
+	}
+      }
+    }
+    c.cd(4);
+    leg.Draw();
+    TString name=histo.at(0).GetName();
+    TString EPSName="EPS/";
+    c.Update();
+    name=histo.at(0).GetName();
+    name+="_index_";
+    name+=0;
+    EPSName="EPS/";
+    EPSName+=name;
+    EPSName+=".eps";
+    c.Print(EPSName);
+    if(verbose)std::cout << "Histo 3D " << EPSName << std::endl;
+  }
+}
 
 void Plots::CMSStyle1(){
   std::cout << "Configuring Plots::CMSStyle1()" << std::endl;
