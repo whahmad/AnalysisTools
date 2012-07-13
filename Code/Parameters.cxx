@@ -48,7 +48,7 @@ void Parameters::GetBool(TString p, bool &v, bool dv){
   GetParameter(p,vb,dvb);
   vb.ToLower();
   v=false;
-  if(vb==true) v=true;
+  if(vb=="true") v=true;
 }
 
 void Parameters::GetInt(TString p, int &v, int dv){
