@@ -304,7 +304,7 @@ bool Ntuple_Controller::isGoodJet(unsigned int i){
 
 bool Ntuple_Controller::jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx){
   for(unsigned int j=0;j<NMuons();j++){
-    if(isGoodMuon_nooverlapremoval(j) && Muon_RelIso(j)){
+    if(isGoodMuon_nooverlapremoval(j) && Muon_RelIso(j)<0.2){
       if(Tools::dr(Muons_p4(j),PFJet_p4(jet_idx))<0.4){ muon_idx=j;return true;}
     }
   }

@@ -30,7 +30,7 @@ class ChargedHiggs_dilepontic : public Selection {
              MTplusMET,
 	     Charge,
 	     MT,
-	     MuMETdphi,
+	     MuMETJetdphi,
 	     MTandMuMETdphi,
 	     NCuts};
 

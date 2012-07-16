@@ -51,7 +51,7 @@ void  ChargedHiggs_dilepontic::Configure(){
     if(i==NTauPt)             cut.at(NTauPt)=1;
     if(i==NTauEta)            cut.at(NTauEta)=1 ;
     if(i==MT)                 cut.at(MT)=30;
-    if(i==MuMETdphi)          cut.at(MuMETdphi)=0.5;
+    if(i==MuMETJetdphi)       cut.at(MuMETJetdphi)=-1.0/sqrt(2.0);
     if(i==MTandMuMETdphi)     cut.at(MTandMuMETdphi)=20;
     if(i==Charge)             cut.at(Charge)=0.0;
   }
@@ -254,18 +254,18 @@ void  ChargedHiggs_dilepontic::Configure(){
      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,15,0,300,hlabel,"Events"));
      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,15,0,300,hlabel,"Events"));
    }
-   else if(i==MuMETdphi){
-    title.at(i)="$cos(\\phi(\\mu,MET)) < $";
+   else if(i==MuMETJetdphi){
+    title.at(i)="$cos(\\phi(\\mu+MET,Jet^{Lead})) < $";
     char buffer[50];
-    sprintf(buffer,"%5.2f",cut.at(MuMETdphi));
+    sprintf(buffer,"%5.2f",cut.at(MuMETJetdphi));
     title.at(i)+=buffer;
     title.at(i)+="(rad)";
     htitle=title.at(i);
     htitle.ReplaceAll("$","");
     htitle.ReplaceAll("\\","#");
-    hlabel="cos(#phi(#mu,MET)) (rad)";
-    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuMETdphi_",htitle,10,-1,1,hlabel,"Events"));
-    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuMETdphi_",htitle,10,-1,1,hlabel,"Events"));
+    hlabel="cos(#phi(#mu+MET,Jet^{Lead})) (rad)";
+    Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MuMETJetdphi_",htitle,10,-1,1,hlabel,"Events"));
+    Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MuMETJetdphi_",htitle,10,-1,1,hlabel,"Events"));
   }
    else if(i==MTandMuMETdphi){
       title.at(i)="$[\\alpha(1- cos(\\phi(\\mu,MET)))^2+M_{T}^2]^{1/2} < $";
@@ -456,7 +456,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
     GoodBJets.at(1)=Temp;
   }
   value.at(NBJets)=GoodBJets.size();
-  pass.at(NBJets)=(value.at(NBJets)>=cut.at(NBJets));
+  pass.at(NBJets)=true;//(value.at(NBJets)>=cut.at(NBJets));
   if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() D " << tauidx << std::endl;
   ///////////////////////////////////////////////
   //
@@ -485,21 +485,28 @@ void  ChargedHiggs_dilepontic::doEvent(){
   }
   pass.at(MT)=true;
 
-  value.at(MuMETdphi)=0;
-  if(mu_idx.size()>0){
-    value.at(MuMETdphi)=cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx.at(0)),Met));
-  }
-  pass.at(MuMETdphi)=(value.at(MuMETdphi)<=cut.at(MuMETdphi));
-  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() H " << tauidx << std::endl;
-
   value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
   pass.at(MET)=(value.at(MET)>cut.at(MET));
 
-  value.at(MTandMuMETdphi)=sqrt(pow((1-value.at(MuMETdphi))*200,2.0)+pow(value.at(MT),2.0));
+  float dphiMuMET=0;
+  if(mu_idx.size()>0){
+    dphiMuMET=cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx.at(0)),Met));
+  }
+  value.at(MTandMuMETdphi)=sqrt(pow((1-dphiMuMET)*200,2.0)+pow(value.at(MT),2.0));
   pass.at(MTandMuMETdphi)=(value.at(MTandMuMETdphi)>=cut.at(MTandMuMETdphi));
 
   value.at(MTplusMET)=value.at(MET)+value.at(MT);
   pass.at(MTplusMET)=(value.at(MTplusMET)>=cut.at(MTplusMET));
+
+
+  value.at(MuMETJetdphi)=0;
+  if(mu_idx.size()>0 && GoodBJets.size()>0){
+    TLorentzVector LVMuMET=Met;LVMuMET+=Ntp->Muons_p4(mu_idx.at(0));
+    value.at(MuMETJetdphi)=cos(Tools::DeltaPhi(Ntp->PFJet_p4(GoodBJets.at(0)),LVMuMET));
+  }
+  pass.at(MuMETJetdphi)=(value.at(MuMETJetdphi)>cut.at(MuMETJetdphi));
+  if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() H " << tauidx << std::endl;
+
 
   ///////////////////////////////////////////////////////////
   value.at(Charge)=0;
@@ -509,8 +516,6 @@ void  ChargedHiggs_dilepontic::doEvent(){
     pass.at(Charge)=value.at(Charge)==cut.at(Charge);
   }
   if(verbose)std::cout << "void  ChargedHiggs_dilepontic::doEvent() I" << std::endl;
-
-  pass.at(MuMETdphi)=true;
 
   ///////////////////////////////////////////////////////////
   double wobs(1),w(1);
@@ -539,9 +544,9 @@ void  ChargedHiggs_dilepontic::doEvent(){
   }
   if(NMinusL(MT,MET/*,MTplusMET*/)){
     METvsMT.at(t).Fill(value.at(MT),value.at(MET),w*wobs);
-    MTvsMuMETdphi.at(t).Fill(value.at(MuMETdphi),value.at(MT),w*wobs);
-    METvsMuMETdphi.at(t).Fill(value.at(MuMETdphi),value.at(MET),w*wobs);
-    METvsMTvsMuMETdphi.at(t).Fill(value.at(MT),value.at(MET),value.at(MuMETdphi),w*wobs);
+    MTvsMuMETdphi.at(t).Fill(dphiMuMET,value.at(MT),w*wobs);
+    METvsMuMETdphi.at(t).Fill(dphiMuMET,value.at(MET),w*wobs);
+    METvsMTvsMuMETdphi.at(t).Fill(value.at(MT),value.at(MET),dphiMuMET,w*wobs);
     METWHypvsMT.at(t).Fill(value.at(MT),Ntp->MET_et(),w*wobs);
   }
 
