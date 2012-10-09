@@ -1,6 +1,6 @@
 #! /bin/bash
 echo "Configuring Environment...."
-export ROOTSYS=/usr/lib/root-5.26.00c/
+export ROOTSYS=/usr/lib/root-5.34.00/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
 ## now downloading required code from CVS
 cd CommonUtils

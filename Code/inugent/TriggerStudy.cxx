@@ -113,8 +113,8 @@ void  TriggerStudy::doEvent(){
 
   if(verbose)std::cout << "void  TriggerStudy::doEvent() A" << std::endl;
 
-  TString DataParking="HLT_DoubleMediumIsoPFTau35_Trk5_eta2p1_v";
-  TString OneProng="HLT_DoubleMediumIsoPFTau35_Trk5_eta2p1_Prong1_v"; 
+  TString DataParking="HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_v";
+  TString OneProng="HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Prong1_v"; 
 
   bool FlagDataParking=Ntp->TriggerAccept(DataParking);
   bool Flag1Prong=Ntp->TriggerAccept(OneProng);

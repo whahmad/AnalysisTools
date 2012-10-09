@@ -83,7 +83,7 @@ bool HistoConfig::Load(TString Name_)
   }
 
   std::cout << "HistoConfig::Load("<< Name_ <<") complete" << std::endl;
-  if(HistoName.size()>1) return true;
+  if(HistoName.size()>=1) return true;
   return false;
 }
 
