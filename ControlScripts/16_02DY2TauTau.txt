@@ -1,1 +1,0 @@
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/HLT_IsoMu_LooseIsoPFTau_DYJetsToTauTau_TauNtuple_HPS_16_02/f399647d0d632dcbf40591317c45f4b2
