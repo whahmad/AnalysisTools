@@ -105,12 +105,6 @@ void  TauSpinExample::Configure(){
   rho_PtRatio_hplus=HConfig.GetTH1D(Name+"_rho_PtRatio_hplus","PtRatio_hplus",20,0.0,1.0,"P_{t,#rho}/P_{t,#tau}|_{h^{+}}","Events");
   rho_PtRatio_hminus=HConfig.GetTH1D(Name+"_rho_PtRatio_hminus","PtRatio_hminus",20,0.0,1.0,"P_{t,#rho}/P_{t,#tau}|_{h^{-}}","Events");
 
-
-  LongitudinalPolarization=HConfig.GetTH1D(Name+"_LongitudinalPolarization","LongitudinalPolarization",20,-2.0,2.0,"#rho_{l}","Events");
-  LongitudinalPolarization_Spin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_Spin","LongitudinalPolarization_Spin",20,-2.0,2.0,"#rho_{l}|_{Spin}","Events");
-  LongitudinalPolarization_UnSpin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_UnSpin","LongitudinalPolarization_UnSpin",20,-2.0,2.0,"#rho_{l}|_{UnSpin}","Events");
-  LongitudinalPolarization_FlipSpin=HConfig.GetTH1D(Name+"_LongitudinalPolarization_FlipSpin","LongitudinalPolarization_FlipSpin",20,-2.0,2.0,"#rho_{l}|_{FlipSpin}","Events");
-
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
 }
@@ -119,10 +113,6 @@ void  TauSpinExample::Configure(){
 
 
 void  TauSpinExample::Store_ExtraDist(){
-  Extradist1d.push_back(&LongitudinalPolarization);
- Extradist1d.push_back(&LongitudinalPolarization_Spin);
- Extradist1d.push_back(&LongitudinalPolarization_UnSpin);
- Extradist1d.push_back(&LongitudinalPolarization_FlipSpin);
 
  Extradist1d.push_back(&mu_ExoverEtau);
  Extradist1d.push_back(&mu_ExoverEtau_hplus);
@@ -199,11 +189,6 @@ void  TauSpinExample::doEvent(){
     double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin);
     double UnSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::UnSpin);
     double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
-
-    LongitudinalPolarization.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w);
-    LongitudinalPolarization_Spin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*Spin_WT);
-    LongitudinalPolarization_UnSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*UnSpin_WT);
-    LongitudinalPolarization_FlipSpin.at(t).Fill(Ntp->TauSpinerGet(TauSpinerInterface::LPolarization),w*FlipSpin_WT);
   
       ////////////////////////////////////////////////
       //

@@ -46,26 +46,16 @@ if [ $pythia == 0 ]; then
     tar -xzvf pythia8135.tgz
     cd ..
 fi
-tauola=$(ls TauSpiner/* | grep tauola | wc -l )
+tauola=$(ls TauSpiner/* | grep TAUOLA | wc -l )
 if [ $tauola == 0 ]; then 
     cd TauSpiner
-    cp /afs/cern.ch/sw/lcg/external/MCGenerators/distribution/tauola++-1.0.5-src.tgz .
-    tar -xzvf tauola++-1.0.5-src.tgz
-    cd ..
-fi
-tauspiner=$(ls TauSpiner/* | grep TauSpiner.v1.0 | wc -l )
-if [ $tauspiner == 0  ]; then
-    cd TauSpiner
-    wget http://hibiscus.if.uj.edu.pl/~przedzinski/tau-reweight/downloads/release/TauSpiner.v1.0.tgz
-    tar -xzvf TauSpiner.v1.0.tgz
-    cp Makefile.TauSpiner TauSpiner.v1.0/Makefile
-    mkdir TauSpiner.v1.0/lib
-    mkdir TauSpiner.v1.0/include
+     wget http://annapurna.ifj.edu.pl/~tprzedzinski/resources/TAUOLA.1.1.1a/TAUOLA.1.1.1a.tar.gz
+    tar -xzvf TAUOLA.1.1.1a.tar.gz
     cd ..
 fi
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/TauSpiner.v1.0/lib/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/tauola++/1.0.5/lib/
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/TAUOLA/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/pythia8135/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/lhapdf/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/hepmc/install/lib/

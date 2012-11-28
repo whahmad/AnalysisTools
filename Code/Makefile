@@ -16,16 +16,15 @@ SHELL = /bin/sh
 ####################################
 
 SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple \
-		-L./TauSpiner/TauSpiner.v1.0/lib/ -lTauSpiner \
-		-L./TauSpiner/lhapdf/lib/ -lLHAPDF \
-		-L./TauSpiner/tauola++/1.0.5/lib/ -lTauolaCxxInterface -lTauolaFortran \
-		-L./TauSpiner/hepmc/install/lib/ -lHepMC 
+		-L./TauSpiner/lhapdf/lib -lLHAPDF \
+		-L./TauSpiner/TAUOLA/lib -lTauolaCxxInterface -lTauolaFortran -lTauolaTauSpinner \
+		-L./TauSpiner/hepmc/install/lib -lHepMC 
 
 SHAREDCXXFLAGS =-I./CommonUtils \
-	 	-I./TauSpiner/TauSpiner.v1.0/include \
 		-I./TauSpiner/hepmc/install/include \
-		-I./TauSpiner/tauola++/1.0.5/include \
-		-I./TauSpiner/lhapdf/include \
+		-I./TauSpiner/TAUOLA/include/Tauola \
+                -I./TauSpiner/TAUOLA/include/TauSpinner \
+		-I./TauSpiner/lhapdf/include/ \
 		-I./TauSpiner/pythia8135/include
 
 SUBDIRS = CommonUtils/ TauSpiner/

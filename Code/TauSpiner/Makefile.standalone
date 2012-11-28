@@ -3,7 +3,7 @@
 #################################################
 
 
-
+BASE = ${PWD}
 CXX           = g++ -m32  -Wno-deprecated
 LD            = g++ -m32  -Wno-deprecated 
 INSTALL	      = /usr/bin/install
@@ -13,9 +13,9 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-.PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER LINKS 
+.PHONY: clean install HEPMC LHAPDF PYTHIA8 TAUOLA LINKS 
 
-install: HEPMC LHAPDF PYTHIA8 TAUOLA TAUSPINNER LINKS
+install: HEPMC LHAPDF PYTHIA8 TAUOLA LINKS
 
 clean:
         @echo "============================="
@@ -23,7 +23,7 @@ clean:
 
 HEPMC:
 	@cd hepmc/build/; \
-	../../HepMC-2.06.05/configure -prefix=${PWD}/hepmc/install -with-momentum=GEV -with-length=CM; \
+	../../HepMC-2.06.05/configure -prefix=${BASE}/hepmc/install -with-momentum=GEV -with-length=CM; \
 	make; \
 	make check; \
 	make install; \
@@ -31,25 +31,22 @@ HEPMC:
 
 LHAPDF:
 	@cd lhapdf/5.8.6/; \
-	./configure --prefix=${PWD}/lhapdf/; \
+	./configure --prefix=${BASE}/lhapdf/; \
 	make; \
 	make install; \
 	cd ../../; 
 
 PYTHIA8:
 	@cd pythia8135; \
-	./configure --enable-shared --lcgplatform=x86_64-slc5-gcc43-opt --with-hepmc=${PWD}/hepmc/install/ --with-hepmcversion=2.06.05; \
+	./configure --enable-shared --lcgplatform=x86_64-slc5-gcc43-opt --with-hepmc=${BASE}/hepmc/install/ --with-hepmcversion=2.06.05; \
 	make;
 
 TAUOLA:
-	@cd tauola++/1.0.5; \
-	./configure --with-hepmc=${PWD}/hepmc/install/ --with-pythia8libs=${PWD}/pythia8135/; \
+	@cd TAUOLA; \
+	 ./configure --with-hepmc=${BASE}/hepmc/install/ --with-pythia8libs=${BASE}/pythia8135/ --with-lhapdf=${BASE}/lhapdf --with-tau-spinner \
 	make; \
 	make install; 
 
-TAUSPINNER:
-	@cd TauSpiner.v1.0; \
-	make;
 
 LINKS:
-	@ln -s ${PWD}/lhapdf/5.8.6/share/lhapdf/PDFsets/ ${PWD}/lhapdf/share/lhapdf/
+	@ln -s ${BASE}/lhapdf/5.8.6/share/lhapdf/PDFsets/ ${BASE}/lhapdf/share/lhapdf/
