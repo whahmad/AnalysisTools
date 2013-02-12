@@ -104,8 +104,8 @@ class Ntuple_Controller{
   ~Ntuple_Controller() ;
 
   //TauSpiner function
-  double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
-  void TauSpinerSetSignal(int signalcharge){TauSpinerInt.SetTauSignalCharge(signalcharge);}
+    double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
+   void TauSpinerSetSignal(int signalcharge){TauSpinerInt.SetTauSignalCharge(signalcharge);}
   enum TrackQuality {
     undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
     confirmed = 3, goodIterative = 4, looseSetWithPV = 5, highPuritySetWithPV = 6,
@@ -202,7 +202,29 @@ class Ntuple_Controller{
   int            Muon_Charge(unsigned int i){return Ntp->Muon_Charge->at(i);}
   bool           isGoodMuon(unsigned int i);
   bool           isGoodMuon_nooverlapremoval(unsigned int i);
-  float           Muon_RelIso(unsigned int i);
+  float          Muon_RelIso(unsigned int i);
+
+  bool           Muon_isPFMuon(unsigned int i){return Ntp->Muon_isPFMuon->at(i);}                                                     
+  float          Muon_sumChargedHadronPt03(unsigned int i){return Ntp->Muon_sumChargedHadronPt03->at(i);}                             // sum-pt of charged Hadron					                               
+  float          Muon_sumChargedParticlePt03(unsigned int i){return Ntp->Muon_sumChargedParticlePt03->at(i);}			      // sum-pt of charged Particles(inludes e/mu)			    
+  float          Muon_sumNeutralHadronEt03(unsigned int i){return Ntp->Muon_sumNeutralHadronEt03->at(i);}			      // sum pt of neutral hadrons					    
+  float          Muon_sumNeutralHadronEtHighThreshold03(unsigned int i){return Ntp->Muon_sumNeutralHadronEtHighThreshold03->at(i);}   // sum pt of neutral hadrons with a higher threshold		    
+  float          Muon_sumPhotonEt03(unsigned int i){return Ntp->Muon_sumPhotonEt03->at(i);}					      // sum pt of PF photons					    
+  float          Muon_sumPhotonEtHighThreshold03(unsigned int i){return Ntp->Muon_sumPhotonEtHighThreshold03->at(i);}		      // sum pt of PF photons with a higher threshold		    
+  float          Muon_sumPUPt03(unsigned int i){return Ntp->Muon_sumPUPt03->at(i);}						      // sum pt of charged Particles not from PV (for Pu corrections)  
+																      								    
+  float          Muon_sumChargedHadronPt04(unsigned int i){return Ntp->Muon_sumChargedHadronPt04->at(i);}			      // sum-pt of charged Hadron					    
+  float          Muon_sumChargedParticlePt04(unsigned int i){return Ntp->Muon_sumChargedParticlePt04->at(i);}			      // sum-pt of charged Particles(inludes e/mu)			    
+  float          Muon_sumNeutralHadronEt04(unsigned int i){return Ntp->Muon_sumNeutralHadronEt04->at(i);}			      // sum pt of neutral hadrons					    
+  float          Muon_sumNeutralHadronEtHighThreshold04(unsigned int i){return Ntp->Muon_sumNeutralHadronEtHighThreshold04->at(i);}   // sum pt of neutral hadrons with a higher threshold		    
+  float          Muon_sumPhotonEt04(unsigned int i){return Ntp->Muon_sumPhotonEt04->at(i);}					      // sum pt of PF photons					    
+  float          Muon_sumPhotonEtHighThreshold04(unsigned int i){return Ntp->Muon_sumPhotonEtHighThreshold04->at(i);}		      // sum pt of PF photons with a higher threshold		    
+  float          Muon_sumPUPt04(unsigned int i){return Ntp->Muon_sumPUPt04->at(i);}						      // sum pt of charged Particles not from PV (for Pu corrections)  
+
+  int            Muon_numberofValidPixelHits(unsigned int i){return Ntp->Muon_numberofValidPixelHits->at(i);}
+  int            Muon_trackerLayersWithMeasurement(unsigned int i){return Ntp->Muon_trackerLayersWithMeasurement->at(i);}
+
+
 
   //Base Tau Information (PF)
    unsigned int      NPFTaus(){return Ntp->PFTau_p4->size();}
@@ -228,32 +250,80 @@ class Ntuple_Controller{
    
 
 
+   bool              PFTau_isHPSAgainstMuonLoose2(unsigned int i){return Ntp->PFTau_isHPSAgainstMuonLoose2->at(i);}
+   bool	             PFTau_isHPSAgainstMuonMedium2(unsigned int i){return Ntp->PFTau_isHPSAgainstMuonMedium2->at(i);}
+   bool	             PFTau_isHPSAgainstMuonTight2(unsigned int i){return Ntp->PFTau_isHPSAgainstMuonTight2->at(i);}
+													
+   bool	             PFTau_HPSPFTauDiscriminationByMVA3LooseElectronRejection(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMVA3LooseElectronRejection->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMVA3MediumElectronRejection(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMVA3MediumElectronRejection->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMVA3TightElectronRejection(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMVA3TightElectronRejection->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMVA3VTightElectronRejection(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMVA3VTightElectronRejection->at(i);}
+													
+   bool	             PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByLooseIsolationMVA(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByLooseIsolationMVA->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMediumIsolationMVA(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMediumIsolationMVA->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByTightIsolationMVA(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByTightIsolationMVA->at(i);}
+													
+   bool	             PFTau_HPSPFTauDiscriminationByLooseIsolationMVA2(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByLooseIsolationMVA2->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByMediumIsolationMVA2(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByMediumIsolationMVA2->at(i);}
+   bool	             PFTau_HPSPFTauDiscriminationByTightIsolationMVA2(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByTightIsolationMVA2->at(i);}
+
    std::vector<int>  PFTau_Track_idx(unsigned int i){return Ntp->PFTau_Track_idx->at(i);}
+
+
+
 
    // Kinematic Fit Tau Information
    unsigned int     NKFTau(){return Ntp->KFTau_TauVis_p4->size();}
-   bool             isGoodKFTau(unsigned int i);
-   TLorentzVector   KFTau_TauVis_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_TauVis_p4->at(i).at(1),Ntp->KFTau_TauVis_p4->at(i).at(2),Ntp->KFTau_TauVis_p4->at(i).at(3),Ntp->KFTau_TauVis_p4->at(i).at(0));}
-   TLorentzVector   KFTau_TauFit_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_TauFit_p4->at(i).at(1),Ntp->KFTau_TauFit_p4->at(i).at(2),Ntp->KFTau_TauFit_p4->at(i).at(3),Ntp->KFTau_TauFit_p4->at(i).at(0));}
-   TLorentzVector   KFTau_Neutrino_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_Neutrino_p4->at(i).at(1),Ntp->KFTau_Neutrino_p4->at(i).at(2),Ntp->KFTau_Neutrino_p4->at(i).at(3),Ntp->KFTau_Neutrino_p4->at(i).at(0));}
-   bool             KFTau_discriminatorByKFit(unsigned int i){return Ntp->KFTau_discriminatorByKFit->at(i);}
-   bool             KFTau_discriminatorByQC(unsigned int i){return Ntp->KFTau_discriminatorByQC->at(i);}
+   bool             isGoodKFTau(unsigned int i, unsigned int j);
+   int KFTauNSolutions1(unsigned int i) {return  Ntp->KFTau_TauVis_p4->at(i).size();}
+   int KFTauNSolutions11(unsigned int i) {return  Ntp->Muon_Charge->size();}
+   int KFTauNSolutions2(unsigned int i) {return  Ntp->KFTau_Fit_charge->size();}
+
+  
+   TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauVis_p4->at(i).at(j).at(1),Ntp->KFTau_TauVis_p4->at(i).at(j).at(2),Ntp->KFTau_TauVis_p4->at(i).at(j).at(3),Ntp->KFTau_TauVis_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_TauFit_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauFit_p4->at(i).at(j).at(1),Ntp->KFTau_TauFit_p4->at(i).at(j).at(2),Ntp->KFTau_TauFit_p4->at(i).at(j).at(3),Ntp->KFTau_TauFit_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_TauFitInitial_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(1),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(2),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(3),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_Neutrino_p4->at(i).at(j).at(1),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(2),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(3),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_NeutrinoInitial_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(1),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(2),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(3),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_a1Initial_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_a1Initial_p4->at(i).at(1),Ntp->KFTau_a1Initial_p4->at(i).at(2),Ntp->KFTau_a1Initial_p4->at(i).at(3),Ntp->KFTau_a1Initial_p4->at(i).at(0));}
+   int              KFTau_discriminatorByKFit(unsigned int i,unsigned int j){return Ntp->KFTau_discriminatorByKFit->at(i).at(j);}
+   int              KFTau_discriminatorByQC(unsigned int i,unsigned int j){return Ntp->KFTau_discriminatorByQC->at(i).at(j);}
    int              KFTau_nKinTaus(){return Ntp->KFTau_nKinTaus;}
    unsigned int     KFTau_MatchedHPS_idx(unsigned int i){return Ntp->KFTau_MatchedHPS_idx->at(i);}
    std::vector<int> KFTau_Track_idx(unsigned int i){return Ntp->KFTau_Track_idx->at(i);}
- 
+
+
+   int      KFTau_indexOfFitInfo(unsigned int i){return Ntp->KFTau_indexOfFitInfo->at(i);}
+
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return TVector3(Ntp->KFTau_Fit_TauPrimVtx->at(i).at(0),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(1),Ntp->KFTau_Fit_TauPrimVtx->at(i).at(2));}
-   float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
-   float    KFTau_Fit_ndf(unsigned int i){return Ntp->KFTau_Fit_ndf->at(i);}
-   int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
+
+   TVector3 KFTau_Fit_PrimaryVertex(unsigned int i){return TVector3(Ntp->KFTau_Fit_PrimaryVertex->at(i).at(0),Ntp->KFTau_Fit_PrimaryVertex->at(i).at(1),Ntp->KFTau_Fit_PrimaryVertex->at(i).at(2));}
+   TVector3 KFTau_Fit_InitialPrimaryVertex(unsigned int i){return TVector3(Ntp->KFTau_Fit_InitialPrimaryVertex->at(i).at(0),Ntp->KFTau_Fit_InitialPrimaryVertex->at(i).at(1),Ntp->KFTau_Fit_InitialPrimaryVertex->at(i).at(2));}
+
+   TVector3 KFTau_Fit_InitialSecondaryVertex(unsigned int i){return TVector3(Ntp->KFTau_Fit_InitialSecondaryVertex->at(i).at(0),Ntp->KFTau_Fit_InitialSecondaryVertex->at(i).at(1),Ntp->KFTau_Fit_InitialSecondaryVertex->at(i).at(2));}
+   TVector3 KFTau_Fit_SecondaryVertex(unsigned int i,unsigned int j){return TVector3(Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(0),Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(1),Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(2));}
+
+   //   float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
+   float    KFTau_Fit_ndf(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_ndf->at(i).at(j);}
+   //  int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
    int      KFTau_Fit_charge(unsigned int i){return Ntp->KFTau_Fit_charge->at(i);}
-   int      KFTau_Fit_csum(unsigned int i){return Ntp->KFTau_Fit_csum->at(i);}
-   int      KFTau_Fit_iterations(unsigned int i){return Ntp->KFTau_Fit_iterations->at(i);}
-   double   KFTau_Fit_TauEnergyFraction(unsigned int i){return Ntp->KFTau_Fit_TauEnergyFraction->at(i);}
-   double   KFTau_Fit_RefitVisibleMass(unsigned int i){return Ntp->KFTau_Fit_RefitVisibleMass->at(i);}
-   double   KFTau_Fit_Chi2Prob(unsigned int i){return Ntp->KFTau_Fit_Chi2->at(i);}
-   double   KFTau_Fit_PV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_PV_PV_significance->at(i);}
-   double   KFTau_Fit_SV_PV_significance(unsigned int i){return Ntp->KFTau_Fit_SV_PV_significance->at(i);}
+
+   int      KFTau_Fit_csum(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_csum->at(i).at(j);}
+   int      KFTau_Fit_iterations(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_iterations->at(i).at(j);}
+
+   double   KFTau_Fit_TauEnergyFraction(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_TauEnergyFraction->at(i).at(j);}
+   double   KFTau_Fit_RefitVisibleMass(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_RefitVisibleMass->at(i).at(j);}
+   double   KFTau_Fit_Chi2Prob(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_Chi2Prob->at(i).at(j);}
+   float    KFTau_Fit_chi2(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_chi2->at(i).at(j);}
+
+   float    KFTau_Fit_BDTVal(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_BDTVal->at(i).at(j);}
+
+
+   double   KFTau_Fit_PV_PV_significance(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_PV_PV_significance->at(i).at(j);}
+   double   KFTau_Fit_SV_PV_significance(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_SV_PV_significance->at(i).at(j);}
 
    unsigned int KFTau_NDaughter(unsigned int i){return Ntp->KFTau_Daughter_pdgid->at(i).size();}
    int KFTau_Daughter_pdgid(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_pdgid->at(i).at(j);}
@@ -283,7 +353,69 @@ class Ntuple_Controller{
    TVector3  KFTau_InitialSecondaryVtx(unsigned int i);
    TMatrixF  KFTau_InitialSecondaryVtx_Cov(unsigned int i);
 
-  
+/*   std::vector<std::vector<std::vector<float> > >  KFTau_Fit_SecondaryVertex; */
+/*   std::vector<std::vector<float> >  KFTau_Fit_InitialSecondaryVertex; */
+
+
+/*   std::vector<std::vector<float> > KFTau_Fit_TauEnergyFraction; */
+/*   std::vector<std::vector<float> > KFTau_Fit_RefitVisibleMass; */
+/*   std::vector<std::vector<float> > KFTau_Fit_Chi2Prob; */
+/*   std::vector<std::vector<float> > KFTau_Fit_chi2; */
+/*   std::vector<std::vector<float> > KFTau_Fit_BDTVal; */
+/*   std::vector<std::vector<float> > KFTau_Fit_PV_PV_significance; */
+/*   std::vector<std::vector<float> > KFTau_Fit_SV_PV_significance; */
+
+/*   std::vector<std::vector<int> > KFTau_Daughter_pdgid; */
+/*   std::vector<std::vector<int> > KFTau_Daughter_charge; */
+/*   std::vector<std::vector<float> > KFTau_Daughter_ambiguity; */
+
+/*   std::vector<std::vector<std::vector<float> > > KFTau_Daughter_par; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_Daughter_parCov; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_Daughter_inputpar; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_Daughter_inputparCov; */
+
+/*   std::vector<float> ReducedVtx_chi2; */
+/*   std::vector<float> ReducedVtx_nTrk; */
+/*   std::vector<float> ReducedVtx_ndof; */
+/*   std::vector<float> ReducedVtx_y; */
+/*   std::vector<float> ReducedVtx_x; */
+/*   std::vector<float> ReducedVtx_z; */
+/*   std::vector<std::vector<std::vector<float> > >  ReducedVtx_Cov; */
+/*   std::vector<std::vector<int> >    ReducedVtx_Track_idx; */
+/*   std::vector<float> ReducedVtx_isFake; */
+
+
+
+
+
+
+
+
+
+/*     std::vector<std::vector<int> > KFTau_discriminatorByKFit; */
+/*   std::vector<std::vector<int> > KFTau_discriminatorByQC; */
+
+
+/*   std::vector<std::vector<std::vector<float> > > KFTau_TauVis_p4; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_TauFit_p4; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_TauFitInitial_p4; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_Neutrino_p4; */
+/*   std::vector<std::vector<std::vector<float> > > KFTau_NeutrinoInitial_p4; */
+/*   std::vector<std::vector<float> >  KFTau_a1Initial_p4; */
+/*   std::vector<std::vector<int> > KFTau_Track_idx; */
+/*   std::vector<int> KFTau_indexOfFitInfo; */
+/*   std::vector<std::vector<float> >	KFTau_Fit_ndf; */
+/*   // std::vector<int>	KFTau_Fit_ambiguity; */
+/*   std::vector<int>	KFTau_Fit_charge; */
+/*   std::vector<std::vector<int> >	KFTau_Fit_csum;      */
+/*   std::vector<std::vector<int> >     KFTau_Fit_iterations; */
+/*   std::vector<std::vector<float> > KFTau_Fit_TauPrimVtx; */
+
+
+/*   std::vector<std::vector<float> > KFTau_Fit_PrimaryVertex; */
+/*   std::vector<std::vector<float> > KFTau_Fit_InitialPrimaryVertex; */
+
+
    // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}
    TLorentzVector     PFJet_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));}
@@ -322,7 +454,7 @@ class Ntuple_Controller{
    bool               isGoodJet(unsigned int i);
    bool               isGoodJet_nooverlapremoval(unsigned int i);
    bool               isJetID(unsigned int i);
-
+ 
 
    //MET information
    double             MET_et(){return Ntp->MET_et;}
@@ -403,6 +535,38 @@ class Ntuple_Controller{
    float   Electron_supercluster_centroid_y(unsigned int i){return Ntp->Electron_supercluster_centroid_y->at(i);}
    float   Electron_supercluster_centroid_z(unsigned int i){return Ntp->Electron_supercluster_centroid_z->at(i);}
    unsigned int Electron_Track_idx(unsigned int i){return Ntp->Electron_Track_idx->at(i);}
+
+
+   float    Electron_ecalRecHitSumEt03(unsigned int i){return Ntp->Electron_ecalRecHitSumEt03->at(i);}
+   float    Electron_hcalDepth1TowerSumEt03(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEt03->at(i);}
+   float    Electron_hcalDepth1TowerSumEtBc03(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEtBc03->at(i);}
+   float    Electron_hcalDepth2TowerSumEt03(unsigned int i){return Ntp->Electron_hcalDepth2TowerSumEt03->at(i);}
+   float    Electron_hcalDepth2TowerSumEtBc03(unsigned int i){return Ntp->Electron_hcalDepth2TowerSumEtBc03->at(i);}
+   float    Electron_tkSumPt03(unsigned int i){return Ntp->Electron_tkSumPt03->at(i);}
+   float    Electron_ecalRecHitSumEt04(unsigned int i){return Ntp->Electron_ecalRecHitSumEt04->at(i);}
+   float    Electron_hcalDepth1TowerSumEt04(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEt04->at(i);}
+   float    Electron_hcalDepth1TowerSumEtBc04(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEtBc04->at(i);}
+   float    Electron_hcalDepth2TowerSumEt04(unsigned int i){return Ntp->Electron_hcalDepth2TowerSumEt04->at(i);}
+   float    Electron_hcalDepth2TowerSumEtBc04(unsigned int i){return Ntp->Electron_hcalDepth2TowerSumEtBc04->at(i);}
+   float    Electron_tkSumPt04(unsigned int i){return Ntp->Electron_tkSumPt04->at(i);}
+   
+   
+   float    Electron_chargedHadronIso(unsigned int i){return Ntp->Electron_chargedHadronIso->at(i);}
+   float    Electron_neutralHadronIso(unsigned int i){return Ntp->Electron_neutralHadronIso->at(i);}
+   float    Electron_photonIso(unsigned int i){return Ntp->Electron_photonIso->at(i);}
+     	 						    
+   
+   float    Electron_sigmaIetaIeta(unsigned int i){return Ntp->Electron_sigmaIetaIeta->at(i);}
+   float    Electron_hadronicOverEm(unsigned int i){return Ntp->Electron_hadronicOverEm->at(i);}
+   float    Electron_fbrem(unsigned int i){return Ntp->Electron_fbrem->at(i);}
+   float    Electron_eSuperClusterOverP(unsigned int i){return Ntp->Electron_eSuperClusterOverP->at(i);}
+   float    Electron_ecalEnergy(unsigned int i){return Ntp->Electron_ecalEnergy->at(i);}
+   float    Electron_trackMomentumAtVtx(unsigned int i){return Ntp->Electron_trackMomentumAtVtx->at(i);}
+   float    Electron_numberOfMissedHits(unsigned int i){return Ntp->Electron_numberOfMissedHits->at(i);}
+   bool     Electron_HasMatchedConversions(unsigned int i){return Ntp->Electron_HasMatchedConversions->at(i);}
+
+
+
 
 
    // Trigger
