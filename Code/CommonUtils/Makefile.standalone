@@ -20,12 +20,12 @@ ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 
-HDRS          = TauDataFormat/TauNtuple/interface/PdtPdgMini.h \
-		TauDataFormat/TauNtuple/interface/TauDecay.h \
+HDRS          = Validation/EventGenerator/interface/PdtPdgMini.h \
+		Validation/EventGenerator/interface/TauDecay.h \
 		TauDataFormat/TauNtuple/interface/DataMCType.h
 
-SRCS          = TauDataFormat/TauNtuple/src/PdtPdgMini.cc \
-		TauDataFormat/TauNtuple/src/TauDecay.cc \
+SRCS          = Validation/EventGenerator/src/PdtPdgMini.cc \
+		Validation/EventGenerator/src/TauDecay.cc \
 		TauDataFormat/TauNtuple/src/DataMCType.cc
 
 OBJS          = PdtPdgMini.o TauDecay.o DataMCType.o
@@ -41,8 +41,8 @@ $(SHAREDLIB): $(OBJS)
 	@echo "======================================================="
 
 VPATH = utilities:OBJECTS
-vpath %.cc TauDataFormat/TauNtuple/src/
-
+vpath %.cc TauDataFormat/TauNtuple/src/ 
+vpath %.cc Validation/EventGenerator/src/
 ##########################################################
 ###                                                    ###
 ##########################################################
