@@ -8,18 +8,24 @@ $numArgs = $#ARGV +1;
 $ARGV[$argnum];
 
 $UserID= POSIX::cuserid();
+$UserIDCern=$UserID;
+if($UserID eq "nugent"){
+    $UserIDCern="inugent";
+}
+
+
 #Default vaules
 $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
 $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 #$OutputDir="~/";
 $CodeDir="../Code";
-$set="ChargedHiggs_";
-$CMSSWRel="4_4_4";
+$set="Trigger_";
+$CMSSWRel="5_3_9";
 $PileupVersion="V08-03-17";
-$tag="HEAD";
-$TauReco="4_4_Y_08_03_2012";
-$BTag="YES";
-$Cleaning ="YES";
+$tag="03-00-12";
+$TauReco="5_2_3_patch3_Dec_08_2012";
+$BTag="NO";
+$Cleaning ="NO";
 $maxdata=100;
 $maxmc=100;
 
@@ -33,8 +39,8 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                     --CMSSWRel <CMSSW release #> The CMSSW release you want to use Default: $CMSSWRel");
     printf("\n                                                     --PileupVersion <Version # ie V08-03-17>");
     printf("\n                                                     --tag <tag for TauNuptle/SkimProduction/TiggerFiliter/...>");
-    printf("\n                                                     --TauReco <tag for Recommended TauReco> current option: na or 4_4_Y_08_03_2012");
-    printf("\n                                                     --BTag <YES/NO> Default: YES");
+    printf("\n                                                     --TauReco <tag for Recommended TauReco> current option: na, 4_4_Y_08_03_2012 or 5_2_3_patch3_Dec_08_2012");
+    printf("\n                                                     --BTag <YES/NO> Default: NO");
     printf("\n./todo.pl --Local <Input.txt>                      INTENTED FOR SMALL SCALE TESTS ONLY");  
     printf("\n                                                   Configure a directory to run locally. <InputPar.txt> name of file that");
     printf("\n                                                   contains input command template.");
@@ -130,92 +136,80 @@ if( $ARGV[0] eq "--TauNtuple"){
     printf("\nWorkingDir for CMSSW: $basedir");
     printf("\nCurrentDir is: $currentdir");
     printf("\nUsing CMSSW Release: $CMSSWRel");
-    printf("\nUsing PileupVersion: $PileupVersion");
 
     # setup CMSSW
     system(sprintf("rm Install_TauNtuple_$CMSSWRel-$time; rm Setup_$CMSSWRel-$time "));
     system(sprintf("echo \"rm $basedir/TauNtuple_$CMSSWRel-$time -rf; mkdir $basedir/TauNtuple_$CMSSWRel-$time\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd $basedir/TauNtuple_$CMSSWRel-$time\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    if($CMSSWRel eq "4_4_4"){
-	system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc434\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc434\\\"\" >> Setup_$CMSSWRel-$time"));
-    }
-    if($CMSSWRel eq "5_2_0"){
-        system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc462\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
-        system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc462\\\"\" >> Setup_$CMSSWRel-$time"));
-    }
-
+    system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc462\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"export SCRAM_ARCH=\\\"slc5_amd64_gcc462\\\"\" >> Setup_$CMSSWRel-$time"));
+    
     system(sprintf("echo \"cd $basedir/TauNtuple_$CMSSWRel-$time\" >> Setup_$CMSSWRel-$time"));
-    if($CMSSWRel eq "4_4_4"){
-	system(sprintf("echo \"source /net/software_cms/cmsset_default_legacy.sh\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"source /net/software_cms/cmsset_default_legacy.sh\" >> Setup_$CMSSWRel-$time"));
-    }
-    else{
-	system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Setup_$CMSSWRel-$time"));
-    } 
+    system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Setup_$CMSSWRel-$time"));
+    
     system(sprintf("echo \"cmsrel CMSSW_$CMSSWRel\" >> Install_TauNtuple_$CMSSWRel-$time")); 
     system(sprintf("echo \"cd CMSSW_$CMSSWRel/src\" >> Install_TauNtuple_$CMSSWRel-$time")); 
     system(sprintf("echo \"cmsenv\" >> Install_TauNtuple_$CMSSWRel-$time")); 
 
     system(sprintf("echo \"cd CMSSW_$CMSSWRel/src\" >> Setup_$CMSSWRel-$time"));
     system(sprintf("echo \"cmsenv\" >> Setup_$CMSSWRel-$time"));
-
-    system(sprintf("echo \"addpkg RecoVertex/KinematicFit V02-00-06 \" >> Install_TauNtuple_$CMSSWRel-$time")); 
-    system(sprintf("echo \"addpkg RecoVertex/KinematicFitPrimitives  V02-00-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d DataFormats -r V01-03-03 UserCode/RWTH3b/Tau/src/DataFormats\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d RecoTauTag  -r V01-03-03 UserCode/RWTH3b/Tau/src/RecoTauTag\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d CommonTools -r V01-03-03 UserCode/RWTH3b/Tau/src/CommonTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg PhysicsTools/Utilities $PileupVersion \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoLuminosity/LumiDB V03-03-16\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d TauDataFormat  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d SkimmingTools  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools/\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d SkimProduction -r $tag UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction/\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d TriggerFilter  -r $tag UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    if($BTag eq "YES"){
-	system(sprintf("echo \"cvs co -r V00-04-11 RecoBTag/PerformanceDB\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -d TopAnalysis/TopUtils UserCode/Bromo/TopAnalysis/TopUtils\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    }
-    if($TauReco eq "4_4_Y_08_03_2012"){
-	system(sprintf("echo \"cvs co -r V01-02-01 RecoTauTag/TauTagTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -r V01-02-16 RecoTauTag/RecoTau \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -r V01-02-12 RecoTauTag/Configuration \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"addpkg  PhysicsTools/PatAlgos \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs up -r 1.47 PhysicsTools/PatAlgos/python/tools/tauTools.py \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    }
-    # add private hacks
-    if($CMSSWRel eq "4_2_8"){    
-	system(sprintf("echo \"$currentdir/subs \\\"AlgebraicMatrix33\\\" \\\"AlgebraicSymMatrix\\\" RecoVertex/KinematicFitPrimitives/src/KinematicVertex.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    }
-    if($PileupVersion eq "V08-03-14"){
-	system(sprintf("echo \"$currentdir/subs \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_,PUOutputFile_\\\" \\\"PUInputFile_,PUInputFile_, PUInputHistoMC_, PUInputHistoData_\\\" TauDataFormat/TauNtuple/src/TauNtuple.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    }
-    if($Cleaning eq "YES"){
-	system(sprintf("echo \"cvs co -r lhx_12JAN2012_v1 DataFormats/METReco\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -r lhx_08FEB2012_v2 RecoMET/METFilters\" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -r V00-00-08 RecoMET/METAnalyzers\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    }
+
+    system(sprintf("echo \"mkdir data \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+    #Tau Package V08-09-57 recomendation for 5_3_9: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATReleaseNotes52X 
+    system(sprintf("echo \"addpkg DataFormats/PatCandidates   V06-05-06-10 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg PhysicsTools/PatAlgos       V08-09-57 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg PhysicsTools/PatUtils       V03-09-28 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/CaloRecHit      V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg FWCore/GuiBrowsers          V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoMET/METProducers        V03-03-12-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/RecoTau V01-04-25 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/Configuration V01-04-13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+    #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
+    system(sprintf("echo \"cvs co -r V09-00-01      RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r jakob19April2013_2012ID EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+    # Tau KinFit
+    system(sprintf("echo \"cvs co -d DataFormats/KinematicFit -r V04-00-40 UserCode/RWTH3b/Tau/src/DataFormats/KinematicFit \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d RecoTauTag/KinematicTau  -r V04-00-40 UserCode/RWTH3b/Tau/src/RecoTauTag/KinematicTau \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d SimpleFits  -r V04-00-40 UserCode/inugent/SimpleFits  \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp RecoTauTag/KinematicTau/QualityCutsTraining_BDT.weights.xml data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+    # Tau Nutple
+    system(sprintf("echo \"cvs co -d TauDataFormat  -r V01-00-06 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d SkimmingTools  -r V01-00-06 UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d SkimProduction -r V01-00-08 UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d TriggerFilter  -r V00-01-15 UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"source /net/software_cms/cmsset_default.sh\" >> Install_TauNtuple_$CMSSWRel-$time "));
+    system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Install_TauNtuple_$CMSSWRel-$time "));
     system(sprintf("echo \"source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh\" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Setup_$CMSSWRel-$time"));
-    system(sprintf("echo \"source /net/software_cms/cmsset_default.sh\" >> Setup_$CMSSWRel-$time "));
+    system(sprintf("echo \"source /cvmfs/cms.cern.ch/cmsset_default.sh\" >> Setup_$CMSSWRel-$time "));
     system(sprintf("echo \"source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh\" >> Setup_$CMSSWRel-$time"));
 
-   #build
-    system(sprintf("echo \"scram build -c\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"scram b\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    #build
+    system(sprintf("echo \"scram b -j 9 \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # print Instructions
     printf("\n\nInstructions\n");
     printf("Please setup CVSROOT, klog and kinit before proceeding...");
     printf("\nexport CVSROOT=\":gserver:cmscvs.cern.ch:/local/reps/CMSSW\"");
-    printf("\nkinit <UserID>@CERN.CH"); 
-    printf("\nklog <UserID>@CERN.CH"); 
+    printf("\nkinit $UserIDCern\@CERN.CH"); 
+    printf("\nklog $UserIDCern\@CERN.CH"); 
     printf("\nsource Install_TauNtuple_$CMSSWRel-$time"); 
     printf("\nYou can now go to the Production Directory and submit jobs.");
     printf("\ncd  $basedir/SkimProduction/CRAB/");
@@ -433,6 +427,7 @@ if( $ARGV[0] eq "--DCache" ){
     system(sprintf("echo \"rm Set*/*.o; rm Set*/*.e; rm Set*/*.log; \" >> $OutputDir/workdir$set/Submit")) ;
 
     for($l=0;$l<2; $l++){
+	system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Condor_Combine"));
 	$B=0;
 	$max=1;
 	foreach $DS (@DataSets){
@@ -528,12 +523,13 @@ if( $ARGV[0] eq "--DCache" ){
 		    }
 		    if($b =~ m/root/){
                         $myfile=$b;
+			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Conder_Set_$B"));
                     }
 		    if($c =~ m/root/){
                         $myfile=$c;
                     }
 		    #printf("$myfile");
-		    system(sprintf("echo \"/opt/d-cache/dcap/bin/dccp  dcap://grid-dcap.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
+		    system(sprintf("echo \"dccp  dcap://grid-dcap.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
 		    system(sprintf("echo \"File:  /user/scratch/$UserID/$myfile \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
 		    system(sprintf("echo \"rm -rf /user/scratch/$UserID/$myfile  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
 		    $A++;
@@ -554,7 +550,7 @@ if( $ARGV[0] eq "--DCache" ){
     printf("\nPlease make sure you have run:");
     printf("\nvoms-proxy-init");
     printf("\ngrid-proxy-init");
-    printf("\nkinit $UserID@CERN.CH");
+    printf("\nkinit $UserIDCern\@CERN.CH");
     printf("\nNow you can run the analysis using dcache.");
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
     printf("\nTo compile the code in the workdir: source compile ");
