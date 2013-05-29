@@ -12,31 +12,27 @@ class ZtoEMu : public Selection {
   virtual ~ZtoEMu();
 
   virtual void  Configure();
-  //virtual void Finish();
+  virtual void Finish();
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
 	     qualitycuts,
+	     SameVtx,
 	     NMuPt,
 	     NMuEta,
+	     NMuRelIso,
 		 NMu,
 	     NEPt,
 	     NEEta,
 		 NE,
 		 drMuE,
-		 charge,
-		 MuRelIso,
 		 looseMuonVeto,
-		 SameVtx,
+		 charge,
 		 jetVeto,
 		 MtMu,
 	     ptBalance,
 	     ZMassmax,
 	     ZMassmin,
-	     MET,
-	     MtE,
-         deltaPhi,
-         cosdeltaPhi,
 	     NCuts};
 
  protected:
@@ -55,27 +51,15 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> EPt;
   std::vector<TH1D> MuPt;
   std::vector<TH1D> mtMu;
-  std::vector<TH1D> phiMtMu;
   std::vector<TH1D> mtE;
-  std::vector<TH1D> phiMtE;
-  std::vector<TH1D> NJets;
   std::vector<TH1D> pzeta;
   std::vector<TH1D> pzetaDQM;
-  std::vector<TH1D> JetPt;
-  std::vector<TH1D> JetFromVtxPt;
-  std::vector<TH1D> drejet;
-  std::vector<TH1D> invmass;
   std::vector<TH1D> etaMu;
   std::vector<TH1D> etaE;
   std::vector<TH1D> jetsum;
+  std::vector<TH1D> NJets;
   std::vector<TH1D> chargesum;
   std::vector<TH1D> chargesumID;
-  std::vector<TH1D> chargesumMuID;
-  std::vector<TH1D> chargesumEID;
-  std::vector<TH1D> chargeE;
-  std::vector<TH1D> chargeEID;
-  std::vector<TH1D> chargeMu;
-  std::vector<TH1D> chargeMuID;
   std::vector<TH1D> drmue;
   std::vector<TH1D> drmueID;
   std::vector<TH1D> deltaphi;
@@ -87,24 +71,23 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> SecondJetPt;
   std::vector<TH1D> ThirdJetPt;
   std::vector<TH1D> FourthJetPt;
-  std::vector<TH1D> MuPoca;
-  std::vector<TH1D> EPoca;
-  std::vector<TH1D> EMuPoca;
-  std::vector<TH1D> EMuPocaDiff;
-  std::vector<TH1D> NMuonsInRange;
-  std::vector<TH1D> NElectronsInRange;
-  std::vector<TH1D> phiMu;
-  std::vector<TH1D> MuDXY;
-  std::vector<TH1D> MuDZ;
-  std::vector<TH1D> EDXY;
-  std::vector<TH1D> EDZ;
-  std::vector<TH1D> mudxypass;
-  std::vector<TH1D> mudzpass;
-  std::vector<TH1D> edxypass;
-  std::vector<TH1D> edzpass;
-  std::vector<TH1D> etachargemu;
-  std::vector<TH1D> etachargee;
-  std::vector<TH1D> jetsumpass;
+  
+  std::vector<TH1D> invmass;
+  std::vector<TH1D> invmass_zmass;
+  std::vector<TH1D> invmass_ptbalance;
+  std::vector<TH1D> invmass_mtmu;
+  std::vector<TH1D> invmass_jetveto;
+  std::vector<TH1D> invmass_charge;
+  std::vector<TH1D> invmass_loosemuonveto;
+  std::vector<TH1D> invmass_dremu;
+  std::vector<TH1D> invmass_only_object_id;
+  std::vector<TH1D> invmass_no_loosemuonveto;
+  
+  std::vector<TH1D> nm2_charge;
+  std::vector<TH1D> nm2_jetveto;
+  std::vector<TH1D> nm2_mtmu;
+  std::vector<TH1D> nm2_ptbalance;
+  std::vector<TH1D> nm2_drmue;
   
   std::vector<TH1D> mproj1;
   std::vector<TH1D> mproj2;
@@ -125,16 +108,9 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> phiproj8;
   std::vector<TH1D> phiproj9;
   
-  std::vector<TH2D> ABCD;
-  std::vector<TH2D> ABCDEF;
-  std::vector<TH2D> chargemue;
   std::vector<TH2D> InvmassVsDeltaPhi;
-  std::vector<TH2D> EPtVsCosTheta;
-  std::vector<TH2D> MuPtVsCosTheta;
-  std::vector<TH2D> EPtVsEta;
-  std::vector<TH2D> MuPtVsEta;
 
-  double mu_pt,mu_eta,mu_reliso,e_pt,e_eta,jet_pt,jet_eta,jet_sum;
+  double mu_pt,mu_eta,mu_reliso,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;
   double pex,pey,pmux,pmuy,phie,phimu;
   double combpt;
@@ -153,6 +129,13 @@ class ZtoEMu : public Selection {
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+  double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
+  
+  TH2D* ElectronFakeRate;
+  TH2D* MuonFakeRate;
+  double fakeRate;
+  double fakeRateMu;
+  double fakeRateE;
 
 };
 #endif
