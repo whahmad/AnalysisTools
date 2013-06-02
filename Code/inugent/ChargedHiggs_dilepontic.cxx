@@ -492,7 +492,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
   if(mu_idx.size()>0){
     dphiMuMET=cos(Tools::DeltaPhi(Ntp->Muons_p4(mu_idx.at(0)),Met));
   }
-  value.at(MTandMuMETdphi)=sqrt(pow((1-dphiMuMET)*200,2.0)+pow(value.at(MT),2.0));
+  value.at(MTandMuMETdphi)=sqrt(pow((double)(1-dphiMuMET)*200,2.0)+pow((double)value.at(MT),2.0));
   pass.at(MTandMuMETdphi)=(value.at(MTandMuMETdphi)>=cut.at(MTandMuMETdphi));
 
   value.at(MTplusMET)=value.at(MET)+value.at(MT);

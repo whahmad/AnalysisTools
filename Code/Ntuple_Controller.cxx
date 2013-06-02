@@ -6,7 +6,6 @@
 #include "PDG_Var.h"
 
 // External code
-#include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -501,9 +500,9 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 
-bool Ntuple_Controller::isGoodKFTau(unsigned int i){
-  if(KFTau_discriminatorByKFit(i)){
-    if(KFTau_discriminatorByQC(i)){
+bool Ntuple_Controller::isGoodKFTau(unsigned int i,unsigned int j){
+  if(KFTau_discriminatorByKFit(i,j)){
+    if(KFTau_discriminatorByQC(i,j)){
       if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
 	if(PFTau_isVLooseIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
 	  //if(PFTau_isMediumIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){

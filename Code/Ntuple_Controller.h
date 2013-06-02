@@ -29,8 +29,8 @@
 
 #include "HistoConfig.h"
 #include "TauSpinerInterface.h"
-#include "TauDataFormat/TauNtuple/interface/PdtPdgMini.h"
-#include "TauDataFormat/TauNtuple/interface/TauDecay.h"
+#include "Validation/EventGenerator/interface/PdtPdgMini.h"
+#include "Validation/EventGenerator/interface/TauDecay.h"
 #include "HistoConfig.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -277,20 +277,20 @@ class Ntuple_Controller{
 
    // Kinematic Fit Tau Information
    unsigned int     NKFTau(){return Ntp->KFTau_TauVis_p4->size();}
-   bool             isGoodKFTau(unsigned int i, unsigned int j);
+   bool             isGoodKFTau(unsigned int i,unsigned int j=0);
    int KFTauNSolutions1(unsigned int i) {return  Ntp->KFTau_TauVis_p4->at(i).size();}
    int KFTauNSolutions11(unsigned int i) {return  Ntp->Muon_Charge->size();}
    int KFTauNSolutions2(unsigned int i) {return  Ntp->KFTau_Fit_charge->size();}
 
   
-   TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauVis_p4->at(i).at(j).at(1),Ntp->KFTau_TauVis_p4->at(i).at(j).at(2),Ntp->KFTau_TauVis_p4->at(i).at(j).at(3),Ntp->KFTau_TauVis_p4->at(i).at(j).at(0));}
-   TLorentzVector   KFTau_TauFit_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauFit_p4->at(i).at(j).at(1),Ntp->KFTau_TauFit_p4->at(i).at(j).at(2),Ntp->KFTau_TauFit_p4->at(i).at(j).at(3),Ntp->KFTau_TauFit_p4->at(i).at(j).at(0));}
-   TLorentzVector   KFTau_TauFitInitial_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(1),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(2),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(3),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(0));}
-   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_Neutrino_p4->at(i).at(j).at(1),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(2),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(3),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j=0){return TLorentzVector(Ntp->KFTau_TauVis_p4->at(i).at(j).at(1),Ntp->KFTau_TauVis_p4->at(i).at(j).at(2),Ntp->KFTau_TauVis_p4->at(i).at(j).at(3),Ntp->KFTau_TauVis_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_TauFit_p4(unsigned int i,unsigned int j=0){return TLorentzVector(Ntp->KFTau_TauFit_p4->at(i).at(j).at(1),Ntp->KFTau_TauFit_p4->at(i).at(j).at(2),Ntp->KFTau_TauFit_p4->at(i).at(j).at(3),Ntp->KFTau_TauFit_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_TauFitInitial_p4(unsigned int i,unsigned int j=0){return TLorentzVector(Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(1),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(2),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(3),Ntp->KFTau_TauFitInitial_p4->at(i).at(j).at(0));}
+   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return TLorentzVector(Ntp->KFTau_Neutrino_p4->at(i).at(j).at(1),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(2),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(3),Ntp->KFTau_Neutrino_p4->at(i).at(j).at(0));}
    TLorentzVector   KFTau_NeutrinoInitial_p4(unsigned int i,unsigned int j){return TLorentzVector(Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(1),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(2),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(3),Ntp->KFTau_NeutrinoInitial_p4->at(i).at(j).at(0));}
    TLorentzVector   KFTau_a1Initial_p4(unsigned int i){return TLorentzVector(Ntp->KFTau_a1Initial_p4->at(i).at(1),Ntp->KFTau_a1Initial_p4->at(i).at(2),Ntp->KFTau_a1Initial_p4->at(i).at(3),Ntp->KFTau_a1Initial_p4->at(i).at(0));}
-   int              KFTau_discriminatorByKFit(unsigned int i,unsigned int j){return Ntp->KFTau_discriminatorByKFit->at(i).at(j);}
-   int              KFTau_discriminatorByQC(unsigned int i,unsigned int j){return Ntp->KFTau_discriminatorByQC->at(i).at(j);}
+   int              KFTau_discriminatorByKFit(unsigned int i,unsigned int j=0){return Ntp->KFTau_discriminatorByKFit->at(i).at(j);}
+   int              KFTau_discriminatorByQC(unsigned int i,unsigned int j=0){return Ntp->KFTau_discriminatorByQC->at(i).at(j);}
    int              KFTau_nKinTaus(){return Ntp->KFTau_nKinTaus;}
    unsigned int     KFTau_MatchedHPS_idx(unsigned int i){return Ntp->KFTau_MatchedHPS_idx->at(i);}
    std::vector<int> KFTau_Track_idx(unsigned int i){return Ntp->KFTau_Track_idx->at(i);}
@@ -307,23 +307,23 @@ class Ntuple_Controller{
    TVector3 KFTau_Fit_SecondaryVertex(unsigned int i,unsigned int j){return TVector3(Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(0),Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(1),Ntp->KFTau_Fit_SecondaryVertex->at(i).at(j).at(2));}
 
    //   float    KFTau_Fit_chi2(unsigned int i){return Ntp->KFTau_Fit_chi2->at(i);}
-   float    KFTau_Fit_ndf(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_ndf->at(i).at(j);}
+   float    KFTau_Fit_ndf(unsigned int i,unsigned int j=0){return Ntp->KFTau_Fit_ndf->at(i).at(j);}
    //  int      KFTau_Fit_ambiguity(unsigned int i){return Ntp->KFTau_Fit_ambiguity->at(i);}
    int      KFTau_Fit_charge(unsigned int i){return Ntp->KFTau_Fit_charge->at(i);}
 
-   int      KFTau_Fit_csum(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_csum->at(i).at(j);}
-   int      KFTau_Fit_iterations(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_iterations->at(i).at(j);}
+   int      KFTau_Fit_csum(unsigned int i,unsigned int j=0){return Ntp->KFTau_Fit_csum->at(i).at(j);}
+   int      KFTau_Fit_iterations(unsigned int i,unsigned int j=0){return Ntp->KFTau_Fit_iterations->at(i).at(j);}
 
-   double   KFTau_Fit_TauEnergyFraction(unsigned int i,unsigned int j){return Ntp->KFTau_Fit_TauEnergyFraction->at(i).at(j);}
-   double   KFTau_Fit_RefitVisibleMass(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_RefitVisibleMass->at(i).at(j);}
-   double   KFTau_Fit_Chi2Prob(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_Chi2Prob->at(i).at(j);}
-   float    KFTau_Fit_chi2(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_chi2->at(i).at(j);}
+   double   KFTau_Fit_TauEnergyFraction(unsigned int i,unsigned int j=0){return Ntp->KFTau_Fit_TauEnergyFraction->at(i).at(j);}
+   double   KFTau_Fit_RefitVisibleMass(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_RefitVisibleMass->at(i).at(j);}
+   double   KFTau_Fit_Chi2Prob(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_Chi2Prob->at(i).at(j);}
+   float    KFTau_Fit_chi2(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_chi2->at(i).at(j);}
 
-   float    KFTau_Fit_BDTVal(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_BDTVal->at(i).at(j);}
+   float    KFTau_Fit_BDTVal(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_BDTVal->at(i).at(j);}
 
 
-   double   KFTau_Fit_PV_PV_significance(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_PV_PV_significance->at(i).at(j);}
-   double   KFTau_Fit_SV_PV_significance(unsigned int i, unsigned int j){return Ntp->KFTau_Fit_SV_PV_significance->at(i).at(j);}
+   double   KFTau_Fit_PV_PV_significance(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_PV_PV_significance->at(i).at(j);}
+   double   KFTau_Fit_SV_PV_significance(unsigned int i, unsigned int j=0){return Ntp->KFTau_Fit_SV_PV_significance->at(i).at(j);}
 
    unsigned int KFTau_NDaughter(unsigned int i){return Ntp->KFTau_Daughter_pdgid->at(i).size();}
    int KFTau_Daughter_pdgid(unsigned int i, unsigned int j){return Ntp->KFTau_Daughter_pdgid->at(i).at(j);}

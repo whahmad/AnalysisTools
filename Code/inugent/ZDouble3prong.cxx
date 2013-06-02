@@ -554,7 +554,7 @@ void  ZDouble3prong::doEvent(){
       KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx1),w);
       KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx1),w);
       KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx1),w);
-      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx1),w);
+      //KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx1),w);
       KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx1),w);
       KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx1),w);
       KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx1),w);
@@ -566,7 +566,7 @@ void  ZDouble3prong::doEvent(){
       KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx2),w);
       KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx2),w);
       KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx2),w);
-      KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx2),w);
+      //KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx2),w);
       KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx2),w);
       KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx2),w);
       KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx2),w);
