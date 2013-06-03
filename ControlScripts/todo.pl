@@ -19,7 +19,7 @@ $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
 $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 #$OutputDir="~/";
 $CodeDir="../Code";
-$set="Trigger_";
+$set="Analysis_";
 $CMSSWRel="5_3_9";
 $PileupVersion="V08-03-17";
 $tag="03-00-12";
@@ -346,7 +346,7 @@ if( $ARGV[0] eq "--Local" ){
     # Finish Submit script
     system(sprintf("echo \"cd  $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit"));
     system(sprintf("echo \"chmod +x  Auto_Combine_submit  \" >> $OutputDir/workdir$set/Submit"));
-    system(sprintf("echo \"nohup  ./Auto_Combine_submit & \" >> $OutputDir/workdir$set/Submit"));
+    #system(sprintf("echo \"nohup  ./Auto_Combine_submit & \" >> $OutputDir/workdir$set/Submit"));
     GenerateAutoCombineScript("Auto_Combine_submit");
     system(sprintf("mv Auto_Combine_submit $OutputDir/workdir$set/"));
 
