@@ -747,11 +747,11 @@ void  Ztotautau_ControlSample::doEvent(){
 	TauCandP.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).P(),w);
 	TauCandPT.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Pt(),w);
 	
-	KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tau_idx),w);
+	//	KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tau_idx),w);
 	KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tau_idx),w);
 	KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tau_idx),w);
 	KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tau_idx),w);
-	//KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tau_idx),w);
+	//	KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tau_idx),w);
 	KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tau_idx),w);
 	KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tau_idx),w);
 	KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tau_idx),w);
@@ -813,10 +813,10 @@ void  Ztotautau_ControlSample::doEvent(){
             TLorentzVector pi(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),
 			      Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),
 			      Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),
-			      sqrt(pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_m),2.0)+
-				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),2.0)+
-				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),2.0)+
-				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),2.0)));
+			      sqrt(pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_m),2.0)+
+				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),2.0)+
+				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),2.0)+
+				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),2.0)));
 	    if(verbose)std::cout << "pi 4-vec E " << pi.E() << " Phi " <<pi.Phi() << " Theta " << pi.Theta() << " M " << pi.M() << std::endl;
             TauVisInput+=pi;
 	    npi++;

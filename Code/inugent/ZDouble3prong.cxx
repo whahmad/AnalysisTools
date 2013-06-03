@@ -499,8 +499,8 @@ void  ZDouble3prong::doEvent(){
 
   value.at(TauChiProb)=0;
   if(tauidx1!=999 &&tauidx2!=999){
-    value.at(TauChiProb)=Ntp->KFTau_Fit_Chi2Prob(tauidx1);
-    if(value.at(TauChiProb)>Ntp->KFTau_Fit_Chi2Prob(tauidx2))value.at(TauChiProb)=Ntp->KFTau_Fit_Chi2Prob(tauidx2);
+    //    value.at(TauChiProb)=Ntp->KFTau_Fit_Chi2Prob(tauidx1);
+    //    if(value.at(TauChiProb)>Ntp->KFTau_Fit_Chi2Prob(tauidx2))value.at(TauChiProb)=Ntp->KFTau_Fit_Chi2Prob(tauidx2);
   }
   pass.at(TauChiProb)=value.at(TauChiProb)>cut.at(TauChiProb);
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() G" << std::endl;
@@ -550,7 +550,7 @@ void  ZDouble3prong::doEvent(){
 
     if(tauidx1!=999 && tauidx2!=999){
       if(verbose)std::cout << "void  ZDouble3prong::doEvent() J" << std::endl;
-      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx1),w);
+      //      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx1),w);
       KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx1),w);
       KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx1),w);
       KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx1),w);
@@ -562,7 +562,7 @@ void  ZDouble3prong::doEvent(){
       KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauidx1),w);
 
 
-      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx2),w);
+      //      KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx2),w);
       KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tauidx2),w);
       KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tauidx2),w);
       KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tauidx2),w);
