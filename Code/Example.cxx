@@ -103,9 +103,6 @@ void  Example::doEvent(){
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
-  std::cout<<"id  "<< id <<std::endl;
-  std::cout<<"isData  "<<  Ntp->isData() <<std::endl;
-
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
