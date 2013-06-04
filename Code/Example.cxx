@@ -84,6 +84,8 @@ void  Example::doEvent(){
   for(unsigned int i=0;i<Ntp->NVtx();i++){
     if(Ntp->isVtxGood(i))nGoodVtx++;
   }
+
+
   value.at(PrimeVtx)=nGoodVtx;
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
   
@@ -91,12 +93,19 @@ void  Example::doEvent(){
   pass.at(TriggerOk)=true;
   
   double wobs=1;
-  double w=Ntp->EvtWeight3D();
+  double w;
+  if(!Ntp->isData()){w = Ntp->EvtWeight3D();}
+  else{w=1;}
+
+
+
   bool status=AnalysisCuts(t,w,wobs);
- 
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
+  std::cout<<"id  "<< id <<std::endl;
+  std::cout<<"isData  "<<  Ntp->isData() <<std::endl;
+
     NVtx.at(t).Fill(Ntp->NVtx(),w);
     unsigned int nGoodVtx=0;
     for(unsigned int i=0;i<Ntp->NVtx();i++){
@@ -106,6 +115,15 @@ void  Example::doEvent(){
     NGoodVtx.at(t).Fill(nGoodVtx,w);;
   }
 }
+
+
+
+
+
+void  Example::Finish(){
+  Selection::Finish();
+}
+
 
 
 

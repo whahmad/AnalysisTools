@@ -18,6 +18,7 @@ class Example : public Selection {
  protected:
   virtual void doEvent();
   virtual void Store_ExtraDist();
+  virtual void  Finish();
 
  private:
   // Selection Variables
