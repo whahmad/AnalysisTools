@@ -319,16 +319,16 @@ void  Ztotautau_ControlSample::Configure(){
   TauCandNuMass =HConfig.GetTH1D(Name+"_TauCandNuMass","TauCandNuMass",110,-0.1,1,"M(#nu) (GeV)","Events");
 
   TauSolutionResult = HConfig.GetTH1D(Name+"_TauSolutionResult","TauSolutionResult",3,-1.5,1.5,"Solution: -:R<0:+","Events");
-  EstimatedTauE =HConfig.GetTH1D(Name+"_TauCandE","TauCandE",40,0,200,"E_{Est-#tau} (GeV)","Events");
-  EstimatedTauPhi =HConfig.GetTH1D(Name+"_TauCandPhi","TauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{Est-#tau} (rad)","Events");
-  EstimatedTauEta  =HConfig.GetTH1D(Name+"_TauCandEta","TauCandEta",25,-2.5,2.5,"#eta_{Est-#tau}","Events");
+  EstimatedTauE =HConfig.GetTH1D(Name+"_EstimatedTauCandE","EstimatedTauCandE",40,0,200,"E_{Est-#tau} (GeV)","Events");
+  EstimatedTauPhi =HConfig.GetTH1D(Name+"_EstimatedTauCandPhi","EstimatedTauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{Est-#tau} (rad)","Events");
+  EstimatedTauEta  =HConfig.GetTH1D(Name+"_EstimatedTauCandEta","EstimatedTauCandEta",25,-2.5,2.5,"#eta_{Est-#tau}","Events");
 
   EstimatedTauERes =HConfig.GetTH1D(Name+"_TauEstimatedERes","TauEstimatedERes",40,-50,50,"#sigma(E_{Est-#tau}) (GeV)","Events");
   EstimatedTauPhiRes =HConfig.GetTH1D(Name+"_TauEstimatedPhiRes","TauEstimatedPhiRes",100,-0.2,0.2,"#sigma(#phi_{Est-#tau}) (rad)","Events");
   EstimatedTauEtaRes =HConfig.GetTH1D(Name+"_TauEstimatedEtaRes","TauEstimatedEtaRes",100,-0.2,0.2,"#sigma(#eta_{Est-#tau}) ","Events");
 
-  EstimatedTauDirPhiRes=HConfig.GetTH1D(Name+"_TauCandDirPhiRes","TauCandDirPhiRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
-  EstimatedTauDirEtaRes=HConfig.GetTH1D(Name+"_TauCandDirEtaRes","TauCandDirEtaRes",100,-0.2,0.2,"#sigma(#eta_{Direction-#tau}) (rad)","Events");
+  EstimatedTauDirPhiRes=HConfig.GetTH1D(Name+"_EstimatedTauCandDirPhiRes","EstimatedTauCandDirPhiRes",100,-0.2,0.2,"#sigma(#phi_{Direction-#tau}) (rad)","Events");
+  EstimatedTauDirEtaRes=HConfig.GetTH1D(Name+"_EstimatedTauCandDirEtaRes","EstimatedTauCandDirEtaRes",100,-0.2,0.2,"#sigma(#eta_{Direction-#tau}) (rad)","Events");
 
   KFTau_Fit_chiprob=HConfig.GetTH1D(Name+"_KFTau_Fit_prob","KFTau_Fit_prob",25,0,1,"Kinematic Fit Probability","Events");
   KFTau_Fit_a1mass=HConfig.GetTH1D(Name+"_KFTau_Fit_a1mass","KFTau_Fit_a1mass",25,0,2.5,"Kinematic Fit a_{1} Mass","Events");
@@ -341,6 +341,15 @@ void  Ztotautau_ControlSample::Configure(){
   KFTau_Fit_PV_PV_significance=HConfig.GetTH1D(Name+"_ KFTau_Fit_PV_PV_significance"," KFTau_Fit_PV_PV_significance",50,0,10,"Kinematic Fit PV-PV_{Rotated} Significance","Events");
   KFTau_Fit_SV_PV_significance=HConfig.GetTH1D(Name+"_ KFTau_Fit_SV_PV_significance","KFTau_Fit_SV_PV_significance",50,0,10,"Kinematic Fit SV-PV_{Rotated} Significance","Events");
 
+
+
+
+  PFTauCandPhi =HConfig.GetTH1D(Name+"_PFTauCandPhi","PFTauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
+  PFMTauCandPhi =HConfig.GetTH1D(Name+"_PFMTauCandPhi","PFMTauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
+  KFTauCandPhi =HConfig.GetTH1D(Name+"_KFTauCandPhi","KFTauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
+  KFSTauCandPhi =HConfig.GetTH1D(Name+"_KFSTauCandPhi","KFSTauCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
+  KFTauVCandPhi =HConfig.GetTH1D(Name+"_KFTauVCandPhi","KFTauVCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
+  KFSTauVCandPhi =HConfig.GetTH1D(Name+"_KFSTauVCandPhi","KFSTauVCandPhi",32,-TMath::Pi(),TMath::Pi(),"#phi_{KF-#tau} (rad)","Events");
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
@@ -403,6 +412,14 @@ void  Ztotautau_ControlSample::Store_ExtraDist(){
  Extradist1d.push_back(&KFTau_Fit_TauEnergyFraction);
  Extradist1d.push_back(&KFTau_Fit_PV_PV_significance);
  Extradist1d.push_back(&KFTau_Fit_SV_PV_significance);
+
+ Extradist1d.push_back(&PFTauCandPhi);
+ Extradist1d.push_back(&PFMTauCandPhi);
+ Extradist1d.push_back(&KFTauCandPhi);
+ Extradist1d.push_back(&KFSTauCandPhi);
+ Extradist1d.push_back(&KFTauVCandPhi);
+ Extradist1d.push_back(&KFSTauVCandPhi);
+
 
 }
 
@@ -481,7 +498,7 @@ void  Ztotautau_ControlSample::doEvent(){
 	if(Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt()>value.at(JetTrackPtMax)) value.at(JetTrackPtMax)=Ntp->Track_p4(PFJet_Track_idx.at(i)).Pt();
       }
     }
-    pass.at(JetTrackPtMax)=value.at(JetTrackPtMax)>cut.at(JetTrackPtMax);
+    pass.at(JetTrackPtMax)=true;//value.at(JetTrackPtMax)>cut.at(JetTrackPtMax);
   }
   else{
     value.at(JetTrackPtMax)=0;
@@ -725,38 +742,64 @@ void  Ztotautau_ControlSample::doEvent(){
     //
     // Analyze Tau
     //
-    unsigned int tau_idx(999);
     if(jet_idx!=999){
       double mydr=0.5;
       for(unsigned i=0;i<Ntp->NKFTau();i++){
+	if(Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx))<mydr){
+	  KFTauCandPhi.at(t).Fill(Ntp->KFTau_TauFit_p4(i).Phi(),w);
+	  if(Ntp->isGoodKFTau(i))KFSTauCandPhi.at(t).Fill(Ntp->KFTau_TauFit_p4(i).Phi(),w);
+	  KFTauVCandPhi.at(t).Fill(Ntp->KFTau_TauVis_p4(i).Phi(),w);
+          if(Ntp->isGoodKFTau(i))KFSTauVCandPhi.at(t).Fill(Ntp->KFTau_TauVis_p4(i).Phi(),w);
+
+	}
+      }
+      for(unsigned i=0;i<Ntp->NPFTaus();i++){
+	if(Tools::dr(Ntp->PFTau_p4(i),Ntp->PFJet_p4(jet_idx))<mydr){
+	  PFTauCandPhi.at(t).Fill(Ntp->PFTau_p4(i).Phi(),w);
+	  if(Ntp->PFTau_hpsDecayMode(i) == 10)PFMTauCandPhi.at(t).Fill(Ntp->PFTau_p4(i).Phi(),w);
+	}
+      }
+    }
+
+    unsigned int tau_idx(999);
+    std::cout << "jet_idx " << jet_idx << " Ntp->NKFTau() " << Ntp->NKFTau() << std::endl;
+      if(jet_idx!=999){
+      double mydr=0.5;
+      for(unsigned i=0;i<Ntp->NKFTau();i++){
+	std::cout << "tau " <<  i;
         if(Ntp->isGoodKFTau(i)){
+	  std::cout << " is good" << std::endl;
           if(Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx))<mydr){
             tau_idx=i;
 	    mydr=Tools::dr(Ntp->KFTau_TauVis_p4(i),Ntp->PFJet_p4(jet_idx));
           }
         }
+	else std::cout << "failed" << std::endl;
       }
       
       if(tau_idx!=999 ){
-        TauCandFound.at(t).Fill(1,w);
-        TauCandEtaPhi.at(t).Fill(fabs(Ntp->KFTau_TauFit_p4(tau_idx).Eta()),Ntp->KFTau_TauFit_p4(tau_idx).Pt(),w);
+    
 
+	TauCandFound.at(t).Fill(1,w);
+        TauCandEtaPhi.at(t).Fill(fabs(Ntp->KFTau_TauFit_p4(tau_idx).Eta()),Ntp->KFTau_TauFit_p4(tau_idx).Pt(),w);
+	std::cout << "Ntp->KFTau_TauFit_p4(tau_idx).Phi() " << Ntp->KFTau_TauFit_p4(tau_idx).Phi() << std::endl;
         TauCandPhi.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Phi(),w);
         TauCandEta.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Eta(),w);
         TauCandE.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).E(),w);
 	TauCandP.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).P(),w);
 	TauCandPT.at(t).Fill(Ntp->KFTau_TauFit_p4(tau_idx).Pt(),w);
 	
-	//	KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tau_idx),w);
+	KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tau_idx),w);
 	KFTau_Fit_a1mass.at(t).Fill(Ntp->KFTau_Fit_RefitVisibleMass(tau_idx),w);
 	KFTau_Fit_chi2.at(t).Fill(Ntp->KFTau_Fit_chi2(tau_idx),w);
 	KFTau_Fit_ndf.at(t).Fill(Ntp->KFTau_Fit_ndf(tau_idx),w);
-	//	KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tau_idx),w);
+	//KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tau_idx),w);
 	KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tau_idx),w);
 	KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tau_idx),w);
 	KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tau_idx),w);
 	KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tau_idx),w);
 	KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_SV_PV_significance(tau_idx),w);
+	std::cout << "Ntp-> KFTau_Fit_SV_PV_significance(tau_idx) " << Ntp-> KFTau_Fit_SV_PV_significance(tau_idx) << std::endl;
       }
       else{
 	TauCandFound.at(t).Fill(0.0,w);
@@ -813,10 +856,10 @@ void  Ztotautau_ControlSample::doEvent(){
             TLorentzVector pi(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),
 			      Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),
 			      Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),
-			      sqrt(pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_m),2.0)+
-				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),2.0)+
-				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),2.0)+
-				   pow(Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),2.0)));
+			      sqrt(pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_m),2.0)+
+				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_px),2.0)+
+				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_py),2.0)+
+				   pow((double)Ntp->KFTau_Daughter_inputpar(tau_idx,i,Ntuple_Controller::KFTau_pz),2.0)));
 	    if(verbose)std::cout << "pi 4-vec E " << pi.E() << " Phi " <<pi.Phi() << " Theta " << pi.Theta() << " M " << pi.M() << std::endl;
             TauVisInput+=pi;
 	    npi++;

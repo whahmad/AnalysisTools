@@ -92,6 +92,14 @@ class Ztotautau_ControlSample : public Selection {
   std::vector<TH1D> MinTauTrackPt;
   std::vector<TH1D> TauTrackdphitheta;
 
+  std::vector<TH1D>  PFTauCandPhi; 
+  std::vector<TH1D>  PFMTauCandPhi;
+  std::vector<TH1D>  KFTauCandPhi; 
+  std::vector<TH1D>  KFSTauCandPhi;
+  std::vector<TH1D>  KFTauVCandPhi;
+  std::vector<TH1D>  KFSTauVCandPhi;
+
+
   int channel;
   double jeteta,muoneta,TauTrackPtThreshold;
 

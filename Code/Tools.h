@@ -31,7 +31,7 @@ namespace Tools {
   }
   
   inline double dr(TLorentzVector LV1, TLorentzVector LV2){
-    return dr(LV1.Phi(),LV1.Eta(),LV2.Phi(),LV2.Eta());
+    return LV1.DeltaR(LV2);
   }
 
  

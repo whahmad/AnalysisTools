@@ -178,37 +178,27 @@ void Ntuple_Controller::doTaus(){
 void Ntuple_Controller::doMET(){
 }
 
+
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
-    if((Ntp->DataMC_Type)==10230533 or (Ntp->DataMC_Type)==10230833 or (Ntp->DataMC_Type)==10231433 or (Ntp->DataMC_Type)==10231833) {  // For Combined Plots
-      //if((Ntp->DataMC_Type)==10230533){           // All decays seaprately
+
+  if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal && HistoC.hasID(DataMCType::DY_ll_Signal)){
     for(int i=0;i<NMCSignalParticles();i++){
       if(abs(MCSignalParticle_pdgid(i))==PdtPdgMini::Z0){
-	//	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
+	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
 	  return DataMCType::Signal;
-	  //	}
+	}
       }
     }
     return Ntp->DataMC_Type;
+  }
+  if(Ntp->DataMC_Type>100){
+    if(HistoC.hasID(Ntp->DataMC_Type%100)){
+      return Ntp->DataMC_Type%100;
     }
-
-
-    if((Ntp->DataMC_Type)==20 or (Ntp->DataMC_Type)==23){// or (Ntp->DataMC_Type)==10231433 or (Ntp->DataMC_Type)==10231833) {  // For Combined Plots
-      return 20;
-    }
-   
-
-
-
-  if(NMCTaus()>0 && (Ntp->DataMC_Type%100)==DataMCType::DY_ll){
-    return DataMCType::DY_tautau;
   }
   if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;
 }
-
-
-
-
 
 TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
   unsigned int dim=3;
@@ -223,7 +213,7 @@ TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
 
 bool Ntuple_Controller::isVtxGood(unsigned int i){
   if(0<=i && i<NVtx()){
-    if(Vtx_Track_idx(i).size()>2)return true;
+    if(Vtx_Track_idx(i).size()>4)return true;
   }
   return false;
 }
@@ -235,7 +225,7 @@ bool Ntuple_Controller::isGoodMuon(unsigned int i){
   //  ΔR(μ,jet)>0.3 where jet is any jet passing the jet requirements not applied applied       
   if(isGoodMuon_nooverlapremoval(i)){
     unsigned int jet_idx=0;
-    return !muonhasJetOverlap(i,jet_idx); 
+    return !muonhasJetOverlap(i,jet_idx);
   }
   return false;
 }
@@ -340,63 +330,6 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   return false;
 }
 
-bool Ntuple_Controller::isMuonID(unsigned int iMuon, unsigned int iVertex){
-  //  Recomended tigth muon ID for 2012
-  //  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2012Data
-  if(Ntp->Muon_isGlobalMuon->at(iMuon)){
-    if(Ntp->Muon_isPFMuon->at(iMuon)){
-      if(Ntp->Muon_normChi2->at(iMuon)<10){
-	if(Ntp->Muon_hitPattern_numberOfValidMuonHits->at(iMuon) >0 ){
-	  if(Ntp->Muon_numberOfMatchedStations->at(iMuon) > 1 ){
-  //	    std::cout<<"dxy  "<<sqrt( pow(Ntp->Vtx_x->at(iMuon) - Ntp->Muon_Poca->at(iMuon).at(0),2)  + pow(Ntp->Vtx_y->at(iMuon) - Ntp->Muon_Poca->at(iMuon).at(1),2)) <<std::endl;
-	    //   if(sqrt( pow(Ntp->Vtx_x->at(iVertex) - Ntp->Muon_Poca->at(iMuon).at(0),2)  + pow(Ntp->Vtx_y->at(iVertex) - Ntp->Muon_Poca->at(iMuon).at(1),2)) < 0.2)
-	    {
-	    //     if(fabs( Ntp->Vtx_z->at(iVertex)- Ntp->Muon_Poca->at(iMuon).at(2)) < 0.5)
-	      {
-
-			if( Ntp->Muon_numberofValidPixelHits->at(iMuon) >0)
-			  
-			  {			  if( Ntp->Muon_trackerLayersWithMeasurement->at(iMuon)>5)
-			      {
-		    return true;
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-
-  return false;
-}
- bool Ntuple_Controller::isTauID(unsigned int iTau, unsigned int iAmbiguity){
-  if(Ntp->KFTau_discriminatorByQC->at(iTau).at(iAmbiguity) == 1){
-    if(Ntp->PFTau_HPSPFTauDiscriminationByMVA3TightElectronRejection->at(Ntp->KFTau_MatchedHPS_idx->at(iTau))){
-      if(Ntp->PFTau_isHPSAgainstMuonTight2->at(Ntp->KFTau_MatchedHPS_idx->at(iTau))){
-	// 	TLorentzVector tauF(Ntp->KFTau_TauFit_p4->at(iTau).at(iAmbiguity).at(1),Ntp->KFTau_TauFit_p4->at(iTau).at(iAmbiguity).at(2),Ntp->KFTau_TauFit_p4->at(iTau).at(iAmbiguity).at(3),Ntp->KFTau_TauFit_p4->at(iTau).at(iAmbiguity).at(0) );
- 	TLorentzVector a1F(Ntp->KFTau_TauVis_p4->at(iTau).at(iAmbiguity).at(1),Ntp->KFTau_TauVis_p4->at(iTau).at(iAmbiguity).at(2),Ntp->KFTau_TauVis_p4->at(iTau).at(iAmbiguity).at(3),Ntp->KFTau_TauVis_p4->at(iTau).at(iAmbiguity).at(0) );
-	//	if(tauF.Et()!=0)
-	if(a1F.M() > 0.7 && a1F.M()<1.6)
-	  {
-	    // if( (a1F.Et()/ tauF.Et()) > 0.65  && (a1F.Et()/ tauF.Et()) <1)
-	    {
-	    return true;
-	  }
-	}
-      }   
-    }
-  }
-  return false;
-  
- }
-
-
-
-
-
 bool Ntuple_Controller::isJetID(unsigned int i){
   //  Top Dilepton Jet selection with pt and iso matching the muon and tau.
   //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel  
@@ -453,94 +386,94 @@ float     Ntuple_Controller::Track_parCov(unsigned int i, TrackPar par1, TrackPa
 
 
 
- double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType){
-   if(!isData()){
-     std::vector<SimpleParticle> tau_daughters, tau_daughters2;
-     SimpleParticle tau, tau2;
-     for(int i=0; i<NMCSignalParticles();i++){
-       // check for signal Boson
-       if(MCSignalParticle_pdgid(i)==25 || 
- 	 MCSignalParticle_pdgid(i)==36 || 
- 	 MCSignalParticle_pdgid(i)==22 || 
- 	 MCSignalParticle_pdgid(i)==23){
- 	if(MCSignalParticle_Tauidx(i).size()==2){
- 	  SimpleParticle X(MCSignalParticle_p4(i).Px(),
- 			   MCSignalParticle_p4(i).Py(),
- 			   MCSignalParticle_p4(i).Pz(),
- 			   MCSignalParticle_p4(i).E(),
- 			   MCSignalParticle_pdgid(i));
- 	  bool tau1good(false),tau2good(false);
- 	  //first tau
- 	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(0);
- 	  if(verbose)std::cout  << "tau 1 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
- 	  if(tauidx<NMCTaus()){
- 	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
- 	      if(verbose)std::cout <<  tauidx << " " << t 
- 				   << "pdgid " << MCTauandProd_pdgid(tauidx,t)
- 				   << " px " << MCTauandProd_p4(tauidx,t).Px()
- 				   << " py " << MCTauandProd_p4(tauidx,t).Py()
- 				   << " pz " << MCTauandProd_p4(tauidx,t).Pz()
- 				   << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
- 	      if(t==0){
- 		if(verbose) std::cout << "isTau" << std::endl;
- 		tau=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
- 				   MCTauandProd_p4(tauidx,t).Py(),
- 				   MCTauandProd_p4(tauidx,t).Pz(),
- 				   MCTauandProd_p4(tauidx,t).E(),
- 				   MCTauandProd_pdgid(tauidx,t));
- 	      }
- 	      else{
- 		if(verbose) std::cout << "isDaughter" << std::endl;
- 		if(tau_daughters.size()>0)tau1good=true;
- 		tau_daughters.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
- 						       MCTauandProd_p4(tauidx,t).Py(),
- 						       MCTauandProd_p4(tauidx,t).Pz(),
- 						       MCTauandProd_p4(tauidx,t).E(),
- 						       MCTauandProd_pdgid(tauidx,t)));
- 	      }
- 	    }
- 	    // second tau
- 	    tauidx=MCSignalParticle_Tauidx(i).at(1);
- 	    if(verbose)std::cout  << "tau 2 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
- 	    if(tauidx<NMCTaus()){
- 	      for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
- 		if(verbose)std::cout <<  tauidx << " " << t
- 				     << "pdgid " << MCTauandProd_pdgid(tauidx,t)
- 				     << " px " << MCTauandProd_p4(tauidx,t).Px()
- 				     << " py " << MCTauandProd_p4(tauidx,t).Py()
- 				     << " pz " << MCTauandProd_p4(tauidx,t).Pz()
- 				     << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
+double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType){
+  if(!isData()){
+    std::vector<SimpleParticle> tau_daughters, tau_daughters2;
+    SimpleParticle tau, tau2;
+    for(int i=0; i<NMCSignalParticles();i++){
+      // check for signal Boson
+      if(MCSignalParticle_pdgid(i)==25 || 
+	 MCSignalParticle_pdgid(i)==36 || 
+	 MCSignalParticle_pdgid(i)==22 || 
+	 MCSignalParticle_pdgid(i)==23){
+	if(MCSignalParticle_Tauidx(i).size()==2){
+	  SimpleParticle X(MCSignalParticle_p4(i).Px(),
+			   MCSignalParticle_p4(i).Py(),
+			   MCSignalParticle_p4(i).Pz(),
+			   MCSignalParticle_p4(i).E(),
+			   MCSignalParticle_pdgid(i));
+	  bool tau1good(false),tau2good(false);
+	  //first tau
+	  unsigned int tauidx=MCSignalParticle_Tauidx(i).at(0);
+	  if(verbose)std::cout  << "tau 1 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	  if(tauidx<NMCTaus()){
+	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
+	      if(verbose)std::cout <<  tauidx << " " << t 
+				   << "pdgid " << MCTauandProd_pdgid(tauidx,t)
+				   << " px " << MCTauandProd_p4(tauidx,t).Px()
+				   << " py " << MCTauandProd_p4(tauidx,t).Py()
+				   << " pz " << MCTauandProd_p4(tauidx,t).Pz()
+				   << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
+	      if(t==0){
+		if(verbose) std::cout << "isTau" << std::endl;
+		tau=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+				   MCTauandProd_p4(tauidx,t).Py(),
+				   MCTauandProd_p4(tauidx,t).Pz(),
+				   MCTauandProd_p4(tauidx,t).E(),
+				   MCTauandProd_pdgid(tauidx,t));
+	      }
+	      else{
+		if(verbose) std::cout << "isDaughter" << std::endl;
+		if(tau_daughters.size()>0)tau1good=true;
+		tau_daughters.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+						       MCTauandProd_p4(tauidx,t).Py(),
+						       MCTauandProd_p4(tauidx,t).Pz(),
+						       MCTauandProd_p4(tauidx,t).E(),
+						       MCTauandProd_pdgid(tauidx,t)));
+	      }
+	    }
+	    // second tau
+	    tauidx=MCSignalParticle_Tauidx(i).at(1);
+	    if(verbose)std::cout  << "tau 2 indx " << tauidx  << " Number of Tau and Products " << NMCTauDecayProducts(tauidx) << std::endl;
+	    if(tauidx<NMCTaus()){
+	      for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
+		if(verbose)std::cout <<  tauidx << " " << t
+				     << "pdgid " << MCTauandProd_pdgid(tauidx,t)
+				     << " px " << MCTauandProd_p4(tauidx,t).Px()
+				     << " py " << MCTauandProd_p4(tauidx,t).Py()
+				     << " pz " << MCTauandProd_p4(tauidx,t).Pz()
+				     << " E " << MCTauandProd_p4(tauidx,t).E() << std::endl;
 		
- 		if(t==0){
- 		  if(verbose) std::cout << "isTau" << std::endl;
- 		  tau2=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
- 				      MCTauandProd_p4(tauidx,t).Py(),
- 				      MCTauandProd_p4(tauidx,t).Pz(),
- 				      MCTauandProd_p4(tauidx,t).E(),
- 				      MCTauandProd_pdgid(tauidx,t));
- 		}
- 		else{
- 		  if(verbose) std::cout << "isDaughter" << std::endl;
- 		  if(tau_daughters.size()>0)tau2good=true;
- 		  tau_daughters2.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
- 							  MCTauandProd_p4(tauidx,t).Py(),
- 							  MCTauandProd_p4(tauidx,t).Pz(),
- 							  MCTauandProd_p4(tauidx,t).E(),
- 							  MCTauandProd_pdgid(tauidx,t)));
- 		}
- 	      }
- 	    }
- 	    if(tau1good && tau2good){
- 	      if(verbose)std::cout  << "Two Taus found: " << tau_daughters.size() << " " << tau_daughters2.size() << std::endl;
- 	      return TauSpinerInt.Get(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
- 	    }
- 	  }
- 	}
-       }
-     }
-   }
-   return 1.0;
- }
+		if(t==0){
+		  if(verbose) std::cout << "isTau" << std::endl;
+		  tau2=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+				      MCTauandProd_p4(tauidx,t).Py(),
+				      MCTauandProd_p4(tauidx,t).Pz(),
+				      MCTauandProd_p4(tauidx,t).E(),
+				      MCTauandProd_pdgid(tauidx,t));
+		}
+		else{
+		  if(verbose) std::cout << "isDaughter" << std::endl;
+		  if(tau_daughters.size()>0)tau2good=true;
+		  tau_daughters2.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
+							  MCTauandProd_p4(tauidx,t).Py(),
+							  MCTauandProd_p4(tauidx,t).Pz(),
+							  MCTauandProd_p4(tauidx,t).E(),
+							  MCTauandProd_pdgid(tauidx,t)));
+		}
+	      }
+	    }
+	    if(tau1good && tau2good){
+	      if(verbose)std::cout  << "Two Taus found: " << tau_daughters.size() << " " << tau_daughters2.size() << std::endl;
+	      return TauSpinerInt.Get(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
+	    }
+	  }
+	}
+      }
+    }
+  }
+  return 1.0;
+}
 
 
 
@@ -567,7 +500,7 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 
 
 
-bool Ntuple_Controller::isGoodKFTau(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isGoodKFTau(unsigned int i,unsigned int j){
   if(KFTau_discriminatorByKFit(i,j)){
     if(KFTau_discriminatorByQC(i,j)){
       if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
@@ -607,60 +540,8 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
   return false;
 }
 
-TLorentzVector Ntuple_Controller::GetTruthTauLV(int jak){
-  TLorentzVector tau(0,0,0,0);
-  bool DecayOK = false;
-  unsigned int tauIndex;
-  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
-    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
-      if(Ntp->MCTau_JAK->at(0) == jak){tauIndex=0; DecayOK = true;}
-      else if(  Ntp->MCTau_JAK->at(1) ==jak ){ tauIndex=1; DecayOK = true;}
-      if(DecayOK){
-	tau = TLorentzVector(Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(1),Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(2),
-			     Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(3),Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(0));
-	
-      }
-    }
-  }
-  return tau; 
-}
-TLorentzVector Ntuple_Controller::GetTruthTauProductLV(int jak, int pdgID){
-  TLorentzVector tauProd(0,0,0,0);
-  bool DecayOK = false;
-  unsigned int tauIndex;
-  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
-    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
-      if(Ntp->MCTau_JAK->at(0) == jak){tauIndex=0; DecayOK = true;}
-      else if(  Ntp->MCTau_JAK->at(1) ==jak ){ tauIndex=1; DecayOK = true;}
-      if(DecayOK){
-	unsigned int NDec;
-	if(0<=tauIndex && tauIndex<NMCTaus()){ NDec = Ntp->MCTauandProd_p4->at(tauIndex).size();}
-	else NDec= 0;
-	for(int iProd =0; iProd < NDec; iProd++ ){
-	  if(abs( Ntp->MCTauandProd_pdgid->at(tauIndex).at(iProd))==pdgID){
-	    tauProd = TLorentzVector(Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(1),Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(2),
-                                     Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(3),Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(0));
 
 
-
-	  }
-	}
-      }
-    }
-  }
-  return tauProd;
-}											   
-
-bool Ntuple_Controller::CheckDecayID(int jak1, int jak2){
-  bool decayid= false;
-  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
-    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
-      if(Ntp->MCTau_JAK->at(0) == jak1 and Ntp->MCTau_JAK->at(1) ==jak2 ){ decayid = true;}
-      else if(Ntp->MCTau_JAK->at(0) ==jak2  and Ntp->MCTau_JAK->at(1) ==jak1){decayid  = true;}
-    }
-  }
-  return decayid;
-}
 float Ntuple_Controller::KFTau_Daughter_parCov(unsigned int i, unsigned int j,int par1,int par2){
   TMatrixF M(NKFTau_par,NKFTau_par);
   unsigned int idx(0);
