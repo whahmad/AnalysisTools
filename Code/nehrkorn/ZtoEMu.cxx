@@ -494,6 +494,9 @@ void  ZtoEMu::Store_ExtraDist(){
  Extradist1d.push_back(&phi2);
  Extradist1d.push_back(&phi3);
  
+ Extradist1d.push_back(&frMu);
+ Extradist1d.push_back(&frE);
+ 
  Extradist2d.push_back(&InvmassVsDeltaPhi);
 
 }
