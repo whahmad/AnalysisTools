@@ -592,9 +592,9 @@ void  Ztotautau_ControlSample::doEvent(){
     dist.at(MinTracksinJet).push_back(ptmin);
 
     value.at(MaxTracksinJet)=TauTracks.size();
-    pass.at(MaxTracksinJet)=cut.at(MaxTracksinJet)>value.at(MaxTracksinJet);                                                                                                                                                          
+    pass.at(MaxTracksinJet)=true;//cut.at(MaxTracksinJet)>value.at(MaxTracksinJet);                                                                                                                                                          
     value.at(MinTracksinJet)=TauTracks.size();
-    pass.at(MinTracksinJet)=cut.at(MinTracksinJet)<value.at(MinTracksinJet);
+    pass.at(MinTracksinJet)=true;//cut.at(MinTracksinJet)<value.at(MinTracksinJet);
   }
 
   value.at(charge)=0;
