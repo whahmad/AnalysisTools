@@ -20,7 +20,7 @@ class ZtoEMu : public Selection {
 	     SameVtx,
 	     NMuPt,
 	     NMuEta,
-	     NMuRelIso,
+	     //NMuRelIso,
 		 NMu,
 	     NEPt,
 	     NEEta,
@@ -88,6 +88,15 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nm2_mtmu;
   std::vector<TH1D> nm2_ptbalance;
   std::vector<TH1D> nm2_drmue;
+
+  std::vector<TH1D> no_jetveto_mtmu;
+  std::vector<TH1D> no_charge_ptbalance;
+  std::vector<TH1D> no_charge;
+  
+  std::vector<TH1D> drmue_plus_charge;
+  std::vector<TH1D> drmue_plus_jetveto;
+  std::vector<TH1D> drmue_plus_mtmu;
+  std::vector<TH1D> drmue_plus_ptbalance;
   
   std::vector<TH1D> mproj1;
   std::vector<TH1D> mproj2;
@@ -108,6 +117,16 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> phiproj8;
   std::vector<TH1D> phiproj9;
   
+  std::vector<TH1D> m1;
+  std::vector<TH1D> m2;
+  std::vector<TH1D> m3;
+  std::vector<TH1D> phi1;
+  std::vector<TH1D> phi2;
+  std::vector<TH1D> phi3;
+  
+  std::vector<TH1D> frMu;
+  std::vector<TH1D> frE;
+  
   std::vector<TH2D> InvmassVsDeltaPhi;
 
   double mu_pt,mu_eta,mu_reliso,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
@@ -117,7 +136,7 @@ class ZtoEMu : public Selection {
   double aemu; //angle between electron and muon
   double beta; //angle between combined pt and bisector of electron and muon
   double gamma; //angle between MET and bisector of electron and muon
-  double phi1; //smaller angle (electron or muon)
+  double phismall; //smaller angle (electron or muon)
   double pvis,pmiss;
   
   double calculatePzeta(int muiterator, int eiterator,std::vector<unsigned int> vec1, std::vector<unsigned int> vec2);
@@ -127,6 +146,18 @@ class ZtoEMu : public Selection {
   double jetdxy(int vtx_idx, int leadingtrack_idx, int jet_idx);
   double jetdz(int vtx_idx, int leadingtrack_idx, int jet_idx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
+  
+  bool isTightMuon(unsigned int i, unsigned int j);
+  bool isSoftMuon(unsigned int i, unsigned int j);
+  bool isLooseMuon(unsigned int i);
+  bool isFakeMuon(unsigned int i, unsigned int j);
+  double Muon_RelIso(unsigned int i);
+  
+  bool isTightElectron(unsigned int i, unsigned int j);
+  bool isFakeElectron(unsigned int i, unsigned int j);
+  double Electron_RelIso(unsigned int i);
+  double Electron_Aeff(double Eta);
+  
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
