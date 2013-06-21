@@ -169,7 +169,8 @@ if( $ARGV[0] eq "--TauNtuple"){
     # HighPt Branch
     system(sprintf("echo \"addpkg DataFormats/CaloRecHit V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg DataFormats/METReco V03-03-11-01 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg DataFormats/PatCandidates HighPtTaus_2013Jun13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/PatCandidates V06-05-06-10; cd DataFormats/PatCandidates; cvs update -r HighPtTaus_2013Jun13;  cvs update -r V06-05-06-10  src/Electron.cc  interface/Electron.h; cd ../../  \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"$currentdir/subs 366535823 4113394532 DataFormats/PatCandidates/src/classes_def.xml \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg PhysicsTools/IsolationAlgos HighPtTaus_2013Jun13  \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
@@ -181,11 +182,11 @@ if( $ARGV[0] eq "--TauNtuple"){
 
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
     system(sprintf("echo \"cvs co -r V09-00-01      RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #system(sprintf("echo \"cvs co -r jakob19April2013_2012ID EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r jakob19April2013_2012ID EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Tau KinFit
     system(sprintf("echo \"cvs co -d SimpleFits  -r V04-00-40 UserCode/inugent/SimpleFits  \" >> Install_TauNtuple_$CMSSWRel-$time"));
