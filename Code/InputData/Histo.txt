@@ -1,7 +1,0 @@
-Histo: 1   -1 Data Data 1
-Histo: 60       -1 MC_QCD QCD 619
-Histo: 20       36475 MC_WJ W+J 414
-Histo: 30       2334.535 MC_DY DrellYan 53
-Histo: 33       1169.175 MC_tautau_DY DY(#tau#tau) 10
-Histo: 70       225.2 MC_ttbar t#bar{t}   
-
