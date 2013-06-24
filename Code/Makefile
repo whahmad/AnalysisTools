@@ -22,8 +22,9 @@ SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple \
 
 SHAREDCXXFLAGS =-I./CommonUtils \
 		-I./TauSpiner/hepmc/install/include \
-		-I./TauSpiner/TAUOLA/include/Tauola \
-                -I./TauSpiner/TAUOLA/include/TauSpinner \
+		-I./TauSpiner/tauola++/1.1.3/include/Tauola/ \
+                -I./TauSpiner/tauola++/1.1.3/include/TauSpinner/ \
+		-I./TauSpiner/tauola++/1.1.3/include/ \
 		-I./TauSpiner/lhapdf/include/ \
 		-I./TauSpiner/pythia8135/include
 

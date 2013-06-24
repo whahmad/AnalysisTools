@@ -42,7 +42,7 @@ PYTHIA8:
 	make;
 
 TAUOLA:
-	@cd TAUOLA; \
+	@cd tauola++/1.1.3/; \
 	 ./configure --with-hepmc=${BASE}/hepmc/install/ --with-pythia8libs=${BASE}/pythia8135/ --with-lhapdf=${BASE}/lhapdf --with-tau-spinner ; \
 	make; 
 

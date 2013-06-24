@@ -50,8 +50,10 @@ fi
 tauola=$(ls TauSpiner/* | grep TAUOLA | wc -l )
 if [ $tauola == 0 ]; then 
     cd TauSpiner
-     wget http://annapurna.ifj.edu.pl/~tprzedzinski/resources/TAUOLA.1.1.1a/TAUOLA.1.1.1a.tar.gz
-    tar -xzvf TAUOLA.1.1.1a.tar.gz
+    # wget http://annapurna.ifj.edu.pl/~tprzedzinski/resources/TAUOLA.1.1.1a/TAUOLA.1.1.1a.tar.gz
+    # tar -xzvf TAUOLA.1.1.1a.tar.gz
+    wget http://service-spi.web.cern.ch/service-spi/external/MCGenerators/distribution/tauola++/tauola++-1.1.3-src.tgz
+    tar -xzvf tauola++-1.1.3-src.tgz
     cd ..
 fi
 
