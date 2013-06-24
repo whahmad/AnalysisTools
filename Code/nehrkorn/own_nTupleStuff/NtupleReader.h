@@ -293,6 +293,14 @@ public :
    Int_t           PileupInfo_NumInteractions_n0;
    Int_t           PileupInfo_NumInteractions_np1;
    Float_t         EvtWeight3D;
+   Double_t        TauSpinnerWeight;
+   Double_t        SelEffWeight;
+   Double_t        RadiationCorrWeight;
+   Double_t        MinVisPtFilter;
+   Double_t        KinWeightPt;
+   Double_t        KinWeightEta;
+   Double_t        KinWeightMassPt;
+   Double_t        EmbeddedWeight;
    std::vector<std::vector<float> > *Track_p4;
    std::vector<std::vector<float> > *Track_Poca;
    std::vector<int>     *Track_charge;
@@ -613,6 +621,14 @@ public :
    TBranch        *b_PileupInfo_NumInteractions_n0;   //!
    TBranch        *b_PileupInfo_NumInteractions_np1;   //!
    TBranch        *b_EvtWeight3D;   //!
+   TBranch        *b_TauSpinnerWeight;   //!
+   TBranch        *b_SelEffWeight;   //!
+   TBranch        *b_RadiationCorrWeight;   //!
+   TBranch        *b_MinVisPtFilter;   //!
+   TBranch        *b_KinWeightPt;   //!
+   TBranch        *b_KinWeightEta;   //!
+   TBranch        *b_KinWeightMassPt;   //!
+   TBranch        *b_EmbeddedWeight;   //!
    TBranch        *b_Track_p4;   //!
    TBranch        *b_Track_Poca;   //!
    TBranch        *b_Track_charge;   //!
@@ -1298,6 +1314,14 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PileupInfo_NumInteractions_n0", &PileupInfo_NumInteractions_n0, &b_PileupInfo_NumInteractions_n0);
    fChain->SetBranchAddress("PileupInfo_NumInteractions_np1", &PileupInfo_NumInteractions_np1, &b_PileupInfo_NumInteractions_np1);
    fChain->SetBranchAddress("EvtWeight3D", &EvtWeight3D, &b_EvtWeight3D);
+   fChain->SetBranchAddress("TauSpinnerWeight", &TauSpinnerWeight, &b_TauSpinnerWeight);
+   fChain->SetBranchAddress("SelEffWeight", &SelEffWeight, &b_SelEffWeight);
+   fChain->SetBranchAddress("RadiationCorrWeight", &RadiationCorrWeight, &b_RadiationCorrWeight);
+   fChain->SetBranchAddress("MinVisPtFilter", &MinVisPtFilter, &b_MinVisPtFilter);
+   fChain->SetBranchAddress("KinWeightPt", &KinWeightPt, &b_KinWeightPt);
+   fChain->SetBranchAddress("KinWeightEta", &KinWeightEta, &b_KinWeightEta);
+   fChain->SetBranchAddress("KinWeightMassPt", &KinWeightMassPt, &b_KinWeightMassPt);
+   fChain->SetBranchAddress("EmbeddedWeight", &EmbeddedWeight, &b_EmbeddedWeight);
    fChain->SetBranchAddress("Track_p4", &Track_p4, &b_Track_p4);
    fChain->SetBranchAddress("Track_Poca", &Track_Poca, &b_Track_Poca);
    fChain->SetBranchAddress("Track_charge", &Track_charge, &b_Track_charge);

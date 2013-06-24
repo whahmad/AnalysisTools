@@ -149,7 +149,15 @@ class Ntuple_Controller{
   int           PileupInfo_NumInteractions_n0(){Ntp->PileupInfo_NumInteractions_n0;}
   int           PileupInfo_NumInteractions_np1(){Ntp->PileupInfo_NumInteractions_np1;}
   double        EvtWeight3D(){return Ntp->EvtWeight3D;}
-
+	// Embedded sample related
+	double        TauSpinnerWeight(){return Ntp->TauSpinnerWeight;}
+	double        SelEffWeight(){return Ntp->SelEffWeight;}
+	double        RadiationCorrWeight(){return Ntp->RadiationCorrWeight;}
+	double        MinVisPtFilter(){return Ntp->MinVisPtFilter;}
+	double        KinWeightPt(){return Ntp->KinWeightPt;}
+	double        KinWeightEta(){return Ntp->KinWeightEta;}
+	double        KinWeightMassPt(){return Ntp->KinWeightMassPt;}
+	double        EmbeddedWeight(){return Ntp->EmbeddedWeight;}
 
 
   // Vertex Information
