@@ -20,7 +20,6 @@ class ZtoEMu : public Selection {
 	     SameVtx,
 	     NMuPt,
 	     NMuEta,
-	     //NMuRelIso,
 		 NMu,
 	     NEPt,
 	     NEEta,
@@ -33,6 +32,8 @@ class ZtoEMu : public Selection {
 	     ptBalance,
 	     ZMassmax,
 	     ZMassmin,
+	     Phimin,
+	     Phimax,
 	     NCuts};
 
  protected:
@@ -81,7 +82,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_loosemuonveto;
   std::vector<TH1D> invmass_dremu;
   std::vector<TH1D> invmass_only_object_id;
-  std::vector<TH1D> invmass_no_loosemuonveto;
   
   std::vector<TH1D> nm2_charge;
   std::vector<TH1D> nm2_jetveto;
@@ -124,12 +124,28 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> phi2;
   std::vector<TH1D> phi3;
   
+  std::vector<TH1D> phi1_nopt;
+  std::vector<TH1D> phi2_nopt;
+  std::vector<TH1D> phi3_nopt;
+  
+  std::vector<TH1D> phi1_ptdiff;
+  std::vector<TH1D> phi2_ptdiff;
+  std::vector<TH1D> phi3_ptdiff;
+  
+  std::vector<TH1D> ptbal2;
+  
   std::vector<TH1D> frMu;
   std::vector<TH1D> frE;
   
+  std::vector<TH1D> pzetaCut;
+  std::vector<TH1D> pzetaStatus;
+  std::vector<TH1D> metCut;
+  std::vector<TH1D> metStatus;
+  
   std::vector<TH2D> InvmassVsDeltaPhi;
+  std::vector<TH2D> PtDiffVsDeltaPhi;
 
-  double mu_pt,mu_eta,mu_reliso,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
+  double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,phimin,phimax,mtmu,ptbalance,dRmue;
   int n_mu,n_e;
   double pex,pey,pmux,pmuy,phie,phimu;
   double combpt;
@@ -140,33 +156,40 @@ class ZtoEMu : public Selection {
   double pvis,pmiss;
   
   double calculatePzeta(int muiterator, int eiterator,std::vector<unsigned int> vec1, std::vector<unsigned int> vec2);
-  double calculatePzetaDQM(int muiterator, int eiterator,std::vector<unsigned int> vec1, std::vector<unsigned int> vec2);
+  double calculatePzetaDQM(int muiterator, int eiterator);
   double cosphi2d(double px1, double py1, double px2, double py2);
   double cosphi3d(TVector3 vec1, TVector3 vec2);
-  double jetdxy(int vtx_idx, int leadingtrack_idx, int jet_idx);
-  double jetdz(int vtx_idx, int leadingtrack_idx, int jet_idx);
+  double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+  double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   
+  bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
-  bool isSoftMuon(unsigned int i, unsigned int j);
   bool isLooseMuon(unsigned int i);
+  bool isFakeMuon(unsigned int i);
   bool isFakeMuon(unsigned int i, unsigned int j);
   double Muon_RelIso(unsigned int i);
+  double Muon_AbsIso(unsigned int i);
   
+  bool isMVAElectron(unsigned int i);
+  bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
+  bool isFakeElectron(unsigned int i);
   bool isFakeElectron(unsigned int i, unsigned int j);
   double Electron_RelIso(unsigned int i);
   double Electron_Aeff(double Eta);
   
-  double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
-  double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
+  bool MVA_ID;
+  TFile* FRFile;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;
+  
+  bool twod;
 
 };
 #endif
