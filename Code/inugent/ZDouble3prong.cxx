@@ -404,99 +404,12 @@ void  ZDouble3prong::doEvent(){
   value.at(TauTauVertex)=0;
   if(verbose)std::cout << "void  ZDouble3prong::doEvent() F2" << std::endl;
   if(tauidx1!=999 && tauidx2!=999) {
-    unsigned int dim=3;
-    TVector3 tau1_vtx=Ntp->KFTau_RotatedVtx(tauidx1);
-    TMatrixF tau1_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx1);
-    TVector3 tautau_vtx=Ntp->KFTau_RotatedVtx(tauidx2);
-    TMatrixF tautau_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx2);
-    tautau_vtx-=tau1_vtx;
-    tautau_cov+=tau1_cov;
-    double det=0;
-    tautau_cov.Invert(&det);
-    if(det!=0){
-      std::vector<float> dist;
-      dist.push_back(tautau_vtx.X());
-      dist.push_back(tautau_vtx.Y());
-      dist.push_back(tautau_vtx.Z());
-      float sig2=0;
-      for(unsigned int i=0;i<dim;i++){
-	for(unsigned int j=0;j<dim;j++){
-	  sig2+=dist.at(i)*dist.at(j)*tautau_cov[i][j];
-	}
-      }
-      value.at(TauTauVertex)=sqrt(fabs(sig2));
-      pass.at(TauTauVertex)=value.at(TauTauVertex)<cut.at(TauTauVertex);
-    }
   }
  
   //////////////////////////////////////////////////
   if(verbose){
-  if(tauidx1!=999 && tauidx2!=999) {
-    unsigned int dim=3;
-    TVector3 tau1_vtx=Ntp->KFTau_RotatedVtx(tauidx1);
-    TMatrixF tau1_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx1);
-    TVector3 tautau_vtx=Ntp->KFTau_ReducedVtx();
-    TMatrixF tautau_cov=Ntp->KFTau_ReducedVtx_Cov();
-    std::cout << "Rotated: " << tau1_vtx.X() << " " << tau1_vtx.Y() << " " << tau1_vtx.Z() << std::endl;
-    std::cout << "Reduced: " << tautau_vtx.X() << " " << tautau_vtx.Y() << " " << tautau_vtx.Z() << std::endl;
 
-    tautau_vtx-=tau1_vtx;
-    tautau_cov+=tau1_cov;
-    std::cout << "Diff: " << tautau_vtx.X() << " " << tautau_vtx.Y() << " " << tautau_vtx.Z() << std::endl;
-    std::cout << "row 1: " << tautau_cov[0][0] << " " <<  tautau_cov[0][1] << " " <<  tautau_cov[0][2]  << std::endl;
-    std::cout << "row 2: " << tautau_cov[1][0] << " " <<  tautau_cov[1][1] << " " <<  tautau_cov[1][2]  << std::endl;
-    std::cout << "row 3: " << tautau_cov[2][0] << " " <<  tautau_cov[2][1] << " " <<  tautau_cov[2][2]  << std::endl;
-
-    double det=0;
-    tautau_cov.Invert(&det);
-    if(det!=0){
-      std::vector<float> dist;
-      dist.push_back(tautau_vtx.X());
-      dist.push_back(tautau_vtx.Y());
-      dist.push_back(tautau_vtx.Z());
-      float sig2=0;
-      for(unsigned int i=0;i<dim;i++){
-        for(unsigned int j=0;j<dim;j++){
-          sig2+=dist.at(i)*dist.at(j)*tautau_cov[i][j];
-        }
-      }
-      std::cout << "PV PV: " << Ntp->KFTau_Fit_PV_PV_significance(tauidx1) << " " << Ntp->KFTau_Fit_PV_PV_significance(tauidx2) << " " << fabs(sig2) << " " << sqrt(fabs(sig2)) << std::endl;
-    }
   }
-
-  if(tauidx1!=999 && tauidx2!=999) {
-    unsigned int dim=3;
-    TVector3 tau1_vtx=Ntp->KFTau_RotatedVtx(tauidx1);
-    TMatrixF tau1_cov=Ntp->KFTau_RotatedVtx_Cov(tauidx1);
-    TVector3 tautau_vtx=Ntp->KFTau_SecondayVtx(tauidx1);
-    TMatrixF tautau_cov=Ntp->KFTau_SecondaryVtx_Cov(tauidx1);
-    std::cout << "Rotated: " << tau1_vtx.X() << " " << tau1_vtx.Y() << " " << tau1_vtx.Z() << std::endl;
-    std::cout << "Secondary: " << tautau_vtx.X() << " " << tautau_vtx.Y() << " " << tautau_vtx.Z() << std::endl;
-
-    tautau_vtx-=tau1_vtx;
-    tautau_cov+=tau1_cov;
-    std::cout << "Diff: " << tautau_vtx.X() << " " << tautau_vtx.Y() << " " << tautau_vtx.Z() << std::endl;
-    std::cout << "row 1: " << tautau_cov[0][0] << " " <<  tautau_cov[0][1] << " " <<  tautau_cov[0][2]  << std::endl;
-    std::cout << "row 2: " << tautau_cov[1][0] << " " <<  tautau_cov[1][1] << " " <<  tautau_cov[1][2]  << std::endl;
-    std::cout << "row 3: " << tautau_cov[2][0] << " " <<  tautau_cov[2][1] << " " <<  tautau_cov[2][2]  << std::endl;
-    double det=0;
-    tautau_cov.Invert(&det);
-    if(det!=0){
-      std::vector<float> dist;
-      dist.push_back(tautau_vtx.X());
-      dist.push_back(tautau_vtx.Y());
-      dist.push_back(tautau_vtx.Z());
-      float sig2=0;
-      for(unsigned int i=0;i<dim;i++){
-        for(unsigned int j=0;j<dim;j++){
-          sig2+=dist.at(i)*dist.at(j)*tautau_cov[i][j];
-        }
-      }
-      std::cout << "SV PV: " << Ntp->KFTau_Fit_SV_PV_significance(tauidx1) << "  " << Ntp->KFTau_Fit_SV_PV_significance(tauidx2) << " " << fabs(sig2) << " " << sqrt(fabs(sig2)) << std::endl;
-    }
-  }
-  }
-
   value.at(TauChiProb)=0;
   if(tauidx1!=999 &&tauidx2!=999){
     value.at(TauChiProb)=Ntp->KFTau_Fit_Chi2Prob(tauidx1);
@@ -557,9 +470,6 @@ void  ZDouble3prong::doEvent(){
       //KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx1),w);
       KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx1),w);
       KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx1),w);
-      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx1),w);
-      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauidx1),w);
-      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauidx1),w);
 
 
       KFTau_Fit_chiprob.at(t).Fill(Ntp->KFTau_Fit_Chi2Prob(tauidx2),w);
@@ -569,9 +479,6 @@ void  ZDouble3prong::doEvent(){
       //KFTau_Fit_ambiguity.at(t).Fill(Ntp->KFTau_Fit_ambiguity(tauidx2),w);
       KFTau_Fit_csum.at(t).Fill(Ntp->KFTau_Fit_csum(tauidx2),w);
       KFTau_Fit_iterations.at(t).Fill(Ntp->KFTau_Fit_iterations(tauidx2),w);
-      KFTau_Fit_TauEnergyFraction.at(t).Fill(Ntp->KFTau_Fit_TauEnergyFraction(tauidx2),w);
-      KFTau_Fit_PV_PV_significance.at(t).Fill(Ntp->KFTau_Fit_PV_PV_significance(tauidx2),w);
-      KFTau_Fit_SV_PV_significance.at(t).Fill(Ntp-> KFTau_Fit_PV_PV_significance(tauidx2),w);
       if(verbose)std::cout << "void  ZDouble3prong::doEvent() K" << std::endl;
     }
   }

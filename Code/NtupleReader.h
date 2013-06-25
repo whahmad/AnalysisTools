@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sun Jun  2 14:28:07 2013 by ROOT version 5.34/07
+// Mon Jun 24 20:13:22 2013 by ROOT version 5.34/07
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -13,15 +13,11 @@
 
 // Header file for the classes stored in the TTree if any.
 #include <vector>
-#include <vector>
-#include <vector>
-#include <vector>
-#include <vector>
-#include <vector>
-#include <vector>
+
+using namespace std;
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
-using namespace std;
+
 class NtupleReader {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -182,53 +178,34 @@ public :
    vector<int>     *PFTau_hpsDecayMode;
    vector<int>     *PFTau_Charge;
    vector<vector<int> > *PFTau_Track_idx;
-   vector<vector<int> > *KFTau_discriminatorByKFit;
-   vector<vector<int> > *KFTau_discriminatorByQC;
-   Int_t           KFTau_nKinTaus;
-   vector<vector<vector<float> > > *KFTau_TauFitInitial_p4;
-   vector<vector<vector<float> > > *KFTau_NeutrinoInitial_p4;
-   vector<vector<float> > *KFTau_a1Initial_p4;
-   vector<vector<vector<float> > > *KFTau_pions;
-   vector<vector<vector<float> > > *KFTau_Initial_pions;
-   vector<vector<float> > *KFTau_Fit_PrimaryVertex;
-   vector<vector<float> > *KFTau_Fit_InitialPrimaryVertex;
-   vector<vector<float> > *KFTau_Fit_InitialPrimaryVertexReFit;
-   vector<vector<vector<float> > > *KFTau_Fit_SecondaryVertex;
-   vector<vector<float> > *KFTau_Fit_InitialSecondaryVertex;
-   vector<vector<float> > *KFTau_Fit_Chi2Prob;
-   vector<vector<vector<float> > > *KFTau_TauVis_p4;
-   vector<vector<vector<float> > > *KFTau_TauFit_p4;
-   vector<vector<vector<float> > > *KFTau_Neutrino_p4;
-   vector<unsigned int> *KFTau_MatchedHPS_idx;
-   vector<vector<int> > *KFTau_Track_idx;
-   vector<int>     *KFTau_indexOfFitInfo;
-   vector<vector<float> > *KFTau_Fit_TauPrimVtx;
-   vector<vector<float> > *KFTau_Fit_chi2;
-   vector<vector<float> > *KFTau_Fit_ndf;
-   vector<int>     *KFTau_Fit_charge;
-   vector<vector<int> > *KFTau_Fit_csum;
-   vector<vector<int> > *KFTau_Fit_iterations;
-   vector<vector<float> > *KFTau_Fit_BDTVal;
-   vector<vector<float> > *KFTau_Fit_TauEnergyFraction;
-   vector<vector<float> > *KFTau_Fit_RefitVisibleMass;
-   vector<vector<float> > *KFTau_Fit_PV_PV_significance;
-   vector<vector<float> > *KFTau_Fit_SV_PV_significance;
-   vector<vector<int> > *KFTau_Daughter_pdgid;
-   vector<vector<int> > *KFTau_Daughter_charge;
-   vector<vector<float> > *KFTau_Daughter_ambiguity;
-   vector<vector<vector<float> > > *KFTau_Daughter_par;
-   vector<vector<vector<float> > > *KFTau_Daughter_parCov;
-   vector<vector<vector<float> > > *KFTau_Daughter_inputpar;
-   vector<vector<vector<float> > > *KFTau_Daughter_inputparCov;
-   vector<float>   *ReducedVtx_chi2;
-   vector<float>   *ReducedVtx_nTrk;
-   vector<float>   *ReducedVtx_ndof;
-   vector<float>   *ReducedVtx_x;
-   vector<float>   *ReducedVtx_y;
-   vector<float>   *ReducedVtx_z;
-   vector<vector<vector<float> > > *ReducedVtx_Cov;
-   vector<vector<int> > *ReducedVtx_Track_idx;
-   vector<float>   *ReducedVtx_isFake;
+   vector<vector<float> > *PFTau_TIP_primaryVertex_pos;
+   vector<vector<float> > *PFTau_TIP_primaryVertex_cov;
+   vector<vector<float> > *PFTau_TIP_secondaryVertex_pos;
+   vector<vector<float> > *PFTau_TIP_secondaryVertex_cov;
+   vector<float>   *PFTau_TIP_secondaryVertex_vtxchi2;
+   vector<float>   *PFTau_TIP_secondaryVertex_vtxndof;
+   vector<vector<float> > *PFTau_a1_lvp;
+   vector<vector<float> > *PFTau_a1_cov;
+   vector<int>     *PFTau_a1_charge;
+   vector<int>     *PFTau_a1_pdgid;
+   vector<float>   *PFTau_a1_B;
+   vector<float>   *PFTau_a1_M;
+   vector<vector<vector<float> > > *PFTau_daughterTracks;
+   vector<vector<vector<float> > > *PFTau_daughterTracks_cov;
+   vector<vector<int> > *PFTau_daughterTracks_charge;
+   vector<vector<int> > *PFTau_daughterTracks_pdgid;
+   vector<vector<float> > *PFTau_daughterTracks_B;
+   vector<vector<float> > *PFTau_daughterTracks_M;
+   vector<vector<vector<float> > > *PFTau_daughterTracks_poca;
+   vector<vector<float> > *PFTau_3PS_A1_LV;
+   vector<float>   *PFTau_3PS_M_A1;
+   vector<float>   *PFTau_3PS_M_12;
+   vector<float>   *PFTau_3PS_M_13;
+   vector<float>   *PFTau_3PS_M_23;
+   vector<int>     *PFTau_3PS_Tau_Charge;
+   vector<vector<float> > *PFTau_3PS_LCchi2;
+   vector<vector<int> > *PFTau_3PS_has3ProngSolution;
+   vector<vector<vector<float> > > *PFTau_3PS_Tau_LV;
    Bool_t          isPatJet;
    vector<vector<float> > *PFJet_p4;
    vector<vector<float> > *PFJet_Poca;
@@ -497,53 +474,34 @@ public :
    TBranch        *b_PFTau_hpsDecayMode;   //!
    TBranch        *b_PFTau_Charge;   //!
    TBranch        *b_PFTau_Track_idx;   //!
-   TBranch        *b_KFTau_discriminatorByKFit;   //!
-   TBranch        *b_KFTau_discriminatorByQC;   //!
-   TBranch        *b_KFTau_nKinTaus;   //!
-   TBranch        *b_KFTau_TauFitInitial_p4;   //!
-   TBranch        *b_KFTau_NeutrinoInitial_p4;   //!
-   TBranch        *b_KFTau_a1Initial_p4;   //!
-   TBranch        *b_KFTau_pions;   //!
-   TBranch        *b_KFTau_Initial_pions;   //!
-   TBranch        *b_KFTau_Fit_PrimaryVertex;   //!
-   TBranch        *b_KFTau_Fit_InitialPrimaryVertex;   //!
-   TBranch        *b_KFTau_Fit_InitialPrimaryVertexReFit;   //!
-   TBranch        *b_KFTau_Fit_SecondaryVertex;   //!
-   TBranch        *b_KFTau_Fit_InitialSecondaryVertex;   //!
-   TBranch        *b_KFTau_Fit_Chi2Prob;   //!
-   TBranch        *b_KFTau_TauVis_p4;   //!
-   TBranch        *b_KFTau_TauFit_p4;   //!
-   TBranch        *b_KFTau_Neutrino_p4;   //!
-   TBranch        *b_KFTau_MatchedHPS_idx;   //!
-   TBranch        *b_KFTau_Track_idx;   //!
-   TBranch        *b_KFTau_indexOfFitInfo;   //!
-   TBranch        *b_KFTau_Fit_TauPrimVtx;   //!
-   TBranch        *b_KFTau_Fit_chi2;   //!
-   TBranch        *b_KFTau_Fit_ndf;   //!
-   TBranch        *b_KFTau_Fit_charge;   //!
-   TBranch        *b_KFTau_Fit_csum;   //!
-   TBranch        *b_KFTau_Fit_iterations;   //!
-   TBranch        *b_KFTau_Fit_BDTVal;   //!
-   TBranch        *b_KFTau_Fit_TauEnergyFraction;   //!
-   TBranch        *b_KFTau_Fit_RefitVisibleMass;   //!
-   TBranch        *b_KFTau_Fit_PV_PV_significance;   //!
-   TBranch        *b_KFTau_Fit_SV_PV_significance;   //!
-   TBranch        *b_KFTau_Daughter_pdgid;   //!
-   TBranch        *b_KFTau_Daughter_charge;   //!
-   TBranch        *b_KFTau_Daughter_ambiguity;   //!
-   TBranch        *b_KFTau_Daughter_par;   //!
-   TBranch        *b_KFTau_Daughter_parCov;   //!
-   TBranch        *b_KFTau_Daughter_inputpar;   //!
-   TBranch        *b_KFTau_Daughter_inputparCov;   //!
-   TBranch        *b_ReducedVtx_chi2;   //!
-   TBranch        *b_ReducedVtx_nTrk;   //!
-   TBranch        *b_ReducedVtx_ndof;   //!
-   TBranch        *b_ReducedVtx_x;   //!
-   TBranch        *b_ReducedVtx_y;   //!
-   TBranch        *b_ReducedVtx_z;   //!
-   TBranch        *b_ReducedVtx_Cov;   //!
-   TBranch        *b_ReducedVtx_Track_idx;   //!
-   TBranch        *b_ReducedVtx_isFake;   //!
+   TBranch        *b_PFTau_TIP_primaryVertex_pos;   //!
+   TBranch        *b_PFTau_TIP_primaryVertex_cov;   //!
+   TBranch        *b_PFTau_TIP_secondaryVertex_pos;   //!
+   TBranch        *b_PFTau_TIP_secondaryVertex_cov;   //!
+   TBranch        *b_PFTau_TIP_secondaryVertex_vtxchi2;   //!
+   TBranch        *b_PFTau_TIP_secondaryVertex_vtxndof;   //!
+   TBranch        *b_PFTau_a1_lvp;   //!
+   TBranch        *b_PFTau_a1_cov;   //!
+   TBranch        *b_PFTau_a1_charge;   //!
+   TBranch        *b_PFTau_a1_pdgid;   //!
+   TBranch        *b_PFTau_a1_B;   //!
+   TBranch        *b_PFTau_a1_M;   //!
+   TBranch        *b_PFTau_daughterTracks;   //!
+   TBranch        *b_PFTau_daughterTracks_cov;   //!
+   TBranch        *b_PFTau_daughterTracks_charge;   //!
+   TBranch        *b_PFTau_daughterTracks_pdgid;   //!
+   TBranch        *b_PFTau_daughterTracks_B;   //!
+   TBranch        *b_PFTau_daughterTracks_M;   //!
+   TBranch        *b_PFTau_daughterTracks_poca;   //!
+   TBranch        *b_PFTau_3PS_A1_LV;   //!
+   TBranch        *b_PFTau_3PS_M_A1;   //!
+   TBranch        *b_PFTau_3PS_M_12;   //!
+   TBranch        *b_PFTau_3PS_M_13;   //!
+   TBranch        *b_PFTau_3PS_M_23;   //!
+   TBranch        *b_PFTau_3PS_Tau_Charge;   //!
+   TBranch        *b_PFTau_3PS_LCchi2;   //!
+   TBranch        *b_PFTau_3PS_has3ProngSolution;   //!
+   TBranch        *b_PFTau_3PS_Tau_LV;   //!
    TBranch        *b_isPatJet;   //!
    TBranch        *b_PFJet_p4;   //!
    TBranch        *b_PFJet_Poca;   //!
@@ -691,7 +649,7 @@ NtupleReader::NtupleReader(TTree *tree) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("~/TauNtuple_362_1_W0p.root/t");
+      chain->Add("dcap://grid-dcap.physik.rwth-aachen.de//pnfs/physik.rwth-aachen.de/cms/store/user/inugent/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball_Production_May_23_2013_Jun_20_2013_hr14_min26/7774cd0115f3f08bc0d958ea0b0d5fa5/TauNtuple_373_1_bvv.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -885,53 +843,34 @@ void NtupleReader::Init(TTree *tree)
    PFTau_hpsDecayMode = 0;
    PFTau_Charge = 0;
    PFTau_Track_idx = 0;
-   KFTau_discriminatorByKFit = 0;
-   KFTau_discriminatorByQC = 0;
-   KFTau_TauFitInitial_p4 = 0;
-   KFTau_NeutrinoInitial_p4 = 0;
-   KFTau_a1Initial_p4 = 0;
-   KFTau_pions = 0;
-   KFTau_Initial_pions = 0;
-   KFTau_Fit_PrimaryVertex = 0;
-   KFTau_Fit_InitialPrimaryVertex = 0;
-   KFTau_Fit_InitialPrimaryVertexReFit = 0;
-   KFTau_Fit_SecondaryVertex = 0;
-   KFTau_Fit_InitialSecondaryVertex = 0;
-   KFTau_Fit_Chi2Prob = 0;
-   KFTau_TauVis_p4 = 0;
-   KFTau_TauFit_p4 = 0;
-   KFTau_Neutrino_p4 = 0;
-   KFTau_MatchedHPS_idx = 0;
-   KFTau_Track_idx = 0;
-   KFTau_indexOfFitInfo = 0;
-   KFTau_Fit_TauPrimVtx = 0;
-   KFTau_Fit_chi2 = 0;
-   KFTau_Fit_ndf = 0;
-   KFTau_Fit_charge = 0;
-   KFTau_Fit_csum = 0;
-   KFTau_Fit_iterations = 0;
-   KFTau_Fit_BDTVal = 0;
-   KFTau_Fit_TauEnergyFraction = 0;
-   KFTau_Fit_RefitVisibleMass = 0;
-   KFTau_Fit_Chi2Prob = 0;
-   KFTau_Fit_PV_PV_significance = 0;
-   KFTau_Fit_SV_PV_significance = 0;
-   KFTau_Daughter_pdgid = 0;
-   KFTau_Daughter_charge = 0;
-   KFTau_Daughter_ambiguity = 0;
-   KFTau_Daughter_par = 0;
-   KFTau_Daughter_parCov = 0;
-   KFTau_Daughter_inputpar = 0;
-   KFTau_Daughter_inputparCov = 0;
-   ReducedVtx_chi2 = 0;
-   ReducedVtx_nTrk = 0;
-   ReducedVtx_ndof = 0;
-   ReducedVtx_x = 0;
-   ReducedVtx_y = 0;
-   ReducedVtx_z = 0;
-   ReducedVtx_Cov = 0;
-   ReducedVtx_Track_idx = 0;
-   ReducedVtx_isFake = 0;
+   PFTau_TIP_primaryVertex_pos = 0;
+   PFTau_TIP_primaryVertex_cov = 0;
+   PFTau_TIP_secondaryVertex_pos = 0;
+   PFTau_TIP_secondaryVertex_cov = 0;
+   PFTau_TIP_secondaryVertex_vtxchi2 = 0;
+   PFTau_TIP_secondaryVertex_vtxndof = 0;
+   PFTau_a1_lvp = 0;
+   PFTau_a1_cov = 0;
+   PFTau_a1_charge = 0;
+   PFTau_a1_pdgid = 0;
+   PFTau_a1_B = 0;
+   PFTau_a1_M = 0;
+   PFTau_daughterTracks = 0;
+   PFTau_daughterTracks_cov = 0;
+   PFTau_daughterTracks_charge = 0;
+   PFTau_daughterTracks_pdgid = 0;
+   PFTau_daughterTracks_B = 0;
+   PFTau_daughterTracks_M = 0;
+   PFTau_daughterTracks_poca = 0;
+   PFTau_3PS_A1_LV = 0;
+   PFTau_3PS_M_A1 = 0;
+   PFTau_3PS_M_12 = 0;
+   PFTau_3PS_M_13 = 0;
+   PFTau_3PS_M_23 = 0;
+   PFTau_3PS_Tau_Charge = 0;
+   PFTau_3PS_LCchi2 = 0;
+   PFTau_3PS_has3ProngSolution = 0;
+   PFTau_3PS_Tau_LV = 0;
    PFJet_p4 = 0;
    PFJet_Poca = 0;
    PFJet_chargedEmEnergy = 0;
@@ -1173,54 +1112,34 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_hpsDecayMode", &PFTau_hpsDecayMode, &b_PFTau_hpsDecayMode);
    fChain->SetBranchAddress("PFTau_Charge", &PFTau_Charge, &b_PFTau_Charge);
    fChain->SetBranchAddress("PFTau_Track_idx", &PFTau_Track_idx, &b_PFTau_Track_idx);
-   fChain->SetBranchAddress("KFTau_discriminatorByKFit", &KFTau_discriminatorByKFit, &b_KFTau_discriminatorByKFit);
-   fChain->SetBranchAddress("KFTau_discriminatorByQC", &KFTau_discriminatorByQC, &b_KFTau_discriminatorByQC);
-   fChain->SetBranchAddress("KFTau_nKinTaus", &KFTau_nKinTaus, &b_KFTau_nKinTaus);
-   fChain->SetBranchAddress("KFTau_TauFitInitial_p4", &KFTau_TauFitInitial_p4, &b_KFTau_TauFitInitial_p4);
-   fChain->SetBranchAddress("KFTau_NeutrinoInitial_p4", &KFTau_NeutrinoInitial_p4, &b_KFTau_NeutrinoInitial_p4);
-   fChain->SetBranchAddress("KFTau_a1Initial_p4", &KFTau_a1Initial_p4, &b_KFTau_a1Initial_p4);
-   fChain->SetBranchAddress("KFTau_pions", &KFTau_pions, &b_KFTau_pions);
-   fChain->SetBranchAddress("KFTau_Initial_pions", &KFTau_Initial_pions, &b_KFTau_Initial_pions);
-   fChain->SetBranchAddress("KFTau_Fit_PrimaryVertex", &KFTau_Fit_PrimaryVertex, &b_KFTau_Fit_PrimaryVertex);
-   fChain->SetBranchAddress("KFTau_Fit_InitialPrimaryVertex", &KFTau_Fit_InitialPrimaryVertex, &b_KFTau_Fit_InitialPrimaryVertex);
-   fChain->SetBranchAddress("KFTau_Fit_InitialPrimaryVertexReFit", &KFTau_Fit_InitialPrimaryVertexReFit, &b_KFTau_Fit_InitialPrimaryVertexReFit);
-   fChain->SetBranchAddress("KFTau_Fit_SecondaryVertex", &KFTau_Fit_SecondaryVertex, &b_KFTau_Fit_SecondaryVertex);
-   fChain->SetBranchAddress("KFTau_Fit_InitialSecondaryVertex", &KFTau_Fit_InitialSecondaryVertex, &b_KFTau_Fit_InitialSecondaryVertex);
-   fChain->SetBranchAddress("KFTau_Fit_Chi2Prob", &KFTau_Fit_Chi2Prob, &b_KFTau_Fit_Chi2Prob);
-   fChain->SetBranchAddress("KFTau_TauVis_p4", &KFTau_TauVis_p4, &b_KFTau_TauVis_p4);
-   fChain->SetBranchAddress("KFTau_TauFit_p4", &KFTau_TauFit_p4, &b_KFTau_TauFit_p4);
-   fChain->SetBranchAddress("KFTau_Neutrino_p4", &KFTau_Neutrino_p4, &b_KFTau_Neutrino_p4);
-   fChain->SetBranchAddress("KFTau_MatchedHPS_idx", &KFTau_MatchedHPS_idx, &b_KFTau_MatchedHPS_idx);
-   fChain->SetBranchAddress("KFTau_Track_idx", &KFTau_Track_idx, &b_KFTau_Track_idx);
-   fChain->SetBranchAddress("KFTau_indexOfFitInfo", &KFTau_indexOfFitInfo, &b_KFTau_indexOfFitInfo);
-   fChain->SetBranchAddress("KFTau_Fit_TauPrimVtx", &KFTau_Fit_TauPrimVtx, &b_KFTau_Fit_TauPrimVtx);
-   fChain->SetBranchAddress("KFTau_Fit_chi2", &KFTau_Fit_chi2, &b_KFTau_Fit_chi2);
-   fChain->SetBranchAddress("KFTau_Fit_ndf", &KFTau_Fit_ndf, &b_KFTau_Fit_ndf);
-   fChain->SetBranchAddress("KFTau_Fit_charge", &KFTau_Fit_charge, &b_KFTau_Fit_charge);
-   fChain->SetBranchAddress("KFTau_Fit_csum", &KFTau_Fit_csum, &b_KFTau_Fit_csum);
-   fChain->SetBranchAddress("KFTau_Fit_iterations", &KFTau_Fit_iterations, &b_KFTau_Fit_iterations);
-   fChain->SetBranchAddress("KFTau_Fit_BDTVal", &KFTau_Fit_BDTVal, &b_KFTau_Fit_BDTVal);
-   fChain->SetBranchAddress("KFTau_Fit_TauEnergyFraction", &KFTau_Fit_TauEnergyFraction, &b_KFTau_Fit_TauEnergyFraction);
-   fChain->SetBranchAddress("KFTau_Fit_RefitVisibleMass", &KFTau_Fit_RefitVisibleMass, &b_KFTau_Fit_RefitVisibleMass);
-//    fChain->SetBranchAddress("KFTau_Fit_Chi2Prob", &KFTau_Fit_Chi2Prob, &b_KFTau_Fit_Chi2Prob);
-   fChain->SetBranchAddress("KFTau_Fit_PV_PV_significance", &KFTau_Fit_PV_PV_significance, &b_KFTau_Fit_PV_PV_significance);
-   fChain->SetBranchAddress("KFTau_Fit_SV_PV_significance", &KFTau_Fit_SV_PV_significance, &b_KFTau_Fit_SV_PV_significance);
-   fChain->SetBranchAddress("KFTau_Daughter_pdgid", &KFTau_Daughter_pdgid, &b_KFTau_Daughter_pdgid);
-   fChain->SetBranchAddress("KFTau_Daughter_charge", &KFTau_Daughter_charge, &b_KFTau_Daughter_charge);
-   fChain->SetBranchAddress("KFTau_Daughter_ambiguity", &KFTau_Daughter_ambiguity, &b_KFTau_Daughter_ambiguity);
-   fChain->SetBranchAddress("KFTau_Daughter_par", &KFTau_Daughter_par, &b_KFTau_Daughter_par);
-   fChain->SetBranchAddress("KFTau_Daughter_parCov", &KFTau_Daughter_parCov, &b_KFTau_Daughter_parCov);
-   fChain->SetBranchAddress("KFTau_Daughter_inputpar", &KFTau_Daughter_inputpar, &b_KFTau_Daughter_inputpar);
-   fChain->SetBranchAddress("KFTau_Daughter_inputparCov", &KFTau_Daughter_inputparCov, &b_KFTau_Daughter_inputparCov);
-   fChain->SetBranchAddress("ReducedVtx_chi2", &ReducedVtx_chi2, &b_ReducedVtx_chi2);
-   fChain->SetBranchAddress("ReducedVtx_nTrk", &ReducedVtx_nTrk, &b_ReducedVtx_nTrk);
-   fChain->SetBranchAddress("ReducedVtx_ndof", &ReducedVtx_ndof, &b_ReducedVtx_ndof);
-   fChain->SetBranchAddress("ReducedVtx_x", &ReducedVtx_x, &b_ReducedVtx_x);
-   fChain->SetBranchAddress("ReducedVtx_y", &ReducedVtx_y, &b_ReducedVtx_y);
-   fChain->SetBranchAddress("ReducedVtx_z", &ReducedVtx_z, &b_ReducedVtx_z);
-   fChain->SetBranchAddress("ReducedVtx_Cov", &ReducedVtx_Cov, &b_ReducedVtx_Cov);
-   fChain->SetBranchAddress("ReducedVtx_Track_idx", &ReducedVtx_Track_idx, &b_ReducedVtx_Track_idx);
-   fChain->SetBranchAddress("ReducedVtx_isFake", &ReducedVtx_isFake, &b_ReducedVtx_isFake);
+   fChain->SetBranchAddress("PFTau_TIP_primaryVertex_pos", &PFTau_TIP_primaryVertex_pos, &b_PFTau_TIP_primaryVertex_pos);
+   fChain->SetBranchAddress("PFTau_TIP_primaryVertex_cov", &PFTau_TIP_primaryVertex_cov, &b_PFTau_TIP_primaryVertex_cov);
+   fChain->SetBranchAddress("PFTau_TIP_secondaryVertex_pos", &PFTau_TIP_secondaryVertex_pos, &b_PFTau_TIP_secondaryVertex_pos);
+   fChain->SetBranchAddress("PFTau_TIP_secondaryVertex_cov", &PFTau_TIP_secondaryVertex_cov, &b_PFTau_TIP_secondaryVertex_cov);
+   fChain->SetBranchAddress("PFTau_TIP_secondaryVertex_vtxchi2", &PFTau_TIP_secondaryVertex_vtxchi2, &b_PFTau_TIP_secondaryVertex_vtxchi2);
+   fChain->SetBranchAddress("PFTau_TIP_secondaryVertex_vtxndof", &PFTau_TIP_secondaryVertex_vtxndof, &b_PFTau_TIP_secondaryVertex_vtxndof);
+   fChain->SetBranchAddress("PFTau_a1_lvp", &PFTau_a1_lvp, &b_PFTau_a1_lvp);
+   fChain->SetBranchAddress("PFTau_a1_cov", &PFTau_a1_cov, &b_PFTau_a1_cov);
+   fChain->SetBranchAddress("PFTau_a1_charge", &PFTau_a1_charge, &b_PFTau_a1_charge);
+   fChain->SetBranchAddress("PFTau_a1_pdgid", &PFTau_a1_pdgid, &b_PFTau_a1_pdgid);
+   fChain->SetBranchAddress("PFTau_a1_B", &PFTau_a1_B, &b_PFTau_a1_B);
+   fChain->SetBranchAddress("PFTau_a1_M", &PFTau_a1_M, &b_PFTau_a1_M);
+   fChain->SetBranchAddress("PFTau_daughterTracks", &PFTau_daughterTracks, &b_PFTau_daughterTracks);
+   fChain->SetBranchAddress("PFTau_daughterTracks_cov", &PFTau_daughterTracks_cov, &b_PFTau_daughterTracks_cov);
+   fChain->SetBranchAddress("PFTau_daughterTracks_charge", &PFTau_daughterTracks_charge, &b_PFTau_daughterTracks_charge);
+   fChain->SetBranchAddress("PFTau_daughterTracks_pdgid", &PFTau_daughterTracks_pdgid, &b_PFTau_daughterTracks_pdgid);
+   fChain->SetBranchAddress("PFTau_daughterTracks_B", &PFTau_daughterTracks_B, &b_PFTau_daughterTracks_B);
+   fChain->SetBranchAddress("PFTau_daughterTracks_M", &PFTau_daughterTracks_M, &b_PFTau_daughterTracks_M);
+   fChain->SetBranchAddress("PFTau_daughterTracks_poca", &PFTau_daughterTracks_poca, &b_PFTau_daughterTracks_poca);
+   fChain->SetBranchAddress("PFTau_3PS_A1_LV", &PFTau_3PS_A1_LV, &b_PFTau_3PS_A1_LV);
+   fChain->SetBranchAddress("PFTau_3PS_M_A1", &PFTau_3PS_M_A1, &b_PFTau_3PS_M_A1);
+   fChain->SetBranchAddress("PFTau_3PS_M_12", &PFTau_3PS_M_12, &b_PFTau_3PS_M_12);
+   fChain->SetBranchAddress("PFTau_3PS_M_13", &PFTau_3PS_M_13, &b_PFTau_3PS_M_13);
+   fChain->SetBranchAddress("PFTau_3PS_M_23", &PFTau_3PS_M_23, &b_PFTau_3PS_M_23);
+   fChain->SetBranchAddress("PFTau_3PS_Tau_Charge", &PFTau_3PS_Tau_Charge, &b_PFTau_3PS_Tau_Charge);
+   fChain->SetBranchAddress("PFTau_3PS_LCchi2", &PFTau_3PS_LCchi2, &b_PFTau_3PS_LCchi2);
+   fChain->SetBranchAddress("PFTau_3PS_has3ProngSolution", &PFTau_3PS_has3ProngSolution, &b_PFTau_3PS_has3ProngSolution);
+   fChain->SetBranchAddress("PFTau_3PS_Tau_LV", &PFTau_3PS_Tau_LV, &b_PFTau_3PS_Tau_LV);
    fChain->SetBranchAddress("isPatJet", &isPatJet, &b_isPatJet);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
    fChain->SetBranchAddress("PFJet_Poca", &PFJet_Poca, &b_PFJet_Poca);

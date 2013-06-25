@@ -17,7 +17,7 @@ SHELL = /bin/sh
 
 SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple \
 		-L./TauSpiner/lhapdf/lib -lLHAPDF \
-		-L./TauSpiner/TAUOLA/lib -lTauolaCxxInterface -lTauolaFortran -lTauolaTauSpinner \
+		-L./TauSpiner/tauola++/1.1.3/lib -lTauolaCxxInterface -lTauolaFortran -lTauolaTauSpinner \
 		-L./TauSpiner/hepmc/install/lib -lHepMC 
 
 SHAREDCXXFLAGS =-I./CommonUtils \
@@ -34,7 +34,7 @@ SUBDIRS = CommonUtils/ TauSpiner/
 
 CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c -I./ -c
 LDFLAGS       =  
-ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lMinuit2 -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
 # -ldl -lpthread
 
@@ -57,17 +57,17 @@ TARGETS       =	Ntuple_Controller \
 		Example \
 		Validation \
 		Ztotautau_hadmu_ControlSample \
-		Ztotautau_ControlSample \
 		ChargedHiggs_tauplusjet \
 		ChargedHiggs_dilepontic \
 		TauSpinExample \
                 Tau_momentum_calculation \
 		TauSpinerInterface \
-		ZDouble3prong \
 		Ztomumu_ControlSample \
 		TauSolver \
 		TriggerStudy \
-		TriggerStudyMC
+		TriggerStudyMC \
+		ZDouble3prong \
+		Ztotautau_ControlSample 
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx

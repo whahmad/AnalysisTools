@@ -499,33 +499,18 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
 }
 
 
-
-bool Ntuple_Controller::isGoodKFTau(unsigned int i,unsigned int j){
-  if(KFTau_discriminatorByKFit(i,j)){
-    if(KFTau_discriminatorByQC(i,j)){
-      if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10){
-	if(PFTau_isVLooseIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
-	  //if(PFTau_isMediumIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
-	  return true;
-	}
-      }
-    }
-  }
-  return false;
-}
-
-
- 
 bool Ntuple_Controller::TriggerAccept(TString n){
   unsigned int i=0;
   if(GetTriggerIndex(n,i))return TriggerAccept(i);
   return false;
 }
+
 unsigned int Ntuple_Controller::HLTPrescale(TString n){
   unsigned int i=0;
   if(GetTriggerIndex(n,i))return HLTPrescale(i);
   return 1;
 }
+
 unsigned int Ntuple_Controller::L1SEEDPrescale(TString n){
   unsigned int i=0;
   if(GetTriggerIndex(n,i))return L1SEEDPrescale(i);
@@ -541,140 +526,67 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
 }
 
 
+TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(unsigned int i){
+  TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
+  int l=0;
+  for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
+    for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
+      V_cov(i,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
+      l++;
+    }
+  }
+  return  V_cov;
+}
 
-float Ntuple_Controller::KFTau_Daughter_parCov(unsigned int i, unsigned int j,int par1,int par2){
-  TMatrixF M(NKFTau_par,NKFTau_par);
-  unsigned int idx(0);
-  for(unsigned int k=0;k<NKFTau_par;k++){
-    for(unsigned int l=0;l<=k;l++){
-      if(idx<Ntp->KFTau_Daughter_parCov->at(i).at(j).size()){
-        M[l][k]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(idx);
-	M[k][l]=Ntp->KFTau_Daughter_parCov->at(i).at(j).at(idx);
+TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_secondaryVertex_cov(unsigned int i){
+  TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
+  int l=0;
+  for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
+    for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
+      V_cov(i,j)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
+      l++;
+    }
+  }
+  return  V_cov;
+}
+
+LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
+  TMatrixT<double>    a1_par(LorentzVectorParticle::NLorentzandVertexPar,1);
+  TMatrixTSym<double> a1_cov(LorentzVectorParticle::NLorentzandVertexPar);
+  int l=0;
+  for(int k=0; k<LorentzVectorParticle::NLorentzandVertexPar; k++){
+    a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
+    for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
+      a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
+      l++;
+    } 
+  }
+  return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i),Ntp->PFTau_a1_charge->at(i),Ntp->PFTau_a1_B->at(i));
+}
+
+std::vector<TrackParticle> Ntuple_Controller::PFTau_daughterTracks(unsigned int i){
+  std::vector<TrackParticle> daughter;
+  for(unsigned int d=0;d<Ntp->PFTau_daughterTracks_poca->at(i).size();d++){
+    TMatrixT<double>    a1_par(TrackParticle::NHelixPar,1);
+    TMatrixTSym<double> a1_cov(TrackParticle::NHelixPar);
+    int l=0;
+    for(int k=0; k<TrackParticle::NHelixPar; k++){
+      a1_par(k,0)=Ntp->PFTau_daughterTracks->at(i).at(d).at(k);
+      for(int j=k; j<TrackParticle::NHelixPar; j++){
+	a1_cov(k,j)=Ntp->PFTau_daughterTracks->at(i).at(d).at(l);
+	l++;
       }
-      idx++;
     }
+    daughter.push_back(TrackParticle(a1_par,a1_cov,Ntp->PFTau_daughterTracks_pdgid->at(i).at(d),Ntp->PFTau_daughterTracks_M->at(i).at(d),Ntp->PFTau_daughterTracks_charge->at(i).at(d),Ntp->PFTau_daughterTracks_B->at(i).at(d)));
   }
-  return  M[par1][par2];
+  return daughter;
 }
 
-float Ntuple_Controller::KFTau_Daughter_inputparCov(unsigned int i, unsigned int j,int par1,int par2){
-  TMatrixF M(NKFTau_par,NKFTau_par);
-  unsigned int idx(0);
-  for(unsigned int k=0;k<NKFTau_par;k++){
-    for(unsigned int l=0;l<=k;l++){
-      if(idx<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
-        M[l][k]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(idx);
-        M[k][l]=Ntp->KFTau_Daughter_inputparCov->at(i).at(j).at(idx);
-      }
-      idx++;
-    }
+std::vector<TVector3> Ntuple_Controller::PFTau_daughterTracks_poca(unsigned int i){
+  std::vector<TVector3> poca;
+  for(unsigned int k=0;k<Ntp->PFTau_daughterTracks_poca->at(i).size();k++){
+    poca.push_back(TVector3(Ntp->PFTau_daughterTracks_poca->at(i).at(k).at(0),Ntp->PFTau_daughterTracks_poca->at(i).at(k).at(1),Ntp->PFTau_daughterTracks_poca->at(i).at(k).at(2)));
   }
-  return  M[par1][par2];
+  return poca;
 }
-
-TVector3  Ntuple_Controller::KFTau_RotatedVtx(unsigned int i){
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
-      return TVector3(Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vx),
-		     Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vy),
-		     Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vz));
-    }
-  }
-  return TVector3(0,0,0);
-}
-
-TMatrixF  Ntuple_Controller::KFTau_RotatedVtx_Cov(unsigned int i){
-  unsigned int dim=3;
-  TMatrixF M(dim,dim);
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
-      for(unsigned int k=0;k<dim;k++){
-	for(unsigned int l=0;l<=k;l++){
-	  if(k*NKFTau_par+l<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
-	    M[k][l]=KFTau_Daughter_inputparCov(i,j,k,l);
-	    M[l][k]=KFTau_Daughter_inputparCov(i,j,k,l);
-	  }
-	}
-      }
-      return M;
-    }
-  }
-  return M;
-}
-
-TMatrixF  Ntuple_Controller::KFTau_ReducedVtx_Cov(){
-  unsigned int i=0;
-  unsigned int dim=3;
-  TMatrixF M(dim,dim);
-  for(unsigned int j=0;j<dim;j++){
-    for(unsigned int k=0;k<=j;k++){
-      M[j][k]=Ntp->ReducedVtx_Cov->at(i).at(j).at(k);
-      M[k][j]=Ntp->ReducedVtx_Cov->at(i).at(j).at(k);
-    }
-  }
-  return M;
-}
-
-
-TVector3  Ntuple_Controller::KFTau_SecondayVtx(unsigned int i){
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
-      return TVector3(Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vx),
-		      Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vy),
-		      Ntp->KFTau_Daughter_par->at(i).at(j).at(KFTau_vz));
-    }
-  }
-  return TVector3(0,0,0);
-}
-
-
-TMatrixF  Ntuple_Controller::KFTau_SecondaryVtx_Cov(unsigned int i){
-  unsigned int dim=3;
-  TMatrixF M(dim,dim);
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::tau_plus)){
-      for(unsigned int k=0;k<dim;k++){
-        for(unsigned int l=0;l<=k;l++){
-          if(k*NKFTau_par+l<Ntp->KFTau_Daughter_parCov->at(i).at(j).size()){
-            M[k][l]=KFTau_Daughter_parCov(i,j,k,l);
-            M[l][k]=KFTau_Daughter_parCov(i,j,k,l);
-          }
-        }
-      }
-      return M;
-    }
-  }
-  return M;
-}
-
-
-
-TVector3  Ntuple_Controller::KFTau_InitialSecondaryVtx(unsigned int i){
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::pi_plus)){
-      return TVector3(Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vx),
-		      Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vy),
-		      Ntp->KFTau_Daughter_inputpar->at(i).at(j).at(KFTau_vz));
-    }
-  }
-  return TVector3(0,0,0);
-}
-
-TMatrixF  Ntuple_Controller::KFTau_InitialSecondaryVtx_Cov(unsigned int i){
-  unsigned int dim=3;
-  TMatrixF M(dim,dim);
-  for(unsigned int j=0; j<KFTau_NDaughter(i);j++){
-    if(abs(KFTau_Daughter_pdgid(i,j))==abs(PdtPdgMini::pi_plus)){
-      for(unsigned int k=0;k<dim;k++){
-        for(unsigned int l=0;l<=k;l++){
-          if(k*NKFTau_par+l<Ntp->KFTau_Daughter_inputparCov->at(i).at(j).size()){
-            M[k][l]=KFTau_Daughter_inputparCov(i,j,k,l);
-            M[l][k]=KFTau_Daughter_inputparCov(i,j,k,l);
-          }
-        }
-      }
-      return M;
-    }
-  }
-  return M;
-}
+   
