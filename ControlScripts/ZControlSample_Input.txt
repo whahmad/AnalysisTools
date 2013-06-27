@@ -1,9 +1,0 @@
-Thin: False
-Skim: True
-Analysis: ztotautau_controlsample
-UncertType: default
-HistoFile: InputData/Histo.txt
-SkimInfo: InputData/SkimSummary2705ForMichael.log
-Lumi: 19300.0
-PlotStyle: style2
-
