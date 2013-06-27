@@ -36,6 +36,8 @@
 
 #include "SimpleFits/FitSoftware/interface/TrackParticle.h"
 #include "SimpleFits/FitSoftware/interface/LorentzVectorParticle.h"
+#include "SimpleFits/FitSoftware/interface/MultiProngTauSolver.h"
+#include "SimpleFits/FitSoftware/interface/ErrorMatrixPropagator.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
@@ -284,12 +286,13 @@ class Ntuple_Controller{
    int   PFTau_3PS_has3ProngSolution(unsigned int i,unsigned int j){return Ntp->PFTau_3PS_has3ProngSolution->at(i).at(j);}
    TLorentzVector PFTau_3PS_Tau_LV(unsigned int i,unsigned int j){return TLorentzVector(Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(1),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(2),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(3),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(0));}
 
-
-   double   PFTau_FlightLength_significance(unsigned int i){return 0;}
-   double   PFTau_FlightLength_error(unsigned int i){return 0;}
-   double   PFTau_FlightLength(unsigned int i){return 0;}
-
-
+   TMatrixTSym<double> PFTau_FlightLength3d_cov(unsigned int i){return  PFTau_TIP_secondaryVertex_cov(i)+PFTau_TIP_primaryVertex_cov(i);}
+   TVector3 PFTau_FlightLength3d(unsigned int i){return PFTau_TIP_secondaryVertex_pos(i)-PFTau_TIP_primaryVertex_pos(i);}
+   TMatrixTSym<double> PF_Tau_FlightLegth3d_TauFrame_cov(unsigned int i);   
+   TVector3 PF_Tau_FlightLegth3d_TauFrame(unsigned int i);
+   double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(0); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
+   double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
+   double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
 
    ////////////////////////////////////////////////
    // wrapper for backwards compatibility to KFit

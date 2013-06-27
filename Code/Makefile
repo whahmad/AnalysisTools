@@ -67,7 +67,8 @@ TARGETS       =	Ntuple_Controller \
 		TriggerStudy \
 		TriggerStudyMC \
 		ZDouble3prong \
-		Ztotautau_ControlSample 
+		Ztotautau_ControlSample \
+		TauLifeTime
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
