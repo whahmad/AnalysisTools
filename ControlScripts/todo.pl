@@ -178,7 +178,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"addpkg DataFormats/TauReco HighPt_2013Jun09 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg RecoTauTag/RecoTau HighPt_2013Jun09 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg RecoTauTag/Configuration HighPt_2013June11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/ImpactParameter V01-00-00 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/ImpactParameter V01-00-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
     system(sprintf("echo \"cvs co -r V09-00-01      RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
