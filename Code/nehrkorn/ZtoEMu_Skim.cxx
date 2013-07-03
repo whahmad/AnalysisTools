@@ -27,7 +27,7 @@ ZtoEMu_Skim::ZtoEMu_Skim(TString Name_, TString id_):
 {
     //verbose=true;
 	MVA_ID = true;
-	FRFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/FakeRates_2012_19ifb.root");
+	FRFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/FakeRates_2012_19ifb_rereco.root");
 	ElectronFakeRate = (TH2D*)(FRFile->Get("ElectronFakeRateHist"));
 	MuonFakeRate = (TH2D*)(FRFile->Get("MuonFakeRateHist"));
 
@@ -275,6 +275,27 @@ void  ZtoEMu_Skim::doEvent(){
 	  std::cout << "######################################" << std::endl;
   }*/
   if(Ntp->TriggerAccept("HLT_IsoMu24_eta2p1"))value.at(TriggerOk)=1;
+  if(Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
+		  && !Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
+		  ){
+	  value.at(TriggerOk)=1;
+	  mu_pt = 20;
+	  e_pt = 10;
+  }
+  if(Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
+		  && !Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
+		  ){
+	  value.at(TriggerOk)=1;
+	  mu_pt = 10;
+	  e_pt = 20;
+  }
+  if(Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
+		  && Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
+		  ){
+	  value.at(TriggerOk)=1;
+	  mu_pt = 20;
+	  e_pt = 20;
+  }
   pass.at(TriggerOk)=(value.at(TriggerOk)==cut.at(TriggerOk));
 
   // Apply Selection
@@ -310,8 +331,8 @@ void  ZtoEMu_Skim::doEvent(){
 	  }
   }
   for(unsigned i=0;i<Ntp->NElectrons();i++){
-	  if(Ntp->Electron_p4(i).Pt()>=e_pt
-			  && Ntp->Electron_p4(i).Pt()<=70.
+	  if(Ntp->Electron_p4(i).Et()>=e_pt
+			  && Ntp->Electron_p4(i).Et()<=70.
 			  ){
 		  if(fabs(Ntp->Electron_supercluster_eta(i))<0.8 && Ntp->Electron_MVA_discriminator(i)>0.7){
 			  qualityelectrons.push_back(i);
@@ -593,6 +614,10 @@ void  ZtoEMu_Skim::doEvent(){
 			  fakeRate = fakeRateE;
 			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
 			  pass.at(charge) = true;
+		  }else if(fakeMuon && fakeElectron){
+			  fakeRate = fakeRateMu*fakeRateE;
+			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+			  pass.at(charge) = true;
 		  }else{
 			  fakeRate = 1.;
 		  }
@@ -615,6 +640,8 @@ void  ZtoEMu_Skim::doEvent(){
     if(verbose)std::cout << "void  ZtoEMu_Skim::doEvent() k" << w << " " << wobs << std::endl;
   }else if(Ntp->GetMCID()==34){
 		w*=embedd_weight;
+		if(pass.at(NE))w*=ElectronEffRecHit(GoodElectrons.at(0));
+		if(pass.at(NMu))w*=MuonDataSF(GoodMuons.at(0));
   }
   else{w=1*fakeRate;wobs=1;}
   if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
@@ -844,6 +871,303 @@ double ZtoEMu_Skim::Electron_Aeff(double Eta){
 	else if(eta>2.2 && eta<2.3)return 0.11;
 	else if(eta>2.3 && eta<2.4)return 0.11;
 	else if(eta>2.4)return 0.14;
+}
+
+//////////////////////////////
+//
+// Trigger & ID efficiencies
+//
+
+double ZtoEMu_Skim::MuonSF(unsigned int i){
+	double pt = Ntp->Muons_p4(i).Pt();
+	double eta = fabs(Ntp->Muons_p4(i).Eta());
+	if(pt>10 && pt<=15){
+		if(eta>=0 && eta<0.8){
+			return 0.9829*0.9771;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9745*0.9746;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9943*0.9644;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9158*0.9891;
+		}
+	}else if(pt>15 && pt<=20){
+		if(eta>=0 && eta<0.8){
+			return 0.9850*0.9548;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9852*0.9701;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9743*0.9766;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9333*0.9892;
+		}
+	}else if(pt>20 && pt<=25){
+		if(eta>=0 && eta<0.8){
+			return 0.9951*0.9648;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9610*0.9836;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9716*0.9820;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9459*0.9909;
+		}
+	}else if(pt>25 && pt<=30){
+		if(eta>=0 && eta<0.8){
+			return 0.9869*0.9676;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9779*0.9817;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9665*0.9886;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9501*0.9883;
+		}
+	}else if(pt>30 && pt<=35){
+		if(eta>=0 && eta<0.8){
+			return 0.9959*0.9883;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9881*0.9833;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9932*0.9910;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9391*0.9900;
+		}
+	}else if(pt>35){
+		if(eta>=0 && eta<0.8){
+			return 0.9986*0.9826;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9540*0.9841;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9549*0.9900;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9386*0.9886;
+		}
+	}
+}
+
+double ZtoEMu_Skim::MuonDataSF(unsigned int i){
+	double pt = Ntp->Muons_p4(i).Pt();
+	double eta = fabs(Ntp->Muons_p4(i).Eta());
+	if(pt>10 && pt<=15){
+		if(eta>=0 && eta<0.8){
+			return 0.9701*0.5981;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9419*0.6578;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9303*0.6738;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.8623*0.6246;
+		}
+	}else if(pt>15 && pt<=20){
+		if(eta>=0 && eta<0.8){
+			return 0.9720*0.6740;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9305*0.7309;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9267*0.7416;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.8995*0.6954;
+		}
+	}else if(pt>20 && pt<=25){
+		if(eta>=0 && eta<0.8){
+			return 0.9764*0.7533;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9439*0.7915;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9366*0.7997;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9134*0.7567;
+		}
+	}else if(pt>25 && pt<=30){
+		if(eta>=0 && eta<0.8){
+			return 0.9725*0.8141;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9405*0.8364;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9218*0.8462;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.8824*0.8051;
+		}
+	}else if(pt>30 && pt<=35){
+		if(eta>=0 && eta<0.8){
+			return 0.9785*0.8606;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9342*0.8680;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9184*0.8745;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.8990*0.8399;
+		}
+	}else if(pt>35){
+		if(eta>=0 && eta<0.8){
+			return 0.9679*0.9255;
+		}else if(eta>=0.8 && eta<1.2){
+			return 0.9310*0.9249;
+		}else if(eta>=1.2 && eta<1.6){
+			return 0.9092*0.9291;
+		}else if(eta>=1.6 && eta<2.1){
+			return 0.9016*0.9025;
+		}
+	}
+}
+
+double ZtoEMu_Skim::ElectronSF(unsigned int i){
+	double pt = Ntp->Electron_p4(i).Pt();
+	double eta = fabs(Ntp->Electron_supercluster_eta(i));
+	if(pt>10 && pt<=15){
+		if(eta>=0 && eta<0.8){
+			return 0.9548*0.7654;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9015*0.7693;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9017*0.5719;
+		}
+	}else if(pt>15 && pt<=20){
+		if(eta>=0 && eta<0.8){
+			return 0.9830*0.8394;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9672*0.8457;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9463*0.7024;
+		}
+	}else if(pt>20 && pt<=25){
+		if(eta>=0 && eta<0.8){
+			return 0.9707*0.8772;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9731*0.8530;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9691*0.7631;
+		}
+	}else if(pt>25 && pt<=30){
+		if(eta>=0 && eta<0.8){
+			return 0.9768*0.9006;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9870*0.8874;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9727*0.8092;
+		}
+	}else if(pt>30 && pt<=35){
+		if(eta>=0 && eta<0.8){
+			return 1.0047*0.9261;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9891*0.9199;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9858*0.8469;
+		}
+	}else if(pt>35){
+		if(eta>=0 && eta<0.8){
+			return 1.0063*0.9514;
+		}else if(eta>=0.8 && eta<1.5){
+			return 1.0047*0.9445;
+		}else if(eta>=1.5 && eta<2.3){
+			return 1.0015*0.9078;
+		}
+	}
+}
+
+double ZtoEMu_Skim::ElectronDataSF(unsigned int i){
+	double pt = Ntp->Electron_p4(i).Pt();
+	double eta = fabs(Ntp->Electron_supercluster_eta(i));
+	if(pt>10 && pt<=15){
+		if(eta>=0 && eta<0.8){
+			return 0.7270*0.3436;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.7380*0.3481;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.6899*0.1104;
+		}
+	}else if(pt>15 && pt<=20){
+		if(eta>=0 && eta<0.8){
+			return 0.8752*0.5196;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9059*0.5235;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.8635*0.2431;
+		}
+	}else if(pt>20 && pt<=25){
+		if(eta>=0 && eta<0.8){
+			return 0.9142*0.6442;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9484*0.5535;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9356*0.2888;
+		}
+	}else if(pt>25 && pt<=30){
+		if(eta>=0 && eta<0.8){
+			return 0.9368*0.7191;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9630*0.6472;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9466*0.3746;
+		}
+	}else if(pt>30 && pt<=35){
+		if(eta>=0 && eta<0.8){
+			return 0.9499*0.7819;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9642*0.7224;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9735*0.4527;
+		}
+	}else if(pt>35){
+		if(eta>=0 && eta<0.8){
+			return 0.9689*0.8650;
+		}else if(eta>=0.8 && eta<1.5){
+			return 0.9809*0.8201;
+		}else if(eta>=1.5 && eta<2.3){
+			return 0.9802*0.6015;
+		}
+	}
+}
+
+double ZtoEMu_Skim::ElectronEffRecHit(unsigned int i){
+	double pt = Ntp->Electron_p4(i).Pt();
+	double eta = Ntp->Electron_supercluster_eta(i);
+	
+	Double_t xAxis1[10] = {10, 15, 20, 25, 30, 40, 55, 70, 100, 200}; 
+	Double_t yAxis1[4] = {0, 0.8, 1.479, 2.5}; 
+	   
+	TH2D* hPtEtaSFL = new TH2D("hPtEtaSFL","",9, xAxis1,3, yAxis1);
+	hPtEtaSFL->SetBinContent(12,0.81);
+	hPtEtaSFL->SetBinContent(13,0.91);
+	hPtEtaSFL->SetBinContent(14,0.95);
+	hPtEtaSFL->SetBinContent(15,0.96);
+	hPtEtaSFL->SetBinContent(16,0.97);
+	hPtEtaSFL->SetBinContent(17,0.98);
+	hPtEtaSFL->SetBinContent(18,0.99);
+	hPtEtaSFL->SetBinContent(19,0.98);
+	hPtEtaSFL->SetBinContent(20,0.99);
+	hPtEtaSFL->SetBinContent(21,0.98);
+	hPtEtaSFL->SetBinContent(23,0.78);
+	hPtEtaSFL->SetBinContent(24,0.89);
+	hPtEtaSFL->SetBinContent(25,0.92);
+	hPtEtaSFL->SetBinContent(26,0.94);
+	hPtEtaSFL->SetBinContent(27,0.94);
+	hPtEtaSFL->SetBinContent(28,0.97);
+	hPtEtaSFL->SetBinContent(29,0.97);
+	hPtEtaSFL->SetBinContent(30,0.99);
+	hPtEtaSFL->SetBinContent(31,1.00);
+	hPtEtaSFL->SetBinContent(32,1.00);
+	hPtEtaSFL->SetBinContent(34,0.46);
+	hPtEtaSFL->SetBinContent(35,0.66);
+	hPtEtaSFL->SetBinContent(36,0.73);
+	hPtEtaSFL->SetBinContent(37,0.80);
+	hPtEtaSFL->SetBinContent(38,0.83);
+	hPtEtaSFL->SetBinContent(39,0.86);
+	hPtEtaSFL->SetBinContent(40,0.88);
+	hPtEtaSFL->SetBinContent(41,0.91);
+	hPtEtaSFL->SetBinContent(42,0.93);
+	hPtEtaSFL->SetBinContent(43,1.00);
+	
+	if(pt>199.99)pt=199.9;
+	eta=fabs(eta);
+	if(eta>2.49)eta=2.49;
+	if(pt<10)return 0;
+	
+	Float_t eff=0;
+	Int_t bin = hPtEtaSFL->FindFixBin(pt,eta);
+	eff = hPtEtaSFL->GetBinContent(bin);
+	//std::cout<<" pt="<<pt<<", eta="<<eta<<", eff="<<eff<<std::endl;
+	
+	return eff;
 }
 
 //////////////////////////////

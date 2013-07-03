@@ -25,6 +25,8 @@ class ZtoEMu : public Selection {
 	     NEEta,
 		 NE,
 		 drMuE,
+		 diMuonVeto,
+		 triLeptonVeto,
 		 looseMuonVeto,
 		 charge,
 		 jetVeto,
@@ -174,10 +176,17 @@ class ZtoEMu : public Selection {
   bool isMVAElectron(unsigned int i);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
+  bool isLooseElectron(unsigned int i);
   bool isFakeElectron(unsigned int i);
   bool isFakeElectron(unsigned int i, unsigned int j);
   double Electron_RelIso(unsigned int i);
   double Electron_Aeff(double Eta);
+  
+  double MuonSF(unsigned int i);
+  double MuonDataSF(unsigned int i);
+  double ElectronSF(unsigned int i);
+  double ElectronDataSF(unsigned int i);
+  double ElectronEffRecHit(unsigned int i);
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
