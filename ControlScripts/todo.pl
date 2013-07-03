@@ -159,26 +159,18 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"mkdir data \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     #Tau Package V08-09-57 recomendation for 5_3_9: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATReleaseNotes52X 
-    system(sprintf("echo \"addpkg PhysicsTools/PatAlgos        HighPtTaus_2013Jun13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/PatCandidates   V06-05-06-10 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg PhysicsTools/PatAlgos       V08-09-57 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg PhysicsTools/PatUtils       V03-09-28 \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg DataFormats/CaloRecHit      V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg FWCore/GuiBrowsers          V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoMET/METProducers        V03-03-12-02  \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    
-    # HighPt Branch
-    system(sprintf("echo \"addpkg DataFormats/CaloRecHit V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg DataFormats/METReco V03-03-11-01 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg DataFormats/PatCandidates V06-05-06-10; cd DataFormats/PatCandidates; cvs update -r HighPtTaus_2013Jun13;  cvs update -r V06-05-06-10  src/Electron.cc  interface/Electron.h; cd ../../  \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"$currentdir/subs 366535823 4113394532 DataFormats/PatCandidates/src/classes_def.xml \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg PhysicsTools/IsolationAlgos HighPtTaus_2013Jun13  \" >> Install_TauNtuple_$CMSSWRel-$time"));
-
-
-    system(sprintf("echo \"addpkg DataFormats/TauReco HighPt_2013Jun09 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/RecoTau HighPt_2013Jun09 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/Configuration HighPt_2013June11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/ImpactParameter V01-00-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg FWCore/GuiBrowsers          V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoMET/METProducers        V03-03-12-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/RecoTau V01-04-25 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/Configuration V01-04-13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r b5_3_x_analysis_2013Jun18 TauAnalysis/MCEmbeddingTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp TauAnalysis/MCEmbeddingTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
     system(sprintf("echo \"cvs co -r V09-00-01      RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
@@ -188,15 +180,13 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
-    # Tau KinFit
+    # SimpleFits 
     system(sprintf("echo \"cvs co -d SimpleFits  -r V04-00-40 UserCode/inugent/SimpleFits  \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
-    # Tau Nutpleaddpkg TauDataFormat/TauNtuple V02-00-00
-    system(sprintf("echo \"cvs co -d TauDataFormat  -r V02-00-04 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d SkimmingTools  -r V02-00-04 UserCode/RWTH3b/Tau/FlatNtuple/SkimmingTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d SkimProduction -r V02-00-05 UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -d TriggerFilter  -r V00-01-15 UserCode/RWTH3b/Tau/FlatNtuple/TriggerFilter \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # Tau Nutple
+    system(sprintf("echo \"cvs co -d TauDataFormat  -r V03-00-00 UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -d SkimProduction -r V03-00-00 UserCode/RWTH3b/Tau/FlatNtuple/SkimProduction \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Setup CRAB
@@ -357,13 +347,19 @@ if( $ARGV[0] eq "--Local" ){
     GenerateAutoCombineScript("Auto_Combine_submit");
     system(sprintf("mv Auto_Combine_submit $OutputDir/workdir$set/"));
 
-    # print Instructions
+    # print Instructions  
     printf("\n\nInstructions");
+    printf("\nPlease make sure you have run:");
+    printf("\nvoms-proxy-init");
+    printf("\ngrid-proxy-init");
+    printf("\nkinit $UserIDCern\@CERN.CH");
+    printf("\nNow you can run the analysis using dcache.");
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
     printf("\nTo compile the code in the workdir: source compile ");
     printf("\nTo submit jobs to the batch queue: source Submit ");
     printf("\nTo combine jobs submitted to the batch queue: source Combine \n");
-    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile; cd $OutputDir/workdir$set/Set_1; source Set_1.sh | tee log; cd ..\n");
+    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile; cd $OutputDir/workdir$set/Set_1; source Set_1 | tee log; cd ..\n");
+
 } 
 
 
