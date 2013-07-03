@@ -498,6 +498,26 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
   return false;
 }
 
+bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx){
+  for(int i=0; i<NMCSignalParticles();i++){
+    if(MCSignalParticle_pdgid(i)==parent_pdgid){
+      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+        if(MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
+	  std::cout << "Warning INVALID Tau index... Skipping event! MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << std::endl;
+          return false;
+        }
+      }
+      if(MCSignalParticle_Tauidx(i).size()==2){
+	tau1_idx=MCSignalParticle_Tauidx(i).at(0);
+        tau2_idx=MCSignalParticle_Tauidx(i).at(1);
+      }
+    }
+  }
+  return false;
+}
+
+
+
 
 bool Ntuple_Controller::TriggerAccept(TString n){
   unsigned int i=0;
