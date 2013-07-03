@@ -51,7 +51,7 @@ if [ $pythia == 0 ]; then
     tar -xzvf pythia8135.tgz
     cd ..
 fi
-tauola=$(ls TauSpiner/* | grep TAUOLA | wc -l )
+tauola=$(ls TauSpiner/* | grep tauola++ | wc -l )
 if [ $tauola == 0 ]; then 
     cd TauSpiner
     # wget http://annapurna.ifj.edu.pl/~tprzedzinski/resources/TAUOLA.1.1.1a/TAUOLA.1.1.1a.tar.gz
