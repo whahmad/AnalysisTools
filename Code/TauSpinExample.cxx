@@ -12,6 +12,7 @@ TauSpinExample::TauSpinExample(TString Name_, TString id_):
   zsmin(-0.5),
   zsmax(0.5)
 {
+  //verbose=true;
 }
 
 TauSpinExample::~TauSpinExample(){
@@ -254,7 +255,8 @@ void  TauSpinExample::doEvent(){
     double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin);
     double UnSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::UnSpin);
     double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
-  
+
+    if(verbose)std::cout<< "A " <<std::endl;
       ////////////////////////////////////////////////
       //
       // Spin Validation
@@ -291,10 +293,12 @@ void  TauSpinExample::doEvent(){
 	mu_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	mu_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
       }
+      if(verbose)std::cout<< "muon done " <<std::endl;
     }
     unsigned int tau1_idx(0),tau2_idx(0);
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,tau1_idx,tau2_idx) ){
       if(Ntp->MCTau_JAK(tau1_idx)==TauDecay::JAK_PION && Ntp->MCTau_JAK(tau2_idx)==TauDecay::JAK_PION){
+	if(verbose)std::cout<< "pi-pi " <<std::endl;
 	double x1(0),x2(0); 
 	TLorentzVector Zboson=Ntp->MCSignalParticle_p4(Boson_idx);
 	TLorentzVector LVTau=Ntp->MCTau_p4(tau2_idx);
@@ -350,8 +354,8 @@ void  TauSpinExample::doEvent(){
 	  pi_Mvis_hminus.at(t).Fill(pipi.M()/tautau.M(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
 	}
       }
+      if(verbose)std::cout<< "pi-pi done" <<std::endl;
     }
-
    if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_PION,tau_idx)){
       if(verbose)std::cout << "pion" << std::endl;
       TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
@@ -385,6 +389,7 @@ void  TauSpinExample::doEvent(){
 	pi_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
 
       }
+      if(verbose)std::cout<< "pion done " <<std::endl;
     }
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_A1_3PI,tau_idx)){
       if(verbose)std::cout << "a1to3pi" << std::endl;
@@ -405,6 +410,7 @@ void  TauSpinExample::doEvent(){
 	  pions_charge.push_back(Ntp->MCTauandProd_charge(tau_idx,i));
         }
       }
+      if(verbose)std::cout << "a1to3pi - 1" << std::endl;
       if(Tau_LV.E()>0){
         a1_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
         a1_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
@@ -412,7 +418,8 @@ void  TauSpinExample::doEvent(){
         Tau_LV.Boost(-Boson_LV.BoostVector());
         X_LV.Boost(-Boson_LV.BoostVector());
         Boson_LV.Boost(-Boson_LV.BoostVector());
-        // Now fill results                                                                                                                                                                                                                  
+        // Now fill results               
+	if(verbose)std::cout << "a1to3pi - 2 " << std::endl;                                                                                                                                                                                                   
         Ntp->TauSpinerSetSignal(Ntp->MCTau_charge(tau_idx));
 	a1_ExoverEtau.at(t).Fill(X_LV.E()/Tau_LV.E(),w);
 	a1_ExoverEtau_Spin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Spin_WT);
@@ -424,14 +431,17 @@ void  TauSpinExample::doEvent(){
 	a1_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	a1_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
 
+	if(verbose)std::cout << "a1to3pi - 3 " << std::endl;
+
 	TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
-	int charge=Ntp->MCTau_charge(tau2_idx);
+	int charge=Ntp->MCTau_charge(tau_idx);
 	TLorentzVector a1(0,0,0,0),pi(0,0,0,0);
 	for(unsigned int i=0;i<Ntp->NMCTauDecayProducts(tau_idx);i++){
-	  TLorentzVector LV=Ntp->MCTauandProd_p4(tau1_idx,i);
-	  if(abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==abs(PdtPdgMini::pi_plus) && Ntp->MCTauandProd_pdgid(tau2_idx,i)/abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==charge){pi+=LV; a1+=LV;}
-          else if(abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==abs(PdtPdgMini::pi0) || abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==abs(PdtPdgMini::pi_plus)){a1+=LV;}
+	  TLorentzVector LV=Ntp->MCTauandProd_p4(tau_idx,i);
+	  if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) && Ntp->MCTauandProd_pdgid(tau_idx,i)/abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==charge){pi+=LV; a1+=LV;}
+          else if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi0) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus)){a1+=LV;}
 	}
+	if(verbose)std::cout << "a1to3pi - 3 " << std::endl;
 	double gamma=2*pi.Pt()/a1.Pt()-1;
         a1_Gamma.at(t).Fill(gamma,w);
         a1_Gamma_Spin.at(t).Fill(gamma,w*Spin_WT);
@@ -439,8 +449,9 @@ void  TauSpinExample::doEvent(){
         a1_Gamma_FlipSpin.at(t).Fill(gamma,w*FlipSpin_WT);
         a1_Gamma_hplus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
         a1_Gamma_hminus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
-
+	if(verbose)std::cout << "a1to3pi - 4 " << std::endl;
       }
+      if(verbose)std::cout<< "a1 done " <<std::endl;
     }
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_RHO_PIPI0,tau_idx)){
       if(verbose)std::cout << "rho" << std::endl;
@@ -474,12 +485,12 @@ void  TauSpinExample::doEvent(){
 	rho_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
 
         TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
-        int charge=Ntp->MCTau_charge(tau2_idx);
+        int charge=Ntp->MCTau_charge(tau_idx);
         TLorentzVector rho(0,0,0,0),pi(0,0,0,0);
         for(unsigned int i=0;i<Ntp->NMCTauDecayProducts(tau_idx);i++){
-          TLorentzVector LV=Ntp->MCTauandProd_p4(tau1_idx,i);
-          if(abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==abs(PdtPdgMini::pi_plus)){pi+=LV; rho+=LV;}
-          if(abs(Ntp->MCTauandProd_pdgid(tau2_idx,i))==abs(PdtPdgMini::pi0)){rho+=LV;}
+          TLorentzVector LV=Ntp->MCTauandProd_p4(tau_idx,i);
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus)){pi+=LV; rho+=LV;}
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi0)){rho+=LV;}
         }
 	double gamma=2*pi.Pt()/rho.Pt()-1;
 	rho_Gamma.at(t).Fill(gamma,w);
@@ -494,6 +505,7 @@ void  TauSpinExample::doEvent(){
 	rho_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
       }
     }
+    if(verbose)std::cout << "rho done" << std::endl;
   }
   if(verbose)std::cout << "done" << std::endl;
 }
