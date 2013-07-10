@@ -12,7 +12,7 @@ TauSpinExample::TauSpinExample(TString Name_, TString id_):
   zsmin(-0.5),
   zsmax(0.5)
 {
-  //verbose=true;
+  //  verbose=true;
 }
 
 TauSpinExample::~TauSpinExample(){
@@ -96,19 +96,19 @@ void  TauSpinExample::Configure(){
   a1_ExoverEtau_UnSpin=HConfig.GetTH1D(Name+"_a1_ExoverEtau_UnSpin","ExoverEtau_UnSpin",20,0.0,1.0,"E_{a_{1}(1260)}/E_{#tau}|_{UnSpin}","Events");
   a1_ExoverEtau_FlipSpin=HConfig.GetTH1D(Name+"_a1_ExoverEtau_FlipSpin","ExoverEtau_FlipSpin",20,0.0,1.0,"E_{a_{1}(1260)}/E_{#tau}|_{FlipSpin}","Events");
 
-  a1_Gamma=HConfig.GetTH1D(Name+"_a1_Gamma","Gamma",20,-1.0,1.0,"Egamma_{a1(1260)}","Events");
-  a1_Gamma_hplus=HConfig.GetTH1D(Name+"_a1_Gamma_hplus","Gamma_hplus",20,-1.0,1.0,"Egamma_{a1(1260)}|_{h^{+}}","Events");
-  a1_Gamma_hminus=HConfig.GetTH1D(Name+"_a1_Gamma_hminus","Gamma_hminus",20,-1.0,1.0,"Egamma_{a1(1260)}|_{h^{-}}","Events");
-  a1_Gamma_Spin=HConfig.GetTH1D(Name+"_a1_Gamma_Spin","Gamma_Spin",20,-1.0,1.0,"Egamma_{a1(1260)}|_{Spin}","Events");
-  a1_Gamma_UnSpin=HConfig.GetTH1D(Name+"_a1_Gamma_UnSpin","Gamma_UnSpin",20,-1.0,1.0,"Egamma_{a1(1260)}|_{UnSpin}","Events");
-  a1_Gamma_FlipSpin=HConfig.GetTH1D(Name+"_a1_Gamma_FlipSpin","Gamma_FlipSpin",20,-1.0,1.0,"Egamma_{a1(1260)}|_{FlipSpin}","Events");
+  a1_Gamma=HConfig.GetTH1D(Name+"_a1_Gamma","Gamma",20,-1.0,1.0,"#gamma_{a1(1260)}","Events");
+  a1_Gamma_hplus=HConfig.GetTH1D(Name+"_a1_Gamma_hplus","Gamma_hplus",20,-1.0,1.0,"#gamma_{a1(1260)}|_{h^{+}}","Events");
+  a1_Gamma_hminus=HConfig.GetTH1D(Name+"_a1_Gamma_hminus","Gamma_hminus",20,-1.0,1.0,"#gamma_{a1(1260)}|_{h^{-}}","Events");
+  a1_Gamma_Spin=HConfig.GetTH1D(Name+"_a1_Gamma_Spin","Gamma_Spin",20,-1.0,1.0,"#gamma_{a1(1260)}|_{Spin}","Events");
+  a1_Gamma_UnSpin=HConfig.GetTH1D(Name+"_a1_Gamma_UnSpin","Gamma_UnSpin",20,-1.0,1.0,"#gamma_{a1(1260)}|_{UnSpin}","Events");
+  a1_Gamma_FlipSpin=HConfig.GetTH1D(Name+"_a1_Gamma_FlipSpin","Gamma_FlipSpin",20,-1.0,1.0,"#gamma_{a1(1260)}|_{FlipSpin}","Events");
 
-  pi_Mvis=HConfig.GetTH1D(Name+"_pi_Mvis","Mvis",20,0.0,100.0,"M_{Vis[#pi#pi]}}","Events");
-  pi_Mvis_hplus=HConfig.GetTH1D(Name+"_pi_Mvis_hplus","Mvis_hplus",20,0.0,100.0,"M_{Vis[#pi#pi]}}|_{h^{+}}","Events");
-  pi_Mvis_hminus=HConfig.GetTH1D(Name+"_pi_Mvis_hminus","Mvis_hminus",20,0.0,100.0,"M_{Vis[#pi#pi]}}|_{h^{-}}","Events");
-  pi_Mvis_Spin=HConfig.GetTH1D(Name+"_pi_Mvis_Spin","Mvis_Spin",20,0.0,100.0,"M_{Vis[#pi#pi]}}|_{Spin}","Events");
-  pi_Mvis_UnSpin=HConfig.GetTH1D(Name+"_pi_Mvis_UnSpin","Mvis_UnSpin",20,0.0,100.0,"M_{Vis[#pi#pi]}}|_{UnSpin}","Events");
-  pi_Mvis_FlipSpin=HConfig.GetTH1D(Name+"_pi_Mvis_FlipSpin","Mvis_FlipSpin",20,0.0,100.0,"M_{Vis[#pi#pi]}}|_{FlipSpin}","Events");
+  pi_Mvis=HConfig.GetTH1D(Name+"_pi_Mvis","Mvis",20,0.0,1.0,"M_{Vis[#pi#pi]}}","Events");
+  pi_Mvis_hplus=HConfig.GetTH1D(Name+"_pi_Mvis_hplus","Mvis_hplus",20,0.0,1.0,"M_{Vis[#pi#pi]}}|_{h^{+}}","Events");
+  pi_Mvis_hminus=HConfig.GetTH1D(Name+"_pi_Mvis_hminus","Mvis_hminus",20,0.0,1.0,"M_{Vis[#pi#pi]}}|_{h^{-}}","Events");
+  pi_Mvis_Spin=HConfig.GetTH1D(Name+"_pi_Mvis_Spin","Mvis_Spin",20,0.0,1.0,"M_{Vis[#pi#pi]}}|_{Spin}","Events");
+  pi_Mvis_UnSpin=HConfig.GetTH1D(Name+"_pi_Mvis_UnSpin","Mvis_UnSpin",20,0.0,1.0,"M_{Vis[#pi#pi]}}|_{UnSpin}","Events");
+  pi_Mvis_FlipSpin=HConfig.GetTH1D(Name+"_pi_Mvis_FlipSpin","Mvis_FlipSpin",20,0.0,1.0,"M_{Vis[#pi#pi]}}|_{FlipSpin}","Events");
 
   a1_WT_Spin=HConfig.GetTH1D(Name+"_a1_WT_Spin","WT_Spin",40,0.0,4.0,"WT|_{a_{1}(1260)}","Events");
   a1_WT_UnSpin=HConfig.GetTH1D(Name+"_a1_WT_UnSpin","WT_UnSpin",100,0.0,10.0,"1/WT|_{a_{1}(1260)}","Events");
@@ -152,82 +152,82 @@ void  TauSpinExample::Store_ExtraDist(){
  Extradist1d.push_back(&mu_ExoverEtau);
  Extradist1d.push_back(&mu_ExoverEtau_hplus);
  Extradist1d.push_back(&mu_ExoverEtau_hminus);
- Extradist1d.push_back(&mu_ExoverEtau_Spin);
- Extradist1d.push_back(&mu_ExoverEtau_UnSpin);
- Extradist1d.push_back(&mu_ExoverEtau_FlipSpin);
- Extradist1d.push_back(&mu_WT_Spin);
- Extradist1d.push_back(&mu_WT_UnSpin);
- Extradist1d.push_back(&mu_WT_FlipSpin);
+ //Extradist1d.push_back(&mu_ExoverEtau_Spin);
+ //Extradist1d.push_back(&mu_ExoverEtau_UnSpin);
+ //Extradist1d.push_back(&mu_ExoverEtau_FlipSpin);
+ //Extradist1d.push_back(&mu_WT_Spin);
+ //Extradist1d.push_back(&mu_WT_UnSpin);
+ //Extradist1d.push_back(&mu_WT_FlipSpin);
  Extradist1d.push_back(&mu_PtRatio_hplus);
  Extradist1d.push_back(&mu_PtRatio_hminus);
 
  Extradist1d.push_back(&pi_ExoverEtau);
  Extradist1d.push_back(&pi_ExoverEtau_hplus);
  Extradist1d.push_back(&pi_ExoverEtau_hminus);
- Extradist1d.push_back(&pi_ExoverEtau_Spin);
- Extradist1d.push_back(&pi_ExoverEtau_UnSpin);
- Extradist1d.push_back(&pi_ExoverEtau_FlipSpin);
+ //Extradist1d.push_back(&pi_ExoverEtau_Spin);
+ //Extradist1d.push_back(&pi_ExoverEtau_UnSpin);
+ //Extradist1d.push_back(&pi_ExoverEtau_FlipSpin);
 
  Extradist1d.push_back(&pi_zs);
  Extradist1d.push_back(&pi_zs_hplus);
  Extradist1d.push_back(&pi_zs_hminus);
- Extradist1d.push_back(&pi_zs_Spin);
- Extradist1d.push_back(&pi_zs_UnSpin);
- Extradist1d.push_back(&pi_zs_FlipSpin);
+ //Extradist1d.push_back(&pi_zs_Spin);
+ //Extradist1d.push_back(&pi_zs_UnSpin);
+ //Extradist1d.push_back(&pi_zs_FlipSpin);
 
- Extradist1d.push_back(&pi_WT_Spin);
- Extradist1d.push_back(&pi_WT_UnSpin);
- Extradist1d.push_back(&pi_WT_FlipSpin);
+ //Extradist1d.push_back(&pi_WT_Spin);
+ //Extradist1d.push_back(&pi_WT_UnSpin);
+ //Extradist1d.push_back(&pi_WT_FlipSpin);
  Extradist1d.push_back(&pi_PtRatio_hplus);
  Extradist1d.push_back(&pi_PtRatio_hminus);
  
  Extradist1d.push_back(&a1_ExoverEtau);
  Extradist1d.push_back(&a1_ExoverEtau_hplus);
  Extradist1d.push_back(&a1_ExoverEtau_hminus);
- Extradist1d.push_back(&a1_ExoverEtau_Spin);
- Extradist1d.push_back(&a1_ExoverEtau_UnSpin);
- Extradist1d.push_back(&a1_ExoverEtau_FlipSpin);
+ //Extradist1d.push_back(&a1_ExoverEtau_Spin);
+ //Extradist1d.push_back(&a1_ExoverEtau_UnSpin);
+ //Extradist1d.push_back(&a1_ExoverEtau_FlipSpin);
 
  Extradist1d.push_back(&a1_Gamma);
  Extradist1d.push_back(&a1_Gamma_hplus);
  Extradist1d.push_back(&a1_Gamma_hminus);
- Extradist1d.push_back(&a1_Gamma_Spin);
- Extradist1d.push_back(&a1_Gamma_UnSpin);
- Extradist1d.push_back(&a1_Gamma_FlipSpin);
+ //Extradist1d.push_back(&a1_Gamma_Spin);
+ //Extradist1d.push_back(&a1_Gamma_UnSpin);
+ //Extradist1d.push_back(&a1_Gamma_FlipSpin);
 
  Extradist1d.push_back(&pi_Mvis);
  Extradist1d.push_back(&pi_Mvis_hplus);
  Extradist1d.push_back(&pi_Mvis_hminus);
- Extradist1d.push_back(&pi_Mvis_Spin);
- Extradist1d.push_back(&pi_Mvis_UnSpin);
- Extradist1d.push_back(&pi_Mvis_FlipSpin);
+ //Extradist1d.push_back(&pi_Mvis_Spin);
+ //Extradist1d.push_back(&pi_Mvis_UnSpin);
+ //Extradist1d.push_back(&pi_Mvis_FlipSpin);
 
- Extradist1d.push_back(&a1_WT_Spin);
- Extradist1d.push_back(&a1_WT_UnSpin);
- Extradist1d.push_back(&a1_WT_FlipSpin);
+ //Extradist1d.push_back(&a1_WT_Spin);
+ //Extradist1d.push_back(&a1_WT_UnSpin);
+ //Extradist1d.push_back(&a1_WT_FlipSpin);
  Extradist1d.push_back(&a1_PtRatio_hplus);
  Extradist1d.push_back(&a1_PtRatio_hminus);
 
- Extradist1d.push_back(&a1_cosbeta_hplus);
- Extradist1d.push_back(&a1_cosbeta_hminus);
+ //Extradist1d.push_back(&a1_cosbeta_hplus);
+ //Extradist1d.push_back(&a1_cosbeta_hminus);
  
  Extradist1d.push_back(&rho_ExoverEtau);
  Extradist1d.push_back(&rho_ExoverEtau_hplus);
  Extradist1d.push_back(&rho_ExoverEtau_hminus);
- Extradist1d.push_back(&rho_ExoverEtau_Spin);
- Extradist1d.push_back(&rho_ExoverEtau_UnSpin);
- Extradist1d.push_back(&rho_ExoverEtau_FlipSpin);
+ //Extradist1d.push_back(&rho_ExoverEtau_Spin);
+ //Extradist1d.push_back(&rho_ExoverEtau_UnSpin);
+ //Extradist1d.push_back(&rho_ExoverEtau_FlipSpin);
 
  Extradist1d.push_back(&rho_Gamma);
  Extradist1d.push_back(&rho_Gamma_hplus);
  Extradist1d.push_back(&rho_Gamma_hminus);
- Extradist1d.push_back(&rho_Gamma_Spin);
- Extradist1d.push_back(&rho_Gamma_UnSpin);
- Extradist1d.push_back(&rho_Gamma_FlipSpin);
+ //Extradist1d.push_back(&rho_Gamma_Spin);
+ //Extradist1d.push_back(&rho_Gamma_UnSpin);
+ //Extradist1d.push_back(&rho_Gamma_FlipSpin);
 
  Extradist1d.push_back(&rho_WT_Spin);
- Extradist1d.push_back(&rho_WT_UnSpin);
- Extradist1d.push_back(&rho_WT_FlipSpin);
+ //Extradist1d.push_back(&rho_WT_UnSpin);
+ //Extradist1d.push_back(&rho_WT_FlipSpin);
  Extradist1d.push_back(&rho_PtRatio_hplus);
  Extradist1d.push_back(&rho_PtRatio_hminus);
 
@@ -237,7 +237,7 @@ void  TauSpinExample::doEvent(){
   unsigned int t(0);
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){t=2;}// std::cout << "failed to find id" <<std::endl; return;}
-  unsigned int Boson_idx,tau_idx;
+  unsigned int Boson_idx,tau_idx,tau1_idx(0),tau2_idx(0);
   value.at(isZtautauto3pimu)=0;
   pass.at(isZtautauto3pimu) = true;
   if(pass.at(isZtautauto3pimu))value.at(isZtautauto3pimu)=1;
@@ -251,11 +251,28 @@ void  TauSpinExample::doEvent(){
   // Add plots
   if(status){
     if(verbose)std::cout<<"MC type: " << Ntp->GetMCID() <<std::endl;
-
+    // reject unsupported modes
+    if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,tau1_idx,tau2_idx)){
+      bool ImpTau=true;
+      double jakid1=Ntp->MCTau_JAK(tau1_idx);
+      double jakid2=Ntp->MCTau_JAK(tau2_idx);
+      if(!(jakid1==TauDecay::JAK_PION || jakid1==TauDecay::JAK_MUON || jakid1==TauDecay::JAK_RHO_PIPI0 || jakid1==TauDecay::JAK_A1_3PI)) ImpTau=false;
+      if(!(jakid2==TauDecay::JAK_PION || jakid2==TauDecay::JAK_MUON || jakid2==TauDecay::JAK_RHO_PIPI0 || jakid2==TauDecay::JAK_A1_3PI)) ImpTau=false;
+      //if(jakid1!=TauDecay::JAK_MUON && jakid2!=TauDecay::JAK_MUON) return;
+      if(jakid1!=jakid2) return;
+      if(!ImpTau){ std::cout << "Decay modes not implemented in TauSpinner " << std::endl; return;}
+    }
+    else{
+      std::cout << "Not a valid Z0->tau+tau- decay" <<std::endl;
+      return;
+    }
     double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin);
-    double UnSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::UnSpin);
-    double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
-
+    double UnSpin_WT=1;//Ntp->TauSpinerGet(TauSpinerInterface::UnSpin);
+    double FlipSpin_WT=1;//Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
+    double hplus=Ntp->TauSpinerGet(TauSpinerInterface::hplus);
+    double hminus=1-hplus;//Ntp->TauSpinerGet(TauSpinerInterface::hminus);//1-hplus;
+    std::cout << "hplus " << hplus << " hminus " << hminus << std::endl;
+    //if(Spin_WT<=0 || 2<=Spin_WT){Spin_WT=0.000001;UnSpin_WT=0.000001;FlipSpin_WT=0.000001;}
     if(verbose)std::cout<< "A " <<std::endl;
       ////////////////////////////////////////////////
       //
@@ -275,8 +292,8 @@ void  TauSpinExample::doEvent(){
         }
       }
       if(Tau_LV.E()>0){
-        mu_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        mu_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+        mu_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hplus*UnSpin_WT);
+        mu_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hminus*UnSpin_WT);
 
         Tau_LV.Boost(-Boson_LV.BoostVector());
         X_LV.Boost(-Boson_LV.BoostVector());
@@ -287,15 +304,22 @@ void  TauSpinExample::doEvent(){
 	mu_ExoverEtau_Spin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Spin_WT);
 	mu_ExoverEtau_UnSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*UnSpin_WT);
 	mu_ExoverEtau_FlipSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*FlipSpin_WT);
-	mu_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	mu_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	mu_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hplus*UnSpin_WT);
+	mu_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hminus*UnSpin_WT);
 	mu_WT_Spin.at(t).Fill(Spin_WT,w);
 	mu_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	mu_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
+
+	if(verbose){
+	  for(unsigned int i=0;i<Ntp->NMCTauDecayProducts(tau_idx);i++){
+	    TLorentzVector LV=Ntp->MCTauandProd_p4(tau_idx,i);
+	    std::cout << Ntp->MCTauandProd_pdgid(tau_idx,i) << " " << LV.Px() << " " << LV.Py() << " " << LV.Pz() << " " << LV.E() << std::endl;
+	  }
+	}
+	if(verbose)std::cout << "mu : x " << X_LV.E()/Tau_LV.E() << " w " << w << "spin " <<  Spin_WT << " unspin " << UnSpin_WT << " spin flip " << FlipSpin_WT << " hplus " << hplus << " hminus " << hminus  << std::endl;	
       }
       if(verbose)std::cout<< "muon done " <<std::endl;
     }
-    unsigned int tau1_idx(0),tau2_idx(0);
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,tau1_idx,tau2_idx) ){
       if(Ntp->MCTau_JAK(tau1_idx)==TauDecay::JAK_PION && Ntp->MCTau_JAK(tau2_idx)==TauDecay::JAK_PION){
 	if(verbose)std::cout<< "pi-pi " <<std::endl;
@@ -330,6 +354,7 @@ void  TauSpinExample::doEvent(){
           }
         }
 	//
+	double myzs=-999;
 	if(tautau.M()!= 0) {
 	  for(int i=0;i<zsbins;i++){
 	    double zslow=((double)i)*(zsmax-zsmin)/((double)zsbins)+zsmin; 
@@ -341,8 +366,9 @@ void  TauSpinExample::doEvent(){
 	      pi_zs_Spin.at(t).Fill(zs,w*Spin_WT);
 	      pi_zs_UnSpin.at(t).Fill(zs,w*UnSpin_WT);
 	      pi_zs_FlipSpin.at(t).Fill(zs,w*FlipSpin_WT);
-	      pi_zs_hplus.at(t).Fill(zs,w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	      pi_zs_hminus.at(t).Fill(zs,w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	      pi_zs_hplus.at(t).Fill(zs,w*hplus*UnSpin_WT);
+	      pi_zs_hminus.at(t).Fill(zs,w*hminus*UnSpin_WT);
+	      myzs=zs;
 	      break;
 	    }
 	  }
@@ -350,8 +376,10 @@ void  TauSpinExample::doEvent(){
 	  pi_Mvis_Spin.at(t).Fill(pipi.M()/tautau.M(),w*Spin_WT);
 	  pi_Mvis_UnSpin.at(t).Fill(pipi.M()/tautau.M(),w*UnSpin_WT);
 	  pi_Mvis_FlipSpin.at(t).Fill(pipi.M()/tautau.M(),w*FlipSpin_WT);
-	  pi_Mvis_hplus.at(t).Fill(pipi.M()/tautau.M(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	  pi_Mvis_hminus.at(t).Fill(pipi.M()/tautau.M(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	  pi_Mvis_hplus.at(t).Fill(pipi.M()/tautau.M(),w*hplus*UnSpin_WT);
+	  pi_Mvis_hminus.at(t).Fill(pipi.M()/tautau.M(),w*hminus*UnSpin_WT);
+	  if(verbose)std::cout << "pipi : mtau " << pipi.M()/tautau.M() << " zs " << myzs  
+			       << " w " << w << "spin " <<  Spin_WT << " unspin " << UnSpin_WT << " spin flip " << FlipSpin_WT << " hplus " << hplus << " hminus " << hminus  << std::endl;
 	}
       }
       if(verbose)std::cout<< "pi-pi done" <<std::endl;
@@ -370,8 +398,8 @@ void  TauSpinExample::doEvent(){
         }
       }
       if(Tau_LV.E()>0){
-	pi_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        pi_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	pi_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hplus*UnSpin_WT);
+        pi_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hminus*UnSpin_WT);
 
         Tau_LV.Boost(-Boson_LV.BoostVector());
         X_LV.Boost(-Boson_LV.BoostVector());
@@ -382,16 +410,17 @@ void  TauSpinExample::doEvent(){
 	pi_ExoverEtau_Spin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Spin_WT);
 	pi_ExoverEtau_UnSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*UnSpin_WT);
 	pi_ExoverEtau_FlipSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*FlipSpin_WT);
-	pi_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	pi_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	pi_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hplus*UnSpin_WT);
+	pi_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hminus*UnSpin_WT);
 	pi_WT_Spin.at(t).Fill(Spin_WT,w);
 	pi_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	pi_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
-
+	if(verbose)std::cout << "pi : x " << X_LV.E()/Tau_LV.E() << " w " << w << "spin " <<  Spin_WT << " unspin " << UnSpin_WT << " spin flip " << FlipSpin_WT << " hplus " << hplus << " hminus " << hminus  << std::endl;
       }
       if(verbose)std::cout<< "pion done " <<std::endl;
     }
-    if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_A1_3PI,tau_idx)){
+   if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_A1_3PI,tau_idx)){
+     if(Ntp->MCTau_charge(tau_idx)==-1){
       if(verbose)std::cout << "a1to3pi" << std::endl;
       TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
       TLorentzVector Tau_LV(0,0,0,0);
@@ -412,8 +441,8 @@ void  TauSpinExample::doEvent(){
       }
       if(verbose)std::cout << "a1to3pi - 1" << std::endl;
       if(Tau_LV.E()>0){
-        a1_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        a1_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+        a1_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hplus*UnSpin_WT);
+        a1_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hminus*UnSpin_WT);
 
         Tau_LV.Boost(-Boson_LV.BoostVector());
         X_LV.Boost(-Boson_LV.BoostVector());
@@ -425,8 +454,8 @@ void  TauSpinExample::doEvent(){
 	a1_ExoverEtau_Spin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Spin_WT);
 	a1_ExoverEtau_UnSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*UnSpin_WT);
 	a1_ExoverEtau_FlipSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*FlipSpin_WT);
-	a1_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	a1_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	a1_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hplus*UnSpin_WT);
+	a1_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hminus*UnSpin_WT);
 	a1_WT_Spin.at(t).Fill(Spin_WT,w);
 	a1_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	a1_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
@@ -438,22 +467,26 @@ void  TauSpinExample::doEvent(){
 	TLorentzVector a1(0,0,0,0),pi(0,0,0,0);
 	for(unsigned int i=0;i<Ntp->NMCTauDecayProducts(tau_idx);i++){
 	  TLorentzVector LV=Ntp->MCTauandProd_p4(tau_idx,i);
-	  if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) && Ntp->MCTauandProd_pdgid(tau_idx,i)/abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==charge){pi+=LV; a1+=LV;}
+	  if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) && Ntp->MCTauandProd_pdgid(tau_idx,i)/abs(Ntp->MCTauandProd_pdgid(tau_idx,i))!=charge){pi+=LV; a1+=LV;}
           else if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi0) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus)){a1+=LV;}
+	  else if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))!=abs(PdtPdgMini::nu_tau)){std::cout << Ntp->MCTauandProd_pdgid(tau_idx,i) << std::endl;}
 	}
 	if(verbose)std::cout << "a1to3pi - 3 " << std::endl;
-	double gamma=2*pi.Pt()/a1.Pt()-1;
+	double gamma=2*pi.P()/a1.P()-1;
+     
         a1_Gamma.at(t).Fill(gamma,w);
         a1_Gamma_Spin.at(t).Fill(gamma,w*Spin_WT);
         a1_Gamma_UnSpin.at(t).Fill(gamma,w*UnSpin_WT);
         a1_Gamma_FlipSpin.at(t).Fill(gamma,w*FlipSpin_WT);
-        a1_Gamma_hplus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        a1_Gamma_hminus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
-	if(verbose)std::cout << "a1to3pi - 4 " << std::endl;
+        a1_Gamma_hplus.at(t).Fill(gamma,w*hplus*UnSpin_WT);
+        a1_Gamma_hminus.at(t).Fill(gamma,w*hminus*UnSpin_WT);
+	if(verbose)std::cout << "a1to3pi : gamma " << gamma << " w " << w << "spin " <<  Spin_WT << " unspin " << UnSpin_WT << " spin flip " << FlipSpin_WT << " hplus " << hplus << " hminus " << hminus  << std::endl;
       }
       if(verbose)std::cout<< "a1 done " <<std::endl;
+     }
     }
     if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,Boson_idx,TauDecay::JAK_RHO_PIPI0,tau_idx)){
+      if(Ntp->MCTau_charge(tau_idx)==-1){
       if(verbose)std::cout << "rho" << std::endl;
       TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
       TLorentzVector Tau_LV(0,0,0,0);
@@ -469,8 +502,8 @@ void  TauSpinExample::doEvent(){
 	  }
       }
       if(Tau_LV.E()>0){
-        rho_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        rho_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+        rho_PtRatio_hplus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hplus*UnSpin_WT);
+        rho_PtRatio_hminus.at(t).Fill(X_LV.Pt()/Tau_LV.Pt(),w*hminus*UnSpin_WT);
 
 	Tau_LV.Boost(-Boson_LV.BoostVector());
 	X_LV.Boost(-Boson_LV.BoostVector());
@@ -481,31 +514,34 @@ void  TauSpinExample::doEvent(){
 	rho_ExoverEtau_Spin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Spin_WT);
 	rho_ExoverEtau_UnSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*UnSpin_WT);
 	rho_ExoverEtau_FlipSpin.at(t).Fill(X_LV.E()/Tau_LV.E(),w*FlipSpin_WT);
-	rho_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-	rho_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+	rho_ExoverEtau_hplus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hplus*UnSpin_WT);
+	rho_ExoverEtau_hminus.at(t).Fill(X_LV.E()/Tau_LV.E(),w*hminus*UnSpin_WT);
 
         TLorentzVector Boson_LV=Ntp->MCSignalParticle_p4(Boson_idx);
         int charge=Ntp->MCTau_charge(tau_idx);
         TLorentzVector rho(0,0,0,0),pi(0,0,0,0);
         for(unsigned int i=0;i<Ntp->NMCTauDecayProducts(tau_idx);i++){
           TLorentzVector LV=Ntp->MCTauandProd_p4(tau_idx,i);
+	  //std::cout << Ntp->MCTauandProd_pdgid(tau_idx,i) << " " << LV.Px() << " " << LV.Py() << " " << LV.Pz() << " " << LV.E() << std::endl;
           if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus)){pi+=LV; rho+=LV;}
           if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi0)){rho+=LV;}
         }
-	double gamma=2*pi.Pt()/rho.Pt()-1;
+	double gamma=2*pi.P()/rho.P()-1;
 	rho_Gamma.at(t).Fill(gamma,w);
         rho_Gamma_Spin.at(t).Fill(gamma,w*Spin_WT);
         rho_Gamma_UnSpin.at(t).Fill(gamma,w*UnSpin_WT);
         rho_Gamma_FlipSpin.at(t).Fill(gamma,w*FlipSpin_WT);
-        rho_Gamma_hplus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hplus)*UnSpin_WT);
-        rho_Gamma_hminus.at(t).Fill(gamma,w*Ntp->TauSpinerGet(TauSpinerInterface::hminus)*UnSpin_WT);
+        rho_Gamma_hplus.at(t).Fill(gamma,w*hplus*UnSpin_WT);
+        rho_Gamma_hminus.at(t).Fill(gamma,w*hminus*UnSpin_WT);
 
+	if(verbose)std::cout << "rho : gamma " << gamma << " w " << w << "spin " <<  Spin_WT << " unspin " << UnSpin_WT << " spin flip " << FlipSpin_WT << " hplus " << hplus << " hminus " << hminus  << " rho " << rho.E() << std::endl;
 	rho_WT_Spin.at(t).Fill(Spin_WT,w);
 	rho_WT_UnSpin.at(t).Fill(UnSpin_WT,w);
 	rho_WT_FlipSpin.at(t).Fill(FlipSpin_WT,w);
       }
     }
     if(verbose)std::cout << "rho done" << std::endl;
+    }
   }
   if(verbose)std::cout << "done" << std::endl;
 }
