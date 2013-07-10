@@ -46,6 +46,8 @@ if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\n                                                   contains input command template.");
     printf("\n                                                   Optional commands:  ");
     printf("\n                                                     --InputDir <InputDir>   Default value: $InputDir"); 
+    printf("\n                                                       Note: the root files must be inside a $InputDir/<dir>/ ");
+    printf("\n                                                       where dir contains user, data or mc as a substring");
     printf("\n                                                     --OutputDir <OutputDir> Default value: $OutputDir");
     printf("\n                                                     --CodeDir  <CodeDir>    Default value: $CodeDir");
     printf("\n                                                     --SetName <SetName>     Default value: $set ");
@@ -277,7 +279,7 @@ if( $ARGV[0] eq "--Local" ){
     $B=0;
     $max=1;
     for($l=0;$l<2; $l++){
-	printf("\n\nStarting Loop $l \n");
+	printf("\n\nStarting Loop $l  maxdata = $maxdata maxmc = $maxmc \n");
 	$A=$maxdata+$maxmc+10;
 	foreach $subdir (@dirs){
 	    printf("$subdir");
