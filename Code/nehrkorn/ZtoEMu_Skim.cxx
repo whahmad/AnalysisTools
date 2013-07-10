@@ -15,8 +15,8 @@
 
 ZtoEMu_Skim::ZtoEMu_Skim(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,mu_pt(30)
-  ,e_pt(30)
+  ,mu_pt(10)
+  ,e_pt(10)
   ,mu_eta(2.1)
   ,e_eta(2.3)
   ,jet_pt(30)
@@ -28,8 +28,10 @@ ZtoEMu_Skim::ZtoEMu_Skim(TString Name_, TString id_):
     //verbose=true;
 	MVA_ID = true;
 	FRFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/FakeRates_2012_19ifb_rereco.root");
+	EmbEffFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/RecHitElectronEfficiencies.root");
 	ElectronFakeRate = (TH2D*)(FRFile->Get("ElectronFakeRateHist"));
 	MuonFakeRate = (TH2D*)(FRFile->Get("MuonFakeRateHist"));
+	EmbEff = (TH2D*)(EmbEffFile->Get("hPtEtaSFL"));
 
 }
 
@@ -295,6 +297,11 @@ void  ZtoEMu_Skim::doEvent(){
 	  value.at(TriggerOk)=1;
 	  mu_pt = 20;
 	  e_pt = 20;
+  }
+  if(id==34){
+	  value.at(TriggerOk)=1;
+	  mu_pt = 10;
+	  e_pt = 10;
   }
   pass.at(TriggerOk)=(value.at(TriggerOk)==cut.at(TriggerOk));
 
@@ -1122,50 +1129,14 @@ double ZtoEMu_Skim::ElectronEffRecHit(unsigned int i){
 	double pt = Ntp->Electron_p4(i).Pt();
 	double eta = Ntp->Electron_supercluster_eta(i);
 	
-	Double_t xAxis1[10] = {10, 15, 20, 25, 30, 40, 55, 70, 100, 200}; 
-	Double_t yAxis1[4] = {0, 0.8, 1.479, 2.5}; 
-	   
-	TH2D* hPtEtaSFL = new TH2D("hPtEtaSFL","",9, xAxis1,3, yAxis1);
-	hPtEtaSFL->SetBinContent(12,0.81);
-	hPtEtaSFL->SetBinContent(13,0.91);
-	hPtEtaSFL->SetBinContent(14,0.95);
-	hPtEtaSFL->SetBinContent(15,0.96);
-	hPtEtaSFL->SetBinContent(16,0.97);
-	hPtEtaSFL->SetBinContent(17,0.98);
-	hPtEtaSFL->SetBinContent(18,0.99);
-	hPtEtaSFL->SetBinContent(19,0.98);
-	hPtEtaSFL->SetBinContent(20,0.99);
-	hPtEtaSFL->SetBinContent(21,0.98);
-	hPtEtaSFL->SetBinContent(23,0.78);
-	hPtEtaSFL->SetBinContent(24,0.89);
-	hPtEtaSFL->SetBinContent(25,0.92);
-	hPtEtaSFL->SetBinContent(26,0.94);
-	hPtEtaSFL->SetBinContent(27,0.94);
-	hPtEtaSFL->SetBinContent(28,0.97);
-	hPtEtaSFL->SetBinContent(29,0.97);
-	hPtEtaSFL->SetBinContent(30,0.99);
-	hPtEtaSFL->SetBinContent(31,1.00);
-	hPtEtaSFL->SetBinContent(32,1.00);
-	hPtEtaSFL->SetBinContent(34,0.46);
-	hPtEtaSFL->SetBinContent(35,0.66);
-	hPtEtaSFL->SetBinContent(36,0.73);
-	hPtEtaSFL->SetBinContent(37,0.80);
-	hPtEtaSFL->SetBinContent(38,0.83);
-	hPtEtaSFL->SetBinContent(39,0.86);
-	hPtEtaSFL->SetBinContent(40,0.88);
-	hPtEtaSFL->SetBinContent(41,0.91);
-	hPtEtaSFL->SetBinContent(42,0.93);
-	hPtEtaSFL->SetBinContent(43,1.00);
-	
 	if(pt>199.99)pt=199.9;
 	eta=fabs(eta);
 	if(eta>2.49)eta=2.49;
 	if(pt<10)return 0;
 	
 	Float_t eff=0;
-	Int_t bin = hPtEtaSFL->FindFixBin(pt,eta);
-	eff = hPtEtaSFL->GetBinContent(bin);
-	//std::cout<<" pt="<<pt<<", eta="<<eta<<", eff="<<eff<<std::endl;
+	Int_t bin = EmbEff->FindFixBin(pt,eta);
+	eff = EmbEff->GetBinContent(bin);
 	
 	return eff;
 }

@@ -45,10 +45,6 @@ class ZtoEMu : public Selection {
  private:
   // Selection Variables
 
-  std::vector<TH1D> NVtx;
-  std::vector<TH1D> NGoodVtx;
-  std::vector<TH1D> NTrackperVtx;
-
   std::vector<TH1D> RelIsoE;
   std::vector<TH1D> RelIsoMu;
   std::vector<TH1D> EPt;
@@ -62,20 +58,15 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> jetsum;
   std::vector<TH1D> NJets;
   std::vector<TH1D> chargesum;
-  std::vector<TH1D> chargesumID;
   std::vector<TH1D> drmue;
-  std::vector<TH1D> drmueID;
   std::vector<TH1D> deltaphi;
-  std::vector<TH1D> deltaphiID;
   std::vector<TH1D> ptbal;
-  std::vector<TH1D> chargesumIDsigned;
   std::vector<TH1D> chargesumsigned;
   std::vector<TH1D> FirstJetPt;
   std::vector<TH1D> SecondJetPt;
   std::vector<TH1D> ThirdJetPt;
   std::vector<TH1D> FourthJetPt;
   
-  std::vector<TH1D> invmass;
   std::vector<TH1D> invmass_zmass;
   std::vector<TH1D> invmass_ptbalance;
   std::vector<TH1D> invmass_mtmu;
@@ -90,38 +81,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nm2_mtmu;
   std::vector<TH1D> nm2_ptbalance;
   std::vector<TH1D> nm2_drmue;
-
-  std::vector<TH1D> no_jetveto_mtmu;
-  std::vector<TH1D> no_charge_ptbalance;
-  std::vector<TH1D> no_charge;
   
-  std::vector<TH1D> drmue_plus_charge;
-  std::vector<TH1D> drmue_plus_jetveto;
-  std::vector<TH1D> drmue_plus_mtmu;
-  std::vector<TH1D> drmue_plus_ptbalance;
-  
-  std::vector<TH1D> mproj1;
-  std::vector<TH1D> mproj2;
-  std::vector<TH1D> mproj3;
-  std::vector<TH1D> mproj4;
-  std::vector<TH1D> mproj5;
-  std::vector<TH1D> mproj6;
-  std::vector<TH1D> mproj7;
-  std::vector<TH1D> mproj8;
-  std::vector<TH1D> mproj9;
-  std::vector<TH1D> phiproj1;
-  std::vector<TH1D> phiproj2;
-  std::vector<TH1D> phiproj3;
-  std::vector<TH1D> phiproj4;
-  std::vector<TH1D> phiproj5;
-  std::vector<TH1D> phiproj6;
-  std::vector<TH1D> phiproj7;
-  std::vector<TH1D> phiproj8;
-  std::vector<TH1D> phiproj9;
-  
-  std::vector<TH1D> m1;
-  std::vector<TH1D> m2;
-  std::vector<TH1D> m3;
   std::vector<TH1D> phi1;
   std::vector<TH1D> phi2;
   std::vector<TH1D> phi3;
@@ -135,6 +95,9 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> phi3_ptdiff;
   
   std::vector<TH1D> ptbal2;
+  
+  std::vector<TH1D> NPV;
+  std::vector<TH1D> NPV_noweight;
   
   std::vector<TH1D> frMu;
   std::vector<TH1D> frE;
@@ -157,7 +120,7 @@ class ZtoEMu : public Selection {
   double phismall; //smaller angle (electron or muon)
   double pvis,pmiss;
   
-  double calculatePzeta(int muiterator, int eiterator,std::vector<unsigned int> vec1, std::vector<unsigned int> vec2);
+  double calculatePzeta(int muiterator, int eiterator);
   double calculatePzetaDQM(int muiterator, int eiterator);
   double cosphi2d(double px1, double py1, double px2, double py2);
   double cosphi3d(TVector3 vec1, TVector3 vec2);
@@ -192,8 +155,10 @@ class ZtoEMu : public Selection {
   
   bool MVA_ID;
   TFile* FRFile;
+  TFile* EmbEffFile;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
+  TH2D* EmbEff;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;

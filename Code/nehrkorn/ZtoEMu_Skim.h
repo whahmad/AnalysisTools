@@ -70,8 +70,10 @@ class ZtoEMu_Skim : public Selection {
   
   bool MVA_ID;
   TFile* FRFile;
+  TFile* EmbEffFile;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
+  TH2D* EmbEff;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;
