@@ -34,6 +34,9 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   nbytes=0; 
   nb=0;
   std::cout << "Ntuple Configured" << std::endl;
+
+  // Fit setup 
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -365,26 +368,6 @@ bool Ntuple_Controller::isJetID(unsigned int i){
 }
 
 
-TMatrixF     Ntuple_Controller::Track_parCov(unsigned int i){
-  unsigned int dim=5;
-  TMatrixF M(dim,dim);
-  for(unsigned int j=0;j<dim;j++){
-    for(unsigned int k=0;k<=j;k++){
-      if(j*dim+k<Ntp->Track_parCov->at(i).size()){
-        M[j][k]=Ntp->Track_parCov->at(i).at(j).at(k);
-        M[k][j]=Ntp->Track_parCov->at(i).at(j).at(k);
-      }
-    }
-  }
-}
-
-float     Ntuple_Controller::Track_parCov(unsigned int i, TrackPar par1, TrackPar par2){
-  if(par1>par2)return Ntp->Track_parCov->at(i).at(par1).at(par2);
-  return Ntp->Track_parCov->at(i).at(par2).at(par1);
-}
-
-
-
 
 double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType){
   if(!isData()){
@@ -563,7 +546,7 @@ LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
       l++;
     } 
   }
-  return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i),Ntp->PFTau_a1_charge->at(i),Ntp->PFTau_a1_B->at(i));
+  return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i).at(0),Ntp->PFTau_a1_charge->at(i).at(0),Ntp->PFTau_a1_B->at(i).at(0));
 }
 
 std::vector<TrackParticle> Ntuple_Controller::PFTau_daughterTracks(unsigned int i){

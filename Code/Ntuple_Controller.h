@@ -20,6 +20,7 @@
 #include "TVector3.h"
 #include "TMatrixT.h"
 #include "TMatrixTSym.h"
+#include "TVectorT.h"
 
 // Include files (C & C++ libraries)
 #include<iostream>
@@ -38,7 +39,7 @@
 #include "SimpleFits/FitSoftware/interface/LorentzVectorParticle.h"
 #include "SimpleFits/FitSoftware/interface/MultiProngTauSolver.h"
 #include "SimpleFits/FitSoftware/interface/ErrorMatrixPropagator.h"
-
+#include "SimpleFits/FitSoftware/interface/TauA1NuConstrainedFitter.h"
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -65,6 +66,8 @@ class Ntuple_Controller{
   bool copyTree;
 
   bool verbose;
+
+  int currentEvent;
 
   // Ntuple Access Functions
   virtual void Branch_Setup(TString B_Name, int type);
@@ -102,6 +105,13 @@ class Ntuple_Controller{
   TauSpinerInterface TauSpinerInt;
   HistoConfig HistoC;
 
+  // Fit Variables
+  LorentzVectorParticle               theTau;
+  std::vector<LorentzVectorParticle>  daughter;
+  double                              LC_chi2;
+  double                              ndof;
+  bool                                fitStatus;
+
  public:
   // Constructor
   Ntuple_Controller(std::vector<TString> RootFiles);
@@ -112,11 +122,12 @@ class Ntuple_Controller{
   //TauSpiner function
     double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
    void TauSpinerSetSignal(int signalcharge){TauSpinerInt.SetTauSignalCharge(signalcharge);}
-  enum TrackQuality {
-    undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
-    confirmed = 3, goodIterative = 4, looseSetWithPV = 5, highPuritySetWithPV = 6,
-    qualitySize = 7
-  };
+   enum beamspot{BS_x0,BS_y0,BS_z0,BS_sigmaZ,BS_dxdz,BS_dydz,BS_BeamWidthX,NBS_par};
+   enum TrackQuality {
+     undefQuality = -1, loose = 0, tight = 1, highPurity = 2,
+     confirmed = 3, goodIterative = 4, looseSetWithPV = 5, highPuritySetWithPV = 6,
+     qualitySize = 7
+   };
   enum TrackPar{i_qoverp = 0, i_lambda, i_phi, i_dxy,i_dsz};
 
   // Ntuple Access Functions 
@@ -154,7 +165,22 @@ class Ntuple_Controller{
   int           PileupInfo_NumInteractions_np1(){Ntp->PileupInfo_NumInteractions_np1;}
   double        EvtWeight3D(){return Ntp->EvtWeight3D;}
 
+  TVectorT<double>      beamspot_par(){TVectorT<double> BS(NBS_par);for(unsigned int i=0;i<NBS_par;i++)BS(i)=Ntp->beamspot_par->at(i);return BS;}
 
+  TMatrixTSym<double>   beamspot_cov(){
+    TMatrixTSym<double> BS_cov(NBS_par);
+    unsigned int l=0;
+    for(unsigned int i=0;i<NBS_par;i++){
+      for(unsigned int j=i;j<NBS_par;j++){
+	BS_cov(i,j)=Ntp->beamspot_cov->at(l);
+      }
+    }
+    return BS_cov;
+  }
+  
+  float  beamspot_emittanceX(){return Ntp->beamspot_emittanceX;}
+  float  beamspot_emittanceY(){return Ntp->beamspot_emittanceY;}
+  float  beamspot_betaStar(){return Ntp->beamspot_betaStar;}
 
   // Vertex Information
   unsigned int NVtx(){return Ntp->Vtx_ndof->size();}
@@ -203,7 +229,7 @@ class Ntuple_Controller{
   float          Muon_innerTrack_numberofValidHits(unsigned int i){return Ntp->Muon_innerTrack_numberofValidHits->at(i);}
   float          Muon_numberOfMatches(unsigned int i){return Ntp->Muon_numberOfMatches->at(i);}
   int            Muon_numberOfChambers(unsigned int i){return Ntp->Muon_numberOfChambers->at(i);}
-  int            Muon_Charge(unsigned int i){return Ntp->Muon_Charge->at(i);}
+  int            Muon_Charge(unsigned int i){return Ntp->Muon_charge->at(i);}
   bool           isGoodMuon(unsigned int i);
   bool           isGoodMuon_nooverlapremoval(unsigned int i);
   float          Muon_RelIso(unsigned int i);
@@ -228,6 +254,20 @@ class Ntuple_Controller{
   int            Muon_numberofValidPixelHits(unsigned int i){return Ntp->Muon_numberofValidPixelHits->at(i);}
   int            Muon_trackerLayersWithMeasurement(unsigned int i){return Ntp->Muon_trackerLayersWithMeasurement->at(i);}
 
+
+  TrackParticle Muon_TrackParticle(unsigned int i){
+    TMatrixT<double>    mu_par(TrackParticle::NHelixPar,1);
+    TMatrixTSym<double> mu_cov(TrackParticle::NHelixPar);
+    unsigned int l=0;
+    for(int k=0; k<TrackParticle::NHelixPar; k++){
+      mu_par(k,0)=Ntp->Muon_par->at(i).at(k);
+      for(int j=k; j<TrackParticle::NHelixPar; j++){
+        mu_cov(k,j)=Ntp->Muon_cov->at(i).at(l);
+        l++;
+      }
+    }
+    return TrackParticle(mu_par,mu_cov,Ntp->Muon_pdgid->at(i),Ntp->Muon_M->at(i),Ntp->Muon_charge->at(i),Ntp->Muon_B->at(i));
+  }
 
 
   //Base Tau Information (PF)
@@ -271,42 +311,71 @@ class Ntuple_Controller{
    TMatrixTSym<double> PFTau_TIP_primaryVertex_cov(unsigned int i);
    TVector3 PFTau_TIP_secondaryVertex_pos(unsigned int i){return  TVector3(Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(0),Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(1),Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(2));}
    TMatrixTSym<double> PFTau_TIP_secondaryVertex_cov(unsigned int i);
-   float PFTau_TIP_secondaryVertex_vtxchi2(unsigned int i){return  Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i);}
-   float PFTau_TIP_secondaryVertex_vtxndof(unsigned int i){return  Ntp->PFTau_TIP_secondaryVertex_vtxndof->at(i);}
+   float PFTau_TIP_secondaryVertex_vtxchi2(unsigned int i){if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1) return  Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).at(0); return 0;}
+   float PFTau_TIP_secondaryVertex_vtxndof(unsigned int i){if(Ntp->PFTau_TIP_secondaryVertex_vtxndof->at(i).size()==1) return  Ntp->PFTau_TIP_secondaryVertex_vtxndof->at(i).at(0);  return 0;}
    LorentzVectorParticle PFTau_a1_lvp(unsigned int i);
    std::vector<TrackParticle> PFTau_daughterTracks(unsigned int i);
    std::vector<TVector3> PFTau_daughterTracks_poca(unsigned int i);   
-   TLorentzVector PFTau_3PS_A1_LV(unsigned int i){return TLorentzVector(Ntp->PFTau_3PS_A1_LV->at(i).at(1),Ntp->PFTau_3PS_A1_LV->at(i).at(2),Ntp->PFTau_3PS_A1_LV->at(i).at(3),Ntp->PFTau_3PS_A1_LV->at(i).at(0));}
-   float PFTau_3PS_M_A1(unsigned int i){return Ntp->PFTau_3PS_M_A1->at(i);}
-   float PFTau_3PS_M_12(unsigned int i){return Ntp->PFTau_3PS_M_12->at(i);}
-   float PFTau_3PS_M_13(unsigned int i){return Ntp->PFTau_3PS_M_13->at(i);}
-   float PFTau_3PS_M_23(unsigned int i){return Ntp->PFTau_3PS_M_23->at(i);}
-   int   PFTau_3PS_Tau_Charge(unsigned int i){return Ntp->PFTau_3PS_Tau_Charge->at(i);}
-   float PFTau_3PS_LCchi2(unsigned int i,unsigned int j){return Ntp->PFTau_3PS_LCchi2->at(i).at(j);}
-   int   PFTau_3PS_has3ProngSolution(unsigned int i,unsigned int j){return Ntp->PFTau_3PS_has3ProngSolution->at(i).at(j);}
-   TLorentzVector PFTau_3PS_Tau_LV(unsigned int i,unsigned int j){return TLorentzVector(Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(1),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(2),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(3),Ntp->PFTau_3PS_Tau_LV->at(i).at(j).at(0));}
-
    TMatrixTSym<double> PFTau_FlightLength3d_cov(unsigned int i){return  PFTau_TIP_secondaryVertex_cov(i)+PFTau_TIP_primaryVertex_cov(i);}
    TVector3 PFTau_FlightLength3d(unsigned int i){return PFTau_TIP_secondaryVertex_pos(i)-PFTau_TIP_primaryVertex_pos(i);}
-   TMatrixTSym<double> PF_Tau_FlightLegth3d_TauFrame_cov(unsigned int i);   
+   TMatrixTSym<double> PF_Tau_FlightLegth3d_TauFrame_cov(unsigned int i);
    TVector3 PF_Tau_FlightLegth3d_TauFrame(unsigned int i);
    double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(0); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
    double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
 
+
+
+
+   bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
+     ndof=0;
+     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1){
+       // Tau Solver
+       TVector3 pv=PFTau_TIP_primaryVertex_pos(i);
+       TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
+       LorentzVectorParticle a1=PFTau_a1_lvp(i);
+       TauA1NuConstrainedFitter TauA1NU(j,a1,pv,pvcov);
+       TauA1NU.SetMaxDelta(0.01);
+       TauA1NU.SetNIterMax(1000);
+       bool fitStatus=(TauA1NU.isConverged() && TauA1NU.Fit());
+       if(fitStatus){
+	 theTau=TauA1NU.GetMother();
+	 daughter=TauA1NU.GetReFitDaughters();
+	 LC_chi2=TauA1NU.ChiSquare();
+	 return fitStatus;
+       }
+     }
+     return false;
+   }
+   
    ////////////////////////////////////////////////
-   // wrapper for backwards compatibility to KFit
+   // wrapper for backwards compatibility to KFit do not use in new code!!!
    int NKFTau(){return NPFTaus();}
-   int KFTau_discriminatorByKFit(unsigned int i,unsigned int j=0){if(PFTau_3PS_has3ProngSolution(i,j)) return 1; return 0;}
    int KFTau_discriminatorByQC(unsigned int i,unsigned int j=0){
-     if(0.8<PFTau_3PS_M_A1(i) && PFTau_3PS_M_A1(i)<1.5)return true;
+     TLorentzVector a1=PFTau_a1_lvp(i).LV();
+     if(0.8<a1.M() && a1.M()<1.5)return true;
      return false;
    }
 
-   TLorentzVector KFTau_TauFit_p4(unsigned int i, unsigned int j=0){return PFTau_3PS_Tau_LV(i,j);}
+   bool KFTau_discriminatorByKFit(unsigned int i, unsigned int j=0){
+     LorentzVectorParticle theTau;
+     std::vector<LorentzVectorParticle> daughter;
+     double LC_chi2;
+     return ThreeProngTauFit(i,j,theTau,daughter,LC_chi2);
+   }
+
+   TLorentzVector KFTau_TauFit_p4(unsigned int i, unsigned int j=0){
+     LorentzVectorParticle theTau;
+     std::vector<LorentzVectorParticle> daughter;
+     double LC_chi2;
+     if(ThreeProngTauFit(i,j,theTau,daughter,LC_chi2))return theTau.LV();return TLorentzVector(0,0,0,0);
+   }
    int KFTau_MatchedHPS_idx(unsigned int i){return i;}
    bool isGoodKFTau(unsigned int i,unsigned int j=0){
-     if(KFTau_discriminatorByKFit(i,j)){
+     LorentzVectorParticle theTau;
+     std::vector<LorentzVectorParticle> daughter;
+     double LC_chi2;
+     if(ThreeProngTauFit(i,j,theTau,daughter,LC_chi2)){
        if(KFTau_discriminatorByQC(i,j)){
 	 if(PFTau_hpsDecayMode(KFTau_MatchedHPS_idx(i)) == 10 && PFTau_isHPSByDecayModeFinding(i)){
 	   if(PFTau_isVLooseIsolationDBSumPtCorr(KFTau_MatchedHPS_idx(i))){
@@ -317,21 +386,29 @@ class Ntuple_Controller{
      }
      return false;
    }
-
-   TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j=0){return PFTau_3PS_A1_LV(i);}
-   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (PFTau_3PS_Tau_LV(i,j)-PFTau_3PS_A1_LV(i));}
+   
+   TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j=0){return PFTau_a1_lvp(i).LV();}
+   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (KFTau_TauFit_p4(i,j)-PFTau_a1_lvp(i).LV());}
    int      KFTau_nKinTaus(){return NKFTau();}
    int      KFTau_indexOfFitInfo(unsigned int i){return i;}
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return PFTau_TIP_primaryVertex_pos(i);}
    float    KFTau_Fit_ndf(unsigned int i,unsigned int j=0){return PFTau_TIP_secondaryVertex_vtxndof(i);}
-   float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){return PFTau_TIP_secondaryVertex_vtxchi2(i)+PFTau_3PS_LCchi2(i,j);}
+   float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){
+     LorentzVectorParticle theTau;
+     std::vector<LorentzVectorParticle> daughter;
+     double LC_chi2;
+     if(ThreeProngTauFit(i,j,theTau,daughter,LC_chi2)){
+       return PFTau_TIP_secondaryVertex_vtxchi2(i)+LC_chi2;
+     }
+     return 999;
+   }
    float    KFTau_Fit_Chi2Prob(unsigned int i,unsigned int j=0){return TMath::Prob(KFTau_Fit_chi2(i,j),(int)KFTau_Fit_ndf(i,j));}
-   int      KFTau_Fit_charge(unsigned int i){return Ntp->PFTau_a1_charge->at(i);}
+   int      KFTau_Fit_charge(unsigned int i){if(Ntp->PFTau_a1_charge->at(i).size()>0) return Ntp->PFTau_a1_charge->at(i).at(0); return 0;}
    int      KFTau_Fit_csum(unsigned int i,unsigned int j=0){return 0;}
    int      KFTau_Fit_iterations(unsigned int i, unsigned int j=0){return 0;}
-   double KFTau_RotatedVtx(unsigned int i, unsigned int j=0){return 0;}
+   double   KFTau_RotatedVtx(unsigned int i, unsigned int j=0){return 0;}
    
-   double   KFTau_Fit_RefitVisibleMass(unsigned int i, unsigned int j=0){return PFTau_3PS_M_A1(i);}
+   double   KFTau_Fit_RefitVisibleMass(unsigned int i, unsigned int j=0){return PFTau_a1_lvp(i).LV().M();}
    double   KFTau_Fit_SV_PV_significance(unsigned int i, unsigned int j=0){return PFTau_FlightLength_significance(i);}
    double   KFTau_Fit_SV_PV_error(unsigned int i, unsigned int j=0){return PFTau_FlightLength_error(i);}
    double   KFTau_Fit_SV_PV_distance(unsigned int i, unsigned int j=0){return PFTau_FlightLength(i);}
@@ -396,9 +473,20 @@ class Ntuple_Controller{
    unsigned short    Track_numberOfLostHits(unsigned int i){return Ntp->Track_numberOfLostHits->at(i);}
    unsigned short    Track_numberOfValidHits(unsigned int i){return Ntp->Track_numberOfValidHits->at(i);}
    unsigned int      Track_qualityMask(unsigned int i){return Ntp->Track_qualityMask->at(i);}
-   float             Track_par(unsigned int i, TrackPar par){return Ntp->Track_par->at(i).at(par);}
-   TMatrixF          Track_parCov(unsigned int i);
-   float             Track_parCov(unsigned int i, TrackPar par1, TrackPar par2);
+
+   TrackParticle Track_TrackParticle(unsigned int i){
+     TMatrixT<double>    track_par(TrackParticle::NHelixPar,1);
+     TMatrixTSym<double> track_cov(TrackParticle::NHelixPar);
+     unsigned int l=0;
+     for(int k=0; k<TrackParticle::NHelixPar; k++){
+       track_par(k,0)=Ntp->Track_par->at(i).at(k);
+       for(int j=k; j<TrackParticle::NHelixPar; j++){
+	 track_cov(k,j)=Ntp->Track_cov->at(i).at(l);
+	 l++;
+       }
+     }
+     return TrackParticle(track_par,track_cov,Ntp->Track_pdgid->at(i),Ntp->Track_M->at(i),Ntp->Track_charge->at(i),Ntp->Track_B->at(i));
+   }
 
    // MC Informaation
    // Singal particles (Z0,W+/-,H0,H+/-)
@@ -434,7 +522,7 @@ class Ntuple_Controller{
    unsigned int       NElectrons(){return Ntp->Electron_p4->size();}
    TLorentzVector     Electron_p4(unsigned int i){return TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));}
    TVector3           Electron_Poca(unsigned int i){return TVector3(Ntp->Electron_Poca->at(i).at(0),Ntp->Electron_Poca->at(i).at(1),Ntp->Electron_Poca->at(i).at(2));}
-   float   Electron_Charge(unsigned int i){return Ntp->Electron_Charge->at(i);}
+   float   Electron_Charge(unsigned int i){return Ntp->Electron_charge->at(i);}
    float   Electron_Gsf_deltaEtaEleClusterTrackAtCalo(unsigned int i){return Ntp->Electron_Gsf_deltaEtaEleClusterTrackAtCalo->at(i);}
    float   Electron_Gsf_deltaEtaSeedClusterTrackAtCalo(unsigned int i){return Ntp->Electron_Gsf_deltaEtaSeedClusterTrackAtCalo->at(i);}
    float   Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(unsigned int i){return Ntp->Electron_Gsf_deltaEtaSuperClusterTrackAtVtx->at(i);}
@@ -460,7 +548,6 @@ class Ntuple_Controller{
    float   Electron_supercluster_centroid_z(unsigned int i){return Ntp->Electron_supercluster_centroid_z->at(i);}
    unsigned int Electron_Track_idx(unsigned int i){return Ntp->Electron_Track_idx->at(i);}
 
-
    float    Electron_ecalRecHitSumEt03(unsigned int i){return Ntp->Electron_ecalRecHitSumEt03->at(i);}
    float    Electron_hcalDepth1TowerSumEt03(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEt03->at(i);}
    float    Electron_hcalDepth1TowerSumEtBc03(unsigned int i){return Ntp->Electron_hcalDepth1TowerSumEtBc03->at(i);}
@@ -474,11 +561,9 @@ class Ntuple_Controller{
    float    Electron_hcalDepth2TowerSumEtBc04(unsigned int i){return Ntp->Electron_hcalDepth2TowerSumEtBc04->at(i);}
    float    Electron_tkSumPt04(unsigned int i){return Ntp->Electron_tkSumPt04->at(i);}
    
-   
    float    Electron_chargedHadronIso(unsigned int i){return Ntp->Electron_chargedHadronIso->at(i);}
    float    Electron_neutralHadronIso(unsigned int i){return Ntp->Electron_neutralHadronIso->at(i);}
    float    Electron_photonIso(unsigned int i){return Ntp->Electron_photonIso->at(i);}
-     	 						    
    
    float    Electron_sigmaIetaIeta(unsigned int i){return Ntp->Electron_sigmaIetaIeta->at(i);}
    float    Electron_hadronicOverEm(unsigned int i){return Ntp->Electron_hadronicOverEm->at(i);}
@@ -489,9 +574,19 @@ class Ntuple_Controller{
    float    Electron_numberOfMissedHits(unsigned int i){return Ntp->Electron_numberOfMissedHits->at(i);}
    bool     Electron_HasMatchedConversions(unsigned int i){return Ntp->Electron_HasMatchedConversions->at(i);}
 
-
-
-
+   TrackParticle Electron_TrackParticle(unsigned int i){
+     TMatrixT<double>    e_par(TrackParticle::NHelixPar,1);
+     TMatrixTSym<double> e_cov(TrackParticle::NHelixPar);
+     unsigned int l=0;
+     for(int k=0; k<TrackParticle::NHelixPar; k++){
+       e_par(k,0)=Ntp->Electron_par->at(i).at(k);
+       for(int j=k; j<TrackParticle::NHelixPar; j++){
+	 e_cov(k,j)=Ntp->Electron_cov->at(i).at(l);
+	 l++;
+       }
+     }
+     return TrackParticle(e_par,e_cov,Ntp->Electron_pdgid->at(i),Ntp->Electron_M->at(i),Ntp->Electron_charge->at(i),Ntp->Electron_B->at(i));
+   }
 
    // Trigger
    bool         TriggerAccept(TString n);
