@@ -329,23 +329,16 @@ class Ntuple_Controller{
 
    
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
-     std::cout << "here" << std::endl;
      ndof=0;
-     std::cout << i << " " << j << " " << Ntp->PFTau_a1_lvp->size() << std::endl;
      if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&  
 	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
        // Tau Solver
-       std::cout << "here-b" << std::endl;
        TVector3 pv=PFTau_TIP_primaryVertex_pos(i);
-       std::cout << "here-c" << std::endl;
        TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
-       std::cout << "here-d" << std::endl;
        LorentzVectorParticle a1=PFTau_a1_lvp(i);
-       std::cout << "here-e" << std::endl;
        TauA1NuConstrainedFitter TauA1NU(j,a1,pv,pvcov);
        TauA1NU.SetMaxDelta(0.01);
        TauA1NU.SetNIterMax(1000);
-       std::cout << "here-1" << std::endl;
 
 	 bool fitStatus= TauA1NU.Fit();
        if(fitStatus && TauA1NU.isConverged()){
