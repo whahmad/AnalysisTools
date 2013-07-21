@@ -184,11 +184,12 @@ void Ntuple_Controller::doMET(){
 
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
-
+  std::cout << Ntp->DataMC_Type << std::endl;
   if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal && HistoC.hasID(DataMCType::DY_ll_Signal)){
     for(int i=0;i<NMCSignalParticles();i++){
       if(abs(MCSignalParticle_pdgid(i))==PdtPdgMini::Z0){
 	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
+	  std::cout << "Found Signal " <<  DataMCType::Signal << std::endl;
 	  return DataMCType::Signal;
 	}
       }
@@ -197,10 +198,13 @@ int Ntuple_Controller::GetMCID(){
   }
   if(Ntp->DataMC_Type>100){
     if(HistoC.hasID(Ntp->DataMC_Type%100)){
+      std::cout << "Found mode with %100 :" <<  Ntp->DataMC_Type%100 << std::endl;
       return Ntp->DataMC_Type%100;
     }
   }
-  if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;
+  if(HConfig.hasID(Ntp->DataMC_Type)){return Ntp->DataMC_Type;  std::cout << "Decay Mode " <<  Ntp->DataMC_Type << std::endl;}
+  std::cout << "Decay Mode not found " << std::endl;
+  return -999;
 }
 
 TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
@@ -514,9 +518,13 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
 TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(unsigned int i){
   TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
   int l=0;
+  std::cout << Ntp->PFTau_TIP_primaryVertex_cov->size() << std::endl;
+  std::cout << Ntp->PFTau_TIP_primaryVertex_cov->at(i).size() << std::endl;
   for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
     for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
-      V_cov(i,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
+      std::cout << Ntp->PFTau_TIP_primaryVertex_cov->at(i).size() << " l= " << l <<  std::endl; 
+      if(j==k)V_cov(i,j)=pow(0.0001,2.0);
+      //V_cov(i,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
       l++;
     }
   }
@@ -539,12 +547,16 @@ LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
   TMatrixT<double>    a1_par(LorentzVectorParticle::NLorentzandVertexPar,1);
   TMatrixTSym<double> a1_cov(LorentzVectorParticle::NLorentzandVertexPar);
   int l=0;
-  for(int k=0; k<LorentzVectorParticle::NLorentzandVertexPar; k++){
-    a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
-    for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
-      a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
-      l++;
-    } 
+  if(Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
+    for(int k=0; k<LorentzVectorParticle::NLorentzandVertexPar; k++){
+      std::cout << "k " << k << " " << Ntp->PFTau_a1_lvp->at(i).size() << std::endl;
+      a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
+      for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
+	std::cout << "l " << l << " " << Ntp->PFTau_a1_cov->at(i).size() << std::endl;
+	a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
+	l++;
+      } 
+    }
   }
   return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i).at(0),Ntp->PFTau_a1_charge->at(i).at(0),Ntp->PFTau_a1_B->at(i).at(0));
 }

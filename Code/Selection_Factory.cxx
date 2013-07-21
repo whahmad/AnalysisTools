@@ -12,6 +12,7 @@
 #include "inugent/Ztomumu_ControlSample.h"
 #include "inugent/TriggerStudy.h"
 #include "inugent/TriggerStudyMC.h"
+#include "inugent/TauLifeTime.h"
 
 Selection_Factory::Selection_Factory(){
 }
@@ -34,6 +35,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("ztomumu_controlsample"))s=new Ztomumu_ControlSample(Analysis,UncertType);
   else if(Analysis.Contains("triggerstudymc"))s=new TriggerStudyMC(Analysis,UncertType);
   else if(Analysis.Contains("triggerstudy"))s=new TriggerStudy(Analysis,UncertType);
+  else if(Analysis.Contains("taulifetime"))s=new TauLifeTime(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);

@@ -309,11 +309,14 @@ class Ntuple_Controller{
    std::vector<int> PFTau_Track_idx(unsigned int i){return  Ntp->PFTau_Track_idx->at(i);}
    TVector3 PFTau_TIP_primaryVertex_pos(unsigned int i){return  TVector3(Ntp->PFTau_TIP_primaryVertex_pos->at(i).at(0),Ntp->PFTau_TIP_primaryVertex_pos->at(i).at(1),Ntp->PFTau_TIP_primaryVertex_pos->at(i).at(2));}
    TMatrixTSym<double> PFTau_TIP_primaryVertex_cov(unsigned int i);
+   bool PFTau_TIP_hassecondaryVertex(unsigned int i){if(Ntp->PFTau_TIP_secondaryVertex_pos->at(i).size()==3)return true; return false;}
    TVector3 PFTau_TIP_secondaryVertex_pos(unsigned int i){return  TVector3(Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(0),Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(1),Ntp->PFTau_TIP_secondaryVertex_pos->at(i).at(2));}
    TMatrixTSym<double> PFTau_TIP_secondaryVertex_cov(unsigned int i);
    float PFTau_TIP_secondaryVertex_vtxchi2(unsigned int i){if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1) return  Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).at(0); return 0;}
    float PFTau_TIP_secondaryVertex_vtxndof(unsigned int i){if(Ntp->PFTau_TIP_secondaryVertex_vtxndof->at(i).size()==1) return  Ntp->PFTau_TIP_secondaryVertex_vtxndof->at(i).at(0);  return 0;}
+   bool PFTau_TIP_hasA1Momentum(unsigned int i){if(Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar)return true; return false;}
    LorentzVectorParticle PFTau_a1_lvp(unsigned int i);
+   TLorentzVector PFTau_3PS_A1_LV(unsigned int i){return PFTau_a1_lvp(i).LV();}
    std::vector<TrackParticle> PFTau_daughterTracks(unsigned int i);
    std::vector<TVector3> PFTau_daughterTracks_poca(unsigned int i);   
    TMatrixTSym<double> PFTau_FlightLength3d_cov(unsigned int i){return  PFTau_TIP_secondaryVertex_cov(i)+PFTau_TIP_primaryVertex_cov(i);}
@@ -324,25 +327,32 @@ class Ntuple_Controller{
    double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
 
-
-
-
+   
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
+     std::cout << "here" << std::endl;
      ndof=0;
-     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1){
+     std::cout << i << " " << j << " " << Ntp->PFTau_a1_lvp->size() << std::endl;
+     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&  
+	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
        // Tau Solver
+       std::cout << "here-b" << std::endl;
        TVector3 pv=PFTau_TIP_primaryVertex_pos(i);
+       std::cout << "here-c" << std::endl;
        TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
+       std::cout << "here-d" << std::endl;
        LorentzVectorParticle a1=PFTau_a1_lvp(i);
+       std::cout << "here-e" << std::endl;
        TauA1NuConstrainedFitter TauA1NU(j,a1,pv,pvcov);
        TauA1NU.SetMaxDelta(0.01);
        TauA1NU.SetNIterMax(1000);
-       bool fitStatus=(TauA1NU.isConverged() && TauA1NU.Fit());
-       if(fitStatus){
+       std::cout << "here-1" << std::endl;
+
+	 bool fitStatus= TauA1NU.Fit();
+       if(fitStatus && TauA1NU.isConverged()){
 	 theTau=TauA1NU.GetMother();
 	 daughter=TauA1NU.GetReFitDaughters();
 	 LC_chi2=TauA1NU.ChiSquare();
-	 return fitStatus;
+	 return  true;
        }
      }
      return false;
@@ -510,6 +520,9 @@ class Ntuple_Controller{
    int MCTauandProd_pdgid(unsigned int i, unsigned int j){return Ntp->MCTauandProd_pdgid->at(i).at(j);}
    unsigned int MCTauandProd_midx(unsigned int i, unsigned int j){return Ntp->MCTauandProd_midx->at(i).at(j);}
    int MCTauandProd_charge(unsigned int i, unsigned int j){return Ntp->MCTauandProd_charge->at(i).at(j);}
+   TVector3 MCTauandProd_Vertex(unsigned int i, unsigned int j){
+     return TVector3(Ntp->MCTauandProd_Vertex->at(i).at(j).at(0),Ntp->MCTauandProd_Vertex->at(i).at(j).at(1),Ntp->MCTauandProd_Vertex->at(i).at(j).at(2));
+   }
    bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
    bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx);
 

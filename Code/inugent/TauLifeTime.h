@@ -15,22 +15,16 @@ class TauLifeTime : public Selection {
 
   enum cuts {TriggerOk=0, 
 	     hasTag,
-	     TagPtmin,
-             TagPtmax,
+	     TagPtMin,
 	     TagIso,
-	     NJets,
-	     MaxTracksinJet,
-	     MinTracksinJet,
-	     charge,
+//	     numIsoTags,
+	     TauPt,
+	     TauEta,
+	     TauIsIsolated,
+         TauFit,
 	     deltaPhi,
-	     MT,
-	     MET,
-	     JetPt,
-	     etaq,
-	     JetTrackPtMax,
-	     ZMassmax,
-             ZMassmin,
-	     HT,
+	     Charge,
+	     //ZMassmax,
 	     NCuts};
 
  protected:
@@ -41,6 +35,31 @@ class TauLifeTime : public Selection {
   // Selection Variables
   std::vector<TH1D> NVtx;
   std::vector<TH1D> NGoodVtx;
+  std::vector<TH1D> TauFlightLength;
+  std::vector<TH1D> TauFlightLengthTransverse;
+  std::vector<TH1D> TauMomentum;
+  std::vector<TH1D> TauMomentumTransverse;
+  std::vector<TH1D> TauLife;
+  std::vector<TH1D> TauLifeTransverse;
+  std::vector<TH1D> ResTauFlightLength;
+  std::vector<TH1D> ResTauFlightLengthTransverse;
+  std::vector<TH1D> ResTrueTauMomentum;
+  std::vector<TH1D> ResTauMomentumTransverse;
+  std::vector<TH1D>  ResTauMomentum;
+  std::vector<TH1D> ResTrueTauMomentumTransverse;
+  std::vector<TH1D> ResTrueTauLife;
+  std::vector<TH1D> ResTrueTauLifeTransverse;
+  std::vector<TH1D> ResTauLife;
+  std::vector<TH1D> ResTauLifeTransverse;
+
+  std::vector<TH1D> TauMomentumAvg;
+  std::vector<TH1D> TauMomentumTransverseAvg;
+  std::vector<TH1D> ResTauMomentumAvg;
+  std::vector<TH1D> ResTauMomentumTransverseAvg;
+  std::vector<TH1D> TauLifeAvg;
+  std::vector<TH1D> TauLifeTransverseAvg;
+  std::vector<TH1D> ResTauLifeAvg;
+  std::vector<TH1D> ResTauLifeTransverseAvg;
 
   int channel;
   double jeteta,muoneta,TauTrackPtThreshold;
