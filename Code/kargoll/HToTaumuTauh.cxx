@@ -12,8 +12,12 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cMu_pt(20.0),
   cMu_eta(2.1),
   cTau_pt(20.0),
-  cTau_eta(2.3)
+  cTau_eta(2.3),
+  cMuTau_dR(0.3)
 {
+	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
+	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
+	cTriggerNames = temp;
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -31,7 +35,7 @@ void  HToTaumuTauh::Configure(){
     cut.push_back(0);
     value.push_back(0);
     pass.push_back(false);
-    if(i==TriggerOk)    	cut.at(TriggerOk)=1;
+    if(i==TriggerOk)    	cut.at(TriggerOk)=0;
     if(i==PrimeVtx)     	cut.at(PrimeVtx)=1;
     if(i==NMuId)			cut.at(NMuId)=1;
     if(i==NMuKin)			cut.at(NMuKin)=1;
@@ -41,111 +45,136 @@ void  HToTaumuTauh::Configure(){
     if(i==NTauKin)			cut.at(NTauKin)=1;
     if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
+    if(i==MT)				cut.at(MT)=20.0;
   }
 
   TString hlabel;
   TString htitle;
-  for(unsigned int i=0; i<NCuts; i++){
+  for(unsigned int i_cut=0; i_cut<NCuts; i_cut++){
     title.push_back("");
     distindx.push_back(false);
     dist.push_back(std::vector<float>());
-    TString c="_Cut_";c+=i;
+    TString c="_Cut_";c+=i_cut;
   
-    if(i==PrimeVtx){
-      title.at(i)="Number of Prime Vertices $(N>$";
-      title.at(i)+=cut.at(PrimeVtx);
-      title.at(i)+=")";
-      htitle=title.at(i);
+    if(i_cut==PrimeVtx){
+      title.at(i_cut)="Number of Prime Vertices $(N>$";
+      title.at(i_cut)+=cut.at(PrimeVtx);
+      title.at(i_cut)+=")";
+      htitle=title.at(i_cut);
       htitle.ReplaceAll("$","");
       htitle.ReplaceAll("\\","#");
       hlabel="Number of Prime Vertices";
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_PrimeVtx_",htitle,51,-0.5,50.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_PrimeVtx_",htitle,51,-0.5,50.5,hlabel,"Events"));
     }
-    else if(i==TriggerOk){
-      title.at(i)="Trigger ";
+    else if(i_cut==TriggerOk){
+      title.at(i_cut)="Trigger ";
       hlabel="Trigger ";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,2,-0.5,1.5,hlabel,"Events"));
+
+      std::vector<TH1D> Nm1Temp = HConfig.GetTH1D(Name+c+"_Nminus1_TriggerOk_",htitle,cTriggerNames.size()+2,-1.5,cTriggerNames.size()+0.5,hlabel,"Events");
+      std::vector<TH1D> Nm0Temp = HConfig.GetTH1D(Name+c+"_Nminus0_TriggerOk_",htitle,cTriggerNames.size()+2,-1.5,cTriggerNames.size()+0.5,hlabel,"Events");
+      for (unsigned i_hist = 0; i_hist < Nm1Temp.size(); i_hist++){
+    	  Nm1Temp.at(i_hist).GetXaxis()->SetBinLabel(1,"not fired");
+    	  Nm0Temp.at(i_hist).GetXaxis()->SetBinLabel(1,"not fired");
+    	  for (unsigned i_bin = 2; i_bin < cTriggerNames.size()+2; i_bin++){
+    		  Nm1Temp.at(i_hist).GetXaxis()->SetBinLabel(i_bin,cTriggerNames.at(i_bin-2));
+    		  Nm0Temp.at(i_hist).GetXaxis()->SetBinLabel(i_bin,cTriggerNames.at(i_bin-2));
+    	  }
+    	  Nm1Temp.at(i_hist).GetXaxis()->SetBinLabel(cTriggerNames.size()+2,"multiple fired");
+    	  Nm0Temp.at(i_hist).GetXaxis()->SetBinLabel(cTriggerNames.size()+2,"multiple fired");
+      }
+      Nminus1.push_back(Nm1Temp);
+      Nminus0.push_back(Nm0Temp);
     }
-    else if(i==NMuId){
-    	title.at(i)="Number $\\mu_{ID} =$";
-    	title.at(i)+=cut.at(NMuId);
-    	htitle=title.at(i);
+    else if(i_cut==NMuId){
+    	title.at(i_cut)="Number $\\mu_{ID} =$";
+    	title.at(i_cut)+=cut.at(NMuId);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of #mu_{ID}";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuId_",htitle,11,-0.5,10.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuId_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i==NMuKin){
-    	title.at(i)="Number $\\mu_{sel} =$";
-    	title.at(i)+=cut.at(NMuKin);
-    	htitle=title.at(i);
+    else if(i_cut==NMuKin){
+    	title.at(i_cut)="Number $\\mu_{sel} =$";
+    	title.at(i_cut)+=cut.at(NMuKin);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of #mu_{sel}";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuKin_",htitle,6,-0.5,5.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuKin_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
-    else if(i==DiMuonVeto){
-    	title.at(i)="Veto on $\\mu_{veto}$ pair";
-    	htitle=title.at(i);
+    else if(i_cut==DiMuonVeto){
+    	title.at(i_cut)="Veto on $\\mu_{veto}$ pair";
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Veto on #mu_{veto} pair";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_DiMuonVeto_",htitle,2,-0.5,1.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_DiMuonVeto_",htitle,2,-0.5,1.5,hlabel,"Events"));
     }
-    else if(i==NTauId){
-    	title.at(i)="Number $\\tau_{ID} =$";
-    	title.at(i)+=cut.at(NTauId);
-    	htitle=title.at(i);
+    else if(i_cut==NTauId){
+    	title.at(i_cut)="Number $\\tau_{ID} =$";
+    	title.at(i_cut)+=cut.at(NTauId);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of #tau_{ID}";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauId_",htitle,26,-0.5,25.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauId_",htitle,26,-0.5,25.5,hlabel,"Events"));
     }
-    else if(i==NTauIso){
-    	title.at(i)="Number $\\tau_{Iso} =$";
-    	title.at(i)+=cut.at(NTauIso);
-    	htitle=title.at(i);
+    else if(i_cut==NTauIso){
+    	title.at(i_cut)="Number $\\tau_{Iso} =$";
+    	title.at(i_cut)+=cut.at(NTauIso);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of #tau_{Iso}";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauIso_",htitle,16,-0.5,15.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauIso_",htitle,16,-0.5,15.5,hlabel,"Events"));
     }
-    else if(i==NTauKin){
-    	title.at(i)="Number $\\tau_{sel} =$";
-    	title.at(i)+=cut.at(NTauKin);
-    	htitle=title.at(i);
+    else if(i_cut==NTauKin){
+    	title.at(i_cut)="Number $\\tau_{sel} =$";
+    	title.at(i_cut)+=cut.at(NTauKin);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of #tau_{sel}";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i==OppCharge){
-    	title.at(i)="$q(\\mu)+q(\\tau) =$";
-    	title.at(i)+=cut.at(OppCharge);
-    	htitle=title.at(i);
+    else if(i_cut==OppCharge){
+    	title.at(i_cut)="$q(\\mu)+q(\\tau) =$";
+    	title.at(i_cut)+=cut.at(OppCharge);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="q(#mu)+q(#tau)";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
     }
-    else if(i==TriLeptonVeto){
-    	title.at(i)="3 lepton veto: $N(\\mu)+N(e) =$";
-    	title.at(i)+=cut.at(TriLeptonVeto);
-    	htitle=title.at(i);
+    else if(i_cut==TriLeptonVeto){
+    	title.at(i_cut)="3 lepton veto: $N(\\mu)+N(e) =$";
+    	title.at(i_cut)+=cut.at(TriLeptonVeto);
+    	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of tri-lepton veto leptons";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
+    }
+    else if(i_cut==MT){
+    	title.at(i_cut)="$m_{T}(\\mu,E_{T}^{miss}) <$";
+    	title.at(i_cut)+=cut.at(MT);
+    	title.at(i_cut)+=" GeV";
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="m_{T}(#mu,E_{T}^{miss})/GeV";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,50,0.,100.,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,50,0.,100.,hlabel,"Events"));
     }
   } 
   // Setup NPassed Histogams
@@ -166,12 +195,23 @@ void  HToTaumuTauh::Configure(){
   MuRelIso=HConfig.GetTH1D(Name+"_MuRelIso","MuRelIso",50,0.,1.,"relIso(#mu)");
   MuPt=HConfig.GetTH1D(Name+"_MuPt","MuPt",50,0.,200.,"p_{T}(#mu)/GeV");
   MuEta=HConfig.GetTH1D(Name+"_MuEta","MuEta",50,-2.5,2.5,"#eta(#mu)");
+  MuPhi=HConfig.GetTH1D(Name+"_MuPhi","MuPhi",50,-3.14159,3.14159,"#phi(#mu)");
+
+  MuSelPt=HConfig.GetTH1D(Name+"_MuSelPt","MuSelPt",50,0.,200.,"p_{T}(#mu_{sel})/GeV");
+  MuSelEta=HConfig.GetTH1D(Name+"_MuSelEta","MuSelEta",50,-2.5,2.5,"#eta(#mu_{sel})");
+  MuSelPhi=HConfig.GetTH1D(Name+"_MuSelPhi","MuSelPhi",50,-3.14159,3.14159,"#phi(#mu_{sel})");
+  MuSelFakesTauID=HConfig.GetTH1D(Name+"_MuSelFakesTauID","MuSelFakesTauID",2,-0.5,1.5,"#mu_{sel} fakes #tau_{h}");
 
   TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,200.,"p_{T}(#tau)/GeV");
   TauEta=HConfig.GetTH1D(Name+"_TauEta","TauEta",50,-2.5,2.5,"#eta(#tau)");
+  TauPhi=HConfig.GetTH1D(Name+"_TauPhi","TauPhi",50,-3.14159,3.14159,"#phi(#tau)");
+
+  TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,200.,"p_{T}(#tau_{sel})/GeV");
+  TauSelEta=HConfig.GetTH1D(Name+"_TauSelEta","TauSelEta",50,-2.5,2.5,"#eta(#tau_{sel})");
+  TauSelPhi=HConfig.GetTH1D(Name+"_TauSelPhi","TauSelPhi",50,-3.14159,3.14159,"#phi(#tau_{sel})");
 
   MuVetoDPtSelMuon=HConfig.GetTH1D(Name+"_MuVetoDPtSelMuon","MuVetoDPtSelMuon",100,-100.,100.,"#Deltap_{T}(#mu_{veto},#mu)/GeV");
-  MuVetoInvM=HConfig.GetTH1D(Name+"_MuVetoInvM","MuVetoInvM",100,0.,200,"m_{inv}(#mu_{veto}^1,#mu_{veto}^2)/GeV");
+  MuVetoInvM=HConfig.GetTH1D(Name+"_MuVetoInvM","MuVetoInvM",100,0.,200,"m_{inv}(#mu_{veto}^{1},#mu_{veto}^{2})/GeV");
   MuVetoPtPositive=HConfig.GetTH1D(Name+"_MuVetoPtPositive","MuVetoPtPositive",50,0.,200.,"p_{T}(#mu_{veto}^{+})/GeV");
   MuVetoPtNegative=HConfig.GetTH1D(Name+"_MuVetoPtNegative","MuVetoPtNegative",50,0.,200.,"p_{T}(#mu_{veto}^{-})/GeV");
   MuVetoDRTau=HConfig.GetTH1D(Name+"_MuVetoDRTau","MuVetoDRTau",50,0.,5.,"#DeltaR(#mu_{veto},#tau_{h})");
@@ -187,6 +227,9 @@ void  HToTaumuTauh::Configure(){
   MuTauDEta=HConfig.GetTH1D(Name+"_MuTauDEta","MuTauDEta",50,-5.,5.,"#Delta#eta(#mu,#tau_{h})");
   MuTauDPt=HConfig.GetTH1D(Name+"_MuTauDPt","MuTauDPt",100,-100.,100.,"#Deltap_{T}(#mu,#tau_{h})/GeV");
   MuTauRelDPt=HConfig.GetTH1D(Name+"_MuTauRelDPt","MuTauRelDPt",100,-2.,2.,"#Deltap_{T}(#mu,#tau_{h})/p_{T}(#mu)");
+
+  MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
+  MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
 
 
   Selection::ConfigureHistograms();
@@ -208,9 +251,20 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MuRelIso);
  Extradist1d.push_back(&MuPt  );
  Extradist1d.push_back(&MuEta  );
+ Extradist1d.push_back(&MuPhi  );
+
+ Extradist1d.push_back(&MuSelPt  );
+ Extradist1d.push_back(&MuSelEta  );
+ Extradist1d.push_back(&MuSelPhi  );
+ Extradist1d.push_back(&MuSelFakesTauID  );
 
  Extradist1d.push_back(&TauPt  );
  Extradist1d.push_back(&TauEta  );
+ Extradist1d.push_back(&TauPhi  );
+
+ Extradist1d.push_back(&TauSelPt  );
+ Extradist1d.push_back(&TauSelEta  );
+ Extradist1d.push_back(&TauSelPhi  );
 
  Extradist1d.push_back(&MuVetoDPtSelMuon);
  Extradist1d.push_back(&MuVetoInvM);
@@ -229,9 +283,13 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MuTauDEta);
  Extradist1d.push_back(&MuTauDPt);
  Extradist1d.push_back(&MuTauRelDPt);
+
+ Extradist1d.push_back(&MetPt);
+ Extradist1d.push_back(&MetPhi);
 }
 
 void  HToTaumuTauh::doEvent(){
+
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
@@ -246,9 +304,9 @@ void  HToTaumuTauh::doEvent(){
   // Vertex
   unsigned int nGoodVtx=0;
   int selVertex = -1;
-  for(unsigned int i=0;i<Ntp->NVtx();i++){
-    if(selectVertex(i)){
-    	if(selVertex == -1) selVertex = i; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
+  for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
+    if(selectVertex(i_vtx)){
+    	if(selVertex == -1) selVertex = i_vtx; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
     	nGoodVtx++;
     }
   }
@@ -257,15 +315,26 @@ void  HToTaumuTauh::doEvent(){
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
   
   // Trigger
-  value.at(TriggerOk)=1;
-  pass.at(TriggerOk)=true;
+  value.at(TriggerOk) = -1;
+  //std::cout << "****** Trigger Results:" << std::endl;
+  for (std::vector<TString>::iterator it_trig = cTriggerNames.begin(); it_trig != cTriggerNames.end(); ++it_trig){
+	  if(Ntp->TriggerAccept(*it_trig)){
+		  //std::cout << (*it_trig).Data() << " fired" << std::endl;
+		  if ( value.at(TriggerOk) == -1 )
+			  value.at(TriggerOk) = it_trig - cTriggerNames.begin();
+		  else // more than 1 trigger fired, save this seperately
+			  value.at(TriggerOk) = cTriggerNames.size();
+	  }
+	  //else std::cout << (*it_trig).Data() << " did not fire" << std::endl;
+  }
+  pass.at(TriggerOk) = (value.at(TriggerOk) >= cut.at(TriggerOk));
   
   // Muon cuts
   std::vector<int> selectedMuonsId;
   selectedMuonsId.clear();
-  for(unsigned i=0;i<Ntp->NMuons();i++){
-	  if( selectMuon_Id(i,selVertex) ) {
-		  selectedMuonsId.push_back(i);
+  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
+	  if( selectMuon_Id(i_mu,selVertex) ) {
+		  selectedMuonsId.push_back(i_mu);
 	  }
   }
   value.at(NMuId)=selectedMuonsId.size();
@@ -273,9 +342,9 @@ void  HToTaumuTauh::doEvent(){
 
   std::vector<int> selectedMuons;	// full selection: ID and Kinematics
   selectedMuons.clear();
-  for(unsigned i=0;i<selectedMuonsId.size();i++){
-	  if( selectMuon_Kinematics(i)) {
-		  selectedMuons.push_back(i);
+  for(std::vector<int>::iterator it_mu = selectedMuonsId.begin(); it_mu != selectedMuonsId.end(); ++it_mu){
+	  if( selectMuon_Kinematics(*it_mu)) {
+		  selectedMuons.push_back(*it_mu);
 	  }
   }
   value.at(NMuKin)=selectedMuons.size();
@@ -302,9 +371,9 @@ void  HToTaumuTauh::doEvent(){
   // Tau cuts
   std::vector<int> selectedTausId;
   selectedTausId.clear();
-  for(unsigned i=0; i < Ntp->NPFTaus(); i++){
-	  if ( selectPFTau_Id(i) ){
-		  selectedTausId.push_back(i);
+  for(unsigned i_tau=0; i_tau < Ntp->NPFTaus(); i_tau++){
+	  if ( selectPFTau_Id(i_tau,selectedMuonsId) ){
+		  selectedTausId.push_back(i_tau);
 	  }
   }
   value.at(NTauId)=selectedTausId.size();
@@ -312,9 +381,9 @@ void  HToTaumuTauh::doEvent(){
 
   std::vector<int> selectedTausIso;
   selectedTausIso.clear();
-  for(unsigned i=0; i < selectedTausId.size(); i++){
-	  if ( selectPFTau_Iso(i) ){
-		  selectedTausIso.push_back(i);
+  for(std::vector<int>::iterator it_tau = selectedTausId.begin(); it_tau != selectedTausId.end(); ++it_tau){
+	  if ( selectPFTau_Iso(*it_tau) ){
+		  selectedTausIso.push_back(*it_tau);
 	  }
   }
   value.at(NTauIso)=selectedTausIso.size();
@@ -322,9 +391,9 @@ void  HToTaumuTauh::doEvent(){
 
   std::vector<int> selectedTaus;
   selectedTaus.clear();
-  for(unsigned i=0; i < selectedTausIso.size(); i++){
-	  if ( selectPFTau_Kinematics(i) ){
-		  selectedTaus.push_back(i);
+  for(std::vector<int>::iterator it_tau = selectedTausIso.begin(); it_tau != selectedTausIso.end(); ++it_tau){
+	  if ( selectPFTau_Kinematics(*it_tau) ){
+		  selectedTaus.push_back(*it_tau);
 	  }
   }
   value.at(NTauKin)=selectedTaus.size();
@@ -341,20 +410,33 @@ void  HToTaumuTauh::doEvent(){
   // Tri-lepton veto
   std::vector<int> triLepVetoMuons;
   triLepVetoMuons.clear();
-  for(unsigned i=0;i<Ntp->NMuons();i++){
-	  if( selectMuon_triLeptonVeto(i,selMuon,selVertex) ) {
-		  triLepVetoMuons.push_back(i);
+  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
+	  if( selectMuon_triLeptonVeto(i_mu,selMuon,selVertex) ) {
+		  triLepVetoMuons.push_back(i_mu);
 	  }
   }
   std::vector<int> triLepVetoElecs;
   triLepVetoElecs.clear();
-  for(unsigned i=0;i<Ntp->NElectrons();i++){
-	  if( selectElectron_triLeptonVeto(i,selVertex) ) {
-		  triLepVetoElecs.push_back(i);
+  for(unsigned i_el=0;i_el<Ntp->NElectrons();i_el++){
+	  if( selectElectron_triLeptonVeto(i_el,selVertex,selectedMuonsId) ) {
+		  triLepVetoElecs.push_back(i_el);
 	  }
   }
   value.at(TriLeptonVeto) = triLepVetoMuons.size() + triLepVetoElecs.size();
   pass.at(TriLeptonVeto) = (value.at(TriLeptonVeto) <= cut.at(TriLeptonVeto));
+
+  // Transverse mass
+  if(selMuon == -1){ // no good muon in event: set MT to high value -> fail MT cut
+	  value.at(MT) = 500.0;
+  }
+  else{
+	  double pT 	= Ntp->Muons_p4(selMuon).Pt();
+	  double phi	= Ntp->Muons_p4(selMuon).Phi();
+	  double eTmiss = Ntp->MET_et();
+	  double eTmPhi = Ntp->MET_phi();
+	  value.at(MT)	= transverseMass(pT,phi,eTmiss,eTmPhi);
+  }
+  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
 
 
@@ -367,39 +449,67 @@ void  HToTaumuTauh::doEvent(){
   //////// plots filled before any cuts
   // Vertex plots
   NVtx.at(t).Fill(Ntp->NVtx(),w);
-  for(unsigned int i=0;i<Ntp->NVtx();i++){
-	VtxZ.at(t).Fill(Ntp->Vtx(i).z(),w);
-	VtxRho.at(t).Fill(sqrt(Ntp->Vtx(i).x()*Ntp->Vtx(i).x() + Ntp->Vtx(i).y()*Ntp->Vtx(i).y()), w);
-	VtxNdof.at(t).Fill(Ntp->Vtx_ndof(i), w);
-	VtxIsfake.at(t).Fill(Ntp->Vtx_isFake(i), w);
+  for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
+	VtxZ.at(t).Fill(Ntp->Vtx(i_vtx).z(),w);
+	VtxRho.at(t).Fill(sqrt(Ntp->Vtx(i_vtx).x()*Ntp->Vtx(i_vtx).x() + Ntp->Vtx(i_vtx).y()*Ntp->Vtx(i_vtx).y()), w);
+	VtxNdof.at(t).Fill(Ntp->Vtx_ndof(i_vtx), w);
+	VtxIsfake.at(t).Fill(Ntp->Vtx_isFake(i_vtx), w);
   }
   NGoodVtx.at(t).Fill(nGoodVtx,w);
 
   //////// plots filled after Vertex selection: Object selection
 
   if(pass.at(TriggerOk) && pass.at(PrimeVtx)){
-	  for(unsigned i=0;i<Ntp->NMuons();i++){
-		  if(	isTightMuon(i,selVertex) ){
-			  MuDxy.at(t).Fill(dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(selVertex)), w);
-			  MuDz.at(t).Fill(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(selVertex)), w);
-			  MuRelIso.at(t).Fill(Muon_RelIso(i), w);
+	  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
+		  if(	isTightMuon(i_mu,selVertex) ){
+			  MuDxy.at(t).Fill(dxy(Ntp->Muons_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuDz.at(t).Fill(dz(Ntp->Muons_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuRelIso.at(t).Fill(Muon_RelIso(i_mu), w);
 		  }
 	  }
   }
 
   //////// plots filled after muon ID selection: Muon Kinematics
   if(pass.at(TriggerOk) && pass.at(PrimeVtx) && pass.at(NMuId)){
-	  for(unsigned i=0;i<selectedMuonsId.size();i++){
-		  MuPt.at(t).Fill(Ntp->Muons_p4(i).Pt(), w);
-		  MuEta.at(t).Fill(Ntp->Muons_p4(i).Eta(), w);
+	  for(std::vector<int>::iterator it_mu = selectedMuonsId.begin();it_mu != selectedMuonsId.end(); ++it_mu){
+		  MuPt.at(t).Fill(Ntp->Muons_p4(*it_mu).Pt(), w);
+		  MuEta.at(t).Fill(Ntp->Muons_p4(*it_mu).Eta(), w);
+		  MuPhi.at(t).Fill(Ntp->Muons_p4(*it_mu).Phi(), w);
+	  }
+
+	  //////// plots filled only with selected muon
+	  if(pass.at(NMuKin)){
+		  MuSelPt.at(t).Fill(Ntp->Muons_p4(selMuon).Pt(), w);
+		  MuSelEta.at(t).Fill(Ntp->Muons_p4(selMuon).Eta(), w);
+		  MuSelPhi.at(t).Fill(Ntp->Muons_p4(selMuon).Phi(), w);
+
+		  // Does the muon fake the tau_ID+Iso?
+		  bool fakes = false;
+		  for( unsigned  i_tau = 0; i_tau < Ntp->NPFTaus(); i_tau++){
+			  if (	  selectPFTau_Id(i_tau) &&
+					  selectPFTau_Iso(i_tau) &&
+					  Ntp->Muons_p4(selMuon).DeltaR(Ntp->PFTau_p4(i_tau)) < cMuTau_dR){
+				  fakes = true;
+				  break;
+			  }
+		  }
+		  MuSelFakesTauID.at(t).Fill(fakes, w);
 	  }
   }
 
   //////// plots filled after tau ID + Iso selection: Tau Kinematics
   if(pass.at(TriggerOk) && pass.at(PrimeVtx) && pass.at(NTauId) && pass.at(NTauIso)){
-	  for(unsigned i=0;i<selectedTausIso.size();i++){
-		  TauPt.at(t).Fill(Ntp->PFTau_p4(i).Pt(), w);
-		  TauEta.at(t).Fill(Ntp->PFTau_p4(i).Eta(), w);
+	  for(std::vector<int>::iterator it_tau = selectedTausIso.begin(); it_tau != selectedTausIso.end(); ++it_tau){
+		  TauPt.at(t).Fill(Ntp->PFTau_p4(*it_tau).Pt(), w);
+		  TauEta.at(t).Fill(Ntp->PFTau_p4(*it_tau).Eta(), w);
+		  TauPhi.at(t).Fill(Ntp->PFTau_p4(*it_tau).Phi(), w);
+	  }
+
+	  //////// plots filled only with selected tau
+	  if(pass.at(NTauKin)){
+		  TauSelPt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(), w);
+		  TauSelEta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(), w);
+		  TauSelPhi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(), w);
 	  }
   }
 
@@ -435,6 +545,9 @@ void  HToTaumuTauh::doEvent(){
 		  MuCharge.at(t).Fill( Ntp->Muon_Charge(selMuon), w);
 		  TauCharge.at(t).Fill( Ntp->PFTau_Charge(selMuon), w);
 	  }
+
+	  MetPt.at(t).Fill(Ntp->MET_et(), w);
+	  MetPhi.at(t).Fill(Ntp->MET_phi(), w);
   }
 
   //////// plots filled after full selection
@@ -596,10 +709,17 @@ double HToTaumuTauh::Electron_RelIso(unsigned i){
 	//	TODO: uncomment as soon as Electron_MVA_discriminator is in Ntuple and Ntuple_Controller (was implemented already by Alex)
 	//return (Ntp->Electron_chargedHadronIso(i)+std::max((double)0.,Ntp->Electron_neutralHadronIso(i)+Ntp->Electron_photonIso(i)-Ntp->RhoIsolationAllInputTags()*Electron_Aeff(Ntp->Electron_supercluster_eta(i))))/Ntp->Electron_p4(i).Pt();
 
-	return 10.0;
+	return -1.0;
 }
 
-bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx){
+bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int> muonCollection){
+	// check if elec is matched to a muon, if so this is not a good elec (should become obsolete when using top projections)
+	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
+	  if( Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(*it_mu)) < cMuTau_dR ) {
+		  return false;
+	  }
+	}
+
 	if ( 	Ntp->Electron_numberOfMissedHits(i) < 0.1 && // no missing hits
 			!Ntp->Electron_HasMatchedConversions(i) &&
 			fabs( dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(i_vtx)) ) < 0.2 &&
@@ -616,12 +736,24 @@ bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx){
 
 ///////// Taus
 
-bool HToTaumuTauh::selectPFTau_Id(unsigned i, unsigned i_muon){
-	if ( 	Ntp->PFTau_p4(i).DeltaR(Ntp->Muons_p4(i_muon))  &&
-			Ntp->PFTau_isHPSByDecayModeFinding(i) &&
+bool HToTaumuTauh::selectPFTau_Id(unsigned i){
+	if ( 	Ntp->PFTau_isHPSByDecayModeFinding(i) &&
 			Ntp->PFTau_isHPSAgainstElectronsLoose(i) &&
 			Ntp->PFTau_isHPSAgainstMuonTight(i)
 			){
+		return true;
+	}
+	return false;
+}
+
+bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
+	// check if tau is matched to a muon, if so this is not a good tau (should become obsolete when using top projections)
+	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
+	  if( Ntp->PFTau_p4(i).DeltaR(Ntp->Muons_p4(*it_mu)) < cMuTau_dR ) {
+		  return false;
+	  }
+	}
+	if ( 	selectPFTau_Id(i) ){
 		return true;
 	}
 	return false;

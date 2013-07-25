@@ -24,6 +24,7 @@ class HToTaumuTauh : public Selection {
 	  NTauKin,
 	  OppCharge,
 	  TriLeptonVeto,
+	  MT,
 	  NCuts};
 
  protected:
@@ -48,9 +49,20 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuRelIso;
   std::vector<TH1D> MuPt;
   std::vector<TH1D> MuEta;
+  std::vector<TH1D> MuPhi;
+
+  std::vector<TH1D> MuSelPt;
+  std::vector<TH1D> MuSelEta;
+  std::vector<TH1D> MuSelPhi;
+  std::vector<TH1D> MuSelFakesTauID;
 
   std::vector<TH1D> TauPt;
   std::vector<TH1D> TauEta;
+  std::vector<TH1D> TauPhi;
+
+  std::vector<TH1D> TauSelPt;
+  std::vector<TH1D> TauSelEta;
+  std::vector<TH1D> TauSelPhi;
 
   std::vector<TH1D> MuVetoDPtSelMuon;
   std::vector<TH1D> MuVetoInvM;
@@ -70,10 +82,14 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuTauDPt;
   std::vector<TH1D> MuTauRelDPt;
 
+  std::vector<TH1D> MetPt;
+  std::vector<TH1D> MetPhi;
+
 
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
-  double cTau_pt, cTau_eta;
+  double cTau_pt, cTau_eta, cMuTau_dR;
+  std::vector<TString> cTriggerNames;
 
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
@@ -92,11 +108,16 @@ class HToTaumuTauh : public Selection {
 
   bool isLooseMVAElectron(unsigned i);
   double Electron_RelIso(unsigned i);
-  bool selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx);
+  bool selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int>);
 
-  bool selectPFTau_Id(unsigned i, unsigned i_muon);
+  bool selectPFTau_Id(unsigned i);
+  bool selectPFTau_Id(unsigned i, std::vector<int>);
   bool selectPFTau_Iso(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
+
+  inline double transverseMass(double pt1, double phi1, double pt2, double phi2){
+	  return sqrt(2 * pt1 * pt2 * (1 - cos(phi1 - phi2)));
+  }
 
 };
 #endif
