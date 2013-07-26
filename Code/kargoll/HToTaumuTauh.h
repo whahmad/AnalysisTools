@@ -25,6 +25,10 @@ class HToTaumuTauh : public Selection {
 	  OppCharge,
 	  TriLeptonVeto,
 	  MT,
+	  VbfNJet,
+	  VbfDeltaEta,
+	  VbfNJetRapGap,
+	  VbfJetInvM,
 	  NCuts};
 
  protected:
@@ -90,6 +94,7 @@ class HToTaumuTauh : public Selection {
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
   double cTau_pt, cTau_eta, cMuTau_dR;
   std::vector<TString> cTriggerNames;
+  double cVBFJet_eta, cVBFJet_pt;
 
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
@@ -114,6 +119,8 @@ class HToTaumuTauh : public Selection {
   bool selectPFTau_Id(unsigned i, std::vector<int>);
   bool selectPFTau_Iso(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
+
+  bool selectPFJet_VBF(unsigned i);
 
   inline double transverseMass(double pt1, double phi1, double pt2, double phi2){
 	  return sqrt(2 * pt1 * pt2 * (1 - cos(phi1 - phi2)));

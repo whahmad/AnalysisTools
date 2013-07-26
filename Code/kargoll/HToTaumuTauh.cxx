@@ -13,7 +13,9 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cMu_eta(2.1),
   cTau_pt(20.0),
   cTau_eta(2.3),
-  cMuTau_dR(0.3)
+  cMuTau_dR(0.3),
+  cVBFJet_eta(4.7),
+  cVBFJet_pt(30.0)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
@@ -46,6 +48,10 @@ void  HToTaumuTauh::Configure(){
     if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
     if(i==MT)				cut.at(MT)=20.0;
+    if(i==VbfNJet)			cut.at(VbfNJet)=2;
+    if(i==VbfDeltaEta)		cut.at(VbfDeltaEta)=3.5;
+    if(i==VbfNJetRapGap)	cut.at(VbfNJetRapGap)=0;
+    if(i==VbfJetInvM)		cut.at(VbfJetInvM)=500.0;
   }
 
   TString hlabel;
@@ -87,7 +93,7 @@ void  HToTaumuTauh::Configure(){
       Nminus0.push_back(Nm0Temp);
     }
     else if(i_cut==NMuId){
-    	title.at(i_cut)="Number $\\mu_{ID} =$";
+    	title.at(i_cut)="Number $\\mu_{ID} >=$";
     	title.at(i_cut)+=cut.at(NMuId);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
@@ -97,7 +103,7 @@ void  HToTaumuTauh::Configure(){
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuId_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i_cut==NMuKin){
-    	title.at(i_cut)="Number $\\mu_{sel} =$";
+    	title.at(i_cut)="Number $\\mu_{sel} >=$";
     	title.at(i_cut)+=cut.at(NMuKin);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
@@ -116,7 +122,7 @@ void  HToTaumuTauh::Configure(){
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_DiMuonVeto_",htitle,2,-0.5,1.5,hlabel,"Events"));
     }
     else if(i_cut==NTauId){
-    	title.at(i_cut)="Number $\\tau_{ID} =$";
+    	title.at(i_cut)="Number $\\tau_{ID} >=$";
     	title.at(i_cut)+=cut.at(NTauId);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
@@ -126,7 +132,7 @@ void  HToTaumuTauh::Configure(){
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauId_",htitle,26,-0.5,25.5,hlabel,"Events"));
     }
     else if(i_cut==NTauIso){
-    	title.at(i_cut)="Number $\\tau_{Iso} =$";
+    	title.at(i_cut)="Number $\\tau_{Iso} >=$";
     	title.at(i_cut)+=cut.at(NTauIso);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
@@ -136,7 +142,7 @@ void  HToTaumuTauh::Configure(){
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauIso_",htitle,16,-0.5,15.5,hlabel,"Events"));
     }
     else if(i_cut==NTauKin){
-    	title.at(i_cut)="Number $\\tau_{sel} =$";
+    	title.at(i_cut)="Number $\\tau_{sel} >=$";
     	title.at(i_cut)+=cut.at(NTauKin);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
@@ -175,6 +181,47 @@ void  HToTaumuTauh::Configure(){
     	hlabel="m_{T}(#mu,E_{T}^{miss})/GeV";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,50,0.,100.,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,50,0.,100.,hlabel,"Events"));
+    }
+    else if(i_cut==VbfNJet){
+    	title.at(i_cut)="Number $j_{VBF} >=$";
+    	title.at(i_cut)+=cut.at(VbfNJet);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="Number of Jet_{VBF}";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i_cut==VbfDeltaEta){
+    	title.at(i_cut)="$\\Delta\\eta(j_{VBF}) >$";
+    	title.at(i_cut)+=cut.at(VbfDeltaEta);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="#Delta#eta(Jet_{VBF}^{1},Jet_{VBF}^{2})";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfDeltaEta_",htitle,50,-10.,10.,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0__VbfDeltaEta",htitle,50,-10.,10.,hlabel,"Events"));
+    }
+    else if(i_cut==VbfNJetRapGap){
+    	title.at(i_cut)="Number $j_{VBF}^{\\eta gap} <=$";
+    	title.at(i_cut)+=cut.at(VbfNJetRapGap);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="Number of Jet_{VBF} in rapidity gap";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    }
+    else if(i_cut==VbfJetInvM){
+    	title.at(i_cut)="$m_jj(VBF) >$";
+    	title.at(i_cut)+=cut.at(VbfJetInvM);
+    	title.at(i_cut)+=" GeV";
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="m_{inv}(jj) of VBF-jets";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events"));
     }
   } 
   // Setup NPassed Histogams
@@ -426,6 +473,7 @@ void  HToTaumuTauh::doEvent(){
   pass.at(TriLeptonVeto) = (value.at(TriLeptonVeto) <= cut.at(TriLeptonVeto));
 
   // Transverse mass
+  // TODO: Switch to proper MET, i.e. corrected MET
   if(selMuon == -1){ // no good muon in event: set MT to high value -> fail MT cut
 	  value.at(MT) = 500.0;
   }
@@ -439,6 +487,51 @@ void  HToTaumuTauh::doEvent(){
   pass.at(MT) = (value.at(MT) < cut.at(MT));
 
 
+  //////// VBF selection
+  // TODO: Switch to JECorrected jets
+  std::vector<int> selectedVBFJets;
+  selectedVBFJets.clear();
+  for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
+	  if( selectPFJet_VBF(i_jet) ){
+		  selectedVBFJets.push_back(i_jet);
+	  }
+  }
+  value.at(VbfNJet) = selectedVBFJets.size();
+  pass.at(VbfNJet) = (value.at(VbfNJet) >= cut.at(VbfNJet));
+
+  if(pass.at(VbfNJet)){
+	  double vbfJetEta1 = Ntp->PFJet_p4(selectedVBFJets.at(0)).Eta();
+	  double vbfJetEta2 = Ntp->PFJet_p4(selectedVBFJets.at(1)).Eta();
+
+	  value.at(VbfDeltaEta) = vbfJetEta1 - vbfJetEta2;
+	  pass.at(VbfDeltaEta) = (fabs(value.at(VbfDeltaEta)) > cut.at(VbfDeltaEta));
+
+	  int jetsInRapidityGap = 0;
+	  for(std::vector<int>::iterator it_jet = selectedVBFJets.begin()+2; it_jet != selectedVBFJets.end(); ++it_jet){
+		  double etaPos = ( value.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
+		  double etaNeg = ( value.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
+		  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
+				Ntp->PFJet_p4(*it_jet).Eta() < etaPos){
+			  jetsInRapidityGap++;
+		  }
+	  }
+	  value.at(VbfNJetRapGap) = jetsInRapidityGap;
+	  pass.at(VbfNJetRapGap) = (value.at(VbfNJetRapGap) <= cut.at(VbfNJetRapGap));
+
+	  double invM = (Ntp->PFJet_p4(selectedVBFJets.at(0)) + Ntp->PFJet_p4(selectedVBFJets.at(1))).M();
+	  value.at(VbfJetInvM) = invM;
+	  pass.at(VbfJetInvM) = (value.at(VbfJetInvM) > cut.at(VbfJetInvM));
+  }
+  else{
+	  value.at(VbfDeltaEta) = -10.;
+	  pass.at(VbfDeltaEta) = false;
+
+	  value.at(VbfNJetRapGap) = -10;
+	  pass.at(VbfNJetRapGap) = false;
+
+	  value.at(VbfJetInvM) = -10.;
+	  pass.at(VbfJetInvM) = false;
+  }
 
   bool status=AnalysisCuts(t,w,wobs); // true only if full selection passed
 
@@ -771,6 +864,14 @@ bool HToTaumuTauh::selectPFTau_Kinematics(unsigned i){
 	if ( 	Ntp->PFTau_p4(i).Pt() >= cTau_pt &&
 			fabs(Ntp->PFTau_p4(i).Eta()) <= cTau_eta
 			){
+		return true;
+	}
+	return false;
+}
+
+bool HToTaumuTauh::selectPFJet_VBF(unsigned i){
+	if (	fabs(Ntp->PFJet_p4(i).Eta()) < cVBFJet_eta &&
+			Ntp->PFJet_p4(i).Pt() > cVBFJet_pt){
 		return true;
 	}
 	return false;
