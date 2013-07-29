@@ -46,11 +46,11 @@ if [ $lhapdf == 1 ]; then
     tar -xzvf lhapdf-5.8.6.tgz
     cd ..
 fi
-pythia=$(ls TauSpiner/* | grep pythia8135 | wc -l )
+pythia=$(ls TauSpiner/* | grep pythia8 | wc -l )
 if [ $pythia == 0 ]; then 
     cd TauSpiner
-    wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8135.tgz
-    tar -xzvf pythia8135.tgz
+    wget http://service-spi.web.cern.ch/service-spi/external/MCGenerators/distribution/pythia8/pythia8-176-src.tgz 
+    tar -xzvf pythia8-176-src.tgz
     cd ..
 fi
 tauola=$(ls TauSpiner/* | grep tauola++ | wc -l )

@@ -26,7 +26,7 @@ SHAREDCXXFLAGS =-I./CommonUtils \
                 -I./TauSpiner/tauola++/1.1.3/include/TauSpinner/ \
 		-I./TauSpiner/tauola++/1.1.3/include/ \
 		-I./TauSpiner/lhapdf/include/ \
-		-I./TauSpiner/pythia8135/include
+		-I./TauSpiner/pythia8/176/include
 
 SUBDIRS = CommonUtils/ TauSpiner/
 
