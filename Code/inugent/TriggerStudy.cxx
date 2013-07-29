@@ -7,8 +7,6 @@
 #include "Tools.h"
 #include "PDG_Var.h"
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
-#include "Validation/EventGenerator/interface/TauDecay.h"
-#include "Validation/EventGenerator/interface/PdtPdgMini.h"
 #include "TLorentzVector.h"
 
 TriggerStudy::TriggerStudy(TString Name_, TString id_):

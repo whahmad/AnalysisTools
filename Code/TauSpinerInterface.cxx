@@ -6,7 +6,6 @@
 #include "tau_reweight_lib.h"
 #include "read_particles_from_TAUOLA.h"
 #include<iostream>
-#include "Validation/EventGenerator/interface/PdtPdgMini.h"
 #include "TLorentzVector.h"
 
 int TauSpinerInterface::signalcharge=-1;

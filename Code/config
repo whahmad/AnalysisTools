@@ -7,20 +7,22 @@ cd CommonUtils
 CommonUtils=$(ls | grep TauDataFormat | wc -l)
 cd ..
 if [ $CommonUtils == 0 ]; then
-    #Get PdtPdgMini
-    cvs co -d CommonUtils/Validation/EventGenerator/interface -r HEAD CMSSW/Validation/EventGenerator/interface/PdtPdgMini.h
-    cvs co -d CommonUtils/Validation/EventGenerator/src -r HEAD CMSSW/Validation/EventGenerator/src/PdtPdgMini.cc
+    cd CommonUtils
+    mkdir lib
 
-    #Get TauDecay
-    cvs co -d CommonUtils/Validation/EventGenerator/interface -r HEAD CMSSW/Validation/EventGenerator/interface/TauDecay.h
-    cvs co -d CommonUtils/Validation/EventGenerator/src -r HEAD CMSSW/Validation/EventGenerator/src/TauDecay.cc
-    
-    #Get DataMCType
-    cvs co -d CommonUtils/TauDataFormat/TauNtuple/interface -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/interface/DataMCType.h
-    cvs co -d CommonUtils/TauDataFormat/TauNtuple/src -r HEAD UserCode/RWTH3b/Tau/FlatNtuple/TauDataFormat/TauNtuple/src/DataMCType.cc
+    git init 
+    git clone https://github.com/inugent/SimpleFits.git SimpleFits
+    cd SimpleFits
+    git checkout
+    cd ../
 
-    #add SimpleFits
-    cvs co -d CommonUtils/SimpleFits/FitSoftware -r HEAD UserCode/inugent/SimpleFits/FitSoftware
+    git init
+    git clone https://github.com/inugent/TauDataFormat.git TauDataFormat
+    cd TauDataFormat
+    git checkout
+    cd ../
+
+    cd ../
 fi
 
 

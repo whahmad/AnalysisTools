@@ -31,9 +31,10 @@
 
 #include "HistoConfig.h"
 #include "TauSpinerInterface.h"
-#include "Validation/EventGenerator/interface/PdtPdgMini.h"
-#include "Validation/EventGenerator/interface/TauDecay.h"
 #include "HistoConfig.h"
+#include "SimpleFits/FitSoftware/interface/PDGInfo.h"
+#include "TauDataFormat/TauNtuple/interface/TauDecay.h"
+
 
 #include "SimpleFits/FitSoftware/interface/TrackParticle.h"
 #include "SimpleFits/FitSoftware/interface/LorentzVectorParticle.h"
@@ -516,8 +517,8 @@ class Ntuple_Controller{
    TVector3 MCTauandProd_Vertex(unsigned int i, unsigned int j){
      return TVector3(Ntp->MCTauandProd_Vertex->at(i).at(j).at(0),Ntp->MCTauandProd_Vertex->at(i).at(j).at(1),Ntp->MCTauandProd_Vertex->at(i).at(j).at(2));
    }
-   bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
-   bool hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx);
+   bool hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
+   bool hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx);
 
    bool jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx);
    bool muonhasJetOverlap(unsigned int muon_idx,unsigned int &jet_idx);
