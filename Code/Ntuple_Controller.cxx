@@ -186,7 +186,7 @@ void Ntuple_Controller::doMET(){
 int Ntuple_Controller::GetMCID(){
   if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal && HistoC.hasID(DataMCType::DY_ll_Signal)){
     for(int i=0;i<NMCSignalParticles();i++){
-      if(abs(MCSignalParticle_pdgid(i))==PdtPdgMini::Z0){
+      if(abs(MCSignalParticle_pdgid(i))==PDGInfo::Z0){
 	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
 	  return DataMCType::Signal;
 	}
@@ -390,11 +390,11 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
 	  if(tauidx<NMCTaus()){
 	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
 	      int mypdgid=abs((int)MCTauandProd_pdgid(tauidx,t));
-	      if(abs( mypdgid)==abs(PdtPdgMini::tau_plus) ){
+	      if(abs( mypdgid)==abs(PDGInfo::tau_plus) ){
 		tau=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),MCTauandProd_p4(tauidx,t).Py(),MCTauandProd_p4(tauidx,t).Pz(),
 				   MCTauandProd_p4(tauidx,t).E(),MCTauandProd_pdgid(tauidx,t));
 	      }
-	      else if((taudecay.isTauFinalStateParticle(mypdgid) && mypdgid!=PdtPdgMini::gamma)){
+	      else if((taudecay.isTauFinalStateParticle(mypdgid) && mypdgid!=PDGInfo::gamma)){
 		tau_daughters.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),MCTauandProd_p4(tauidx,t).Py(),
 						       MCTauandProd_p4(tauidx,t).Pz(),MCTauandProd_p4(tauidx,t).E(),
 						       MCTauandProd_pdgid(tauidx,t)));
@@ -408,7 +408,7 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
 	  if(tauidx<NMCTaus()){
 	    for(int t=0;t<NMCTauDecayProducts(tauidx);t++){
 	      int mypdgid=abs((int)MCTauandProd_pdgid(tauidx,t));
-	      if(abs( mypdgid)==abs(PdtPdgMini::tau_plus)){
+	      if(abs( mypdgid)==abs(PDGInfo::tau_plus)){
 		    tau2=SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
 					MCTauandProd_p4(tauidx,t).Py(),
 					MCTauandProd_p4(tauidx,t).Pz(),
@@ -416,7 +416,7 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
 					MCTauandProd_pdgid(tauidx,t));
 		    tau2good=true;
 	      }
-	      if((taudecay.isTauFinalStateParticle(mypdgid) && mypdgid!=PdtPdgMini::gamma)){
+	      if((taudecay.isTauFinalStateParticle(mypdgid) && mypdgid!=PDGInfo::gamma)){
 		if(verbose) std::cout << "isDaughter" << std::endl;
 		if(tau_daughters.size()>0)tau2good=true;
 		tau_daughters2.push_back(SimpleParticle(MCTauandProd_p4(tauidx,t).Px(),
@@ -442,7 +442,7 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
 
 
 
-bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &tau_idx){
+bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &tau_idx){
   for(int i=0; i<NMCSignalParticles();i++){
     if(MCSignalParticle_pdgid(i)==parent_pdgid){
       for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
@@ -461,7 +461,7 @@ bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,un
   return false;
 }
 
-bool Ntuple_Controller::hasSignalTauDecay(PdtPdgMini::PdgPDTMini parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx){
+bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx){
   for(int i=0; i<NMCSignalParticles();i++){
     if(MCSignalParticle_pdgid(i)==parent_pdgid){
       for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){

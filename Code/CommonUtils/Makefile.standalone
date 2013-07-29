@@ -23,13 +23,11 @@ LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 SF_SRCS    = $(wildcard SimpleFits/FitSoftware/src/*.cc)
 SF_HDRS    = $(SF_SRCS:.cc=.h)
 
-HDRS          = Validation/EventGenerator/interface/PdtPdgMini.h \
-		Validation/EventGenerator/interface/TauDecay.h \
+HDRS          = TauDataFormat/TauNtuple/interface/TauDecay.h \
 		TauDataFormat/TauNtuple/interface/DataMCType.h \
 		$(SF_HDRS)
 
-SRCS          = Validation/EventGenerator/src/PdtPdgMini.cc \
-		Validation/EventGenerator/src/TauDecay.cc \
+SRCS          = TauDataFormat/TauNtuple/src/TauDecay.cc \
 		TauDataFormat/TauNtuple/src/DataMCType.cc \
 		$(SF_SRCS)
 

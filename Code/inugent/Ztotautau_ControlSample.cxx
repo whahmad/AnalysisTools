@@ -8,6 +8,7 @@
 #include "PDG_Var.h"
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 #include "TauSolver.h"
+#include "SimpleFits/FitSoftware/interface/PDGInfo.h"
 
 Ztotautau_ControlSample::Ztotautau_ControlSample(TString Name_, TString id_):
   Selection(Name_,id_)
@@ -703,13 +704,13 @@ void  Ztotautau_ControlSample::doEvent(){
       if((Ntp->MCTau_JAK(0)==2 || Ntp->MCTau_JAK(1)==2) && Ntp->MCTau_p4(1).Pt()>20 && Ntp->MCTau_p4(0).Pt()>20){
  
        for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
-          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::K_plus)){
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PDGInfo::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PDGInfo::K_plus)){
             if(ptmin>Ntp->MCTauandProd_p4(tau_idx,i).Pt()) ptmin=Ntp->MCTauandProd_p4(tau_idx,i).Pt();
             if(ptmax<Ntp->MCTauandProd_p4(tau_idx,i).Pt()){ ptmax=Ntp->MCTauandProd_p4(tau_idx,i).Pt(); ptmaxidx=i;}
           }
         }
         for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(tau_idx);i++){
-          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PdtPdgMini::K_plus)){
+          if(abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PDGInfo::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau_idx,i))==abs(PDGInfo::K_plus)){
             if(i!=ptmaxidx && Ntp->MCTauandProd_p4(tau_idx,i).DeltaR(Ntp->MCTauandProd_p4(tau_idx,ptmaxidx))<0.5){
               TauTrackdphitheta.at(t).Fill(sqrt(pow(Ntp->MCTauandProd_p4(tau_idx,i).DeltaPhi(Ntp->MCTauandProd_p4(tau_idx,ptmaxidx)),2.0)+
 						pow(Ntp->MCTauandProd_p4(tau_idx,i).Theta()-Ntp->MCTauandProd_p4(tau_idx,ptmaxidx).Theta(),2.0)),w);
@@ -804,14 +805,14 @@ void  Ztotautau_ControlSample::doEvent(){
   }
   if(id==DataMCType::Signal){
     unsigned int mcBoson_idx,mctau_idx;
-    if(Ntp->hasSignalTauDecay(PdtPdgMini::Z0,mcBoson_idx,TauDecay::JAK_A1_3PI,mctau_idx)){
+    if(Ntp->hasSignalTauDecay(PDGInfo::Z0,mcBoson_idx,TauDecay::JAK_A1_3PI,mctau_idx)){
       TLorentzVector MCTau_LV(0,0,0,0),X_LV(0,0,0,0);
       for(unsigned int i=0; i<Ntp->NMCTauDecayProducts(mctau_idx);i++){
-	if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::tau_minus) && Ntp->MCTau_JAK(mctau_idx)==TauDecay::JAK_A1_3PI){
+	if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PDGInfo::tau_minus) && Ntp->MCTau_JAK(mctau_idx)==TauDecay::JAK_A1_3PI){
 	  MCTau_LV=Ntp->MCTauandProd_p4(mctau_idx,i);
 	}
-	else if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::pi_plus) ||
-		abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PdtPdgMini::pi0)
+	else if(abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PDGInfo::pi_plus) ||
+		abs(Ntp->MCTauandProd_pdgid(mctau_idx,i))==abs(PDGInfo::pi0)
 		){
 	  X_LV+=Ntp->MCTauandProd_p4(mctau_idx,i);
 	  if(verbose)std::cout << "MC pi: " << Ntp->MCTauandProd_pdgid(mctau_idx,i) << " 4-vec: " << Ntp->MCTauandProd_p4(mctau_idx,i).E()

@@ -7,8 +7,7 @@
 #include "Tools.h"
 #include "PDG_Var.h"
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
-#include "Validation/EventGenerator/interface/TauDecay.h"
-#include "Validation/EventGenerator/interface/PdtPdgMini.h"
+#include "SimpleFits/FitSoftware/interface/PDGInfo.h"
 
 TriggerStudyMC::TriggerStudyMC(TString Name_, TString id_):
   Selection(Name_,id_)
@@ -255,7 +254,7 @@ void  TriggerStudyMC::doEvent(){
       double tau_etavis=0;
       TLorentzVector tautrig_p4(0,0,0,0);
       for(unsigned int p=0; p<Ntp->NMCTauDecayProducts(tau);p++){
-	if(abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PdtPdgMini::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PdtPdgMini::pi0) || abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PdtPdgMini::K_plus)){
+	if(abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PDGInfo::pi_plus) || abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PDGInfo::pi0) || abs(Ntp->MCTauandProd_pdgid(tau,p))==abs(PDGInfo::K_plus)){
 	  //cout << tau << " " << p << " PID "<< Ntp->MCTauandProd_pdgid(tau,p) << endl;
 	  tautrig_p4+=Ntp->MCTauandProd_p4(tau,p);
 	}
