@@ -15,11 +15,19 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cTau_eta(2.3),
   cMuTau_dR(0.3),
   cVBFJet_eta(4.7),
-  cVBFJet_pt(30.0)
+  cVBFJet_pt(30.0),
+  cCat_jetPt(30.0),
+  cCat_jetEta(4.7),
+  cCat_btagPt(20.0),
+  cCat_splitTauPt(40.0)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
 	cTriggerNames = temp;
+
+	// implemented categories:
+	// VBF, OneJetHigh
+	categoryFlag = "OneJetHigh";
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -48,10 +56,27 @@ void  HToTaumuTauh::Configure(){
     if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
     if(i==MT)				cut.at(MT)=20.0;
-    if(i==VbfNJet)			cut.at(VbfNJet)=2;
-    if(i==VbfDeltaEta)		cut.at(VbfDeltaEta)=3.5;
-    if(i==VbfNJetRapGap)	cut.at(VbfNJetRapGap)=0;
-    if(i==VbfJetInvM)		cut.at(VbfJetInvM)=500.0;
+    //category-specific values are set in the corresponding configure function
+    // set them to dummy value -10.0 here
+    cut_VBF.push_back(-10.);
+    cut_OneJetHigh.push_back(-10.);
+    if(i>=CatCut1){
+    	cut.at(i)=-10.0;
+    	value.at(i)=-10.0;
+    	pass.at(i)=true;
+    }
+  }
+  // Setup Category Cut Values
+  for(unsigned i = CatCut1; i< NCuts; i++){
+	  if(i==VbfNJet)		cut_VBF.at(VbfNJet)		 =2;
+	  if(i==VbfDeltaEta)	cut_VBF.at(VbfDeltaEta)	 =3.5;
+	  if(i==VbfNJetRapGap)	cut_VBF.at(VbfNJetRapGap)=0;
+	  if(i==VbfJetInvM)		cut_VBF.at(VbfJetInvM)	 =500.0;
+
+	  if(i==OneJetHighNJet) 	cut_OneJetHigh.at(OneJetHighNJet) = 1;
+	  if(i==OneJetHighNoVBF)	cut_OneJetHigh.at(OneJetHighNoVBF)= true;
+	  if(i==OneJetHighNBtagJets)cut_OneJetHigh.at(OneJetHighNBtagJets) = 0;
+	  if(i==OneJetHighTauPt)	cut_OneJetHigh.at(OneJetHighTauPt) = cCat_splitTauPt;
   }
 
   TString hlabel;
@@ -182,52 +207,28 @@ void  HToTaumuTauh::Configure(){
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,50,0.,100.,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,50,0.,100.,hlabel,"Events"));
     }
-    else if(i_cut==VbfNJet){
-    	title.at(i_cut)="Number $j_{VBF} >=$";
-    	title.at(i_cut)+=cut.at(VbfNJet);
+    else if(i_cut>=CatCut1){
+    	// set histograms to dummy values
+    	// will be overwritten in configure_{Category} method
+    	title.at(i_cut) = "Category Dummy ";
+    	title.at(i_cut)	+=(i_cut-CatCut1);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
-    	hlabel="Number of Jet_{VBF}";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events"));
-    }
-    else if(i_cut==VbfDeltaEta){
-    	title.at(i_cut)="$\\Delta\\eta(j_{VBF}) >$";
-    	title.at(i_cut)+=cut.at(VbfDeltaEta);
-    	htitle=title.at(i_cut);
-    	htitle.ReplaceAll("$","");
-    	htitle.ReplaceAll("\\","#");
-    	hlabel="#Delta#eta(Jet_{VBF}^{1},Jet_{VBF}^{2})";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfDeltaEta_",htitle,50,-10.,10.,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0__VbfDeltaEta",htitle,50,-10.,10.,hlabel,"Events"));
-    }
-    else if(i_cut==VbfNJetRapGap){
-    	title.at(i_cut)="Number $j_{VBF}^{\\eta gap} <=$";
-    	title.at(i_cut)+=cut.at(VbfNJetRapGap);
-    	htitle=title.at(i_cut);
-    	htitle.ReplaceAll("$","");
-    	htitle.ReplaceAll("\\","#");
-    	hlabel="Number of Jet_{VBF} in rapidity gap";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events"));
-    }
-    else if(i_cut==VbfJetInvM){
-    	title.at(i_cut)="$m_jj(VBF) >$";
-    	title.at(i_cut)+=cut.at(VbfJetInvM);
-    	title.at(i_cut)+=" GeV";
-    	htitle=title.at(i_cut);
-    	htitle.ReplaceAll("$","");
-    	htitle.ReplaceAll("\\","#");
-    	hlabel="m_{inv}(jj) of VBF-jets";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events"));
+    	hlabel = title.at(i_cut);
+    	TString n = Name+c+"_Nminus1_CatDummy";
+    	n += (i_cut-CatCut1);
+    	n += "_";
+    	Nminus1.push_back(HConfig.GetTH1D(n,htitle,2,0.,-50.,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(n,htitle,2,0.,50.,hlabel,"Events"));
     }
   } 
   // Setup NPassed Histogams
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
 
   // Setup Extra Histograms
+  NCatFired=HConfig.GetTH1D(Name+"_NCatFired","NCatFired",6,-0.5,5.5,"Num. of passed categories");
+
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"N(Vtx) before selection");
   NVtxFullSelection=HConfig.GetTH1D(Name+"_NVtxFullSelection","NVtxFullSelection",26,-0.5,25.5,"N(Vertex) after selection");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"N(good Vertex)");
@@ -278,6 +279,9 @@ void  HToTaumuTauh::Configure(){
   MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
   MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
 
+  // configure category
+  if (categoryFlag == "VBF")		configure_VBF();
+  if (categoryFlag == "OneJetHigh")	configure_OneJetHigh();
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
@@ -285,6 +289,8 @@ void  HToTaumuTauh::Configure(){
 
 
 void  HToTaumuTauh::Store_ExtraDist(){
+ Extradist1d.push_back(&NCatFired);
+
  Extradist1d.push_back(&NVtx);
  Extradist1d.push_back(&NVtxFullSelection);
  Extradist1d.push_back(&NGoodVtx);
@@ -336,7 +342,6 @@ void  HToTaumuTauh::Store_ExtraDist(){
 }
 
 void  HToTaumuTauh::doEvent(){
-
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
@@ -363,16 +368,13 @@ void  HToTaumuTauh::doEvent(){
   
   // Trigger
   value.at(TriggerOk) = -1;
-  //std::cout << "****** Trigger Results:" << std::endl;
   for (std::vector<TString>::iterator it_trig = cTriggerNames.begin(); it_trig != cTriggerNames.end(); ++it_trig){
 	  if(Ntp->TriggerAccept(*it_trig)){
-		  //std::cout << (*it_trig).Data() << " fired" << std::endl;
 		  if ( value.at(TriggerOk) == -1 )
 			  value.at(TriggerOk) = it_trig - cTriggerNames.begin();
 		  else // more than 1 trigger fired, save this seperately
 			  value.at(TriggerOk) = cTriggerNames.size();
 	  }
-	  //else std::cout << (*it_trig).Data() << " did not fire" << std::endl;
   }
   pass.at(TriggerOk) = (value.at(TriggerOk) >= cut.at(TriggerOk));
   
@@ -486,52 +488,17 @@ void  HToTaumuTauh::doEvent(){
   }
   pass.at(MT) = (value.at(MT) < cut.at(MT));
 
+  // run categories
+  bool passed_VBF 		= category_VBF();
+  bool passed_OneJetHigh= category_OneJetHigh();
 
-  //////// VBF selection
-  // TODO: Switch to JECorrected jets
-  std::vector<int> selectedVBFJets;
-  selectedVBFJets.clear();
-  for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
-	  if( selectPFJet_VBF(i_jet) ){
-		  selectedVBFJets.push_back(i_jet);
-	  }
-  }
-  value.at(VbfNJet) = selectedVBFJets.size();
-  pass.at(VbfNJet) = (value.at(VbfNJet) >= cut.at(VbfNJet));
+  // fill plot checking if multiple categories have passed, which should never happen
+  unsigned nCat = 0;
+  if (passed_VBF) nCat++;
 
-  if(pass.at(VbfNJet)){
-	  double vbfJetEta1 = Ntp->PFJet_p4(selectedVBFJets.at(0)).Eta();
-	  double vbfJetEta2 = Ntp->PFJet_p4(selectedVBFJets.at(1)).Eta();
+  NCatFired.at(t).Fill(nCat);
 
-	  value.at(VbfDeltaEta) = vbfJetEta1 - vbfJetEta2;
-	  pass.at(VbfDeltaEta) = (fabs(value.at(VbfDeltaEta)) > cut.at(VbfDeltaEta));
 
-	  int jetsInRapidityGap = 0;
-	  for(std::vector<int>::iterator it_jet = selectedVBFJets.begin()+2; it_jet != selectedVBFJets.end(); ++it_jet){
-		  double etaPos = ( value.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
-		  double etaNeg = ( value.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
-		  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
-				Ntp->PFJet_p4(*it_jet).Eta() < etaPos){
-			  jetsInRapidityGap++;
-		  }
-	  }
-	  value.at(VbfNJetRapGap) = jetsInRapidityGap;
-	  pass.at(VbfNJetRapGap) = (value.at(VbfNJetRapGap) <= cut.at(VbfNJetRapGap));
-
-	  double invM = (Ntp->PFJet_p4(selectedVBFJets.at(0)) + Ntp->PFJet_p4(selectedVBFJets.at(1))).M();
-	  value.at(VbfJetInvM) = invM;
-	  pass.at(VbfJetInvM) = (value.at(VbfJetInvM) > cut.at(VbfJetInvM));
-  }
-  else{
-	  value.at(VbfDeltaEta) = -10.;
-	  pass.at(VbfDeltaEta) = false;
-
-	  value.at(VbfNJetRapGap) = -10;
-	  pass.at(VbfNJetRapGap) = false;
-
-	  value.at(VbfJetInvM) = -10.;
-	  pass.at(VbfJetInvM) = false;
-  }
 
   bool status=AnalysisCuts(t,w,wobs); // true only if full selection passed
 
@@ -647,8 +614,8 @@ void  HToTaumuTauh::doEvent(){
   if(status){
     NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
   }
-}
 
+}
 
 
 
@@ -875,4 +842,213 @@ bool HToTaumuTauh::selectPFJet_VBF(unsigned i){
 		return true;
 	}
 	return false;
+}
+
+
+//// *****functions defining the categories*****
+
+void HToTaumuTauh::configure_VBF(){
+	// to be called only if VBF is chosen category
+
+	// set cut values to be the cut values of this category
+	cut.at(VbfNJet) = cut_VBF.at(VbfNJet);
+	cut.at(VbfDeltaEta) = cut_VBF.at(VbfDeltaEta);
+	cut.at(VbfNJetRapGap) = cut_VBF.at(VbfNJetRapGap);
+	cut.at(VbfJetInvM) = cut_VBF.at(VbfJetInvM);
+
+	// set histograms of category cuts
+	TString hlabel;
+	TString htitle;
+	TString c;
+
+	title.at(VbfNJet)="Number VBF Jets $>=$";
+	title.at(VbfNJet)+=cut.at(VbfNJet);
+	htitle=title.at(VbfNJet);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="Number of Jet_{VBF}";
+	c="_Cut_";c+=VbfNJet;
+	Nminus1.at(VbfNJet) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus0.at(VbfNJet) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+
+	title.at(VbfDeltaEta)="$\\Delta\\eta(jj) >$";
+	title.at(VbfDeltaEta)+=cut.at(VbfDeltaEta);
+	htitle=title.at(VbfDeltaEta);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="#Delta#eta(Jet_{VBF}^{1},Jet_{VBF}^{2})";
+	c="_Cut_";c+=VbfDeltaEta;
+	Nminus1.at(VbfDeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfDeltaEta_",htitle,50,-10.,10.,hlabel,"Events");
+	Nminus0.at(VbfDeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus0__VbfDeltaEta",htitle,50,-10.,10.,hlabel,"Events");
+
+	title.at(VbfNJetRapGap)="Number Jets in $\\eta$ gap $<=$";
+	title.at(VbfNJetRapGap)+=cut.at(VbfNJetRapGap);
+	htitle=title.at(VbfNJetRapGap);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="Number of Jet_{VBF} in rapidity gap";
+	c="_Cut_";c+=VbfNJetRapGap;
+	Nminus1.at(VbfNJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus0.at(VbfNJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfNJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
+
+	title.at(VbfJetInvM)="$m_{jj}(VBF) >$";
+	title.at(VbfJetInvM)+=cut.at(VbfJetInvM);
+	title.at(VbfJetInvM)+=" GeV";
+	htitle=title.at(VbfJetInvM);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="m_{inv}(jj) of VBF-jets";
+	c="_Cut_";c+=VbfJetInvM;
+	Nminus1.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
+	Nminus0.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
+
+
+}
+bool HToTaumuTauh::category_VBF(){
+	std::vector<float> value_VBF;
+	std::vector<float> pass_VBF;
+
+	// cut implementation
+	for(int i=0; i<NCuts;i++){
+	value_VBF.push_back(-10.);
+	pass_VBF.push_back(false);
+	}
+	// TODO: Switch to JECorrected jets
+	std::vector<int> selectedVBFJets;
+	selectedVBFJets.clear();
+	for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
+	  if( selectPFJet_VBF(i_jet) ){
+		  selectedVBFJets.push_back(i_jet);
+	  }
+	}
+	value_VBF.at(VbfNJet) = selectedVBFJets.size();
+	pass_VBF.at(VbfNJet) = (value_VBF.at(VbfNJet) >= cut_VBF.at(VbfNJet));
+
+	if(pass_VBF.at(VbfNJet)){
+		double vbfJetEta1 = Ntp->PFJet_p4(selectedVBFJets.at(0)).Eta();
+		double vbfJetEta2 = Ntp->PFJet_p4(selectedVBFJets.at(1)).Eta();
+
+		value_VBF.at(VbfDeltaEta) = vbfJetEta1 - vbfJetEta2;
+		pass_VBF.at(VbfDeltaEta) = (fabs(value_VBF.at(VbfDeltaEta)) > cut_VBF.at(VbfDeltaEta));
+
+		int jetsInRapidityGap = 0;
+		for(std::vector<int>::iterator it_jet = selectedVBFJets.begin()+2; it_jet != selectedVBFJets.end(); ++it_jet){
+		  double etaPos = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
+		  double etaNeg = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
+		  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
+				Ntp->PFJet_p4(*it_jet).Eta() < etaPos){
+			  jetsInRapidityGap++;
+		  }
+		}
+		value_VBF.at(VbfNJetRapGap) = jetsInRapidityGap;
+		pass_VBF.at(VbfNJetRapGap) = (value_VBF.at(VbfNJetRapGap) <= cut_VBF.at(VbfNJetRapGap));
+
+		double invM = (Ntp->PFJet_p4(selectedVBFJets.at(0)) + Ntp->PFJet_p4(selectedVBFJets.at(1))).M();
+		value_VBF.at(VbfJetInvM) = invM;
+		pass_VBF.at(VbfJetInvM) = (value_VBF.at(VbfJetInvM) > cut_VBF.at(VbfJetInvM));
+	}
+
+	// migrate into main analysis if this is chosen category
+	bool catPassed = true;
+	for (unsigned i_cut = VbfNJet; i_cut < VbfNCuts; i_cut++){
+		if (categoryFlag == "VBF"){
+			value.at(i_cut) = value_VBF.at(i_cut);
+			pass.at(i_cut) = pass_VBF.at(i_cut);
+		}
+		catPassed = catPassed && pass_VBF.at(i_cut);
+	}
+
+	return catPassed;
+}
+
+void HToTaumuTauh::configure_OneJetHigh(){
+	// to be called only if OneJetHigh is chosen category
+
+	// set cut values to be the cut values of this category
+	cut.at(OneJetHighNJet) = cut_VBF.at(OneJetHighNJet);
+	cut.at(OneJetHighNoVBF) = cut_VBF.at(OneJetHighNoVBF);
+	cut.at(OneJetHighNBtagJets) = cut_VBF.at(OneJetHighNBtagJets);
+	cut.at(OneJetHighTauPt) = cut_VBF.at(OneJetHighTauPt);
+
+	// set histograms of category cuts
+	TString hlabel;
+	TString htitle;
+	TString c;
+
+	title.at(OneJetHighNJet)="Number Jets $>=$";
+	title.at(OneJetHighNJet)+=cut.at(OneJetHighNJet);
+	htitle=title.at(OneJetHighNJet);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="Number of Jets";
+	c="_Cut_";c+=OneJetHighNJet;
+	Nminus1.at(OneJetHighNJet) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetHighNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus0.at(OneJetHighNJet) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetHighNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+
+	title.at(OneJetHighNoVBF)="No VBF $==$";
+	title.at(OneJetHighNoVBF)+=cut.at(OneJetHighNoVBF);
+	htitle=title.at(OneJetHighNoVBF);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="Did not pass VBF cat.";
+	c="_Cut_";c+=OneJetHighNoVBF;
+	Nminus1.at(OneJetHighNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetHighNoVBF_",htitle,2,-0.5,1.5,hlabel,"Events");
+	Nminus0.at(OneJetHighNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus0__OneJetHighNoVBF",htitle,2,-0.5,1.5,hlabel,"Events");
+
+	title.at(OneJetHighNBtagJets)="Number btag jets $<=$";
+	title.at(OneJetHighNBtagJets)+=cut.at(OneJetHighNBtagJets);
+	htitle=title.at(OneJetHighNBtagJets);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="Number of btag jets";
+	c="_Cut_";c+=OneJetHighNBtagJets;
+	Nminus1.at(OneJetHighNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetHighNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus0.at(OneJetHighNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetHighNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
+
+	title.at(OneJetHighTauPt)="$p_{T}(\\tau_{h}) >=$";
+	title.at(OneJetHighTauPt)+=cut.at(OneJetHighTauPt);
+	title.at(OneJetHighTauPt)+=" GeV";
+	htitle=title.at(OneJetHighTauPt);
+	htitle.ReplaceAll("$","");
+	htitle.ReplaceAll("\\","#");
+	hlabel="p_{T}(\\tau_{h})/GeV";
+	c="_Cut_";c+=OneJetHighTauPt;
+	Nminus1.at(OneJetHighTauPt) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetHighTauPt_",htitle,50,0.,200.,hlabel,"Events");
+	Nminus0.at(OneJetHighTauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetHighTauPt_",htitle,50,0.,200.,hlabel,"Events");
+
+
+}
+bool HToTaumuTauh::category_OneJetHigh(){
+	std::vector<float> value_OneJetHigh;
+	std::vector<float> pass_OneJetHigh;
+
+	// cut implementation
+	for(int i=0; i<NCuts;i++){
+	value_OneJetHigh.push_back(-10.);
+	pass_OneJetHigh.push_back(false);
+	}
+
+	// TODO: Switch to JECorrected jets
+	std::vector<int> selectedOneJetHighJets;
+	selectedOneJetHighJets.clear();
+	for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
+	  if( selectPFJet_OneJetHigh(i_jet) ){
+		  selectedOneJetHighJets.push_back(i_jet);
+	  }
+	}
+
+
+
+
+	// migrate into main analysis if this is chosen category
+	bool catPassed = true;
+	for (unsigned i_cut = OneJetHighNJet; i_cut < OneJetHighNCuts; i_cut++){
+		if (categoryFlag == "OneJetHigh"){
+			value.at(i_cut) = value_OneJetHigh.at(i_cut);
+			pass.at(i_cut) = pass_OneJetHigh.at(i_cut);
+		}
+		catPassed = catPassed && pass_OneJetHigh.at(i_cut);
+	}
+
+	return catPassed;
 }
