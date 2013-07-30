@@ -25,11 +25,27 @@ class HToTaumuTauh : public Selection {
 	  OppCharge,
 	  TriLeptonVeto,
 	  MT,
-	  VbfNJet,
-	  VbfDeltaEta,
-	  VbfNJetRapGap,
-	  VbfJetInvM,
+	  CatCut1,
+	  CatCut2,
+	  CatCut3,
+	  CatCut4,
 	  NCuts};
+
+  	// cuts in categories
+	enum cuts_VBF {
+		VbfNJet	= CatCut1,
+		OneJetHighNoVBF,
+		VbfNJetRapGap,
+		VbfJetInvM,
+		VbfNCuts
+	};
+	enum cuts_OneJetHighPt {
+		OneJetHighNJet = CatCut1,
+		OneJetHighNoVBF,
+		OneJetHighNBtagJets,
+		OneJetHighTauPt,
+		OneJetHighNCuts
+	};
 
  protected:
   virtual void doEvent();
@@ -38,6 +54,7 @@ class HToTaumuTauh : public Selection {
 
  private:
   // Selection Variables
+  std::vector<TH1D> NCatFired;
 
   std::vector<TH1D> NVtx;
   std::vector<TH1D> NVtxFullSelection;
@@ -95,6 +112,10 @@ class HToTaumuTauh : public Selection {
   double cTau_pt, cTau_eta, cMuTau_dR;
   std::vector<TString> cTriggerNames;
   double cVBFJet_eta, cVBFJet_pt;
+  double cCat_jetPt, cCat_jetEta, cCat_btagPt, cCat_splitTauPt;
+
+  // flag for category to run
+  TString categoryFlag;
 
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
@@ -125,6 +146,15 @@ class HToTaumuTauh : public Selection {
   inline double transverseMass(double pt1, double phi1, double pt2, double phi2){
 	  return sqrt(2 * pt1 * pt2 * (1 - cos(phi1 - phi2)));
   }
+
+  // categories
+  std::vector<float> cut_VBF, cut_OneJetHigh;
+
+  void configure_VBF();
+  bool category_VBF();
+
+  void configure_OneJetHigh();
+  bool category_OneJetHigh();
 
 };
 #endif
