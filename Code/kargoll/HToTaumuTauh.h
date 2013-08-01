@@ -52,6 +52,9 @@ class HToTaumuTauh : public Selection {
 		ZeroJetTauPt,
 		ZeroJetNCuts
 	};
+	enum cuts_NoCategory {
+		NoCategoryNCuts = CatCut1
+	};
 
  protected:
   virtual void doEvent();
@@ -156,7 +159,7 @@ class HToTaumuTauh : public Selection {
   }
 
   // categories
-  std::vector<float> cut_VBF, cut_OneJet, cut_ZeroJet;
+  std::vector<float> cut_VBF, cut_OneJet, cut_ZeroJet, cut_NoCategory;
 
   void configure_VBF();
   bool category_VBF();
@@ -172,6 +175,9 @@ class HToTaumuTauh : public Selection {
 
   void configure_ZeroJetLow();
   bool category_ZeroJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection);
+
+  void configure_NoCategory();
+  bool category_NoCategory();
 
 };
 #endif

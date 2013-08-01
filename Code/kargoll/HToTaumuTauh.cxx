@@ -26,7 +26,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	cTriggerNames = temp;
 
 	// implemented categories:
-	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow //TODO: implement b-tagging categories
+	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement b-tagging categories
 	categoryFlag = "ZeroJetLow";
 }
 
@@ -63,10 +63,13 @@ void  HToTaumuTauh::Configure(){
     cut_ZeroJet.push_back(-10.);
     if(i>=CatCut1){
     	cut.at(i)=-10.0;
-    	value.at(i)=-10.0;
-    	pass.at(i)=true;
     }
   }
+  std::cout << "after initial setting:" << std::endl;
+  for (int i = CatCut1; i<NCuts; i++){
+	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
+  }
+
   // Setup Category Cut Values
   for(unsigned i = CatCut1; i< NCuts; i++){
 	  if(i==VbfNJet)		cut_VBF.at(VbfNJet)		 =2;
@@ -79,7 +82,7 @@ void  HToTaumuTauh::Configure(){
 	  if(i==OneJetNBtagJets)cut_OneJet.at(OneJetNBtagJets) = 0;
 	  if(i==OneJetTauPt)	cut_OneJet.at(OneJetTauPt) = cCat_splitTauPt;
 
-	  if(i==ZeroJetNJet) 		cut_ZeroJet.at(ZeroJetNJet) = 0;
+	  if(i==ZeroJetNJet) 		cut_ZeroJet.at(ZeroJetNJet) = 5;// 0;
 	  if(i==ZeroJetNBtagJets)	cut_ZeroJet.at(ZeroJetNBtagJets)= 0;
 	  if(i==ZeroJetTauPt)		cut_ZeroJet.at(ZeroJetTauPt) = cCat_splitTauPt;
   }
@@ -224,8 +227,8 @@ void  HToTaumuTauh::Configure(){
     	TString n = Name+c+"_Nminus1_CatDummy";
     	n += (i_cut-CatCut1);
     	n += "_";
-    	Nminus1.push_back(HConfig.GetTH1D(n,htitle,2,0.,-50.,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(n,htitle,2,0.,50.,hlabel,"Events"));
+    	Nminus1.push_back(HConfig.GetTH1D(n,htitle,50,-50.,50.,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(n,htitle,50,-50.,50.,hlabel,"Events"));
     }
   } 
   // Setup NPassed Histogams
@@ -290,9 +293,15 @@ void  HToTaumuTauh::Configure(){
   if (categoryFlag == "OneJetLow")	configure_OneJetLow();
   if (categoryFlag == "ZeroJetHigh")configure_ZeroJetHigh();
   if (categoryFlag == "ZeroJetLow") configure_ZeroJetLow();
+  if (categoryFlag == "NoCategory")	configure_NoCategory();
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
+
+  std::cout << "end of Configure:" << std::endl;
+  for (int i = CatCut1; i<NCuts; i++){
+	  std::cout << "pass.at(CatCut" << i-CatCut1 << ") = " << pass.at(i)  << endl;
+  }
 }
 
 
@@ -350,6 +359,10 @@ void  HToTaumuTauh::Store_ExtraDist(){
 }
 
 void  HToTaumuTauh::doEvent(){
+	  std::cout << "beginning of doEvent():" << std::endl;
+	  for (int i = CatCut1; i<NCuts; i++){
+		  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
+	  }
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
@@ -516,6 +529,7 @@ void  HToTaumuTauh::doEvent(){
   bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJetsCategories, selectedBJetsCategories, passed_VBF);
   bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJetsCategories, selectedBJetsCategories);
   bool passed_ZeroJetLow	= category_ZeroJetLow(selTau,selectedJetsCategories, selectedBJetsCategories);
+  bool passed_NoCategory	= category_NoCategory();
 
   // fill plot checking if multiple categories have passed, which should never happen
   unsigned nCat = 0;
@@ -642,6 +656,11 @@ void  HToTaumuTauh::doEvent(){
   //////// plots filled after full selection
   if(status){
     NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
+  }
+
+  std::cout << "end of doEvent():" << std::endl;
+  for (int i = CatCut1; i<NCuts; i++){
+	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
   }
 
 }
@@ -990,10 +1009,17 @@ bool HToTaumuTauh::category_VBF(){
 
 	// migrate into main analysis if this is chosen category
 	bool catPassed = true;
-	for (unsigned i_cut = VbfNJet; i_cut < VbfNCuts; i_cut++){
+	for (unsigned i_cut = VbfNJet; i_cut < NCuts; i_cut++){
 		if (categoryFlag == "VBF"){
-			value.at(i_cut) = value_VBF.at(i_cut);
-			pass.at(i_cut) = pass_VBF.at(i_cut);
+			if (i_cut < VbfNCuts){
+				value.at(i_cut) = value_VBF.at(i_cut);
+				pass.at(i_cut) = pass_VBF.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
 		}
 		catPassed = catPassed && pass_VBF.at(i_cut);
 	}
@@ -1088,10 +1114,17 @@ bool HToTaumuTauh::category_OneJetHigh(int selTau, std::vector<int> jetCollectio
 
 	// migrate into main analysis if this is chosen category
 	bool catPassed = true;
-	for (unsigned i_cut = OneJetNJet; i_cut < OneJetNCuts; i_cut++){
+	for (unsigned i_cut = OneJetNJet; i_cut < NCuts; i_cut++){
 		if (categoryFlag == "OneJetHigh"){
-			value.at(i_cut) = value_OneJetHigh.at(i_cut);
-			pass.at(i_cut) = pass_OneJetHigh.at(i_cut);
+			if (i_cut < OneJetNCuts){
+				value.at(i_cut) = value_OneJetHigh.at(i_cut);
+				pass.at(i_cut) = pass_OneJetHigh.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
 		}
 		catPassed = catPassed && pass_OneJetHigh.at(i_cut);
 	}
@@ -1186,10 +1219,17 @@ bool HToTaumuTauh::category_OneJetLow(int selTau, std::vector<int> jetCollection
 
 	// migrate into main analysis if this is chosen category
 	bool catPassed = true;
-	for (unsigned i_cut = OneJetNJet; i_cut < OneJetNCuts; i_cut++){
+	for (unsigned i_cut = OneJetNJet; i_cut < NCuts; i_cut++){
 		if (categoryFlag == "OneJetLow"){
-			value.at(i_cut) = value_OneJetLow.at(i_cut);
-			pass.at(i_cut) = pass_OneJetLow.at(i_cut);
+			if (i_cut < OneJetNCuts){
+				value.at(i_cut) = value_OneJetLow.at(i_cut);
+				pass.at(i_cut) = pass_OneJetLow.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
 		}
 		catPassed = catPassed && pass_OneJetLow.at(i_cut);
 	}
@@ -1270,10 +1310,17 @@ bool HToTaumuTauh::category_ZeroJetHigh(int selTau, std::vector<int> jetCollecti
 
 	// migrate into main analysis if this is chosen category
 	bool catPassed = true;
-	for (unsigned i_cut = ZeroJetNJet; i_cut < ZeroJetNCuts; i_cut++){
+	for (unsigned i_cut = ZeroJetNJet; i_cut < NCuts; i_cut++){
 		if (categoryFlag == "ZeroJetHigh"){
-			value.at(i_cut) = value_ZeroJetHigh.at(i_cut);
-			pass.at(i_cut) = pass_ZeroJetHigh.at(i_cut);
+			if (i_cut < ZeroJetNCuts){
+				value.at(i_cut) = value_ZeroJetHigh.at(i_cut);
+				pass.at(i_cut) = pass_ZeroJetHigh.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
 		}
 		catPassed = catPassed && pass_ZeroJetHigh.at(i_cut);
 	}
@@ -1354,12 +1401,59 @@ bool HToTaumuTauh::category_ZeroJetLow(int selTau, std::vector<int> jetCollectio
 
 	// migrate into main analysis if this is chosen category
 	bool catPassed = true;
-	for (unsigned i_cut = ZeroJetNJet; i_cut < ZeroJetNCuts; i_cut++){
+	for (unsigned i_cut = ZeroJetNJet; i_cut < NCuts; i_cut++){
 		if (categoryFlag == "ZeroJetLow"){
-			value.at(i_cut) = value_ZeroJetLow.at(i_cut);
-			pass.at(i_cut) = pass_ZeroJetLow.at(i_cut);
+			if (i_cut < ZeroJetNCuts){
+				value.at(i_cut) = value_ZeroJetLow.at(i_cut);
+				pass.at(i_cut) = pass_ZeroJetLow.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
 		}
 		catPassed = catPassed && pass_ZeroJetLow.at(i_cut);
+	}
+	return catPassed;
+}
+
+void HToTaumuTauh::configure_NoCategory(){
+	// to be called only if No Category shall be run
+
+	// set cut values to be the cut values of this category
+	// nothing to do
+
+	// set histograms of category cuts
+	// no histograms to be set
+}
+bool HToTaumuTauh::category_NoCategory(){
+	std::vector<float> value_NoCategory;
+	std::vector<float> pass_NoCategory;
+
+	// cut implementation
+	for(int i=0; i<NCuts;i++){
+	value_NoCategory.push_back(-10.);
+	pass_NoCategory.push_back(false);
+	}
+
+	// not cuts to compute
+
+	// migrate into main analysis if this is chosen category
+	bool catPassed = true;
+	for (unsigned i_cut = NoCategoryNCuts; i_cut < NCuts; i_cut++){
+		if (categoryFlag == "NoCategory"){
+			if(i_cut < NoCategoryNCuts){
+				value.at(i_cut) = value_NoCategory.at(i_cut);
+				pass.at(i_cut) = pass_NoCategory.at(i_cut);
+			}
+			else{
+				// cut not implemented in this category -> set to true
+				value.at(i_cut) = -10.;
+				pass.at(i_cut) = true;
+			}
+		}
+		catPassed = catPassed && pass_NoCategory.at(i_cut);
 	}
 
 	return catPassed;
