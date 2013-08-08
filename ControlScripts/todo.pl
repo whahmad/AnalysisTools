@@ -157,39 +157,38 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cd CMSSW_$CMSSWRel/src\" >> Setup_$CMSSWRel-$time"));
     system(sprintf("echo \"cmsenv\" >> Setup_$CMSSWRel-$time"));
 
+    system(sprintf("echo \"git init \" >> Setup_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"mkdir data \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
-    #Tau Package V08-09-57 recomendation for 5_3_9: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATReleaseNotes52X 
-    system(sprintf("echo \"git cms-addpkg DataFormats/PatCandidates   V06-05-06-10 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg PhysicsTools/PatAlgos       V08-09-57 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg PhysicsTools/PatUtils       V03-09-28 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg DataFormats/CaloRecHit      V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg FWCore/GuiBrowsers          V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg RecoMET/METProducers        V03-03-12-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg RecoTauTag/RecoTau V01-04-25 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg RecoTauTag/Configuration V01-04-13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg TauAnalysis/MCEmbeddingTools b5_3_x_analysis_2013Jun18 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+   #Tau Package V08-09-57 recomendation for 5_3_9: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATReleaseNotes52X
+    system(sprintf("echo \"addpkg DataFormats/PatCandidates V06-05-06-10 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg PhysicsTools/PatAlgos V08-09-57 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg PhysicsTools/PatUtils V03-09-28 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/CaloRecHit V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg FWCore/GuiBrowsers V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoMET/METProducers V03-03-12-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/RecoTau V01-04-25 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg RecoTauTag/Configuration V01-04-13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r b5_3_x_analysis_2013Jun18 TauAnalysis/MCEmbeddingTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp TauAnalysis/MCEmbeddingTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
-    system(sprintf("echo \"git cms-addpkg RecoEgamma/EgammaTools V09-00-01\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg EgammaAnalysis/ElectronTools jakob19April2013_2012ID\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r V09-00-01 RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r jakob19April2013_2012ID EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
-    # SimpleFits 
-    system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits.git SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git cms-addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-
-    # Tau Nutple
-    system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp $currentdir/subs SkimProduction/CRAB/\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # SimpleFits
+    system(sprintf("echo \"cvs co -d SimpleFits -r V04-00-40 UserCode/inugent/SimpleFits \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
