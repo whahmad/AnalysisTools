@@ -68,7 +68,8 @@ TARGETS       =	Ntuple_Controller \
 		TriggerStudyMC \
 		ZDouble3prong \
 		Ztotautau_ControlSample \
-		TauLifeTime
+		TauLifeTime \
+		HToTaumuTauh
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
@@ -87,6 +88,9 @@ vpath %.cxx inugent
 vpath %.h inugent
 vpath %.cxx cherepanov
 vpath %.h cherepanov
+vpath %.cxx kargoll
+vpath %.h kargoll
+
 
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
 

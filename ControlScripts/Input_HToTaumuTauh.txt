@@ -4,6 +4,6 @@ HistoFile: InputData/Histo_ProductionJul052013.txt
 Analysis: HToTaumuTauh
 UncertType: default
 SkimInfo: InputData/SkimSummary2705.log
-Lumi: 4749.223
+Lumi: 19402.569
 PlotStyle: style2
 
