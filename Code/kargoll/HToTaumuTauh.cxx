@@ -14,6 +14,10 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cTau_pt(20.0),
   cTau_eta(2.3),
   cMuTau_dR(0.3),
+  cMuTriLep_pt(10.0),
+  cMuTriLep_eta(2.4),
+  cEleTriLep_pt(10.0),
+  cEleTriLep_eta(2.5),
   cVBFJet_eta(4.7),
   cVBFJet_pt(30.0),
   cCat_jetPt(30.0),
@@ -776,8 +780,8 @@ bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsign
 		fabs(dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dxy &&
 		fabs(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dz &&
 		Muon_RelIso(i) < 0.3 &&
-		Ntp->Muons_p4(i).Pt() > 10.0 &&
-		fabs(Ntp->Muons_p4(i).Eta()) < 2.4
+		Ntp->Muons_p4(i).Pt() > cMuTriLep_pt &&
+		fabs(Ntp->Muons_p4(i).Eta()) < cMuTriLep_eta
 			){
 			return true;
 	}

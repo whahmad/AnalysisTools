@@ -1,2 +1,0 @@
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/HLT_IsoMu12_LooseIsoPFTau10_v2_DYJetsToLL_TauNtuple_SHCTAU_1/64db25104820215005093ef4389db5eb
-/pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/HLT_IsoMu12_LooseIsoPFTau10_v2_DYJetsToLL_TauNtuple_SHCTAU_1/64db25104820215005093ef4389db5eb

@@ -119,6 +119,7 @@ class HToTaumuTauh : public Selection {
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
   double cTau_pt, cTau_eta, cMuTau_dR;
+  double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
   double cVBFJet_eta, cVBFJet_pt;
   double cCat_jetPt, cCat_jetEta, cCat_btagPt, cCat_splitTauPt;
