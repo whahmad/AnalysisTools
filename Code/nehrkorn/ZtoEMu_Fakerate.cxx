@@ -232,9 +232,9 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02 &&
 			  Ntp->isData()
 			  ){
-		  if(isFakeElectron(i,vertex) && isMVAElectron(i,"trigNoIP")){
+		  if(isFakeElectron(i,vertex) && isMVATrigNoIPElectron(i)){
 			  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
-		  }else if(isFakeElectron(i,vertex) && !isMVAElectron(i,"trigNoIP")){
+		  }else if(isFakeElectron(i,vertex) && !isMVATrigNoIPElectron(i)){
 			  fakee.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
 		  }
 	  }
@@ -276,7 +276,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
 			  ){
-		  if(isMVAElectron(i,"trigNoIP")){
+		  if(isMVATrigNoIPElectron(i)){
 			  SingleElectrons.push_back(i);
 		  }
 	  }
@@ -614,13 +614,6 @@ double ZtoEMu_Fakerate::Muon_AbsIso(unsigned int i){
 //
 // Electron related functions
 //
-
-bool ZtoEMu_Fakerate::isMVAElectron(unsigned int i, std::string mvatype){
-	if(mvatype=="trig") return isMVATrigElectron(i);
-	else if(mvatype=="trigNoIP") return isMVATrigNoIPElectron(i);
-	else if(mvatype=="nonTrig") return isMVANonTrigElectron(i);
-	return false;
-}
 
 bool ZtoEMu_Fakerate::isMVATrigNoIPElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();

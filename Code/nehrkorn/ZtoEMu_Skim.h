@@ -22,9 +22,6 @@ class ZtoEMu_Skim : public Selection {
 	     NEPt,
 	     NEEta,
 		 NE,
-		 //diMuonVeto,
-		 //triLeptonVeto,
-		 //looseMuonVeto,
 		 charge,
 	     NCuts};
 
@@ -61,6 +58,7 @@ class ZtoEMu_Skim : public Selection {
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   bool isGoodVtx(unsigned int i);
+  double vertexSignificance(TVector3 vec, unsigned int vertex);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -70,14 +68,16 @@ class ZtoEMu_Skim : public Selection {
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
-  bool isMVALooseElectron(unsigned int i);
-  bool isMVAElectron(unsigned int i);
+  bool isMVATrigElectron(unsigned int i);
+  bool isMVATrigNoIPElectron(unsigned int i);
+  bool isMVANonTrigElectron(unsigned int i, unsigned int j);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
   bool isFakeElectron(unsigned int i);
   bool isFakeElectron(unsigned int i, unsigned int j);
   double Electron_RelIso(unsigned int i);
-  double Electron_Aeff(double Eta);
+  double Electron_Aeff_R04(double Eta);
+  double Electron_Aeff_R03(double Eta);
   
   double MuonSF(unsigned int i);
   double MuonDataSF(unsigned int i);

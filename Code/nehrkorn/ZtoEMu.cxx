@@ -18,11 +18,10 @@
 
 ZtoEMu::ZtoEMu(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,mu_pt(30)
-  ,e_pt(30)
+  ,mu_pt(10)
+  ,e_pt(10)
   ,mu_eta(2.4)
   ,e_eta(2.5)
-  //,e_eta(1.479)
   ,jet_pt(30)
   ,jet_eta(2.4)
   ,jet_sum(70)
@@ -551,11 +550,6 @@ void  ZtoEMu::doEvent(){
 	  mu_pt = 20;
 	  e_pt = 20;
   }
-  if(id==34){
-	  value.at(TriggerOk)=1;
-	  mu_pt = 10;
-	  e_pt = 10;
-  }
   pass.at(TriggerOk)=(value.at(TriggerOk)==cut.at(TriggerOk));
 
   // Apply Selection
@@ -702,7 +696,7 @@ void  ZtoEMu::doEvent(){
 			  dxy(electrons.at(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
 			  ){
 		  if(MVA_ID){
-			  if(isMVALooseElectron(i)){
+			  if(isMVATrigNoIPElectron(i)){
 				  GoodElectrons.push_back(i);
 			  }else if(isFakeElectron(i,vertex) && Ntp->isData()){
 				  Fakeelectrons.push_back(i);
@@ -854,7 +848,7 @@ void  ZtoEMu::doEvent(){
 				  && Electron_RelIso(i)<0.3
 				  ){
 			  if(MVA_ID){
-				  if(isMVAElectron(i)){
+				  if(isMVATrigNoIPElectron(i)){
 					  trilep++;
 				  }
 			  }else{
@@ -1651,13 +1645,6 @@ double ZtoEMu::Muon_AbsIso(unsigned int i){
 //
 // Electron related functions
 //
-
-bool ZtoEMu::isMVAElectron(unsigned int i, std::string mvatype){
-	if(mvatype=="trig") return isMVATrigElectron(i);
-	else if(mvatype=="trigNoIP") return isMVATrigNoIPElectron(i);
-	else if(mvatype=="nonTrig") return isMVANonTrigElectron(i);
-	return false;
-}
 
 bool ZtoEMu::isMVATrigNoIPElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
