@@ -4,6 +4,7 @@
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
+#include "TF1.h"
 
 class ZtoEMu : public Selection {
 
@@ -16,15 +17,12 @@ class ZtoEMu : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     qualitycuts,
-	     SameVtx,
 	     NMuPt,
 	     NMuEta,
 		 NMu,
 	     NEPt,
 	     NEEta,
 		 NE,
-		 drMuE,
 		 diMuonVeto,
 		 triLeptonVeto,
 		 looseMuonVeto,
@@ -51,8 +49,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> MuPt;
   std::vector<TH1D> mtMu;
   std::vector<TH1D> mtE;
-  std::vector<TH1D> pzeta;
-  std::vector<TH1D> pzetaDQM;
   std::vector<TH1D> etaMu;
   std::vector<TH1D> etaE;
   std::vector<TH1D> jetsum;
@@ -64,8 +60,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> chargesumsigned;
   std::vector<TH1D> FirstJetPt;
   std::vector<TH1D> SecondJetPt;
-  std::vector<TH1D> ThirdJetPt;
-  std::vector<TH1D> FourthJetPt;
+  std::vector<TH1D> jeteta;
   
   std::vector<TH1D> invmass_zmass;
   std::vector<TH1D> invmass_ptbalance;
@@ -73,26 +68,14 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_jetveto;
   std::vector<TH1D> invmass_charge;
   std::vector<TH1D> invmass_loosemuonveto;
-  std::vector<TH1D> invmass_dremu;
   std::vector<TH1D> invmass_only_object_id;
+  std::vector<TH1D> invmass_unblinded;
   
-  std::vector<TH1D> nm2_charge;
-  std::vector<TH1D> nm2_jetveto;
-  std::vector<TH1D> nm2_mtmu;
-  std::vector<TH1D> nm2_ptbalance;
-  std::vector<TH1D> nm2_drmue;
-  
-  std::vector<TH1D> phi1;
-  std::vector<TH1D> phi2;
-  std::vector<TH1D> phi3;
-  
-  std::vector<TH1D> phi1_nopt;
-  std::vector<TH1D> phi2_nopt;
-  std::vector<TH1D> phi3_nopt;
-  
-  std::vector<TH1D> phi1_ptdiff;
-  std::vector<TH1D> phi2_ptdiff;
-  std::vector<TH1D> phi3_ptdiff;
+  std::vector<TH1D> nm0_met;
+  std::vector<TH1D> nm0_jetsum;
+  std::vector<TH1D> nm0_onejet;
+  std::vector<TH1D> nm0_mtmu;
+  std::vector<TH1D> nm0_ptbalance;
   
   std::vector<TH1D> ptbal2;
   
@@ -102,13 +85,32 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> frMu;
   std::vector<TH1D> frE;
   
-  std::vector<TH1D> pzetaCut;
-  std::vector<TH1D> pzetaStatus;
-  std::vector<TH1D> metCut;
-  std::vector<TH1D> metStatus;
-  
-  std::vector<TH2D> InvmassVsDeltaPhi;
-  std::vector<TH2D> PtDiffVsDeltaPhi;
+  std::vector<TH1D> met;
+  std::vector<TH1D> met_uncorr;
+  std::vector<TH1D> onejet;
+  std::vector<TH1D> mte_mtmu;
+  std::vector<TH1D> leadingjet;
+  std::vector<TH1D> subleadingjet;
+  std::vector<TH1D> sumjets;
+
+  // comparison of generators
+
+  std::vector<TH1D> zpt;
+  std::vector<TH1D> zpt_mc;
+  std::vector<TH1D> zeta;
+  std::vector<TH1D> zeta_mc;
+  std::vector<TH1D> zmass;
+  std::vector<TH1D> zmass_mc;
+  std::vector<TH1D> leadingjet_pt;
+  std::vector<TH1D> leadingjet_pt_mc;
+  std::vector<TH1D> subleadingjet_pt;
+  std::vector<TH1D> subleadingjet_pt_mc;
+  std::vector<TH1D> leadingjet_eta;
+  std::vector<TH1D> leadingjet_eta_mc;
+  std::vector<TH1D> subleadingjet_eta;
+  std::vector<TH1D> subleadingjet_eta_mc;
+  std::vector<TH1D> jetsumcustom;
+  std::vector<TH1D> jetsummc;
 
   double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,phimin,phimax,mtmu,ptbalance,dRmue;
   int n_mu,n_e;
@@ -127,6 +129,8 @@ class ZtoEMu : public Selection {
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
+  bool isGoodVtx(unsigned int i);
+  double vertexSignificance(TVector3 vec, unsigned int vertex);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -136,21 +140,36 @@ class ZtoEMu : public Selection {
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
-  bool isMVAElectron(unsigned int i);
+  bool isMVAElectron(unsigned int i,std::string mvatype);
+  bool isMVATrigElectron(unsigned int i);
+  bool isMVATrigNoIPElectron(unsigned int i);
+  bool isMVANonTrigElectron(unsigned int i);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
   bool isLooseElectron(unsigned int i);
   bool isFakeElectron(unsigned int i);
   bool isFakeElectron(unsigned int i, unsigned int j);
   double Electron_RelIso(unsigned int i);
-  double Electron_Aeff(double Eta);
+  double Electron_Aeff_R04(double Eta);
+  double Electron_Aeff_R03(double Eta);
   
-  double MuonSF(unsigned int i);
   double MuonDataSF(unsigned int i);
-  double ElectronSF(unsigned int i);
   double ElectronDataSF(unsigned int i);
   double ElectronEffRecHit(unsigned int i);
+  double MuonIDeff(unsigned int i);
+  double MuonIDerr(unsigned int i);
+  double MuonTriggerEff(unsigned int i);
+  double MuonTriggerErr(unsigned int i);
+  double ElectronIDeff(unsigned int i);
+  double ElectronIDerr(unsigned int i);
+  double ElectronTriggerEff(unsigned int i);
+  double ElectronTriggerErr(unsigned int i);
   
+  double ElectronMassScale(unsigned int i);
+  double ZPtReweight(double zpt);
+
+  //double JECuncertainty(unsigned int i, TString datamc);
+
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
   bool MVA_ID;
@@ -163,6 +182,13 @@ class ZtoEMu : public Selection {
   double fakeRateMu;
   double fakeRateE;
   
+  TF1* gause;
+  TF1* gausmu;
+  TH1D* eres;
+  TH1D* mures;
+  double eleres;
+  double muonres;
+
   bool twod;
 
 };

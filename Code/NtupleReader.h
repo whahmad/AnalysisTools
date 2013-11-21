@@ -158,7 +158,9 @@ public :
    vector<vector<float> > *Electron_cov;
    vector<float>   *Electron_Track_dR;
    vector<float>   *Electron_Rho_kt6PFJets;
-   vector<float>   *Electron_MVA_discriminator;
+   vector<float>   *Electron_MVA_Trig_discriminator;
+   vector<float>   *Electron_MVA_TrigNoIP_discriminator;
+   vector<float>   *Electron_MVA_NonTrig_discriminator;
    vector<vector<float> > *PFTau_p4;
    vector<vector<float> > *PFTau_Poca;
    vector<bool>    *PFTau_isTightIsolation;
@@ -294,6 +296,8 @@ public :
    Int_t           PileupInfo_NumInteractions_n0;
    Int_t           PileupInfo_NumInteractions_np1;
    Float_t         EvtWeight3D;
+   Float_t         EvtWeight3D_p5;
+   Float_t         EvtWeight3D_m5;
    Float_t         TauSpinnerWeight;
    Float_t         SelEffWeight;
    Float_t         RadiationCorrWeight;
@@ -349,6 +353,9 @@ public :
    vector<vector<float> > *HLTTrigger_objs_Pt;
    vector<vector<float> > *HLTTrigger_objs_Eta;
    vector<vector<float> > *HLTTrigger_objs_Phi;
+   vector<vector<float> > *HLTTrigger_objs_E;
+   vector<vector<int> > *HLTTrigger_objs_Id;
+   vector<std::string> *HLTTrigger_objs_trigger;
    vector<string>  *L1TriggerName;
    vector<bool>    *L1TriggerDecision;
    vector<int>     *L1ErrorCode;
@@ -488,7 +495,9 @@ public :
    TBranch        *b_Electron_cov;   //!
    TBranch        *b_Electron_Track_dR;   //!
    TBranch        *b_Electron_Rho_kt6PFJets;   //!
-   TBranch        *b_Electron_MVA_discriminator;   //!
+   TBranch        *b_Electron_MVA_Trig_discriminator;   //!
+   TBranch        *b_Electron_MVA_TrigNoIP_discriminator;   //!
+   TBranch        *b_Electron_MVA_NonTrig_discriminator;   //!
    TBranch        *b_PFTau_p4;   //!
    TBranch        *b_PFTau_Poca;   //!
    TBranch        *b_PFTau_isTightIsolation;   //!
@@ -624,6 +633,8 @@ public :
    TBranch        *b_PileupInfo_NumInteractions_n0;   //!
    TBranch        *b_PileupInfo_NumInteractions_np1;   //!
    TBranch        *b_EvtWeight3D;   //!
+   TBranch        *b_EvtWeight3D_p5;   //!
+   TBranch        *b_EvtWeight3D_m5;   //!
    TBranch        *b_TauSpinnerWeight;   //!
    TBranch        *b_SelEffWeight;   //!
    TBranch        *b_RadiationCorrWeight;   //!
@@ -679,6 +690,9 @@ public :
    TBranch        *b_HLTTrigger_objs_Pt;   //!
    TBranch        *b_HLTTrigger_objs_Eta;   //!
    TBranch        *b_HLTTrigger_objs_Phi;   //!
+   TBranch        *b_HLTTrigger_objs_E;   //!
+   TBranch        *b_HLTTrigger_objs_Id;   //!
+   TBranch        *b_HLTTrigger_objs_trigger;   //!
    TBranch        *b_L1TriggerName;   //!
    TBranch        *b_L1TriggerDecision;   //!
    TBranch        *b_L1ErrorCode;   //!
@@ -888,7 +902,9 @@ void NtupleReader::Init(TTree *tree)
    Electron_cov = 0;
    Electron_Track_dR = 0;
    Electron_Rho_kt6PFJets = 0;
-   Electron_MVA_discriminator = 0;
+   Electron_MVA_Trig_discriminator = 0;
+   Electron_MVA_TrigNoIP_discriminator = 0;
+   Electron_MVA_NonTrig_discriminator = 0;
    PFTau_p4 = 0;
    PFTau_Poca = 0;
    PFTau_isTightIsolation = 0;
@@ -1040,6 +1056,9 @@ void NtupleReader::Init(TTree *tree)
    HLTTrigger_objs_Pt = 0;
    HLTTrigger_objs_Eta = 0;
    HLTTrigger_objs_Phi = 0;
+   HLTTrigger_objs_E = 0;
+   HLTTrigger_objs_Id = 0;
+   HLTTrigger_objs_trigger = 0;
    L1TriggerName = 0;
    L1TriggerDecision = 0;
    L1ErrorCode = 0;
@@ -1183,7 +1202,9 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Electron_cov", &Electron_cov, &b_Electron_cov);
    fChain->SetBranchAddress("Electron_Track_dR", &Electron_Track_dR, &b_Electron_Track_dR);
    fChain->SetBranchAddress("Electron_Rho_kt6PFJets", &Electron_Rho_kt6PFJets, &b_Electron_Rho_kt6PFJets);
-   fChain->SetBranchAddress("Electron_MVA_discriminator", &Electron_MVA_discriminator, &b_Electron_MVA_discriminator);
+   fChain->SetBranchAddress("Electron_MVA_Trig_discriminator", &Electron_MVA_Trig_discriminator, &b_Electron_MVA_Trig_discriminator);
+   fChain->SetBranchAddress("Electron_MVA_TrigNoIP_discriminator", &Electron_MVA_TrigNoIP_discriminator, &b_Electron_MVA_TrigNoIP_discriminator);
+   fChain->SetBranchAddress("Electron_MVA_NonTrig_discriminator", &Electron_MVA_NonTrig_discriminator, &b_Electron_MVA_NonTrig_discriminator);
    fChain->SetBranchAddress("PFTau_p4", &PFTau_p4, &b_PFTau_p4);
    fChain->SetBranchAddress("PFTau_Poca", &PFTau_Poca, &b_PFTau_Poca);
    fChain->SetBranchAddress("PFTau_isTightIsolation", &PFTau_isTightIsolation, &b_PFTau_isTightIsolation);
@@ -1319,6 +1340,8 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PileupInfo_NumInteractions_n0", &PileupInfo_NumInteractions_n0, &b_PileupInfo_NumInteractions_n0);
    fChain->SetBranchAddress("PileupInfo_NumInteractions_np1", &PileupInfo_NumInteractions_np1, &b_PileupInfo_NumInteractions_np1);
    fChain->SetBranchAddress("EvtWeight3D", &EvtWeight3D, &b_EvtWeight3D);
+   fChain->SetBranchAddress("EvtWeight3D_p5", &EvtWeight3D_p5, &b_EvtWeight3D_p5);
+   fChain->SetBranchAddress("EvtWeight3D_m5", &EvtWeight3D_m5, &b_EvtWeight3D_m5);
    fChain->SetBranchAddress("TauSpinnerWeight", &TauSpinnerWeight, &b_TauSpinnerWeight);
    fChain->SetBranchAddress("SelEffWeight", &SelEffWeight, &b_SelEffWeight);
    fChain->SetBranchAddress("RadiationCorrWeight", &RadiationCorrWeight, &b_RadiationCorrWeight);
@@ -1374,6 +1397,9 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("HLTTrigger_objs_Pt", &HLTTrigger_objs_Pt, &b_HLTTrigger_objs_Pt);
    fChain->SetBranchAddress("HLTTrigger_objs_Eta", &HLTTrigger_objs_Eta, &b_HLTTrigger_objs_Eta);
    fChain->SetBranchAddress("HLTTrigger_objs_Phi", &HLTTrigger_objs_Phi, &b_HLTTrigger_objs_Phi);
+   fChain->SetBranchAddress("HLTTrigger_objs_E", &HLTTrigger_objs_E, &b_HLTTrigger_objs_E);
+   fChain->SetBranchAddress("HLTTrigger_objs_Id", &HLTTrigger_objs_Id, &b_HLTTrigger_objs_Id);
+   fChain->SetBranchAddress("HLTTrigger_objs_trigger", &HLTTrigger_objs_trigger, &b_HLTTrigger_objs_trigger);
    fChain->SetBranchAddress("L1TriggerName", &L1TriggerName, &b_L1TriggerName);
    fChain->SetBranchAddress("L1TriggerDecision", &L1TriggerDecision, &b_L1TriggerDecision);
    fChain->SetBranchAddress("L1ErrorCode", &L1ErrorCode, &b_L1ErrorCode);

@@ -16,17 +16,16 @@ class ZtoEMu_Skim : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     qualitycuts,
-	     SameVtx,
 	     NMuPt,
 	     NMuEta,
 		 NMu,
 	     NEPt,
 	     NEEta,
 		 NE,
-		 drMuE,
+		 //diMuonVeto,
+		 //triLeptonVeto,
+		 //looseMuonVeto,
 		 charge,
-		 MtMu,
 	     NCuts};
 
  protected:
@@ -35,6 +34,24 @@ class ZtoEMu_Skim : public Selection {
 
  private:
   // Selection Variables
+  
+  std::vector<TH1D> NPV;
+  std::vector<TH1D> mupt;
+  std::vector<TH1D> mueta;
+  std::vector<TH1D> ept;
+  std::vector<TH1D> eeta;
+
+  std::vector<TH1D> muptw;
+  std::vector<TH1D> muetaw;
+  std::vector<TH1D> eptw;
+  std::vector<TH1D> eetaw;
+
+  std::vector<TH1D> goodmuons;
+  std::vector<TH1D> fakemuons;
+  std::vector<TH1D> goodelectrons;
+  std::vector<TH1D> fakeelectrons;
+  std::vector<TH1D> discrgr20;
+  std::vector<TH1D> discrsm20;
 
   double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;
@@ -43,6 +60,7 @@ class ZtoEMu_Skim : public Selection {
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
+  bool isGoodVtx(unsigned int i);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -52,6 +70,7 @@ class ZtoEMu_Skim : public Selection {
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
+  bool isMVALooseElectron(unsigned int i);
   bool isMVAElectron(unsigned int i);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
@@ -65,6 +84,14 @@ class ZtoEMu_Skim : public Selection {
   double ElectronSF(unsigned int i);
   double ElectronDataSF(unsigned int i);
   double ElectronEffRecHit(unsigned int i);
+  double MuonIDeff(unsigned int i);
+  double MuonIDerr(unsigned int i);
+  double MuonTriggerEff(unsigned int i);
+  double MuonTriggerErr(unsigned int i);
+  double ElectronIDeff(unsigned int i);
+  double ElectronIDerr(unsigned int i);
+  double ElectronTriggerEff(unsigned int i);
+  double ElectronTriggerErr(unsigned int i);
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   

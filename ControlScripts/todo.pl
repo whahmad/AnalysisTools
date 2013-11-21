@@ -516,6 +516,7 @@ if( $ARGV[0] eq "--DCache" ){
 			system(sprintf("echo \"output       = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).o  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"error        = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).e  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 			
+			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }
 		    ($a,$b,$c)=split('/',$file);
@@ -525,7 +526,7 @@ if( $ARGV[0] eq "--DCache" ){
 		    }
 		    if($b =~ m/root/){
                         $myfile=$b;
-			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Conder_Set_$B"));
+			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
                     }
 		    if($c =~ m/root/){
                         $myfile=$c;
