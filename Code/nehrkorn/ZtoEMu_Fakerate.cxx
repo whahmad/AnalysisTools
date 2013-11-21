@@ -200,7 +200,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 	  if(Ntp->Muons_p4(i).Pt()>=mu_pt &&
 			  fabs(Ntp->Muons_p4(i).Eta())<mu_eta &&
 			  vertex>=0 &&
-			  Ntp->TriggerAccept("HLT_QuadJet80_v") &&
+			  (Ntp->TriggerAccept("HLT_Mu8_v") || Ntp->TriggerAccept("HLT_QuadJet80_v")) &&
 			  isFakeMuon(i,vertex) &&
 			  isTightMuon(i,vertex) &&
 			  dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(vertex))<0.02 &&
@@ -225,16 +225,16 @@ void  ZtoEMu_Fakerate::doEvent(){
 	  if(Ntp->Electron_p4(i).Et()>=e_pt &&
 			  fabs(Ntp->Electron_supercluster_eta(i))<e_eta &&
 			  vertex>=0 &&
-			  Ntp->TriggerAccept("HLT_QuadJet80_v") &&
+			  (Ntp->TriggerAccept("HLT_QuadJet80_v") || Ntp->TriggerAccept("HLT_Ele8_CaloIdT_TrkIdVL_v") || Ntp->TriggerAccept("HLT_Ele8_CaloIdL_CaloIsoVL_v")) &&
 			  !Ntp->Electron_HasMatchedConversions(i) &&
 			  Ntp->Electron_numberOfMissedHits(i)==0 &&
 			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02 &&
 			  Ntp->isData()
 			  ){
-		  if(isFakeElectron(i,vertex) && isMVATrigNoIPElectron(i)){
+		  if(isFakeElectron(i,vertex) && isMVANonTrigElectron(i,vertex)){
 			  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
-		  }else if(isFakeElectron(i,vertex) && !isMVATrigNoIPElectron(i)){
+		  }else if(isFakeElectron(i,vertex) && !isMVANonTrigElectron(i,vertex)){
 			  fakee.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
 		  }
 	  }
@@ -276,7 +276,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
 			  ){
-		  if(isMVATrigNoIPElectron(i)){
+		  if(isMVANonTrigElectron(i,vertex)){
 			  SingleElectrons.push_back(i);
 		  }
 	  }
@@ -323,6 +323,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  }
 		  }
 	  }
+	  std::cout << "number of probe electrons: " << ProbeElectrons.size() << std::endl;
 	  // pick probe electron with highest pt
 	  float probeept = 10.;
 	  unsigned int probee = 999;
@@ -401,6 +402,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  }
 		  }
 	  }
+	  std::cout << "number of probe muons: " << ProbeMuons.size() << std::endl;
 	  // pick probe muon with highest pt
 	  float probemupt = 10.;
 	  unsigned int probemu = 999;
@@ -476,13 +478,15 @@ double ZtoEMu_Fakerate::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vt
 }
 
 double ZtoEMu_Fakerate::vertexSignificance(TVector3 vec, unsigned int vertex){
-	TVectorF diff;
-	if(vertex<Ntp->NVtx()){
-		float elements[3] = {(vec.X()-Ntp->Vtx(vertex).X()),(vec.Y()-Ntp->Vtx(vertex).Y()),(vec.Z()-Ntp->Vtx(vertex).Z())};
-		diff = TVectorF(3,elements);
-		TVectorF v2 = diff;
-		v2*=Ntp->Vtx_Cov(vertex);
-		return diff.Norm2Sqr()/sqrt(diff*v2);
+	if(vertex<Ntp->NVtx() && vertex>=0){
+		const float elm[3] = {(vec.X()-Ntp->Vtx(vertex).X()),(vec.Y()-Ntp->Vtx(vertex).Y()),(vec.Z()-Ntp->Vtx(vertex).Z())};
+		TVectorF diff(3,elm);
+		TMatrixF M(Ntp->Vtx_Cov(vertex));
+		if(M.IsValid()){
+			double mag = diff.Norm2Sqr();
+			double sim = M.Similarity(diff);
+			return mag/sqrt(sim);
+		}
 	}
 	return 999;
 }
@@ -492,7 +496,7 @@ int ZtoEMu_Fakerate::getxbin(double pt){
 	else if(pt>=15. && pt<20.) return 2;
 	else if(pt>=20. && pt<25.) return 3;
 	else if(pt>=25. && pt<30.) return 4;
-	else if(pt>=30.) return 5;
+	else if(pt>=30. && pt<35.) return 5;
 	else return 0;
 }
 

@@ -548,9 +548,9 @@ void  ZtoEMu_Skim::doEvent(){
 			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02){
 		  if(Ntp->Electron_p4(i).Pt()>10 && Ntp->Electron_p4(i).Pt()<20){
-			  discrsm20.at(t).Fill(Ntp->Electron_MVA_discriminator(i));
+			  discrsm20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
 		  }else if(Ntp->Electron_p4(i).Pt()>=20){
-			  discrgr20.at(t).Fill(Ntp->Electron_MVA_discriminator(i));
+			  discrgr20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
 		  }
 	  }
   }
@@ -592,7 +592,7 @@ double ZtoEMu_Skim::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return fabs(poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2));
 }
 
-double ZtoEMu_Fakerate::vertexSignificance(TVector3 vec, unsigned int vertex){
+double ZtoEMu_Skim::vertexSignificance(TVector3 vec, unsigned int vertex){
 	TVectorF diff;
 	if(vertex<Ntp->NVtx()){
 		float elements[3] = {(vec.X()-Ntp->Vtx(vertex).X()),(vec.Y()-Ntp->Vtx(vertex).Y()),(vec.Z()-Ntp->Vtx(vertex).Z())};
@@ -689,7 +689,7 @@ double ZtoEMu_Skim::Muon_AbsIso(unsigned int i){
 // Electron related functions
 //
 
-bool ZtoEMu_Fakerate::isMVATrigNoIPElectron(unsigned int i){
+bool ZtoEMu_Skim::isMVATrigNoIPElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(mvapt<20){
@@ -704,7 +704,7 @@ bool ZtoEMu_Fakerate::isMVATrigNoIPElectron(unsigned int i){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isMVANonTrigElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Skim::isMVANonTrigElectron(unsigned int i, unsigned int j){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)<=1
@@ -723,7 +723,7 @@ bool ZtoEMu_Fakerate::isMVANonTrigElectron(unsigned int i, unsigned int j){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isMVATrigElectron(unsigned int i){
+bool ZtoEMu_Skim::isMVATrigElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)==0
@@ -742,7 +742,7 @@ bool ZtoEMu_Fakerate::isMVATrigElectron(unsigned int i){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isTightElectron(unsigned int i){
+bool ZtoEMu_Skim::isTightElectron(unsigned int i){
 	if(verbose)std::cout << "isTightElectron(unsigned int i)" << std::endl;
 	if(fabs(Ntp->Electron_supercluster_eta(i))<=1.479){ //barrel
 		if(Ntp->Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(i)<0.004 &&
@@ -775,7 +775,7 @@ bool ZtoEMu_Fakerate::isTightElectron(unsigned int i){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isTightElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Skim::isTightElectron(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()){
 		return false;
 	}
@@ -788,7 +788,7 @@ bool ZtoEMu_Fakerate::isTightElectron(unsigned int i, unsigned int j){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isFakeElectron(unsigned int i){
+bool ZtoEMu_Skim::isFakeElectron(unsigned int i){
 	if(fabs(Ntp->Electron_supercluster_eta(i))<=1.479){
 		if(Ntp->Electron_p4(i).Pt()>10 &&
 				!Ntp->Electron_HasMatchedConversions(i) &&
@@ -813,7 +813,7 @@ bool ZtoEMu_Fakerate::isFakeElectron(unsigned int i){
 	return false;
 }
 
-bool ZtoEMu_Fakerate::isFakeElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Skim::isFakeElectron(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()){
 		return false;
 	}
@@ -826,11 +826,11 @@ bool ZtoEMu_Fakerate::isFakeElectron(unsigned int i, unsigned int j){
 	return false;
 }
 
-double ZtoEMu_Fakerate::Electron_RelIso(unsigned int i){
+double ZtoEMu_Skim::Electron_RelIso(unsigned int i){
 	return (Ntp->Electron_chargedHadronIso(i)+std::max((double)0.,Ntp->Electron_neutralHadronIso(i)+Ntp->Electron_photonIso(i)-Ntp->RhoIsolationAllInputTags()*Electron_Aeff_R04(Ntp->Electron_supercluster_eta(i))))/Ntp->Electron_p4(i).Pt();
 }
 
-double ZtoEMu_Fakerate::Electron_Aeff_R04(double Eta){
+double ZtoEMu_Skim::Electron_Aeff_R04(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.208;
 	else if(eta>=1. && eta<1.479) return 0.209;
@@ -841,7 +841,7 @@ double ZtoEMu_Fakerate::Electron_Aeff_R04(double Eta){
 	else if(eta>=2.4) return 0.261;
 }
 
-double ZtoEMu_Fakerate::Electron_Aeff_R03(double Eta){
+double ZtoEMu_Skim::Electron_Aeff_R03(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.130;
 	else if(eta>=1. && eta<1.479) return 0.137;
