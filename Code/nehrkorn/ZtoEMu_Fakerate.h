@@ -48,6 +48,10 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH2D> eleg_numerator;
   std::vector<TH2D> eleg_denominator;
 
+  std::vector<TH1D> sip;
+  std::vector<TH1D> nmu;
+  std::vector<TH1D> ne;
+
   double mu_pt,mu_eta,e_pt,e_eta;
   int n_mu,n_e;
   
