@@ -182,7 +182,8 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     
     # PUJetID (https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetID)
-    #system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    
     # MVA MET including PUJetID (https://twiki.cern.ch/twiki/bin/viewauth/CMS/MVAMet,
     # tag given on https://twiki.cern.ch/twiki/bin/view/CMS/HiggsToTauTauWorkingSummer2013#MET_regression_MVA_residual_reco is METPU_5_3_X_v9
     # copy setup.sh script in here with slight modifications to make it work)
@@ -192,13 +193,13 @@ if( $ARGV[0] eq "--TauNtuple"){
     # the following line is not part of the instructions, but the Dec2012 files are used in the config
     ###system(sprintf("echo \"cp  -d pharrisTmp/*Dec2012*.root  JetMETCorrections/METPUSubtraction/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     ###system(sprintf("echo \"rm -rf pharrisTmp \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -r METPU_5_3_X_v4 RecoJets/JetProducers \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py        \" >> Install_TauNtuple_$CMSSWRel-$time"));              
-	system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDParams_cfi.py         \" >> Install_TauNtuple_$CMSSWRel-$time"));             
-	system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetID_cfi.py              \" >> Install_TauNtuple_$CMSSWRel-$time"));        
+    ###system(sprintf("echo \"cvs co -r METPU_5_3_X_v4 RecoJets/JetProducers \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py        \" >> Install_TauNtuple_$CMSSWRel-$time"));              
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDParams_cfi.py         \" >> Install_TauNtuple_$CMSSWRel-$time"));             
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetID_cfi.py              \" >> Install_TauNtuple_$CMSSWRel-$time"));        
 	###system(sprintf("echo \"cvs co -r b5_3_X_cvMEtCorr_2013Feb22            DataFormats/METReco \" >> Install_TauNtuple_$CMSSWRel-$time"));
-	system(sprintf("echo \"cvs co -r V05-00-16  DataFormats/JetReco \" >> Install_TauNtuple_$CMSSWRel-$time"));
+	###system(sprintf("echo \"cvs co -r V05-00-16  DataFormats/JetReco \" >> Install_TauNtuple_$CMSSWRel-$time"));
 	###system(sprintf("echo \"cvs co -r V03-04-07  RecoMET/METAlgorithms \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
 	# Ntuple code
