@@ -38,15 +38,36 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH2D> eeff;
 
   // trigger eff
-  std::vector<TH1D> mudr;
-  std::vector<TH1D> mupt;
-  std::vector<TH1D> edr;
-  std::vector<TH1D> ept;
-  
   std::vector<TH2D> muleg_numerator;
+  std::vector<TH2D> muleg_numerator_rebin;
   std::vector<TH2D> muleg_denominator;
+  std::vector<TH2D> muleg_denominator_rebin;
   std::vector<TH2D> eleg_numerator;
+  std::vector<TH2D> eleg_numerator_rebin;
   std::vector<TH2D> eleg_denominator;
+  std::vector<TH2D> eleg_denominator_rebin;
+  std::vector<TH2D> muleg_eff;
+  std::vector<TH2D> eleg_eff;
+
+  //control plots
+  std::vector<TH1D> tagmupt;
+  std::vector<TH1D> tagmueta;
+  std::vector<TH1D> tagept;
+  std::vector<TH1D> tageeta;
+  std::vector<TH1D> probemupt;
+  std::vector<TH1D> probemueta;
+  std::vector<TH1D> probeept;
+  std::vector<TH1D> probeeeta;
+  std::vector<TH1D> drtagmuprobee;
+  std::vector<TH1D> drtageprobemu;
+  std::vector<TH1D> ptbaltagmuprobee;
+  std::vector<TH1D> ptbaltageprobemu;
+  std::vector<TH1D> mttagmu;
+  std::vector<TH1D> mttage;
+  std::vector<TH1D> mtprobemu;
+  std::vector<TH1D> mtprobee;
+  std::vector<TH1D> mtagmuprobee;
+  std::vector<TH1D> mtageprobemu;
 
   std::vector<TH1D> sip;
   std::vector<TH1D> nmu;
@@ -62,6 +83,11 @@ class ZtoEMu_Fakerate : public Selection {
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
   
+  void triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator,
+		  TH1D &tagmupt, TH1D &tagmueta, TH1D &tagept, TH1D & tageeta, TH1D &probemupt, TH1D &probemueta, TH1D &probeept, TH1D &probeeeta,
+		  TH1D &drtagmuprobee, TH1D &drtageprobemu, TH1D &ptbaltagmuprobee, TH1D &ptbaltageprobemu, TH1D &mttagmu, TH1D &mttage, TH1D &mtprobemu, TH1D &mtprobee, TH1D &mtagmuprobee, TH1D &mtageprobemu, double w);
+  void triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator, double w);
+
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
   bool isLooseMuon(unsigned int i);

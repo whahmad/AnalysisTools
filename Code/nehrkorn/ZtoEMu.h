@@ -5,6 +5,7 @@
 #include <vector>
 #include "TString.h"
 #include "TF1.h"
+#include "TGraphAsymmErrors.h"
 
 class ZtoEMu : public Selection {
 
@@ -23,6 +24,7 @@ class ZtoEMu : public Selection {
 	     NEPt,
 	     NEEta,
 		 NE,
+		 ptthreshold,
 		 diMuonVeto,
 		 triLeptonVeto,
 		 looseMuonVeto,
@@ -32,8 +34,6 @@ class ZtoEMu : public Selection {
 	     ptBalance,
 	     ZMassmax,
 	     ZMassmin,
-	     Phimin,
-	     Phimax,
 	     NCuts};
 
  protected:
@@ -112,7 +112,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> jetsumcustom;
   std::vector<TH1D> jetsummc;
 
-  double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,phimin,phimax,mtmu,ptbalance,dRmue;
+  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance,dRmue;
   int n_mu,n_e;
   double pex,pey,pmux,pmuy,phie,phimu;
   double combpt;
@@ -131,6 +131,8 @@ class ZtoEMu : public Selection {
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
+  bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
+  int findBin(TGraphAsymmErrors* graph, double xval);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -152,15 +154,17 @@ class ZtoEMu : public Selection {
   double Electron_Aeff_R04(double Eta);
   double Electron_Aeff_R03(double Eta);
   
-  double MuonDataSF(unsigned int i);
-  double ElectronDataSF(unsigned int i);
-  double ElectronEffRecHit(unsigned int i);
   double MuonIDeff(unsigned int i);
-  double MuonIDerr(unsigned int i);
+  double MuonIDerrUp(unsigned int i);
+  double MuonIDerrDown(unsigned int i);
   double MuonTriggerEff(unsigned int i);
   double MuonTriggerErr(unsigned int i);
-  double ElectronIDeff(unsigned int i);
-  double ElectronIDerr(unsigned int i);
+  double ElectronIDeff(unsigned int i, std::string id);
+  double ElectronIDerr(unsigned int i, std::string id);
+  double ElectronTrigIDeff(unsigned int i);
+  double ElectronTrigIDerr(unsigned int i);
+  double ElectronNonTrigIDeff(unsigned int i);
+  double ElectronNonTrigIDerr(unsigned int i);
   double ElectronTriggerEff(unsigned int i);
   double ElectronTriggerErr(unsigned int i);
   
@@ -181,6 +185,22 @@ class ZtoEMu : public Selection {
   double fakeRateMu;
   double fakeRateE;
   
+  TFile* MuIdEffFile;
+  TFile* MuIsoEffFile;
+  TFile* ETrigIdEffFile;
+  TFile* ENonTrigIdEffFile;
+
+  TH2D* ElectronTrigEff;
+  TH2D* ElectronNonTrigEff;
+  TGraphAsymmErrors* MuIdEff09;
+  TGraphAsymmErrors* MuIdEff12;
+  TGraphAsymmErrors* MuIdEff21;
+  TGraphAsymmErrors* MuIdEff24;
+  TGraphAsymmErrors* MuIsoEff09;
+  TGraphAsymmErrors* MuIsoEff12;
+  TGraphAsymmErrors* MuIsoEff21;
+  TGraphAsymmErrors* MuIsoEff24;
+
   TF1* gause;
   TF1* gausmu;
   TH1D* eres;

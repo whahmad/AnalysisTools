@@ -15,8 +15,10 @@
 
 ZtoEMu_Skim::ZtoEMu_Skim(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,mu_pt(10)
-  ,e_pt(10)
+  ,mu_ptlow(10)
+  ,mu_pthigh(20)
+  ,e_ptlow(10)
+  ,e_pthigh(20)
   ,mu_eta(2.4)
   ,e_eta(2.5)
   ,jet_pt(18)
@@ -59,6 +61,7 @@ void  ZtoEMu_Skim::Configure(){
     if(i==NE)                 cut.at(NE)=1;
     if(i==NEPt)               cut.at(NEPt)=1;
     if(i==NEEta)              cut.at(NEEta)=1;
+    if(i==ptthreshold)        cut.at(ptthreshold)=1;
     if(i==charge)             cut.at(charge)=0;
   }
 
@@ -115,7 +118,7 @@ void  ZtoEMu_Skim::Configure(){
     }
     else if(i==NMuPt){
       title.at(i)="Number of $\\mu$ [$P_{T}^{\\mu}>$";
-      title.at(i)+=mu_pt;
+      title.at(i)+=mu_ptlow;
       title.at(i)+="(GeV)] $>=$";
       title.at(i)+=cut.at(NMuPt);
       htitle=title.at(i);
@@ -130,7 +133,7 @@ void  ZtoEMu_Skim::Configure(){
     }
     else if(i==NEPt){
       title.at(i)="Number of $e$ [$P_{T}^{e}>$";
-      title.at(i)+=e_pt;
+      title.at(i)+=e_ptlow;
       title.at(i)+="(GeV)] $>=$";
       title.at(i)+=cut.at(NEPt);
       htitle=title.at(i);
@@ -176,6 +179,12 @@ void  ZtoEMu_Skim::Configure(){
       distindx.at(i)=true;
       Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NEEta_","#eta{e} (N-1 Distribution)",100,-7,7,"#eta_{e} (GeV)","Events");
       Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NEEta_","#eta_{e} (Accumulative Distribution)",100,-7,7,"#eta_{e} (GeV)","Events");
+    }
+    else if(i==ptthreshold){
+        title.at(i)="ptthreshold ";
+        hlabel="ptthreshold ";
+        Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_ptthreshold_",htitle,17,-0.5,16.5,hlabel,"Events"));
+        Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_ptthreshold_",htitle,17,-0.5,16.5,hlabel,"Events"));
     }
     else if(i==charge){
       title.at(i)="$e-\\mu$ Charge = ";
@@ -243,15 +252,6 @@ void  ZtoEMu_Skim::doEvent(){
   int id(Ntp->GetMCID());
   if(verbose)std::cout << "id: " << id << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" << std::endl; return;}
-  
-	/*double embedd_weight = 1.;
-	if(id==34){
-		embedd_weight = Ntp->EmbeddedWeight();
-		if(Ntp->EmbeddedWeight()!=Ntp->TauSpinnerWeight()*Ntp->SelEffWeight()*Ntp->RadiationCorrWeight()*Ntp->MinVisPtFilter()*Ntp->KinWeightPt()*Ntp->KinWeightEta()*Ntp->KinWeightMassPt()){
-			std::cout << "Product = " << Ntp->TauSpinnerWeight()*Ntp->SelEffWeight()*Ntp->RadiationCorrWeight()*Ntp->MinVisPtFilter()*Ntp->KinWeightPt()*Ntp->KinWeightEta()*Ntp->KinWeightMassPt() << std::endl;
-			std::cout << "Embedded weight = " << embedd_weight << std::endl;
-		}
-	}*/
 
   value.at(TriggerOk)=0;
   /*std::cout << "Number of HLT Triggers:" << Ntp->NHLTTriggers() << std::endl;
@@ -261,27 +261,8 @@ void  ZtoEMu_Skim::doEvent(){
 	  std::cout << "Acceptet (1) or not (0): " << Ntp->TriggerAccept(Ntp->HTLTriggerName(i)) << std::endl;
 	  std::cout << "######################################" << std::endl;
   }*/
-  //if(Ntp->TriggerAccept("HLT_IsoMu24_eta2p1"))value.at(TriggerOk)=1;
-  if(Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
-		  && !Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
-		  ){
+  if(Ntp->TriggerAccept("HLT_Mu17_Ele8_") || Ntp->TriggerAccept("HLT_Mu8_Ele17_")){
 	  value.at(TriggerOk)=1;
-	  mu_pt = 18;
-	  e_pt = 9;
-  }
-  if(Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
-		  && !Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
-		  ){
-	  value.at(TriggerOk)=1;
-	  mu_pt = 9;
-	  e_pt = 18;
-  }
-  if(Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloId")
-		  && Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloId")
-		  ){
-	  value.at(TriggerOk)=1;
-	  mu_pt = 18;
-	  e_pt = 18;
   }
   pass.at(TriggerOk)=(value.at(TriggerOk)==cut.at(TriggerOk));
 
@@ -315,8 +296,9 @@ void  ZtoEMu_Skim::doEvent(){
   
   // muon ID cuts (including eta-dependent isolation)
   for(unsigned i=0;i<Ntp->NMuons();i++){
-	  if(Ntp->Muons_p4(i).Pt()>mu_pt &&
+	  if(Ntp->Muons_p4(i).Pt()>mu_ptlow &&
 			  fabs(Ntp->Muons_p4(i).Eta())<mu_eta &&
+			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17_","muon") || matchTrigger(i,0.5,"HLT_Mu17_Ele8_","muon")) &&
 			  vertex>=0
 			  ){
 		  if(isTightMuon(i,vertex)){
@@ -339,7 +321,7 @@ void  ZtoEMu_Skim::doEvent(){
   // muon pt cut
   for(unsigned i=0;i<GoodMuons.size();i++){
     dist.at(NMuPt).push_back(Ntp->Muons_p4(GoodMuons.at(i)).Pt());
-    if(Ntp->Muons_p4(GoodMuons.at(i)).Pt()<mu_pt){
+    if(Ntp->Muons_p4(GoodMuons.at(i)).Pt()<mu_ptlow){
       GoodMuons.erase(GoodMuons.begin()+i);
       i--;
     }
@@ -386,17 +368,15 @@ void  ZtoEMu_Skim::doEvent(){
   
   // electron ID cuts (eta-dependent MVA or simple cut-based)
   for(unsigned i=0;i<Ntp->NElectrons();i++){
-	  if(Ntp->Electron_p4(i).Et()>e_pt &&
+	  if(Ntp->Electron_p4(i).Et()>e_ptlow &&
 			  fabs(Ntp->Electron_supercluster_eta(i)<e_eta) &&
 			  muidx!=999 &&
+			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17_","electron") || matchTrigger(i,0.5,"HLT_Mu17_Ele8_","electron")) &&
 			  vertex>=0 &&
 			  Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(muidx))>0.2
 			  ){
 		  if(MVA_ID){
-			  if(isMVATrigNoIPElectron(i) &&
-					  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.1 &&
-					  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
-					  ){
+			  if(isMVANonTrigElectron(i,vertex)){
 				  GoodElectrons.push_back(i);
 			  }else if(isFakeElectron(i,vertex) &&
 					  Ntp->isData()
@@ -414,7 +394,7 @@ void  ZtoEMu_Skim::doEvent(){
   // electron pt cut
   for(unsigned i=0;i<GoodElectrons.size();i++){
     dist.at(NEPt).push_back(Ntp->Electron_p4(GoodElectrons.at(i)).Pt());
-    if(Ntp->Electron_p4(GoodElectrons.at(i)).Et()<e_pt){
+    if(Ntp->Electron_p4(GoodElectrons.at(i)).Et()<e_ptlow){
       GoodElectrons.erase(GoodElectrons.begin()+i);
       i--;
     }
@@ -450,12 +430,30 @@ void  ZtoEMu_Skim::doEvent(){
   
   ///////////////////////////////////////////////
   //
+  // pt thresholds
+  //
+  if(verbose) std::cout << "Setting pt thresholds" << std::endl;
+  value.at(ptthreshold)=0;
+  if(muidx!=999 && eidx!=999){
+	  value.at(ptthreshold)=1;
+	  if(Ntp->Muons_p4(muidx).Pt()<=mu_ptlow || Ntp->Electron_p4(eidx).Pt()<=e_ptlow) value.at(ptthreshold)=0;
+	  if(Ntp->Muons_p4(muidx).Pt()<mu_pthigh && Ntp->Electron_p4(eidx).Pt()<e_pthigh) value.at(ptthreshold)=0;
+	  if(Ntp->Muons_p4(muidx).Pt()<mu_pthigh){
+		  if(!Ntp->TriggerAccept("HLT_Mu8_Ele17_")) value.at(ptthreshold)=0;
+	  }else if(Ntp->Electron_p4(eidx).Pt()<e_pthigh){
+		  if(!Ntp->TriggerAccept("HLT_Mu17_Ele8_")) value.at(ptthreshold)=0;
+	  }
+  }
+  pass.at(ptthreshold)=(value.at(ptthreshold)==cut.at(ptthreshold));
+
+  ///////////////////////////////////////////////
+  //
   // charge cut
   //
   if(verbose) std::cout << "Charge cut" << std::endl;
   value.at(charge)=-5;
   if(eidx!=999 && muidx!=999){
-	  value.at(charge)=Ntp->Electron_Charge(GoodElectrons.at(0))+Ntp->Muon_Charge(GoodMuons.at(0));
+	  value.at(charge)=Ntp->Electron_Charge(eidx)+Ntp->Muon_Charge(muidx);
   }
   pass.at(charge)=(value.at(charge)==cut.at(charge));
   
@@ -514,18 +512,8 @@ void  ZtoEMu_Skim::doEvent(){
   if(!Ntp->isData() && Ntp->GetMCID()!=34){
     w*=Ntp->EvtWeight3D();
     ww*=Ntp->EvtWeight3D();
-    if(pass.at(NE)){
-		ww*=ElectronIDeff(eidx)*ElectronTriggerEff(eidx);
-	}
-	if(pass.at(NMu)){
-		ww*=MuonIDeff(muidx)*MuonTriggerEff(muidx);
-	}
     if(verbose)std::cout << "void  ZtoEMu_Skim::doEvent() k" << w << " " << wobs << std::endl;
-  }/*else if(Ntp->GetMCID()==34){
-		w*=embedd_weight;
-		if(pass.at(NE))w*=ElectronEffRecHit(GoodElectrons.at(0));
-		if(pass.at(NMu))w*=MuonDataSF(GoodMuons.at(0));
-  }*/
+  }
   else{w=1*fakeRate;wobs=1;}
   if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs);
@@ -557,9 +545,9 @@ void  ZtoEMu_Skim::doEvent(){
 			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
 			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02){
 		  if(Ntp->Electron_p4(i).Pt()>10 && Ntp->Electron_p4(i).Pt()<20){
-			  discrsm20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
+			  discrsm20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
 		  }else if(Ntp->Electron_p4(i).Pt()>=20){
-			  discrgr20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
+			  discrgr20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
 		  }
 	  }
   }
@@ -610,6 +598,38 @@ double ZtoEMu_Skim::vertexSignificance(TVector3 vec, unsigned int vertex){
 		}
 	}
 	return 999;
+}
+
+bool ZtoEMu_Skim::matchTrigger(unsigned int i, double dr, std::string trigger, std::string object){
+	unsigned int id = 0;
+	bool flag = false;
+	TLorentzVector particle(0.,0.,0.,0.);
+	TLorentzVector triggerObj(0.,0.,0.,0.);
+	if(object=="electron"){
+		id = 82;
+		particle = Ntp->Electron_p4(i);
+	}
+	if(object=="muon"){
+		id = 83;
+		particle = Ntp->Muons_p4(i);
+	}
+	for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
+		if(Ntp->HLTTrigger_objs_trigger(i).find(trigger) != string::npos){
+			for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
+				if(Ntp->HLTTrigger_objs_Id(i,j)==id){
+					triggerObj.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+							Ntp->HLTTrigger_objs_Eta(i,j),
+							Ntp->HLTTrigger_objs_Phi(i,j),
+							Ntp->HLTTrigger_objs_E(i,j));
+					flag = true;
+				}
+				if(flag) break;
+			}
+		}
+		if(flag) break;
+	}
+	if(triggerObj!=(TLorentzVector)(0.,0.,0.,0.) && particle.DeltaR(triggerObj)<dr) return true;
+	return false;
 }
 
 //////////////////////////////
@@ -838,752 +858,6 @@ double ZtoEMu_Skim::Electron_Aeff_R03(double Eta){
 
 //////////////////////////////
 //
-// Trigger & ID efficiencies
-//
-
-double ZtoEMu_Skim::MuonSF(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9829*0.9771;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9745*0.9746;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9943*0.9644;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9158*0.9891;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9850*0.9548;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9852*0.9701;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9743*0.9766;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9333*0.9892;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9951*0.9648;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9610*0.9836;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9716*0.9820;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9459*0.9909;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9869*0.9676;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9779*0.9817;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9665*0.9886;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9501*0.9883;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9959*0.9883;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9881*0.9833;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9932*0.9910;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9391*0.9900;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9986*0.9826;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9540*0.9841;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9549*0.9900;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9386*0.9886;
-		}
-	}
-}
-
-double ZtoEMu_Skim::MuonDataSF(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9701*0.5981;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9419*0.6578;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9303*0.6738;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.8623*0.6246;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9720*0.6740;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9305*0.7309;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9267*0.7416;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.8995*0.6954;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9764*0.7533;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9439*0.7915;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9366*0.7997;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9134*0.7567;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9725*0.8141;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9405*0.8364;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9218*0.8462;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.8824*0.8051;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9785*0.8606;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9342*0.8680;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9184*0.8745;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.8990*0.8399;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9679*0.9255;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9310*0.9249;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9092*0.9291;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9016*0.9025;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronSF(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9548*0.7654;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9015*0.7693;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9017*0.5719;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9830*0.8394;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9672*0.8457;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9463*0.7024;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9707*0.8772;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9731*0.8530;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9691*0.7631;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9768*0.9006;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9870*0.8874;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9727*0.8092;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 1.0047*0.9261;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9891*0.9199;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9858*0.8469;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 1.0063*0.9514;
-		}else if(eta>=0.8 && eta<1.5){
-			return 1.0047*0.9445;
-		}else if(eta>=1.5 && eta<2.3){
-			return 1.0015*0.9078;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronDataSF(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.7270*0.3436;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.7380*0.3481;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.6899*0.1104;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.8752*0.5196;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9059*0.5235;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.8635*0.2431;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9142*0.6442;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9484*0.5535;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9356*0.2888;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9368*0.7191;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9630*0.6472;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9466*0.3746;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9499*0.7819;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9642*0.7224;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9735*0.4527;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9689*0.8650;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9809*0.8201;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9802*0.6015;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronEffRecHit(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = Ntp->Electron_supercluster_eta(i);
-	
-	if(pt>199.99)pt=199.9;
-	eta=fabs(eta);
-	if(eta>2.49)eta=2.49;
-	if(pt<10)return 0;
-	
-	Float_t eff=0;
-	Int_t bin = EmbEff->FindFixBin(pt,eta);
-	eff = EmbEff->GetBinContent(bin);
-	
-	return eff;
-}
-
-//////////////////////////////
-//
-// Trigger & ID efficiencies
-//
-
-double ZtoEMu_Skim::MuonIDeff(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9771;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9746;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9644;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9891;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9548;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9701;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9766;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9892;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9648;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9836;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9820;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9909;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9676;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9817;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9886;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9883;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9883;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9833;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9910;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9900;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9826;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9841;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9900;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9886;
-		}
-	}
-}
-
-double ZtoEMu_Skim::MuonIDerr(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.0107;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0091;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0078;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0080;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.0046;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0049;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0049;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0049;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.0023;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0030;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0029;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0030;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.0012;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0018;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0018;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0019;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.0008;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0012;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0013;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0016;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.0005;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0004;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0003;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0004;
-		}
-	}
-}
-
-double ZtoEMu_Skim::MuonTriggerEff(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9829;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9745;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9943;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9158;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9850;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9852;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9743;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9333;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9951;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9610;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9716;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9459;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9869;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9779;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9665;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9501;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9959;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9881;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9932;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9391;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9986;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.9540;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.9549;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.9386;
-		}
-	}
-}
-
-double ZtoEMu_Skim::MuonTriggerErr(unsigned int i){
-	double pt = Ntp->Muons_p4(i).Pt();
-	double eta = fabs(Ntp->Muons_p4(i).Eta());
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.0058;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0124;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0164;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0176;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.0056;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0171;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0179;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0162;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.0060;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0116;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0141;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0159;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.0074;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0187;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0184;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0251;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.0085;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0227;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0271;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0307;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.0087;
-		}else if(eta>=0.8 && eta<1.2){
-			return 0.0165;
-		}else if(eta>=1.2 && eta<1.6){
-			return 0.0211;
-		}else if(eta>=1.6 && eta<2.1){
-			return 0.0209;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronIDeff(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.7654;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.7693;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.5719;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.8394;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.8457;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.7024;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.8772;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.8530;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.7631;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9006;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.8874;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.8092;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.9261;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9199;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.8469;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.9514;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9445;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9078;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronIDerr(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.0149;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0164;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0131;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.0045;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0061;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0075;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.0023;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0039;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0061;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.0018;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0017;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0024;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.0007;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0010;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0027;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.0002;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0003;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0007;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronTriggerEff(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.9548;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9015;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9017;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.9830;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9672;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9463;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.9707;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9731;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9691;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.9768;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9870;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9727;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 1.0047;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.9891;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.9858;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 1.0063;
-		}else if(eta>=0.8 && eta<1.5){
-			return 1.0047;
-		}else if(eta>=1.5 && eta<2.3){
-			return 1.0015;
-		}
-	}
-}
-
-double ZtoEMu_Skim::ElectronTriggerErr(unsigned int i){
-	double pt = Ntp->Electron_p4(i).Pt();
-	double eta = fabs(Ntp->Electron_supercluster_eta(i));
-	if(pt>10 && pt<=15){
-		if(eta>=0 && eta<0.8){
-			return 0.0197;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0205;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0470;
-		}
-	}else if(pt>15 && pt<=20){
-		if(eta>=0 && eta<0.8){
-			return 0.0115;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0113;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0212;
-		}
-	}else if(pt>20 && pt<=25){
-		if(eta>=0 && eta<0.8){
-			return 0.0087;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0083;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0149;
-		}
-	}else if(pt>25 && pt<=30){
-		if(eta>=0 && eta<0.8){
-			return 0.0084;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0083;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0162;
-		}
-	}else if(pt>30 && pt<=35){
-		if(eta>=0 && eta<0.8){
-			return 0.0100;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0111;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0112;
-		}
-	}else if(pt>35){
-		if(eta>=0 && eta<0.8){
-			return 0.0078;
-		}else if(eta>=0.8 && eta<1.5){
-			return 0.0073;
-		}else if(eta>=1.5 && eta<2.3){
-			return 0.0135;
-		}
-	}
-}
-
-//////////////////////////////
-//
 // Calculate fakerate
 //
 
@@ -1625,7 +899,7 @@ double ZtoEMu_Skim::Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string
 		fakerate = fakeRateHist->GetBinContent(ptbin,etabin);
 	}
 	
-	return fakerate;
+	return fakerate/(1-fakerate);
 }
 
 //////////////////////////////

@@ -79,26 +79,48 @@ void  ZtoEMu_Fakerate::Configure(){
   // Setup NPassed Histogams
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
   // Setup Extra Histograms
-  tightmu=HConfig.GetTH2D(Name+"_tightmu","tightmu",100,0.,100.,100,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  tightmu_rebin=HConfig.GetTH2D(Name+"_tightmu_rebin","tightmu_rebin",5,10.,35.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  tighte=HConfig.GetTH2D(Name+"_tighte","tighte",100,0.,100.,100,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  tighte_rebin=HConfig.GetTH2D(Name+"_tighte_rebin","tighte_rebin",5,10.,35.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  fakemu=HConfig.GetTH2D(Name+"_fakemu","fakemu",100,0.,100.,100,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  fakemu_rebin=HConfig.GetTH2D(Name+"_fakemu_rebin","fakemu_rebin",5,10.,35.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  fakee=HConfig.GetTH2D(Name+"_fakee","fakee",100,0.,100.,100,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  fakee_rebin=HConfig.GetTH2D(Name+"_fakee_rebin","fakee_rebin",5,10.,35.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  mueff=HConfig.GetTH2D(Name+"_mueff","mueff",5,10.,35.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eeff=HConfig.GetTH2D(Name+"_eeff","eeff",5,10.,35.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  tightmu=HConfig.GetTH2D(Name+"_tightmu","tightmu",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  tightmu_rebin=HConfig.GetTH2D(Name+"_tightmu_rebin","tightmu_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  tighte=HConfig.GetTH2D(Name+"_tighte","tighte",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  tighte_rebin=HConfig.GetTH2D(Name+"_tighte_rebin","tighte_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  fakemu=HConfig.GetTH2D(Name+"_fakemu","fakemu",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  fakemu_rebin=HConfig.GetTH2D(Name+"_fakemu_rebin","fakemu_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  fakee=HConfig.GetTH2D(Name+"_fakee","fakee",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  fakee_rebin=HConfig.GetTH2D(Name+"_fakee_rebin","fakee_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  mueff=HConfig.GetTH2D(Name+"_mueff","mueff",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eeff=HConfig.GetTH2D(Name+"_eeff","eeff",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
 
-  mudr=HConfig.GetTH1D(Name+"_mudr","mudr",100,0.,0.5,"#DeltaR(#mu_{trig},#mu_{reco})");
-  mupt=HConfig.GetTH1D(Name+"_mupt","mupt",100,0.,5.,"|p_{T}^{#mu,trig}-p_{T}^{#mu,reco}|");
-  edr=HConfig.GetTH1D(Name+"_edr","edr",100,0.,0.5,"#DeltaR(e_{trig},e_{reco})");
-  ept=HConfig.GetTH1D(Name+"_ept","ept",100,0.,5.,"|p_{T}^{e,trig}-p_{T}^{e,reco}|");
+  muleg_numerator=HConfig.GetTH2D(Name+"_muleg_numerator","muleg_numerator",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  muleg_denominator=HConfig.GetTH2D(Name+"_muleg_denominator","muleg_denominator",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_numerator=HConfig.GetTH2D(Name+"_eleg_numerator","eleg_numerator",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  eleg_denominator=HConfig.GetTH2D(Name+"_eleg_denominator","eleg_denominator",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
 
-  muleg_numerator=HConfig.GetTH2D(Name+"_muleg_numerator","muleg_numerator",100,0.,100.,100,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  muleg_denominator=HConfig.GetTH2D(Name+"_muleg_denominator","muleg_denominator",100,0.,100.,100,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eleg_numerator=HConfig.GetTH2D(Name+"_eleg_numerator","eleg_numerator",100,0.,100.,100,-2.4,2.4,"p_{T}^{e} / GeV","#eta_{e}");
-  eleg_denominator=HConfig.GetTH2D(Name+"_eleg_denominator","eleg_denominator",100,0.,100.,100,-2.4,2.4,"p_{T}^{e} / GeV","#eta_{e}");
+  muleg_numerator_rebin=HConfig.GetTH2D(Name+"_muleg_numerator_rebin","muleg_numerator_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  muleg_denominator_rebin=HConfig.GetTH2D(Name+"_muleg_denominator_rebin","muleg_denominator_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_numerator_rebin=HConfig.GetTH2D(Name+"_eleg_numerator_rebin","eleg_numerator_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  eleg_denominator_rebin=HConfig.GetTH2D(Name+"_eleg_denominator_rebin","eleg_denominator_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+
+  muleg_eff=HConfig.GetTH2D(Name+"_muleg_eff","muleg_eff",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_eff=HConfig.GetTH2D(Name+"_eleg_eff","eleg_eff",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+
+  tagmupt=HConfig.GetTH1D(Name+"_tagmupt","tagmupt",40,0.,100.,"p_{T}^{#mu} / GeV");
+  tagmueta=HConfig.GetTH1D(Name+"_tagmueta","tagmueta",25,-2.5,2.5,"#eta_{#mu}");
+  tagept=HConfig.GetTH1D(Name+"_tagept","tagept",40,0.,100.,"p_{T}^{e} / GeV");
+  tageeta=HConfig.GetTH1D(Name+"_tageeta","tageeta",25,-2.5,2.5,"#eta_{e}");
+  probemupt=HConfig.GetTH1D(Name+"_probemupt","probemupt",40,0.,100.,"p_{T}^{#mu} / GeV");
+  probemueta=HConfig.GetTH1D(Name+"_probemueta","probemueta",25,-2.5,2.5,"#eta_{#mu}");
+  probeept=HConfig.GetTH1D(Name+"_probeept","probeept",40,0.,100.,"p_{T}^{e} / GeV");
+  probeeeta=HConfig.GetTH1D(Name+"_probeeeta","probeeeta",25,-2.5,2.5,"#eta_{e}");
+  drtagmuprobee=HConfig.GetTH1D(Name+"_drtagmuprobee","drtagmuprobee",20,0.,1.,"#DeltaR(e,#mu)");
+  drtageprobemu=HConfig.GetTH1D(Name+"_drtageprobemu","drtageprobemu",20,0.,1.,"#DeltaR(e,#mu)");
+  ptbaltagmuprobee=HConfig.GetTH1D(Name+"_ptbaltagmuprobee","ptbaltagmuprobee",40,0.,200.,"p_{T}^{e#mu} / GeV");
+  ptbaltageprobemu=HConfig.GetTH1D(Name+"_ptbaltageprobemu","ptbaltageprobemu",40,0.,200.,"p_{T}^{e#mu} / GeV");
+  mttagmu=HConfig.GetTH1D(Name+"_mttagmu","mttagmu",40,0.,160.,"m_{t}^{#mu} / GeV");
+  mttage=HConfig.GetTH1D(Name+"_mttage","mttage",40,0.,160.,"m_{t}^{e} / GeV");
+  mtprobemu=HConfig.GetTH1D(Name+"_mtprobemu","mtprobemu",40,0.,160.,"m_{t}^{#mu} / GeV");
+  mtprobee=HConfig.GetTH1D(Name+"_mtprobee","mtprobee",40,0.,160.,"m_{t}^{e} / GeV");
+  mtagmuprobee=HConfig.GetTH1D(Name+"_mtagmuprobee","mtagmuprobee",30,30.,90.,"m_{e,#mu} / GeV");
+  mtageprobemu=HConfig.GetTH1D(Name+"_mtageprobemu","mtageprobemu",30,30.,90.,"m_{e,#mu} / GeV");
 
   sip=HConfig.GetTH1D(Name+"_sip","sip",10,0,10,"sip");
   nmu=HConfig.GetTH1D(Name+"_nmu","nmu",10,0,10,"nmu");
@@ -125,15 +147,37 @@ void  ZtoEMu_Fakerate::Store_ExtraDist(){
 	Extradist2d.push_back(&mueff);
 	Extradist2d.push_back(&eeff);
 
-	Extradist1d.push_back(&mudr);
-	Extradist1d.push_back(&mupt);
-	Extradist1d.push_back(&edr);
-	Extradist1d.push_back(&ept);
-
 	Extradist2d.push_back(&muleg_numerator);
 	Extradist2d.push_back(&muleg_denominator);
 	Extradist2d.push_back(&eleg_numerator);
 	Extradist2d.push_back(&eleg_denominator);
+
+	Extradist2d.push_back(&muleg_numerator_rebin);
+	Extradist2d.push_back(&muleg_denominator_rebin);
+	Extradist2d.push_back(&eleg_numerator_rebin);
+	Extradist2d.push_back(&eleg_denominator_rebin);
+
+	Extradist2d.push_back(&muleg_eff);
+	Extradist2d.push_back(&eleg_eff);
+
+	Extradist1d.push_back(&tagmupt);
+	Extradist1d.push_back(&tagmueta);
+	Extradist1d.push_back(&tagept);
+	Extradist1d.push_back(&tageeta);
+	Extradist1d.push_back(&probemupt);
+	Extradist1d.push_back(&probemueta);
+	Extradist1d.push_back(&probeept);
+	Extradist1d.push_back(&probeeeta);
+	Extradist1d.push_back(&drtagmuprobee);
+	Extradist1d.push_back(&drtageprobemu);
+	Extradist1d.push_back(&ptbaltagmuprobee);
+	Extradist1d.push_back(&ptbaltageprobemu);
+	Extradist1d.push_back(&mttagmu);
+	Extradist1d.push_back(&mttage);
+	Extradist1d.push_back(&mtprobemu);
+	Extradist1d.push_back(&mtprobee);
+	Extradist1d.push_back(&mtagmuprobee);
+	Extradist1d.push_back(&mtageprobemu);
 
 	Extradist1d.push_back(&sip);
 	Extradist1d.push_back(&nmu);
@@ -214,11 +258,14 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  ){
 		  if(isFakeMuon(i,vertex)){
 			  fakemu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+			  fakemu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
 			  if(isTightMuon(i,vertex)){
 				  if(fabs(Ntp->Muons_p4(i).Eta())<1.479 && Muon_RelIso(i)<0.15){
 					  tightmu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+					  tightmu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
 				  }else if(fabs(Ntp->Muons_p4(i).Eta())>=1.479 && Muon_RelIso(i)<0.1){
 					  tightmu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+					  tightmu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
 				  }
 			  }
 		  }
@@ -235,11 +282,13 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  ){
 		  if(isFakeElectron(i,vertex)){
 			  fakee.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+			  fakee_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
 			  if(isMVANonTrigElectron(i,vertex) &&
 					  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.1 &&
 					  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
 					  ){
 				  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+				  tighte_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
 			  }
 		  }
 	  }
@@ -285,163 +334,15 @@ void  ZtoEMu_Fakerate::doEvent(){
   nmu.at(t).Fill(SingleMuons.size(),w);
   ne.at(t).Fill(SingleElectrons.size(),w);
 
-  TLorentzVector nullvec(0.,0.,0.,0.);
-  // match muons to trigger muon for electron leg measurement
-  if(verbose) std::cout << "examining electron leg" << std::endl;
-  if(Ntp->TriggerAccept("HLT_Mu17_v")){
-	  // find muon that triggered
-	  unsigned int tagmu = 999;
-	  float testdr = 0.5;
-	  float testpt = 5.;
-	  TLorentzVector testmu(0.,0.,0.,0.);
-	  for(unsigned i=0;i<SingleMuons.size();i++){
-		  for(unsigned j=0;j<Ntp->NHLTTrigger_objs();j++){
-			  if(Ntp->HLTTrigger_objs_trigger(j).find("HLT_Mu17_v") != string::npos){
-				  for(unsigned k=0;k<Ntp->NHLTTrigger_objs(j);k++){
-					  if(Ntp->HLTTrigger_objs_Id(j,k)==83){
-						  testmu.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
-								  Ntp->HLTTrigger_objs_Eta(j,k),
-								  Ntp->HLTTrigger_objs_Phi(j,k),
-								  Ntp->HLTTrigger_objs_E(j,k));
-						  mudr.at(t).Fill(testmu.DeltaR(Ntp->Muons_p4(SingleMuons.at(i))),w);
-						  mupt.at(t).Fill(fabs(testmu.Pt()-Ntp->Muons_p4(SingleMuons.at(i)).Pt()),w);
-						  if(testmu!=nullvec &&
-								  testmu.DeltaR(Ntp->Muons_p4(SingleMuons.at(i)))<testdr
-								  && fabs(testmu.Pt()-Ntp->Muons_p4(SingleMuons.at(i)).Pt())<testpt
-								  ){
-							  tagmu=SingleMuons.at(i);
-						  }
-					  }
-				  }
-				  break;
-			  }
-		  }
-	  }
-	  // create collection of probe electrons
-	  if(tagmu!=999){
-		  for(unsigned i=0;i<SingleElectrons.size();i++){
-			  if(Ntp->Electron_Charge(SingleElectrons.at(i))*Ntp->Muon_Charge(tagmu)<0. &&
-					  (Ntp->Electron_p4(SingleElectrons.at(i))+Ntp->Muons_p4(tagmu)).M()>30. &&
-					  (Ntp->Electron_p4(SingleElectrons.at(i))+Ntp->Muons_p4(tagmu)).M()<90.
-					  ){
-				  ProbeElectrons.push_back(SingleElectrons.at(i));
-			  }
-		  }
-	  }
-	  // pick probe electron with highest pt
-	  float probeept = 10.;
-	  unsigned int probee = 999;
-	  for(unsigned i=0;i<ProbeElectrons.size();i++){
-		  if(Ntp->Electron_p4(ProbeElectrons.at(i)).Pt()>probeept){
-			  probeept = Ntp->Electron_p4(ProbeElectrons.at(i)).Pt();
-			  probee = ProbeElectrons.at(i);
-		  }
-	  }
-	  // match probe electron to trigger electron of cross trigger
-	  if(probee!=999){
-		  TLorentzVector teste(0.,0.,0.,0.);
-		  for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
-			  if(Ntp->HLTTrigger_objs_trigger(i).find("HLT_Mu17_Ele8_") != string::npos){
-				  for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
-					  if(Ntp->HLTTrigger_objs_Id(i,j)==82){
-						  teste.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
-								  Ntp->HLTTrigger_objs_Eta(i,j),
-								  Ntp->HLTTrigger_objs_Phi(i,j),
-								  Ntp->HLTTrigger_objs_E(i,j));
-					  }
-				  }
-				  break;
-			  }
-		  }
-		  // plot numerator and denominator
-		  eleg_denominator.at(t).Fill(Ntp->Electron_p4(probee).Pt(),Ntp->Electron_supercluster_eta(probee),w);
-		  if(teste!=nullvec &&
-				  teste.DeltaR(Ntp->Electron_p4(probee))<testdr &&
-				  fabs(teste.Pt()-Ntp->Electron_p4(probee).Pt())<testpt
-				  ){
-			  eleg_numerator.at(t).Fill(Ntp->Electron_p4(probee).Pt(),Ntp->Electron_supercluster_eta(probee),w);
-		  }
-	  }
-  }
-
-
-  // match electrons to trigger electron for muon leg measurement
-  if(verbose) std::cout << "examining muon leg" << std::endl;
-  if(Ntp->TriggerAccept("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")){
-	  // find electron that triggered
-	  unsigned int tage = 999;
-	  float testdr = 0.5;
-	  float testpt = 5.;
-	  TLorentzVector teste(0.,0.,0.,0.);
-	  for(unsigned i=0;i<SingleElectrons.size();i++){
-		  for(unsigned j=0;j<Ntp->NHLTTrigger_objs();j++){
-			  if(Ntp->HLTTrigger_objs_trigger(j).find("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v") != string::npos){
-				  for(unsigned k=0;k<Ntp->NHLTTrigger_objs(j);k++){
-					  if(Ntp->HLTTrigger_objs_Id(j,k)==82){
-						  teste.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
-								  Ntp->HLTTrigger_objs_Eta(j,k),
-								  Ntp->HLTTrigger_objs_Phi(j,k),
-								  Ntp->HLTTrigger_objs_E(j,k));
-						  edr.at(t).Fill(teste.DeltaR(Ntp->Electron_p4(SingleElectrons.at(i))),w);
-						  ept.at(t).Fill(fabs(teste.Pt()-Ntp->Electron_p4(SingleElectrons.at(i)).Pt()),w);
-						  if(teste!=nullvec &&
-								  teste.DeltaR(Ntp->Electron_p4(SingleElectrons.at(i)))<testdr
-								  && fabs(teste.Pt()-Ntp->Electron_p4(SingleElectrons.at(i)).Pt())<testpt
-								  ){
-							  tage=SingleElectrons.at(i);
-						  }
-					  }
-				  }
-				  break;
-			  }
-		  }
-	  }
-	  // create collection of probe muons
-	  if(tage!=999){
-		  for(unsigned i=0;i<SingleMuons.size();i++){
-			  if(Ntp->Muon_Charge(SingleMuons.at(i))*Ntp->Electron_Charge(tage)<0. &&
-					  (Ntp->Muons_p4(SingleMuons.at(i))+Ntp->Electron_p4(tage)).M()>30. &&
-					  (Ntp->Muons_p4(SingleMuons.at(i))+Ntp->Electron_p4(tage)).M()<90.
-					  ){
-				  ProbeMuons.push_back(SingleMuons.at(i));
-			  }
-		  }
-	  }
-	  // pick probe muon with highest pt
-	  float probemupt = 10.;
-	  unsigned int probemu = 999;
-	  for(unsigned i=0;i<ProbeMuons.size();i++){
-		  if(Ntp->Muons_p4(ProbeMuons.at(i)).Pt()>probemupt){
-			  probemupt = Ntp->Muons_p4(ProbeMuons.at(i)).Pt();
-			  probemu = ProbeMuons.at(i);
-		  }
-	  }
-	  // match probe muon to trigger muon of cross trigger
-	  if(probemu!=999){
-		  TLorentzVector testmu(0.,0.,0.,0.);
-		  for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
-			  if(Ntp->HLTTrigger_objs_trigger(i).find("HLT_Mu8_Ele17_") != string::npos){
-				  for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
-					  if(Ntp->HLTTrigger_objs_Id(i,j)==83){
-						  testmu.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
-								  Ntp->HLTTrigger_objs_Eta(i,j),
-								  Ntp->HLTTrigger_objs_Phi(i,j),
-								  Ntp->HLTTrigger_objs_E(i,j));
-					  }
-				  }
-				  break;
-			  }
-		  }
-		  // plot numerator and denominator
-		  muleg_denominator.at(t).Fill(Ntp->Muons_p4(probemu).Pt(),Ntp->Muons_p4(probemu).Eta(),w);
-		  if(testmu!=nullvec &&
-				  testmu.DeltaR(Ntp->Muons_p4(probemu))<testdr &&
-				  fabs(testmu.Pt()-Ntp->Muons_p4(probemu).Pt())<testpt
-				  ){
-			  muleg_numerator.at(t).Fill(Ntp->Muons_p4(probemu).Pt(),Ntp->Muons_p4(probemu).Eta(),w);
-		  }
-	  }
-  }
+  triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu17_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
+		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
+  triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu17_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
+  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_eta2p1_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
+		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
+  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_eta2p1_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
+  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Mu8_Ele17_","electron",muleg_denominator.at(t),muleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
+		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
+  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Mu8_Ele17_","electron",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),w);
 
   if(verbose)std::cout << "ZtoEMu_Fakerate::doEvent() doEvent END" << std::endl;
 }
@@ -530,8 +431,298 @@ int ZtoEMu_Fakerate::getybin(double eta,std::string object){
 			else if(eta>=2.) return 8;
 		}
 	}
-	else{
-		return 0;
+	return 0;
+}
+
+void ZtoEMu_Fakerate::triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator, double w){
+	unsigned int finalprobe = 999;
+	TLorentzVector nullvec(0.,0.,0.,0.);
+	std::vector<unsigned int> Probe;
+	bool flag;
+	// match tag-particle to trigger for probe leg measurement
+	if(Ntp->TriggerAccept(tagtrigger)){
+	  flag = false;
+	  // find muon that triggered
+	  unsigned int tag = 999;
+	  float testdr = 0.5;
+	  TLorentzVector testtag(0.,0.,0.,0.);
+	  for(unsigned i=0;i<tags.size();i++){
+		  for(unsigned j=0;j<Ntp->NHLTTrigger_objs();j++){
+			  if(Ntp->HLTTrigger_objs_trigger(j).find(tagtrigger) != string::npos){
+				  for(unsigned k=0;k<Ntp->NHLTTrigger_objs(j);k++){
+					  if(tagname=="muon"){
+						  if(Ntp->HLTTrigger_objs_Id(j,k)==83){
+							  testtag.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
+								  Ntp->HLTTrigger_objs_Eta(j,k),
+								  Ntp->HLTTrigger_objs_Phi(j,k),
+								  Ntp->HLTTrigger_objs_E(j,k));
+							  if(testtag!=nullvec &&
+									  testtag.DeltaR(Ntp->Muons_p4(tags.at(i)))<testdr
+									  ){
+								  tag = tags.at(i);
+								  flag = true;
+							  }
+						  }
+					  }
+					  if(tagname=="electron"){
+						  if(Ntp->HLTTrigger_objs_Id(j,k)==82){
+							  testtag.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
+								  Ntp->HLTTrigger_objs_Eta(j,k),
+								  Ntp->HLTTrigger_objs_Phi(j,k),
+								  Ntp->HLTTrigger_objs_E(j,k));
+							  if(testtag!=nullvec &&
+									  testtag.DeltaR(Ntp->Electron_p4(tags.at(i)))<testdr
+									  ){
+								  tag = tags.at(i);
+								  flag = true;
+							  }
+						  }
+					  }
+					  if(flag) break;
+				  }
+			  }
+			  if(flag) break;
+		  }
+	  }
+	  // create collection of probes
+	  if(tag!=999){
+		  if(tagname=="muon"){
+			  for(unsigned i=0;i<probes.size();i++){
+				  if(Ntp->Electron_Charge(probes.at(i))+Ntp->Muon_Charge(tag)==0 &&
+						  (Ntp->Electron_p4(probes.at(i))+Ntp->Muons_p4(tag)).M()>30. &&
+						  (Ntp->Electron_p4(probes.at(i))+Ntp->Muons_p4(tag)).M()<90.
+						  ){
+							  Probe.push_back(probes.at(i));
+						  }
+			  }
+		  }
+		  if(tagname=="electron"){
+			  for(unsigned i=0;i<probes.size();i++){
+				  if(Ntp->Muon_Charge(probes.at(i))+Ntp->Electron_Charge(tag)==0 &&
+						  (Ntp->Muons_p4(probes.at(i))+Ntp->Electron_p4(tag)).M()>30. &&
+						  (Ntp->Muons_p4(probes.at(i))+Ntp->Electron_p4(tag)).M()<90.
+						  ){
+					  Probe.push_back(probes.at(i));
+				  }
+			  }
+		  }
+	  }
+	  // pick probe electron with highest pt
+	  float probept = 8.;
+	  unsigned int probe = 999;
+	  for(unsigned i=0;i<Probe.size();i++){
+		  if(tagname=="muon"){
+			  if(Ntp->Electron_p4(Probe.at(i)).Pt()>probept){
+				  probept = Ntp->Electron_p4(Probe.at(i)).Pt();
+				  probe = Probe.at(i);
+			  }
+		  }
+		  if(tagname=="electron"){
+			  if(Ntp->Muons_p4(Probe.at(i)).Pt()>probept){
+				  probept = Ntp->Muons_p4(Probe.at(i)).Pt();
+				  probe = Probe.at(i);
+			  }
+		  }
+	  }
+	  // match probe particle to trigger of probe trigger
+	  if(probe!=999){
+		  TLorentzVector testprobe(0.,0.,0.,0.);
+		  flag = false;
+		  for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
+			  if(Ntp->HLTTrigger_objs_trigger(i).find(probetrigger) != string::npos){
+				  for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
+					  if(tagname=="muon"){
+						  if(Ntp->HLTTrigger_objs_Id(i,j)==82){
+							  testprobe.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+									  Ntp->HLTTrigger_objs_Eta(i,j),
+									  Ntp->HLTTrigger_objs_Phi(i,j),
+									  Ntp->HLTTrigger_objs_E(i,j));
+							  flag = true;
+						  }
+					  }
+					  if(tagname=="electron"){
+						  if(Ntp->HLTTrigger_objs_Id(i,j)==83){
+							  testprobe.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+									  Ntp->HLTTrigger_objs_Eta(i,j),
+									  Ntp->HLTTrigger_objs_Phi(i,j),
+									  Ntp->HLTTrigger_objs_E(i,j));
+							  flag = true;
+						  }
+					  }
+					  if(flag) break;
+				  }
+			  }
+			  if(flag) break;
+		  }
+		  if(tagname=="muon"){
+			  denominator.Fill(Ntp->Electron_p4(probe).Pt(),Ntp->Electron_supercluster_eta(probe),w);
+			  if(testprobe!=nullvec && testprobe.DeltaR(Ntp->Electron_p4(probe))<testdr){
+				  numerator.Fill(Ntp->Electron_p4(probe).Pt(),Ntp->Electron_supercluster_eta(probe),w);
+			  }
+		  }
+		  if(tagname=="electron"){
+			  denominator.Fill(Ntp->Muons_p4(probe).Pt(),Ntp->Muons_p4(probe).Eta(),w);
+			  if(testprobe!=nullvec && testprobe.DeltaR(Ntp->Muons_p4(probe))<testdr){
+				  numerator.Fill(Ntp->Muons_p4(probe).Pt(),Ntp->Muons_p4(probe).Eta(),w);
+			  }
+		  }
+	  }
+	}
+}
+
+void ZtoEMu_Fakerate::triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator,
+		  TH1D &tagmupt, TH1D &tagmueta, TH1D &tagept, TH1D & tageeta, TH1D &probemupt, TH1D &probemueta, TH1D &probeept, TH1D &probeeeta,
+		  TH1D &drtagmuprobee, TH1D &drtageprobemu, TH1D &ptbaltagmuprobee, TH1D &ptbaltageprobemu, TH1D &mttagmu, TH1D &mttage, TH1D &mtprobemu, TH1D &mtprobee, TH1D &mtagmuprobee, TH1D &mtageprobemu, double w){
+	unsigned int finalprobe = 999;
+	TLorentzVector nullvec(0.,0.,0.,0.);
+	std::vector<unsigned int> Probe;
+	bool flag;
+	// match tag-particle to trigger for probe leg measurement
+	if(Ntp->TriggerAccept(tagtrigger)){
+	  flag = false;
+	  // find muon that triggered
+	  unsigned int tag = 999;
+	  float testdr = 0.5;
+	  TLorentzVector testtag(0.,0.,0.,0.);
+	  for(unsigned i=0;i<tags.size();i++){
+		  for(unsigned j=0;j<Ntp->NHLTTrigger_objs();j++){
+			  if(Ntp->HLTTrigger_objs_trigger(j).find(tagtrigger) != string::npos){
+				  for(unsigned k=0;k<Ntp->NHLTTrigger_objs(j);k++){
+					  if(tagname=="muon"){
+						  if(Ntp->HLTTrigger_objs_Id(j,k)==83){
+							  testtag.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
+								  Ntp->HLTTrigger_objs_Eta(j,k),
+								  Ntp->HLTTrigger_objs_Phi(j,k),
+								  Ntp->HLTTrigger_objs_E(j,k));
+							  if(testtag!=nullvec &&
+									  testtag.DeltaR(Ntp->Muons_p4(tags.at(i)))<testdr
+									  ){
+								  tag = tags.at(i);
+								  flag = true;
+								  tagmupt.Fill(Ntp->Muons_p4(tag).Pt(),w);
+								  tagmueta.Fill(Ntp->Muons_p4(tag).Eta(),w);
+								  mttagmu.Fill(sqrt(2*Ntp->Muons_p4(tag).Pt()*Ntp->MET_Corr_et()*(1-cosphi2d(Ntp->Muons_p4(tag).Px(),Ntp->Muons_p4(tag).Py(),Ntp->MET_Corr_ex(),Ntp->MET_Corr_ey()))),w);
+							  }
+						  }
+					  }
+					  if(tagname=="electron"){
+						  if(Ntp->HLTTrigger_objs_Id(j,k)==82){
+							  testtag.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(j,k),
+								  Ntp->HLTTrigger_objs_Eta(j,k),
+								  Ntp->HLTTrigger_objs_Phi(j,k),
+								  Ntp->HLTTrigger_objs_E(j,k));
+							  if(testtag!=nullvec &&
+									  testtag.DeltaR(Ntp->Electron_p4(tags.at(i)))<testdr
+									  ){
+								  tag = tags.at(i);
+								  flag = true;
+								  tagept.Fill(Ntp->Electron_p4(tag).Pt(),w);
+								  tageeta.Fill(Ntp->Electron_supercluster_eta(tag),w);
+								  mttage.Fill(sqrt(2*Ntp->Electron_p4(tag).Pt()*Ntp->MET_Corr_et()*(1-cosphi2d(Ntp->Electron_p4(tag).Px(),Ntp->Electron_p4(tag).Py(),Ntp->MET_Corr_ex(),Ntp->MET_Corr_ey()))),w);
+							  }
+						  }
+					  }
+					  if(flag) break;
+				  }
+			  }
+			  if(flag) break;
+		  }
+	  }
+	  // create collection of probes
+	  if(tag!=999){
+		  if(tagname=="muon"){
+			  for(unsigned i=0;i<probes.size();i++){
+				  if(Ntp->Electron_Charge(probes.at(i))+Ntp->Muon_Charge(tag)==0 &&
+						  (Ntp->Electron_p4(probes.at(i))+Ntp->Muons_p4(tag)).M()>30. &&
+						  (Ntp->Electron_p4(probes.at(i))+Ntp->Muons_p4(tag)).M()<90.
+						  ){
+							  Probe.push_back(probes.at(i));
+						  }
+			  }
+		  }
+		  if(tagname=="electron"){
+			  for(unsigned i=0;i<probes.size();i++){
+				  if(Ntp->Muon_Charge(probes.at(i))+Ntp->Electron_Charge(tag)==0 &&
+						  (Ntp->Muons_p4(probes.at(i))+Ntp->Electron_p4(tag)).M()>30. &&
+						  (Ntp->Muons_p4(probes.at(i))+Ntp->Electron_p4(tag)).M()<90.
+						  ){
+					  Probe.push_back(probes.at(i));
+				  }
+			  }
+		  }
+	  }
+	  // pick probe electron with highest pt
+	  float probept = 8.;
+	  unsigned int probe = 999;
+	  for(unsigned i=0;i<Probe.size();i++){
+		  if(tagname=="muon"){
+			  if(Ntp->Electron_p4(Probe.at(i)).Pt()>probept){
+				  probept = Ntp->Electron_p4(Probe.at(i)).Pt();
+				  probe = Probe.at(i);
+			  }
+		  }
+		  if(tagname=="electron"){
+			  if(Ntp->Muons_p4(Probe.at(i)).Pt()>probept){
+				  probept = Ntp->Muons_p4(Probe.at(i)).Pt();
+				  probe = Probe.at(i);
+			  }
+		  }
+	  }
+	  // match probe particle to trigger of probe trigger
+	  if(probe!=999){
+		  TLorentzVector testprobe(0.,0.,0.,0.);
+		  flag = false;
+		  for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
+			  if(Ntp->HLTTrigger_objs_trigger(i).find(probetrigger) != string::npos){
+				  for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
+					  if(tagname=="muon"){
+						  if(Ntp->HLTTrigger_objs_Id(i,j)==82){
+							  testprobe.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+									  Ntp->HLTTrigger_objs_Eta(i,j),
+									  Ntp->HLTTrigger_objs_Phi(i,j),
+									  Ntp->HLTTrigger_objs_E(i,j));
+							  flag = true;
+						  }
+					  }
+					  if(tagname=="electron"){
+						  if(Ntp->HLTTrigger_objs_Id(i,j)==83){
+							  testprobe.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+									  Ntp->HLTTrigger_objs_Eta(i,j),
+									  Ntp->HLTTrigger_objs_Phi(i,j),
+									  Ntp->HLTTrigger_objs_E(i,j));
+							  flag = true;
+						  }
+					  }
+					  if(flag) break;
+				  }
+			  }
+			  if(flag) break;
+		  }
+		  if(tagname=="muon"){
+			  denominator.Fill(Ntp->Electron_p4(probe).Pt(),Ntp->Electron_supercluster_eta(probe),w);
+			  probeept.Fill(Ntp->Electron_p4(probe).Pt(),w);
+			  probeeeta.Fill(Ntp->Electron_supercluster_eta(probe),w);
+			  mtprobee.Fill(sqrt(2*Ntp->Electron_p4(probe).Pt()*Ntp->MET_Corr_et()*(1-cosphi2d(Ntp->Electron_p4(probe).Px(),Ntp->Electron_p4(probe).Py(),Ntp->MET_Corr_ex(),Ntp->MET_Corr_ey()))),w);
+			  drtagmuprobee.Fill(Ntp->Muons_p4(tag).DeltaR(Ntp->Electron_p4(probe)),w);
+			  ptbaltagmuprobee.Fill((Ntp->Muons_p4(tag)+Ntp->Electron_p4(probe)).Pt(),w);
+			  mtagmuprobee.Fill((Ntp->Muons_p4(tag)+Ntp->Electron_p4(probe)).M(),w);
+			  if(testprobe!=nullvec && testprobe.DeltaR(Ntp->Electron_p4(probe))<testdr){
+				  numerator.Fill(Ntp->Electron_p4(probe).Pt(),Ntp->Electron_supercluster_eta(probe),w);
+			  }
+		  }
+		  if(tagname=="electron"){
+			  denominator.Fill(Ntp->Muons_p4(probe).Pt(),Ntp->Muons_p4(probe).Eta(),w);
+			  probemupt.Fill(Ntp->Muons_p4(probe).Pt(),w);
+			  probemueta.Fill(Ntp->Muons_p4(probe).Eta(),w);
+			  mtprobemu.Fill(sqrt(2*Ntp->Muons_p4(probe).Pt()*Ntp->MET_Corr_et()*(1-cosphi2d(Ntp->Muons_p4(probe).Px(),Ntp->Muons_p4(probe).Py(),Ntp->MET_Corr_ex(),Ntp->MET_Corr_ey()))),w);
+			  drtageprobemu.Fill(Ntp->Electron_p4(tag).DeltaR(Ntp->Muons_p4(probe)),w);
+			  ptbaltageprobemu.Fill((Ntp->Electron_p4(tag)+Ntp->Muons_p4(probe)).Pt(),w);
+			  mtageprobemu.Fill((Ntp->Electron_p4(tag)+Ntp->Muons_p4(probe)).M(),w);
+			  if(testprobe!=nullvec && testprobe.DeltaR(Ntp->Muons_p4(probe))<testdr){
+				  numerator.Fill(Ntp->Muons_p4(probe).Pt(),Ntp->Muons_p4(probe).Eta(),w);
+			  }
+		  }
+	  }
 	}
 }
 
@@ -765,8 +956,8 @@ double ZtoEMu_Fakerate::Electron_Aeff_R03(double Eta){
 //
 
 void ZtoEMu_Fakerate::Finish(){
-	for(unsigned int i=1;i<=fakemu.at(0).GetNbinsX();i++){
-		for(unsigned int j=1;j<fakemu.at(0).GetNbinsY();j++){
+	/*for(unsigned int i=1;i<=fakemu.at(0).GetNbinsX();i++){
+		for(unsigned int j=1;j<=fakemu.at(0).GetNbinsY();j++){
 			int xbin = getxbin(fakemu.at(0).GetXaxis()->GetBinLowEdge(i));
 			int ybin = getybin(fakemu.at(0).GetYaxis()->GetBinLowEdge(j),"muon");
 			fakemu_rebin.at(0).SetBinContent(xbin,ybin,fakemu.at(0).GetBinContent(i,j)+fakemu_rebin.at(0).GetBinContent(xbin,ybin));
@@ -775,17 +966,17 @@ void ZtoEMu_Fakerate::Finish(){
 			tightmu_rebin.at(0).SetBinContent(xbin,ybin,tightmu.at(0).GetBinContent(i,j)+tightmu_rebin.at(0).GetBinContent(xbin,ybin));
 			
 			xbin = getxbin(fakee.at(0).GetXaxis()->GetBinLowEdge(i));
-			ybin = getybin(fakee.at(0).GetYaxis()->GetBinLowEdge(j),"muon");
+			ybin = getybin(fakee.at(0).GetYaxis()->GetBinLowEdge(j),"electron");
 			fakee_rebin.at(0).SetBinContent(xbin,ybin,fakee.at(0).GetBinContent(i,j)+fakee_rebin.at(0).GetBinContent(xbin,ybin));
 			xbin = getxbin(tighte.at(0).GetXaxis()->GetBinLowEdge(i));
-			ybin = getybin(tighte.at(0).GetYaxis()->GetBinLowEdge(j),"muon");
+			ybin = getybin(tighte.at(0).GetYaxis()->GetBinLowEdge(j),"electron");
 			tighte_rebin.at(0).SetBinContent(xbin,ybin,tighte.at(0).GetBinContent(i,j)+tighte_rebin.at(0).GetBinContent(xbin,ybin));
 		}
-	}
+	}*/
 	double muprob;
 	double eprob;
 	for(unsigned int i=1;i<=fakemu_rebin.at(0).GetNbinsX();i++){
-		for(unsigned int j=1;j<fakemu_rebin.at(0).GetNbinsY();j++){
+		for(unsigned int j=1;j<=fakemu_rebin.at(0).GetNbinsY();j++){
 			if(fakemu_rebin.at(0).GetBinContent(i,j)!=0){
 				muprob = tightmu_rebin.at(0).GetBinContent(i,j)/fakemu_rebin.at(0).GetBinContent(i,j);
 				mueff.at(0).SetBinContent(i,j,muprob/(1.-muprob));
@@ -800,6 +991,33 @@ void ZtoEMu_Fakerate::Finish(){
 			}
 		}
 	}
+	for(unsigned i=1;i<=muleg_numerator_rebin.at(0).GetNbinsX();i++){
+		for(unsigned j=1;j<=muleg_numerator_rebin.at(0).GetNbinsY();j++){
+			if(muleg_denominator_rebin.at(0).GetBinContent(i,j)!=0){
+				muleg_eff.at(0).SetBinContent(i,j,muleg_numerator_rebin.at(0).GetBinContent(i,j)/muleg_denominator_rebin.at(0).GetBinContent(i,j));
+			}
+			if(muleg_denominator_rebin.at(11).GetBinContent(i,j)!=0){
+				muleg_eff.at(11).SetBinContent(i,j,muleg_numerator_rebin.at(11).GetBinContent(i,j)/muleg_denominator_rebin.at(11).GetBinContent(i,j));
+			}
+			if(muleg_denominator_rebin.at(12).GetBinContent(i,j)!=0){
+				muleg_eff.at(12).SetBinContent(i,j,muleg_numerator_rebin.at(12).GetBinContent(i,j)/muleg_denominator_rebin.at(12).GetBinContent(i,j));
+			}
+		}
+	}
+	for(unsigned i=1;i<=eleg_numerator_rebin.at(0).GetNbinsX();i++){
+		for(unsigned j=1;j<=eleg_numerator_rebin.at(0).GetNbinsY();j++){
+			if(eleg_denominator_rebin.at(0).GetBinContent(i,j)!=0){
+				eleg_eff.at(0).SetBinContent(i,j,eleg_numerator_rebin.at(0).GetBinContent(i,j)/eleg_denominator_rebin.at(0).GetBinContent(i,j));
+			}
+			if(eleg_denominator_rebin.at(11).GetBinContent(i,j)!=0){
+				eleg_eff.at(11).SetBinContent(i,j,eleg_numerator_rebin.at(11).GetBinContent(i,j)/eleg_denominator_rebin.at(11).GetBinContent(i,j));
+			}
+			if(eleg_denominator_rebin.at(12).GetBinContent(i,j)!=0){
+				eleg_eff.at(12).SetBinContent(i,j,eleg_numerator_rebin.at(12).GetBinContent(i,j)/eleg_denominator_rebin.at(12).GetBinContent(i,j));
+			}
+		}
+	}
+
 	//mueff.at(0).Write();
 	//eeff.at(0).Write();
 	//outfile->Write();

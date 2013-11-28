@@ -22,6 +22,7 @@ class ZtoEMu_Skim : public Selection {
 	     NEPt,
 	     NEEta,
 		 NE,
+		 ptthreshold,
 		 charge,
 	     NCuts};
 
@@ -50,7 +51,7 @@ class ZtoEMu_Skim : public Selection {
   std::vector<TH1D> discrgr20;
   std::vector<TH1D> discrsm20;
 
-  double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
+  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;
   
   double cosphi2d(double px1, double py1, double px2, double py2);
@@ -59,6 +60,7 @@ class ZtoEMu_Skim : public Selection {
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
+  bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -78,20 +80,6 @@ class ZtoEMu_Skim : public Selection {
   double Electron_RelIso(unsigned int i);
   double Electron_Aeff_R04(double Eta);
   double Electron_Aeff_R03(double Eta);
-  
-  double MuonSF(unsigned int i);
-  double MuonDataSF(unsigned int i);
-  double ElectronSF(unsigned int i);
-  double ElectronDataSF(unsigned int i);
-  double ElectronEffRecHit(unsigned int i);
-  double MuonIDeff(unsigned int i);
-  double MuonIDerr(unsigned int i);
-  double MuonTriggerEff(unsigned int i);
-  double MuonTriggerErr(unsigned int i);
-  double ElectronIDeff(unsigned int i);
-  double ElectronIDerr(unsigned int i);
-  double ElectronTriggerEff(unsigned int i);
-  double ElectronTriggerErr(unsigned int i);
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
