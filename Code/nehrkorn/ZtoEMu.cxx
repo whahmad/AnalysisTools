@@ -552,7 +552,7 @@ void  ZtoEMu::doEvent(){
   for(unsigned i=0;i<Ntp->NMuons();i++){
 	  if(Ntp->Muons_p4(i).Pt()>mu_ptlow &&
 			  fabs(Ntp->Muons_p4(i).Eta())<mu_eta &&
-			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17","muon") || matchTrigger(i,0.5,"HLT_Mu17_Ele8","muon")) &&
+			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17_","muon") || matchTrigger(i,0.5,"HLT_Mu17_Ele8_","muon")) &&
 			  vertex>=0
 			  ){
 		  if(isTightMuon(i,vertex)){
@@ -625,15 +625,12 @@ void  ZtoEMu::doEvent(){
 	  if(Ntp->Electron_p4(i).Et()>e_ptlow &&
 			  fabs(Ntp->Electron_supercluster_eta(i)<e_eta) &&
 			  muidx!=999 &&
-			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17","electron") || matchTrigger(i,0.5,"HLT_Mu17_Ele8","electron")) &&
+			  (matchTrigger(i,0.5,"HLT_Mu8_Ele17_","electron") || matchTrigger(i,0.5,"HLT_Mu17_Ele8_","electron")) &&
 			  vertex>=0 &&
 			  Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(muidx))>0.2
 			  ){
 		  if(MVA_ID){
-			  if(isMVANonTrigElectron(i,vertex) &&
-					  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.1 &&
-					  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
-					  ){
+			  if(isMVANonTrigElectron(i,vertex)){
 				  GoodElectrons.push_back(i);
 			  }else if(isFakeElectron(i,vertex) &&
 					  Ntp->isData()

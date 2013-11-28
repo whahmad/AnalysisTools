@@ -48,8 +48,12 @@ class ZtoEMu_Skim : public Selection {
   std::vector<TH1D> fakemuons;
   std::vector<TH1D> goodelectrons;
   std::vector<TH1D> fakeelectrons;
-  std::vector<TH1D> discrgr20;
-  std::vector<TH1D> discrsm20;
+  std::vector<TH1D> nontriggr20;
+  std::vector<TH1D> nontrigsm20;
+  std::vector<TH1D> triggr20;
+  std::vector<TH1D> trigsm20;
+  std::vector<TH1D> trignoipgr20;
+  std::vector<TH1D> trignoipsm20;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;

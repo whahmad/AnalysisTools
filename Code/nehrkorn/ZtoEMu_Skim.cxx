@@ -216,8 +216,12 @@ void  ZtoEMu_Skim::Configure(){
   fakemuons=HConfig.GetTH1D(Name+"_fakemuons","fakemuons",20,0.,20.,"Number of fake muons");
   goodelectrons=HConfig.GetTH1D(Name+"_goodelectrons","goodelectrons",20,0.,20.,"Number of tight electrons");
   fakeelectrons=HConfig.GetTH1D(Name+"_fakeelectrons","fakeelectrons",20,0.,20.,"Number of fake electrons");
-  discrgr20=HConfig.GetTH1D(Name+"_discrgr20","discrgr20",100,-1.,1.,"MVA discriminator (p_{t}#geq20 GeV)");
-  discrsm20=HConfig.GetTH1D(Name+"_discrsm20","discrsm20",100,-1.,1.,"MVA discriminator (p_{t}<20 GeV)");
+  nontriggr20=HConfig.GetTH1D(Name+"_nontriggr20","nontriggr20",100,-1.,1.,"nontrig MVA discriminator (p_{t}#geq20 GeV)");
+  nontrigsm20=HConfig.GetTH1D(Name+"_nontrigsm20","nontrigsm20",100,-1.,1.,"nontrig MVA discriminator (p_{t}<20 GeV)");
+  triggr20=HConfig.GetTH1D(Name+"_triggr20","triggr20",100,-1.,1.,"trig MVA discriminator (p_{t}#geq20 GeV)");
+  trigsm20=HConfig.GetTH1D(Name+"_trigsm20","trigsm20",100,-1.,1.,"trig MVA discriminator (p_{t}<20 GeV)");
+  trignoipgr20=HConfig.GetTH1D(Name+"_trignoipgr20","trignoipgr20",100,-1.,1.,"trignoip MVA discriminator (p_{t}#geq20 GeV)");
+  trignoipsm20=HConfig.GetTH1D(Name+"_trignoipsm20","trignoipsm20",100,-1.,1.,"trignoip MVA discriminator (p_{t}<20 GeV)");
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
   for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -242,8 +246,12 @@ void  ZtoEMu_Skim::Store_ExtraDist(){
 	Extradist1d.push_back(&fakemuons);
 	Extradist1d.push_back(&goodelectrons);
 	Extradist1d.push_back(&fakeelectrons);
-	Extradist1d.push_back(&discrgr20);
-	Extradist1d.push_back(&discrsm20);
+	Extradist1d.push_back(&nontriggr20);
+	Extradist1d.push_back(&nontrigsm20);
+	Extradist1d.push_back(&triggr20);
+	Extradist1d.push_back(&trigsm20);
+	Extradist1d.push_back(&trignoipgr20);
+	Extradist1d.push_back(&trignoipsm20);
 }
 
 void  ZtoEMu_Skim::doEvent(){
@@ -539,15 +547,16 @@ void  ZtoEMu_Skim::doEvent(){
   goodelectrons.at(t).Fill(GoodElectrons.size());
   fakeelectrons.at(t).Fill(Fakeelectrons.size());
   for(unsigned i=0;i<Ntp->NElectrons();i++){
-	  if(vertex>=0 &&
-			  !Ntp->Electron_HasMatchedConversions(i) &&
-			  Ntp->Electron_numberOfMissedHits(i)==0 &&
-			  dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2 &&
-			  dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02){
+	  if(!Ntp->Electron_HasMatchedConversions(i) &&
+			  Ntp->Electron_numberOfMissedHits(i)<=1){
 		  if(Ntp->Electron_p4(i).Pt()>10 && Ntp->Electron_p4(i).Pt()<20){
-			  discrsm20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
+			  nontrigsm20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
+			  trigsm20.at(t).Fill(Ntp->Electron_MVA_Trig_discriminator(i));
+			  trignoipsm20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
 		  }else if(Ntp->Electron_p4(i).Pt()>=20){
-			  discrgr20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
+			  nontriggr20.at(t).Fill(Ntp->Electron_MVA_NonTrig_discriminator(i));
+			  triggr20.at(t).Fill(Ntp->Electron_MVA_Trig_discriminator(i));
+			  trignoipgr20.at(t).Fill(Ntp->Electron_MVA_TrigNoIP_discriminator(i));
 		  }
 	  }
   }
