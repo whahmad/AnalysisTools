@@ -214,7 +214,7 @@ int Ntuple_Controller::GetMCID(){
   return -999;
 }
 
-TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
+TMatrixF Ntuple_Controller::Vtx_Cov(unsigned int i){
   unsigned int dim=3;
   TMatrixF M(dim,dim);
   for(unsigned int j=0;j<dim;j++){
@@ -223,6 +223,7 @@ TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
       M[k][j]=Ntp->Vtx_Cov->at(i).at(j).at(k);
     }
   }
+  return M;
 }
 
 bool Ntuple_Controller::isVtxGood(unsigned int i){
