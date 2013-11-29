@@ -938,44 +938,6 @@ void  ZtoEMu::doEvent(){
   pass.at(ZMassmax)=(value.at(ZMassmax)<cut.at(ZMassmax));
   pass.at(ZMassmin)=(value.at(ZMassmin)>cut.at(ZMassmin));
   
-  ///////////////////////////////////////////////
-  //
-  // Blinding
-  //
-  /*bool blinddataonly = true;
-  int blind = 1;
-  
-  // if combination of muon & electron has mass within +-5 Z-widths, data (and or mc) will be weighted by 0
-  if(pass.at(NMu)
-		  && pass.at(NE)){
-	  //double mass = (Ntp->Muons_p4(muidx)+Ntp->Electron_p4(eidx)).M();
-	  double mass = (muons.at(muidx)+electrons.at(eidx)).M();
-	  double delphi = muons.at(muidx).DeltaPhi(electrons.at(eidx))/TMath::Pi();
-	  //double delphi = Ntp->Muons_p4(muidx).DeltaPhi(Ntp->Electron_p4(eidx))/TMath::Pi();
-	  if(delphi<0)delphi+=2;
-	  if(blinddataonly){
-		  if(twod){
-			  if(Ntp->isData() && mass>=83 && mass<98 && delphi>0.8 && delphi<1.2){
-				  blind = 0;
-			  }
-		  }else{
-			  if(Ntp->isData() && mass>=83 && mass<98){
-				  blind = 0;
-			  }
-		  }
-	  }else{
-		  if(twod){
-			  if(mass>=83 && mass<98 && delphi>0.8 && delphi<1.2){
-				  blind = 0;
-			  }
-		  }else{
-			  if(mass>=83 && mass<98){
-				  blind = 0;
-			  }
-		  }
-		}
-  }*/
-  
   ////////////////////////////////////////////////
   //
   // QCD
@@ -1025,49 +987,12 @@ void  ZtoEMu::doEvent(){
   }else{
 	fakeRate = 1.;
   }
-  
-  ///////////////////////////////////////////////
-  //
-  // Blinding
-  //
-  bool blinddataonly = true;
-  int blind = 1;
-
-  // if combination of muon & electron has mass within +-5 Z-widths, data (and or mc) will be weighted by 0
-  if(pass.at(NMu)
-		  && pass.at(NE)){
-	  double mass = (Ntp->Muons_p4(muidx)+Ntp->Electron_p4(eidx)).M();
-	  double delphi = Ntp->Muons_p4(muidx).DeltaPhi(Ntp->Electron_p4(eidx))/TMath::Pi();
-	  if(delphi<0)delphi+=2;
-	  if(blinddataonly){
-		  if(twod){
-			  if(Ntp->isData() && mass>=88 && mass<94 && delphi>0.8 && delphi<1.2){
-				  blind = 0;
-			  }
-		  }else{
-			  if(Ntp->isData() && mass>=88 && mass<94){
-				  blind = 0;
-			  }
-		  }
-	  }else{
-		  if(twod){
-			  if(mass>=83 && mass<98 && delphi>0.8 && delphi<1.2){
-				  blind = 0;
-			  }
-		  }else{
-			  if(mass>=88 && mass<94){
-				  blind = 0;
-			  }
-		  }
-		}
-  }
-  blind=1;
 
   //////////////////////////////////////////////////////////
   if(verbose) std::cout << "do weights" << std::endl;
   double wobs(1),w(1),ww(1),www(1);
   if(!Ntp->isData() && Ntp->GetMCID()!=34){
-    w*=Ntp->EvtWeight3D()*blind;
+    w*=Ntp->EvtWeight3D();
     ww*=Ntp->EvtWeight3D();
     www*=Ntp->EvtWeight3D();
     if(pass.at(NE)){
@@ -1096,7 +1021,7 @@ void  ZtoEMu::doEvent(){
 	//}
     if(verbose)std::cout << "void  ZtoEMu::doEvent() k" << w << " " << wobs << std::endl;
   }
-  else{w=1*fakeRate*blind;wobs=1;ww=1*fakeRate;}
+  else{w=1*fakeRate;wobs=1;ww=1*fakeRate;}
   if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs);
   if(verbose)std::cout << "status: " << status << std::endl;
@@ -1112,6 +1037,7 @@ void  ZtoEMu::doEvent(){
 		  && pass.at(NEEta)
 		  && pass.at(NMu)
 		  && pass.at(NE)
+		  && pass.at(ptthreshold)
 		  ){
 	  // often needed variables
 	  double m = (Ntp->Muons_p4(muidx)+Ntp->Electron_p4(eidx)).M();
@@ -1170,6 +1096,7 @@ void  ZtoEMu::doEvent(){
 		  && pass.at(NEEta)
 		  && pass.at(NMu)
 		  && pass.at(NE)
+		  && pass.at(ptthreshold)
 		  ){
 	  NPV.at(t).Fill(Ntp->NVtx(),ww);
 	  NPV_noweight.at(t).Fill(Ntp->NVtx());
