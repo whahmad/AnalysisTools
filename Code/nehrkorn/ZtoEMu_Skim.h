@@ -16,17 +16,14 @@ class ZtoEMu_Skim : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     qualitycuts,
-	     SameVtx,
 	     NMuPt,
 	     NMuEta,
 		 NMu,
 	     NEPt,
 	     NEEta,
 		 NE,
-		 drMuE,
+		 ptthreshold,
 		 charge,
-		 MtMu,
 	     NCuts};
 
  protected:
@@ -35,14 +32,39 @@ class ZtoEMu_Skim : public Selection {
 
  private:
   // Selection Variables
+  
+  std::vector<TH1D> NPV;
+  std::vector<TH1D> mupt;
+  std::vector<TH1D> mueta;
+  std::vector<TH1D> ept;
+  std::vector<TH1D> eeta;
 
-  double mu_pt,mu_eta,e_pt,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
+  std::vector<TH1D> muptw;
+  std::vector<TH1D> muetaw;
+  std::vector<TH1D> eptw;
+  std::vector<TH1D> eetaw;
+
+  std::vector<TH1D> goodmuons;
+  std::vector<TH1D> fakemuons;
+  std::vector<TH1D> goodelectrons;
+  std::vector<TH1D> fakeelectrons;
+  std::vector<TH1D> nontriggr20;
+  std::vector<TH1D> nontrigsm20;
+  std::vector<TH1D> triggr20;
+  std::vector<TH1D> trigsm20;
+  std::vector<TH1D> trignoipgr20;
+  std::vector<TH1D> trignoipsm20;
+
+  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;
   
   double cosphi2d(double px1, double py1, double px2, double py2);
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
+  bool isGoodVtx(unsigned int i);
+  double vertexSignificance(TVector3 vec, unsigned int vertex);
+  bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
@@ -52,19 +74,16 @@ class ZtoEMu_Skim : public Selection {
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
-  bool isMVAElectron(unsigned int i);
+  bool isMVATrigElectron(unsigned int i);
+  bool isMVATrigNoIPElectron(unsigned int i);
+  bool isMVANonTrigElectron(unsigned int i, unsigned int j);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
   bool isFakeElectron(unsigned int i);
   bool isFakeElectron(unsigned int i, unsigned int j);
   double Electron_RelIso(unsigned int i);
-  double Electron_Aeff(double Eta);
-  
-  double MuonSF(unsigned int i);
-  double MuonDataSF(unsigned int i);
-  double ElectronSF(unsigned int i);
-  double ElectronDataSF(unsigned int i);
-  double ElectronEffRecHit(unsigned int i);
+  double Electron_Aeff_R04(double Eta);
+  double Electron_Aeff_R03(double Eta);
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   

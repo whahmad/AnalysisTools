@@ -69,7 +69,10 @@ TARGETS       =	Ntuple_Controller \
 		ZDouble3prong \
 		Ztotautau_ControlSample \
 		TauLifeTime \
-		HToTaumuTauh
+		HToTaumuTauh \
+		ZtoEMu_Fakerate \
+		ZtoEMu_Skim \
+		ZtoEMu
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
@@ -90,7 +93,8 @@ vpath %.cxx cherepanov
 vpath %.h cherepanov
 vpath %.cxx kargoll
 vpath %.h kargoll
-
+vpath %.cxx nehrkorn
+vpath %.h nehrkorn
 
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
 

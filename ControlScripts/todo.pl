@@ -547,7 +547,7 @@ if( $ARGV[0] eq "--DCache" ){
 		    }
 		    if($b =~ m/root/){
                         $myfile=$b;
-			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Conder_Set_$B"));
+			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
                     }
 		    if($c =~ m/root/){
                         $myfile=$c;
