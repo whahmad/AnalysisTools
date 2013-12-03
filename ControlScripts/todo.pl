@@ -159,6 +159,8 @@ if( $ARGV[0] eq "--TauNtuple"){
 
     system(sprintf("echo \"git init \" >> Setup_$CMSSWRel-$time"));
 
+	# for SimpleFits
+	system(sprintf("echo \"git cms-addpkg Validation/EventGenerator \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # MET recipe for CMSSW_5_3_12_patch2 (https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETRecipe53X)
     system(sprintf("echo \"git cms-addpkg PhysicsTools/PatAlgos\" >> Install_TauNtuple_$CMSSWRel-$time"));
 	system(sprintf("echo \"git cms-merge-topic 967\" >> Install_TauNtuple_$CMSSWRel-$time"));
@@ -207,8 +209,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"git clone -b bastiansHacks https://github.com/bkargoll/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # SimpleFits
-    system(sprintf("echo \"cvs co -d SimpleFits -r V04-00-40 UserCode/inugent/SimpleFits \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
