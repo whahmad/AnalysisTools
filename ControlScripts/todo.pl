@@ -12,7 +12,15 @@ $UserIDCern=$UserID;
 if($UserID eq "nugent"){
     $UserIDCern="inugent";
 }
-
+if($UserID eq "cherepanov"){
+    $UserIDCern="cherepan";
+}
+if($UserID eq "nehrkorn"){
+    $UserIDCern="anehrkor";
+}
+if($UserID eq "kargoll"){
+    $UserIDCern="bkargoll";
+}
 
 #Default vaules
 $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
@@ -228,6 +236,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     printf("\ngit config --global credential.helper 'cache --timeout=3600'");
     printf("\ngit config --global credential.helper cache");
     printf("\ngit config --global user.github $UserIDCern ");
+    printf("\nkinit $UserIDCern ");
     printf("\nsource Install_TauNtuple_$CMSSWRel-$time"); 
     printf("\nYou can now go to the Production Directory and submit jobs.");
     printf("\ncd  $basedir/SkimProduction/CRAB/");
