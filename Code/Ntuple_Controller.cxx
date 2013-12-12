@@ -199,11 +199,22 @@ int Ntuple_Controller::GetMCID(){
       return Ntp->DataMC_Type%100;
     }
   }
+
+  // hack for Higgs production mechanisms
+  if(Ntp->DataMC_Type == DataMCType::H_tautau){
+	  if (Get_File_Name().Contains("GluGlu",TString::kIgnoreCase) && HistoC.hasID(DataMCType::H_tautau_ggF)){
+		  return DataMCType::H_tautau_ggF;
+	  }
+	  else if (Get_File_Name().Contains("VBF",TString::kIgnoreCase) && HistoC.hasID(DataMCType::H_tautau_VBF)){
+		  return DataMCType::H_tautau_VBF;
+	  }
+  }
+
   if(HConfig.hasID(Ntp->DataMC_Type))return Ntp->DataMC_Type;  
   return -999;
 }
 
-TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
+TMatrixF Ntuple_Controller::Vtx_Cov(unsigned int i){
   unsigned int dim=3;
   TMatrixF M(dim,dim);
   for(unsigned int j=0;j<dim;j++){
@@ -212,6 +223,7 @@ TMatrixF     Ntuple_Controller::Vtx_Cov(unsigned int i){
       M[k][j]=Ntp->Vtx_Cov->at(i).at(j).at(k);
     }
   }
+  return M;
 }
 
 bool Ntuple_Controller::isVtxGood(unsigned int i){

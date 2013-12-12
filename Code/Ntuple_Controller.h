@@ -165,6 +165,8 @@ class Ntuple_Controller{
   int           PileupInfo_NumInteractions_n0(){Ntp->PileupInfo_NumInteractions_n0;}
   int           PileupInfo_NumInteractions_np1(){Ntp->PileupInfo_NumInteractions_np1;}
   double        EvtWeight3D(){return Ntp->EvtWeight3D;}
+  double        EvtWeight3D_p5(){return Ntp->EvtWeight3D_p5;}
+  double        EvtWeight3D_m5(){return Ntp->EvtWeight3D_m5;}
 
   TVectorT<double>      beamspot_par(){TVectorT<double> BS(NBS_par);for(unsigned int i=0;i<NBS_par;i++)BS(i)=Ntp->beamspot_par->at(i);return BS;}
 
@@ -192,7 +194,8 @@ class Ntuple_Controller{
   TMatrixF     Vtx_Cov(unsigned int i);
   std::vector<int>  Vtx_Track_idx(unsigned int i){return Ntp->Vtx_Track_idx->at(i);}
   float Vtx_isFake(unsigned int i){return Ntp->Vtx_isFake->at(i);}
-  bool isVtxGood(unsigned int i); 
+  bool isVtxGood(unsigned int i);
+  TLorentzVector Vtx_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->Vtx_TracksP4->at(i).at(j).at(1),Ntp->Vtx_TracksP4->at(i).at(j).at(2),Ntp->Vtx_TracksP4->at(i).at(j).at(3),Ntp->Vtx_TracksP4->at(i).at(j).at(0));}
 
 
   // Muon information
@@ -458,6 +461,9 @@ class Ntuple_Controller{
    bool               isGoodJet(unsigned int i);
    bool               isGoodJet_nooverlapremoval(unsigned int i);
    bool               isJetID(unsigned int i);
+   float              PFJet_nTrk(unsigned int i){return Ntp->PFJet_nTrk->at(i);}
+   TLorentzVector     PFJet_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->PFJet_TracksP4->at(i).at(j).at(1),Ntp->PFJet_TracksP4->at(i).at(j).at(2),Ntp->PFJet_TracksP4->at(i).at(j).at(3),Ntp->PFJet_TracksP4->at(i).at(j).at(0));}
+
  
 
    //MET information
@@ -466,6 +472,10 @@ class Ntuple_Controller{
    double             MET_sumET(){return Ntp->MET_sumET;}
    double             MET_ex(){return Ntp->MET_et*cos(Ntp->MET_phi);}
    double             MET_ey(){return Ntp->MET_et*sin(Ntp->MET_phi);}
+   double             MET_Corr_et(){return Ntp->MET_Corr_et;}
+   double             MET_Corr_phi(){return Ntp->MET_Corr_phi;}
+   double             MET_Corr_ex(){return Ntp->MET_Corr_et*cos(Ntp->MET_Corr_phi);}
+   double             MET_Corr_ey(){return Ntp->MET_Corr_et*sin(Ntp->MET_Corr_phi);}
 
    //Track Information
    unsigned int      NTracks(){return Ntp->Track_p4->size();}
@@ -529,7 +539,7 @@ class Ntuple_Controller{
    unsigned int       NElectrons(){return Ntp->Electron_p4->size();}
    TLorentzVector     Electron_p4(unsigned int i){return TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));}
    TVector3           Electron_Poca(unsigned int i){return TVector3(Ntp->Electron_Poca->at(i).at(0),Ntp->Electron_Poca->at(i).at(1),Ntp->Electron_Poca->at(i).at(2));}
-   float   Electron_Charge(unsigned int i){return Ntp->Electron_charge->at(i);}
+   int   Electron_Charge(unsigned int i){return Ntp->Electron_charge->at(i);}
    float   Electron_Gsf_deltaEtaEleClusterTrackAtCalo(unsigned int i){return Ntp->Electron_Gsf_deltaEtaEleClusterTrackAtCalo->at(i);}
    float   Electron_Gsf_deltaEtaSeedClusterTrackAtCalo(unsigned int i){return Ntp->Electron_Gsf_deltaEtaSeedClusterTrackAtCalo->at(i);}
    float   Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(unsigned int i){return Ntp->Electron_Gsf_deltaEtaSuperClusterTrackAtVtx->at(i);}
@@ -581,6 +591,11 @@ class Ntuple_Controller{
    float    Electron_numberOfMissedHits(unsigned int i){return Ntp->Electron_numberOfMissedHits->at(i);}
    bool     Electron_HasMatchedConversions(unsigned int i){return Ntp->Electron_HasMatchedConversions->at(i);}
 
+   float    Electron_MVA_Trig_discriminator(unsigned int i){return Ntp->Electron_MVA_Trig_discriminator->at(i);}
+   float    Electron_MVA_TrigNoIP_discriminator(unsigned int i){return Ntp->Electron_MVA_TrigNoIP_discriminator->at(i);}
+   float    Electron_MVA_NonTrig_discriminator(unsigned int i){return Ntp->Electron_MVA_NonTrig_discriminator->at(i);}
+   float    RhoIsolationAllInputTags(){return Ntp->RhoIsolationAllInputTags;}
+
    TrackParticle Electron_TrackParticle(unsigned int i){
      TMatrixT<double>    e_par(TrackParticle::NHelixPar,1);
      TMatrixTSym<double> e_cov(TrackParticle::NHelixPar);
@@ -619,6 +634,14 @@ class Ntuple_Controller{
      if(j<Ntp->HLTTrigger_objs_Eta->at(i).size())L.SetPtEtaPhiM(Ntp->HLTTrigger_objs_Pt->at(i).at(j),Ntp->HLTTrigger_objs_Eta->at(i).at(j), Ntp->HLTTrigger_objs_Phi->at(i).at(j),0.0);
      return L;
    }
+   int          NHLTTrigger_objs(){return Ntp->HLTTrigger_objs_Pt->size();}
+   int          NHLTTrigger_objs(unsigned int i){return Ntp->HLTTrigger_objs_Pt->at(i).size();}
+   float        HLTTrigger_objs_Pt(unsigned int i, unsigned int j){return Ntp->HLTTrigger_objs_Pt->at(i).at(j);}
+   float        HLTTrigger_objs_Eta(unsigned int i, unsigned int j){return Ntp->HLTTrigger_objs_Eta->at(i).at(j);}
+   float        HLTTrigger_objs_Phi(unsigned int i, unsigned int j){return Ntp->HLTTrigger_objs_Phi->at(i).at(j);}
+   float        HLTTrigger_objs_E(unsigned int i,unsigned int j){return Ntp->HLTTrigger_objs_E->at(i).at(j);}
+   int          HLTTrigger_objs_Id(unsigned int i,unsigned int j){return Ntp->HLTTrigger_objs_Id->at(i).at(j);}
+   std::string  HLTTrigger_objs_trigger(unsigned int i){return Ntp->HLTTrigger_objs_trigger->at(i);}
 
 
 };
