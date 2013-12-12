@@ -213,8 +213,8 @@ if( $ARGV[0] eq "--TauNtuple"){
 	###system(sprintf("echo \"cvs co -r V03-04-07  RecoMET/METAlgorithms \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
 	# Ntuple code
-    system(sprintf("echo \"git clone -b bastiansHacks https://github.com/bkargoll/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git clone -b bastiansHacks https://github.com/bkargoll/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # SimpleFits
     system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
