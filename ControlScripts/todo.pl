@@ -189,7 +189,8 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    #do not copy large files from CMSSW_base/src/Subpackage/data to CMSSW_base/src/data as crab will put them both in the tarball! one is enough
+    #system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     
     # PUJetID (https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetID)
     system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
