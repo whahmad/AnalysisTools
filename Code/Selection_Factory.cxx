@@ -13,6 +13,9 @@
 #include "inugent/TriggerStudy.h"
 #include "inugent/TriggerStudyMC.h"
 #include "inugent/TauLifeTime.h"
+#include "nehrkorn/ZtoEMu_Fakerate.h"
+#include "nehrkorn/ZtoEMu_Skim.h"
+#include "nehrkorn/ZtoEMu.h"
 
 Selection_Factory::Selection_Factory(){
 }
@@ -36,6 +39,9 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("triggerstudymc"))s=new TriggerStudyMC(Analysis,UncertType);
   else if(Analysis.Contains("triggerstudy"))s=new TriggerStudy(Analysis,UncertType);
   else if(Analysis.Contains("taulifetime"))s=new TauLifeTime(Analysis,UncertType);
+  else if(Analysis.Contains("ztoemu_fakerate"))s=new ZtoEMu_Fakerate(Analysis,UncertType);
+  else if(Analysis.Contains("ztoemu_skim"))s=new ZtoEMu_Skim(Analysis,UncertType);
+  else if(Analysis.Contains("ztoemu_mcsample"))s=new ZtoEMu(Analysis,UncertType);
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
     s=new Example(Analysis,UncertType);
