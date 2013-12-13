@@ -337,6 +337,11 @@ public :
    vector<vector<int> > *MCTauandProd_charge;
    vector<unsigned int> *MCTau_JAK;
    vector<unsigned int> *MCTau_DecayBitMask;
+   vector<vector<float> > *MC_p4;
+   vector<int>     *MC_pdgid;
+   vector<int>     *MC_charge;
+   vector<int>     *MC_midx;
+   vector<vector<int> > *MC_childpdgid;
    vector<string>  *HTLTriggerName;
    vector<bool>    *TriggerAccept;
    vector<bool>    *TriggerError;
@@ -674,6 +679,11 @@ public :
    TBranch        *b_MCTauandProd_charge;   //!
    TBranch        *b_MCTau_JAK;   //!
    TBranch        *b_MCTau_DecayBitMask;   //!
+   TBranch        *b_MC_p4;   //!
+   TBranch        *b_MC_pdgid;   //!
+   TBranch        *b_MC_charge;   //!
+   TBranch        *b_MC_midx;   //!
+   TBranch        *b_MC_childpdgid;   //!
    TBranch        *b_HTLTriggerName;   //!
    TBranch        *b_TriggerAccept;   //!
    TBranch        *b_TriggerError;   //!
@@ -1040,6 +1050,11 @@ void NtupleReader::Init(TTree *tree)
    MCTauandProd_charge = 0;
    MCTau_JAK = 0;
    MCTau_DecayBitMask = 0;
+   MC_p4 = 0;
+   MC_pdgid = 0;
+   MC_charge = 0;
+   MC_midx = 0;
+   MC_childpdgid = 0;
    HTLTriggerName = 0;
    TriggerAccept = 0;
    TriggerError = 0;
@@ -1381,6 +1396,11 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MCTauandProd_charge", &MCTauandProd_charge, &b_MCTauandProd_charge);
    fChain->SetBranchAddress("MCTau_JAK", &MCTau_JAK, &b_MCTau_JAK);
    fChain->SetBranchAddress("MCTau_DecayBitMask", &MCTau_DecayBitMask, &b_MCTau_DecayBitMask);
+   fChain->SetBranchAddress("MC_p4", &MC_p4, &b_MC_p4);
+   fChain->SetBranchAddress("MC_pdgid", &MC_pdgid, &b_MC_pdgid);
+   fChain->SetBranchAddress("MC_charge", &MC_charge, &b_MC_charge);
+   fChain->SetBranchAddress("MC_midx", &MC_midx, &b_MC_midx);
+   fChain->SetBranchAddress("MC_childpdgid", &MC_childpdgid, &b_MC_childpdgid);
    fChain->SetBranchAddress("HTLTriggerName", &HTLTriggerName, &b_HTLTriggerName);
    fChain->SetBranchAddress("TriggerAccept", &TriggerAccept, &b_TriggerAccept);
    fChain->SetBranchAddress("TriggerError", &TriggerError, &b_TriggerError);
