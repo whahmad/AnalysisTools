@@ -12,7 +12,15 @@ $UserIDCern=$UserID;
 if($UserID eq "nugent"){
     $UserIDCern="inugent";
 }
-
+if($UserID eq "cherepanov"){
+    $UserIDCern="cherepan";
+}
+if($UserID eq "nehrkorn"){
+    $UserIDCern="anehrkor";
+}
+if($UserID eq "kargoll"){
+    $UserIDCern="bkargoll";
+}
 
 #Default vaules
 $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
@@ -20,7 +28,7 @@ $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 #$OutputDir="~/";
 $CodeDir="../Code";
 $set="Analysis_";
-$CMSSWRel="5_3_9";
+$CMSSWRel="5_3_12_patch2";
 $PileupVersion="V08-03-17";
 $tag="03-00-12";
 $TauReco="5_2_3_patch3_Dec_08_2012";
@@ -158,37 +166,59 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"cmsenv\" >> Setup_$CMSSWRel-$time"));
 
     system(sprintf("echo \"git init \" >> Setup_$CMSSWRel-$time"));
-    system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+	# for SimpleFits
+	system(sprintf("echo \"git cms-addpkg Validation/EventGenerator \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # MET recipe for CMSSW_5_3_12_patch2 (https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETRecipe53X)
+    system(sprintf("echo \"git cms-addpkg PhysicsTools/PatAlgos\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"git cms-merge-topic 967\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"git cms-merge-topic 973\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"git cms-merge-topic -u TaiSakuma:53X-met-130910-01\" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+	# ATTENTION: CMSSW_X_Y_Z/src must be completely EMPTY in order to run "git cms-addpkg"
     system(sprintf("echo \"mkdir data \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
-
-   #Tau Package V08-09-57 recomendation for 5_3_9: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATReleaseNotes52X
-    system(sprintf("echo \"addpkg DataFormats/PatCandidates V06-05-06-10 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg PhysicsTools/PatAlgos V08-09-57 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg PhysicsTools/PatUtils V03-09-28 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg DataFormats/CaloRecHit V02-05-11 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg DataFormats/StdDictionaries V00-02-15 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg FWCore/GuiBrowsers V00-00-70 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoMET/METProducers V03-03-12-02 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoParticleFlow/PFProducer V15-02-06 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/RecoTau V01-04-25 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg RecoTauTag/Configuration V01-04-13 \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -r b5_3_x_analysis_2013Jun18 TauAnalysis/MCEmbeddingTools \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp TauAnalysis/MCEmbeddingTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+   #Tau Package recomendation for 5_3_12: nothing to do
+    
+    # embedding: seems that there is nothing to do
 
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
+    # PAT packages V08_09_56 should be added, don't do that now as it is incompatible with MVAMET, 5_3_12 should contain newer tags anyway
     system(sprintf("echo \"cvs co -r V09-00-01 RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cvs co -r jakob19April2013_2012ID EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    #do not copy large files from CMSSW_base/src/Subpackage/data to CMSSW_base/src/data as crab will put them both in the tarball! one is enough
+    #system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    
+    # PUJetID (https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetID)
+    system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    
+    # MVA MET including PUJetID (https://twiki.cern.ch/twiki/bin/viewauth/CMS/MVAMet,
+    # tag given on https://twiki.cern.ch/twiki/bin/view/CMS/HiggsToTauTauWorkingSummer2013#MET_regression_MVA_residual_reco is METPU_5_3_X_v9
+    # copy setup.sh script in here with slight modifications to make it work)
+    ###system(sprintf("echo \"cvs co -r METPU_5_3_X_v12 JetMETCorrections/METPUSubtraction \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"cvs co -r HEAD -d pharrisTmp UserCode/pharris/MVAMet/data \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"cp  -d pharrisTmp/*June2013*.root  JetMETCorrections/METPUSubtraction/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # the following line is not part of the instructions, but the Dec2012 files are used in the config
+    ###system(sprintf("echo \"cp  -d pharrisTmp/*Dec2012*.root  JetMETCorrections/METPUSubtraction/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"rm -rf pharrisTmp \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"cvs co -r METPU_5_3_X_v4 RecoJets/JetProducers \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    ###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDCutParams_cfi.py        \" >> Install_TauNtuple_$CMSSWRel-$time"));              
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetIDParams_cfi.py         \" >> Install_TauNtuple_$CMSSWRel-$time"));             
+	###system(sprintf("echo \"cvs up -r HEAD RecoJets/JetProducers/python/PileupJetID_cfi.py              \" >> Install_TauNtuple_$CMSSWRel-$time"));        
+	###system(sprintf("echo \"cvs co -r b5_3_X_cvMEtCorr_2013Feb22            DataFormats/METReco \" >> Install_TauNtuple_$CMSSWRel-$time"));
+	###system(sprintf("echo \"cvs co -r V05-00-16  DataFormats/JetReco \" >> Install_TauNtuple_$CMSSWRel-$time"));
+	###system(sprintf("echo \"cvs co -r V03-04-07  RecoMET/METAlgorithms \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
+	# Ntuple code
+    system(sprintf("echo \"git clone -b Production_2013_Dec_12 https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone -b Production_2013_Dec_12 https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # SimpleFits
-    system(sprintf("echo \"cvs co -d SimpleFits -r V04-00-40 UserCode/inugent/SimpleFits \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"addpkg Validation/EventGenerator V00-02-29 \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # Setup CRAB
     system(sprintf("echo \"export VO_CMS_SW_DIR=\\\"/net/software_cms\\\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
@@ -200,13 +230,14 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh\" >> Setup_$CMSSWRel-$time"));
 
     #build
-    system(sprintf("echo \"scram b \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"scram b -j 4 \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
     # print Instructions
     printf("\n\nInstructions");
     printf("\ngit config --global credential.helper 'cache --timeout=3600'");
     printf("\ngit config --global credential.helper cache");
     printf("\ngit config --global user.github $UserIDCern ");
+    printf("\nkinit $UserIDCern ");
     printf("\nsource Install_TauNtuple_$CMSSWRel-$time"); 
     printf("\nYou can now go to the Production Directory and submit jobs.");
     printf("\ncd  $basedir/SkimProduction/CRAB/");
@@ -330,7 +361,8 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"executable   = Set_$B.sh      \"  >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"output       = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).o  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"error        = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).e  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
-			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 			
+			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
+			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));		
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }
 		    system(sprintf("echo \"File: $InputDir/$subdir/$file  \" >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
@@ -515,7 +547,7 @@ if( $ARGV[0] eq "--DCache" ){
 			system(sprintf("echo \"executable   = Set_$B.sh      \"  >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"output       = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).o  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"error        = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).e  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
-			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 			
+			system(sprintf("echo \"log          = Set_$B-Condor_\\\$(cluster)_\\\$(proccess).log  \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B")); 
 			system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 			system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Set_$B/Condor_Set_$B"));
 		    }

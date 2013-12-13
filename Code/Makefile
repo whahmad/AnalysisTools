@@ -69,6 +69,7 @@ TARGETS       =	Ntuple_Controller \
 		ZDouble3prong \
 		Ztotautau_ControlSample \
 		TauLifeTime \
+		HToTaumuTauh \
 		ZtoEMu_Fakerate \
 		ZtoEMu_Skim \
 		ZtoEMu
@@ -90,6 +91,8 @@ vpath %.cxx inugent
 vpath %.h inugent
 vpath %.cxx cherepanov
 vpath %.h cherepanov
+vpath %.cxx kargoll
+vpath %.h kargoll
 vpath %.cxx nehrkorn
 vpath %.h nehrkorn
 
