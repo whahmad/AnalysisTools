@@ -65,6 +65,7 @@ class ZtoEMu_Skim : public Selection {
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
   bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
+  int matchTruth(TLorentzVector tvector);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);

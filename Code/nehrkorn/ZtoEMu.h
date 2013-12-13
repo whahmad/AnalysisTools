@@ -132,6 +132,7 @@ class ZtoEMu : public Selection {
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
   bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
+  int matchTruth(TLorentzVector tvector);
   int findBin(TGraphAsymmErrors* graph, double xval);
   
   bool isTightMuon(unsigned int i);
