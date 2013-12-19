@@ -1,9 +1,9 @@
 Thin: False
 Skim: False
 HistoFile: InputData/Histo.txt
-Analysis: ztotautau_controlsample
+Analysis: example
 UncertType: default
 SkimInfo: InputData/SkimSummary.log
-Lumi: 4749.223
+Lumi: 19712
 PlotStyle: style2
 
