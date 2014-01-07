@@ -1,7 +1,51 @@
 #! /bin/bash
+if [ "${1}"  == "--help" ]; then
+    echo "Options for running this configuration file:"
+    echo "--help                    Prints this message"
+    echo "--useRoot <ROOTSYSPath>   Configures the enviroment to use root versions <ROOTSYSPath> instead of default version" 
+    echo "--TauSpinner              Configures the make file to use TauSpinner"
+    echo "--cherepanov              Configures the make file to compile files in the directory cherepanov"
+    echo "--inugent                 Configures the make file to compile files in the directory inugent"
+    echo "--kargoll                 Configures the make file to compile files in the directory kargoll"
+    echo "--nehrkorn                Configures the make file to compile files in the directory nehrkorn"
+    exit
+fi
 echo "Configuring Environment...."
-export ROOTSYS=/usr/lib/root-5.34.11/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
+## setup variables for make file
+export ROOTSYS=/usr/lib/root-5.34.11/
+ROOT="/usr/lib/root-5.34.11/"
+if [ "${1}"  == "--useRoot" ]; then
+   export ROOTSYS=${2}
+fi
+
+myINC=$(ls | grep make.inc | wc -l)
+if [ $myINC == 0 ]; then
+    echo "# -*- mode: makefile-gmake -*-" >> make.inc
+    for var in $@ ; do
+	if [ "${var}" == "--TauSpinner" ]; then
+	    echo "Configuring Code to TauSpinner"
+	    echo "USE_TauSpinner=1" >> make.inc
+	fi
+	if [ "${var}" == "--cherepanov" ]; then
+	    echo "Configuring Code to use directory cherepanov"
+	    echo "USE_cherepanov=1" >> make.inc
+	fi
+	if [ "${var}" == "--inugent" ]; then
+	    echo "Configuring Code to use directory inugent"
+	    echo "USE_inugent=1" >> make.inc
+	fi
+	if [ "${var}" == "--kargoll" ]; then
+	    echo "Configuring Code to use directory kargoll"
+	    echo "USE_kargoll=1" >> make.inc
+	fi
+	if [ "${var}" == "--nehrkorn" ]; then
+	    echo "Configuring Code to use directory nehrkorn"
+	    echo "USE_nehrkorn=1" >> make.inc
+	fi
+    done
+fi
+
 ## now downloading required code from CVS
 cd CommonUtils
 CommonUtils=$(ls | grep TauDataFormat | wc -l)
