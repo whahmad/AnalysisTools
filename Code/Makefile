@@ -55,24 +55,24 @@ TARGETS       =	Ntuple_Controller \
 		SkimConfig \
 		HistoConfig \
 		Example \
-		Validation \
-		Ztotautau_hadmu_ControlSample \
-		ChargedHiggs_tauplusjet \
-		ChargedHiggs_dilepontic \
 		TauSpinExample \
-                Tau_momentum_calculation \
 		TauSpinerInterface \
-		Ztomumu_ControlSample \
-		TauSolver \
-		TriggerStudy \
-		TriggerStudyMC \
-		ZDouble3prong \
-		Ztotautau_ControlSample \
-		TauLifeTime \
-		HToTaumuTauh \
-		ZtoEMu_Fakerate \
-		ZtoEMu_Skim \
-		ZtoEMu
+		TauSolver #\
+		#Tau_momentum_calculation \
+		#Validation \
+		#Ztotautau_hadmu_ControlSample \
+		#ChargedHiggs_tauplusjet \
+		#ChargedHiggs_dilepontic \
+		#Ztomumu_ControlSample \
+		#TriggerStudy \
+		#TriggerStudyMC \
+		#ZDouble3prong \
+		#Ztotautau_ControlSample \
+		#TauLifeTime \
+		#HToTaumuTauh \
+		#ZtoEMu_Fakerate \
+		#ZtoEMu_Skim \
+		#ZtoEMu
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx
