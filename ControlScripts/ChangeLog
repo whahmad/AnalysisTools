@@ -1,3 +1,11 @@
+Branch: Production_2013_Dec_12
+	Authors: Alexander Nehrkorn (nehrkorn@physik.rwth-aachen.de)
+		 Bastian Kargoll (kargoll@physik.rwth-aachen.de)
+		 Vladimir Cherepanov (cherepanov@physik.rwth-aachen.de)
+	Changes: - Added several new variables (different MET corrections, PU Jet Id, Pi0 information, all electron MVA Id discriminators, ...)
+		 - cleaned up repository
+	Bugs:	 - wrong JAK Id in DataMCTypes.cc
+		 - missing enumerate for WH_ZH_TTH in DataMCTypes.cc
 V00-01-00 Date: 02/28/2012
 	  Author: Iam M. Nugent (nugent@physik.rwth-aachen.de)
 	  Reason: Stable Release for Production for Z polarization and control samples.
