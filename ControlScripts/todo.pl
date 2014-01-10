@@ -28,7 +28,7 @@ $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 #$OutputDir="~/";
 $CodeDir="../Code";
 $set="Analysis_";
-$CMSSWRel="5_3_12_patch2";
+$CMSSWRel="5_3_12_patch3";
 $PileupVersion="V08-03-17";
 $tag="03-00-12";
 $TauReco="5_2_3_patch3_Dec_08_2012";
@@ -193,7 +193,12 @@ if( $ARGV[0] eq "--TauNtuple"){
     #system(sprintf("echo \"cp EgammaAnalysis/ElectronTools/data/* data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     
     # PUJetID (https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetID)
-    system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    #system(sprintf("echo \"cvs co -r  V00-03-04  -d CMGTools/External UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cvs co -r  V00-03-04 UserCode/CMG/CMGTools/External \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd UserCode/CMG \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"mv CMGTools ../../ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cd ../../ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"rm -r UserCode/CMG \" >> Install_TauNtuple_$CMSSWRel-$time"));
     
     # MVA MET including PUJetID (https://twiki.cern.ch/twiki/bin/viewauth/CMS/MVAMet,
     # tag given on https://twiki.cern.ch/twiki/bin/view/CMS/HiggsToTauTauWorkingSummer2013#MET_regression_MVA_residual_reco is METPU_5_3_X_v9
@@ -460,9 +465,9 @@ if( $ARGV[0] eq "--DCache" ){
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit")) ;
     system(sprintf("echo \"rm Set*/*.o; rm Set*/*.e; rm Set*/*.log; \" >> $OutputDir/workdir$set/Submit")) ;
 
+    $B=0;
     for($l=0;$l<2; $l++){
 	system(sprintf("echo \"notification = Error        \" >> $OutputDir/workdir$set/Condor_Combine"));
-	$B=0;
 	$max=1;
 	foreach $DS (@DataSets){
 	    if(($l==0 && ($DS =~ m/data/)) || ($l==1 && !($DS =~ m/data/))){
