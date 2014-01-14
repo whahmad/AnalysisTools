@@ -185,7 +185,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     # embedding: seems that there is nothing to do
 
     # allow access to old code in cvs
-    system(sprintf("echo \"export CVSROOT=\":ext:$UserIDCern@lxplus5.cern.ch:/afs/cern.ch/user/c/cvscmssw/public/CMSSW\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"export CVSROOT=\":ext:$UserIDCern\@lxplus5.cern.ch:/afs/cern.ch/user/c/cvscmssw/public/CMSSW\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
     #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
     system(sprintf("echo \"cvs co -r V09-00-01 RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cvs co -r V00-00-09 EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
