@@ -18,11 +18,7 @@ class ZtoEMu : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     NMuPt,
-	     NMuEta,
 		 NMu,
-	     NEPt,
-	     NEEta,
 		 NE,
 		 ptthreshold,
 		 diMuonVeto,
@@ -171,12 +167,12 @@ class ZtoEMu : public Selection {
   
   double ElectronMassScale(unsigned int i);
   double ZPtReweight(double zpt);
+  double rundependentJetPtCorrection(double jeteta, int runnumber);
 
   //double JECuncertainty(unsigned int i, TString datamc);
 
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
-  bool MVA_ID;
   TFile* FRFile;
   TFile* EmbEffFile;
   TH2D* ElectronFakeRate;

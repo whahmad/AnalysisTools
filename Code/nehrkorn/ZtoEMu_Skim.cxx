@@ -28,7 +28,6 @@ ZtoEMu_Skim::ZtoEMu_Skim(TString Name_, TString id_):
   ,zmax(94)
 {
     //verbose=true;
-	MVA_ID = true;
 	FRFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/FakeRates_2012_19ifb_rereco.root");
 	EmbEffFile = new TFile("/net/scratch_cms/institut_3b/nehrkorn/RecHitElectronEfficiencies.root");
 	ElectronFakeRate = (TH2D*)(FRFile->Get("ElectronFakeRateHist"));
@@ -56,11 +55,7 @@ void  ZtoEMu_Skim::Configure(){
     if(i==TriggerOk)          cut.at(TriggerOk)=1;
     if(i==PrimeVtx)           cut.at(PrimeVtx)=1;
     if(i==NMu)                cut.at(NMu)=1;
-    if(i==NMuPt)              cut.at(NMuPt)=1;
-    if(i==NMuEta)             cut.at(NMuEta)=1;
     if(i==NE)                 cut.at(NE)=1;
-    if(i==NEPt)               cut.at(NEPt)=1;
-    if(i==NEEta)              cut.at(NEEta)=1;
     if(i==ptthreshold)        cut.at(ptthreshold)=1;
     if(i==charge)             cut.at(charge)=0;
   }
@@ -116,70 +111,6 @@ void  ZtoEMu_Skim::Configure(){
       Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NE_",htitle,6,-0.5,5.5,hlabel,"Events"));
       Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NE_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
-    else if(i==NMuPt){
-      title.at(i)="Number of $\\mu$ [$P_{T}^{\\mu}>$";
-      title.at(i)+=mu_ptlow;
-      title.at(i)+="(GeV)] $>=$";
-      title.at(i)+=cut.at(NMuPt);
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="Number of #mu";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NMuPt_","P_{T,#mu} (N-1 Distribution)",100,0,200,"P_{T,#mu} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NMuPt_","P_{T,#mu} (Accumulative Distribution)",100,0,200,"P_{T,#mu} (GeV)","Events");
-    }
-    else if(i==NEPt){
-      title.at(i)="Number of $e$ [$P_{T}^{e}>$";
-      title.at(i)+=e_ptlow;
-      title.at(i)+="(GeV)] $>=$";
-      title.at(i)+=cut.at(NEPt);
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="Number of e";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NEPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NEPt_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NEPt_","P_{T,e} (N-1 Distribution)",100,0,200,"P_{T,e} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accum1dist_NEPt_","P_{T,e} (Accumulative Distribution)",100,0,200,"P_{T,e} (GeV)","Events");
-    }
-    else if(i==NMuEta){
-      title.at(i)="Number of $\\mu$ [$|\\eta^{\\mu}|<$";
-      char buffer[50];
-      sprintf(buffer,"%5.2f",mu_eta);
-      title.at(i)+=buffer;
-      title.at(i)+="] $>=$";
-      title.at(i)+=cut.at(NMuEta);
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="Number of #mu";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NMuEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NMuEta_","#eta{#mu} (N-1 Distribution)",100,-7,7,"#eta_{#mu} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NMuEta_","#eta_{#mu} (Accumulative Distribution)",100,-7,7,"#eta_{#mu} (GeV)","Events");
-    }
-    else if(i==NEEta){
-      title.at(i)="Number of $e$ [$|\\eta^{e}|<$";
-      char buffer[50];
-      sprintf(buffer,"%5.2f",e_eta);
-      title.at(i)+=buffer;
-      title.at(i)+="] $>=$";
-      title.at(i)+=cut.at(NEEta);
-      htitle=title.at(i);
-      htitle.ReplaceAll("$","");
-      htitle.ReplaceAll("\\","#");
-      hlabel="Number of e";
-      Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NEEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NEEta_",htitle,6,-0.5,5.5,hlabel,"Events"));
-      distindx.at(i)=true;
-      Nminus1dist.at(i)=HConfig.GetTH1D(Name+c+"_Nminus1dist_NEEta_","#eta{e} (N-1 Distribution)",100,-7,7,"#eta_{e} (GeV)","Events");
-      Accumdist.at(i)=HConfig.GetTH1D(Name+c+"_Accumdist_NEEta_","#eta_{e} (Accumulative Distribution)",100,-7,7,"#eta_{e} (GeV)","Events");
-    }
     else if(i==ptthreshold){
         title.at(i)="ptthreshold ";
         hlabel="ptthreshold ";
@@ -208,6 +139,10 @@ void  ZtoEMu_Skim::Configure(){
   mueta=HConfig.GetTH1D(Name+"_mueta","mueta",20,-2.5,2.5,"#eta_{#mu}");
   ept=HConfig.GetTH1D(Name+"_ept","ept",40,0.,100.,"p_{T}^{e}");
   eeta=HConfig.GetTH1D(Name+"_eeta","eeta",20,-2.5,2.5,"#eta_{e}");
+  mupt_n0=HConfig.GetTH1D(Name+"_mupt_n0","mupt_n0",40,0.,100.,"p_{T}^{#mu}");
+  mueta_n0=HConfig.GetTH1D(Name+"_mueta_n0","mueta_n0",20,-2.5,2.5,"#eta_{#mu}");
+  ept_n0=HConfig.GetTH1D(Name+"_ept_n0","ept_n0",40,0.,100.,"p_{T}^{e}");
+  eeta_n0=HConfig.GetTH1D(Name+"_eeta_n0","eeta_n0",20,-2.5,2.5,"#eta_{e}");
   muptw=HConfig.GetTH1D(Name+"_muptw","muptw",40,0.,100.,"p_{T}^{#mu}");
   muetaw=HConfig.GetTH1D(Name+"_muetaw","muetaw",20,-2.5,2.5,"#eta_{#mu}");
   eptw=HConfig.GetTH1D(Name+"_eptw","eptw",40,0.,100.,"p_{T}^{e}");
@@ -242,6 +177,10 @@ void  ZtoEMu_Skim::Store_ExtraDist(){
 	Extradist1d.push_back(&muetaw);
 	Extradist1d.push_back(&eptw);
 	Extradist1d.push_back(&eetaw);
+	Extradist1d.push_back(&mupt_n0);
+	Extradist1d.push_back(&mueta_n0);
+	Extradist1d.push_back(&ept_n0);
+	Extradist1d.push_back(&eeta_n0);
 	Extradist1d.push_back(&goodmuons);
 	Extradist1d.push_back(&fakemuons);
 	Extradist1d.push_back(&goodelectrons);
@@ -302,7 +241,7 @@ void  ZtoEMu_Skim::doEvent(){
   std::vector<unsigned int> Fakemuons;
   std::vector<double> FakeRateMuVec;
   
-  // muon ID cuts (including eta-dependent isolation)
+  // muon ID cuts
   for(unsigned i=0;i<Ntp->NMuons();i++){
 	  if(Ntp->Muons_p4(i).Pt()>mu_ptlow
 			  && fabs(Ntp->Muons_p4(i).Eta())<mu_eta
@@ -312,48 +251,20 @@ void  ZtoEMu_Skim::doEvent(){
 		  if(isTightMuon(i,vertex)
 				  && Muon_RelIso(i)<0.12
 				  ){
+			  if(Ntp->GetMCID()==32 && !fabs(matchTruth(Ntp->Muons_p4(i))==13)) continue;
 			  GoodMuons.push_back(i);
-			  /*if(fabs(Ntp->Muons_p4(i).Eta())<1.479 && Muon_RelIso(i)<0.15){
-				  GoodMuons.push_back(i);
-			  }else if(fabs(Ntp->Muons_p4(i).Eta())>=1.479 && Muon_RelIso(i)<0.1){
-				  GoodMuons.push_back(i);
-			  }*/
 		  }else if(isFakeMuon(i,vertex)
 				  && Ntp->isData()
-				  && MVA_ID
 				  ){
 			  Fakemuons.push_back(i);
-			  GoodMuons.push_back(i);
+			  //GoodMuons.push_back(i);
 			  FakeRateMuVec.push_back(Fakerate(Ntp->Muons_p4(i),MuonFakeRate,"muon"));
 		  }
 	  }
   }
-
-  // muon pt cut
-  for(unsigned i=0;i<GoodMuons.size();i++){
-    dist.at(NMuPt).push_back(Ntp->Muons_p4(GoodMuons.at(i)).Pt());
-    if(Ntp->Muons_p4(GoodMuons.at(i)).Pt()<mu_ptlow){
-      GoodMuons.erase(GoodMuons.begin()+i);
-      i--;
-    }
-  }
-  
-  value.at(NMuPt)=GoodMuons.size();
-  pass.at(NMuPt)=(value.at(NMuPt)>=cut.at(NMuPt));
-  
-  // muon eta cut
-  for(unsigned i=0;i<GoodMuons.size();i++){
-    dist.at(NMuEta).push_back(Ntp->Muons_p4(GoodMuons.at(i)).Eta());
-    if(fabs(Ntp->Muons_p4(GoodMuons.at(i)).Eta())>mu_eta){
-      GoodMuons.erase(GoodMuons.begin()+i);
-      i--;
-    }
-  }
-  
-  value.at(NMuEta)=GoodMuons.size();
-  pass.at(NMuEta)=(value.at(NMuEta)>=cut.at(NMuEta));
   
   value.at(NMu)=GoodMuons.size();
+  if(GoodMuons.size()==0)value.at(NMu)=Fakemuons.size();
   pass.at(NMu)=(value.at(NMu)>=cut.at(NMu));
   
   unsigned int muidx(999);
@@ -367,6 +278,17 @@ void  ZtoEMu_Skim::doEvent(){
 	  }
   }
   if(GoodMuons.size()==1){muidx=GoodMuons.at(0);}
+  if(GoodMuons.size()==0){
+	  if(Fakemuons.size()>1){
+		  for(unsigned i=0;i<Fakemuons.size();i++){
+			  if(Ntp->Muons_p4(Fakemuons.at(i)).Pt()>hardestmu){
+				  hardestmu = Ntp->Muons_p4(Fakemuons.at(i)).Pt();
+				  muidx = Fakemuons.at(i);
+			  }
+		  }
+	  }
+	  if(Fakemuons.size()==1){muidx=Fakemuons.at(0);}
+  }
 
   ///////////////////////////////////////////////
   //
@@ -376,55 +298,51 @@ void  ZtoEMu_Skim::doEvent(){
   std::vector<unsigned int> GoodElectrons;
   std::vector<unsigned int> Fakeelectrons;
   std::vector<double> FakeRateEVec;
+  bool hasMuonTrack = false;
+  bool notThisOne = false;
+  bool matchRecoMuon = false;
   
   // electron ID cuts (eta-dependent MVA or simple cut-based)
   for(unsigned i=0;i<Ntp->NElectrons();i++){
 	  if(Ntp->Electron_p4(i).Et()>e_ptlow
 			  && fabs(Ntp->Electron_supercluster_eta(i))<e_eta
-			  && muidx!=999
 			  && (matchTrigger(i,0.5,"HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","electron") || matchTrigger(i,0.5,"HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","electron"))
 			  && vertex>=0
-			  && Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(muidx))>0.3
 			  ){
-		  if(MVA_ID){
-			  if(isMVATrigElectron(i)){
-				  GoodElectrons.push_back(i);
-			  }else if(isFakeElectron(i,vertex)
-					  && Ntp->isData()
-					  ){
-				  Fakeelectrons.push_back(i);
-				  GoodElectrons.push_back(i);
-				  FakeRateEVec.push_back(Fakerate(Ntp->Electron_p4(i),ElectronFakeRate,"electron"));
+		  for(unsigned j=0;j<GoodMuons.size();j++){
+			  if(Ntp->Electron_Track_idx(i)==Ntp->Muon_Track_idx(GoodMuons.at(j))) hasMuonTrack = true;
+		  }
+		  if(GoodMuons.size()==0){
+			  for(unsigned j=0;j<Fakemuons.size();j++){
+				  if(Ntp->Electron_Track_idx(i)==Ntp->Muon_Track_idx(Fakemuons.at(j))) hasMuonTrack = true;
 			  }
-		  }else{
-		  	if(isTightElectron(i,vertex))GoodElectrons.push_back(i);
+		  }
+		  if(hasMuonTrack) continue;
+		  for(unsigned j=0;j<Ntp->NMuons();j++){
+			  for(unsigned k=0;k<GoodMuons.size();k++){
+				  if(j==k){
+					  notThisOne = true;
+				  }
+				  if(notThisOne)break;
+			  }
+			  if(!notThisOne && Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(j))<0.3) matchRecoMuon = true;
+		  }
+		  if(matchRecoMuon) continue;
+		  if(isMVANonTrigElectron(i,vertex)){
+			  if(Ntp->GetMCID()==31 && !(fabs(matchTruth(Ntp->Electron_p4(i)))==11 || fabs(matchTruth(Ntp->Electron_p4(i)))==13 || fabs(matchTruth(Ntp->Electron_p4(i)))==22)) continue;
+			  GoodElectrons.push_back(i);
+		  }else if(isFakeElectron(i,vertex)
+				  && Ntp->isData()
+				  ){
+			  Fakeelectrons.push_back(i);
+			  //GoodElectrons.push_back(i);
+			  FakeRateEVec.push_back(Fakerate(Ntp->Electron_p4(i),ElectronFakeRate,"electron"));
 		  }
 	  }
   }
   
-  // electron pt cut
-  for(unsigned i=0;i<GoodElectrons.size();i++){
-    dist.at(NEPt).push_back(Ntp->Electron_p4(GoodElectrons.at(i)).Pt());
-    if(Ntp->Electron_p4(GoodElectrons.at(i)).Et()<e_ptlow){
-      GoodElectrons.erase(GoodElectrons.begin()+i);
-      i--;
-    }
-  }
-  value.at(NEPt)=GoodElectrons.size();
-  pass.at(NEPt)=(value.at(NEPt)>=cut.at(NEPt));
-  
-  // electron eta cut
-  for(unsigned i=0;i<GoodElectrons.size();i++){
-    dist.at(NEEta).push_back(Ntp->Electron_supercluster_eta(GoodElectrons.at(i)));
-    if(fabs(Ntp->Electron_supercluster_eta(GoodElectrons.at(i)))>e_eta){
-      GoodElectrons.erase(GoodElectrons.begin()+i);
-      i--;
-    }
-  }
-  value.at(NEEta)=GoodElectrons.size();
-  pass.at(NEEta)=(value.at(NEEta)>=cut.at(NEEta));
-  
   value.at(NE)=GoodElectrons.size();
+  if(GoodElectrons.size()==0)value.at(NE)=Fakeelectrons.size();
   pass.at(NE)=(value.at(NE)>=cut.at(NE));
   
   unsigned int eidx(999);
@@ -438,6 +356,17 @@ void  ZtoEMu_Skim::doEvent(){
 	  }
   }
   if(GoodElectrons.size()==1){eidx=GoodElectrons.at(0);}
+  if(GoodElectrons.size()==0){
+	  if(Fakeelectrons.size()>1){
+		  for(unsigned i=0;i<Fakeelectrons.size();i++){
+			  if(Ntp->Electron_p4(Fakeelectrons.at(i)).Et()>hardeste){
+				  hardeste = Ntp->Electron_p4(Fakeelectrons.at(i)).Et();
+				  eidx = Fakeelectrons.at(i);
+			  }
+		  }
+	  }
+	  if(Fakeelectrons.size()==1){eidx=Fakeelectrons.at(0);}
+  }
   
   ///////////////////////////////////////////////
   //
@@ -486,35 +415,28 @@ void  ZtoEMu_Skim::doEvent(){
 		  fakeRateE = FakeRateEVec.at(i);
 	  }
   }
-  if(MVA_ID){
-	  fakeRate = 0.;
-	  if(!pass.at(charge)
-			  && Ntp->isData()
-			  ){
-		  if(fakemu && !fakee){
-			  fakeRate = fakeRateMu;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge)=true;
-		  }else if(fakee && !fakemu){
-			  fakeRate = fakeRateE;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge)=true;
-		  }else if(fakemu && fakee){
-			  fakeRate = fakeRateMu*fakeRateE;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge) = true;
-		  }else{
-			  fakeRate = 0.;
-		  }
-	  }else if(pass.at(charge)
-			  && Ntp->isData()
-			  && !fakemu
-			  && !fakee
-			  ){
-		  fakeRate = 1.;
+  fakeRate = 1.;
+  if(pass.at(charge)
+		  && Ntp->isData()
+		  ){
+	  if(fakemu || fakee) fakeRate = 0.;
+  }
+  if(!pass.at(charge)
+		  && Ntp->isData()
+		  ){
+	  if(fakemu && !fakee){
+		  fakeRate = fakeRateMu;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge)=true;
+	  }else if(fakee && !fakemu){
+		  fakeRate = fakeRateE;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge)=true;
+	  }else if(fakemu && fakee){
+		  fakeRate = fakeRateMu*fakeRateE;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge) = true;
 	  }
-  }else{
-	  fakeRate = 1.;
   }
   
   //////////////////////////////////////////////////////////
@@ -525,14 +447,14 @@ void  ZtoEMu_Skim::doEvent(){
     ww*=Ntp->EvtWeight3D();
     if(verbose)std::cout << "void  ZtoEMu_Skim::doEvent() k" << w << " " << wobs << std::endl;
   }
-  else{w=1*fakeRate;wobs=1;}
+  else{w=1*fakeRate;wobs=1;ww=1*fakeRate;}
   if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs);
   if(verbose)std::cout << "status: " << status << std::endl;
   ///////////////////////////////////////////////////////////
   // Add plots
   if(verbose) std::cout << "add plots" << std::endl;
-  NPV.at(t).Fill(Ntp->NVtx(),w);
+  //NPV.at(t).Fill(Ntp->NVtx(),w);
   if(muidx!=999){
 	  mupt.at(t).Fill(Ntp->Muons_p4(muidx).Pt(),w);
 	  mueta.at(t).Fill(Ntp->Muons_p4(muidx).Eta(),w);
@@ -544,6 +466,19 @@ void  ZtoEMu_Skim::doEvent(){
 	  eeta.at(t).Fill(Ntp->Electron_supercluster_eta(eidx),w);
 	  eptw.at(t).Fill(Ntp->Electron_p4(eidx).Pt(),ww);
 	  eetaw.at(t).Fill(Ntp->Electron_supercluster_eta(eidx),ww);
+  }
+  if(pass.at(TriggerOk)
+		  && pass.at(PrimeVtx)
+		  && pass.at(NMu)
+		  && pass.at(NE)
+		  && pass.at(ptthreshold)
+		  && pass.at(charge)
+		  ){
+	  NPV.at(t).Fill(Ntp->NVtx(),w);
+	  mupt_n0.at(t).Fill(Ntp->Muons_p4(muidx).Pt(),w);
+	  mueta_n0.at(t).Fill(Ntp->Muons_p4(muidx).Eta(),w);
+	  ept_n0.at(t).Fill(Ntp->Electron_p4(eidx).Pt(),w);
+	  eeta_n0.at(t).Fill(Ntp->Electron_supercluster_eta(eidx),w);
   }
   goodmuons.at(t).Fill(GoodMuons.size());
   fakemuons.at(t).Fill(Fakemuons.size());
@@ -829,7 +764,7 @@ bool ZtoEMu_Skim::isTightElectron(unsigned int i, unsigned int j){
 bool ZtoEMu_Skim::isFakeElectron(unsigned int i){
 	if(Ntp->Electron_p4(i).Pt()<=10) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
-	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(Ntp->Electron_numberOfMissedHits(i)>1) return false;
 	if(Ntp->Electron_tkSumPt03(i)/Ntp->Electron_p4(i).Pt()>=0.2) return false;
 	if(std::max(Ntp->Electron_ecalRecHitSumEt03(i)-1.,0.)/Ntp->Electron_p4(i).Pt()>=0.2) return false;
 	if((Ntp->Electron_hcalDepth1TowerSumEt03(i)+Ntp->Electron_hcalDepth2TowerSumEt03(i))/Ntp->Electron_p4(i).Pt()>=0.2) return false;
