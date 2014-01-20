@@ -6,6 +6,7 @@
 #include "TF1.h"
 #include "TauSolver.h"
 #include "SimpleFits/FitSoftware/interface/PDGInfo.h"
+#include "TauSpinerInterface.h"
 
 TauSpinExample::TauSpinExample(TString Name_, TString id_):
   Selection(Name_,id_),
