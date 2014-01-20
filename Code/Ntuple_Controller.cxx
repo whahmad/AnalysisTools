@@ -17,7 +17,6 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
   ,verbose(false)
-  ,TauSpinerInt()
 {
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
@@ -381,7 +380,8 @@ bool Ntuple_Controller::isJetID(unsigned int i){
 
 
 
-double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType){
+double Ntuple_Controller::TauSpinerGet(int SpinType){
+#ifdef USE_TauSpinner
   if(!isData()){
     TauDecay taudecay;
     std::vector<SimpleParticle> tau_daughters, tau_daughters2;
@@ -447,6 +447,7 @@ double Ntuple_Controller::TauSpinerGet(TauSpinerInterface::TauSpinerType SpinTyp
       }
     }
   }
+#endif
   return 1.0;
 }
 

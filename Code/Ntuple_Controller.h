@@ -30,7 +30,9 @@
 #include "NtupleReader.h"
 
 #include "HistoConfig.h"
+#ifdef USE_TauSpinner
 #include "TauSpinerInterface.h"
+#endif
 #include "HistoConfig.h"
 #include "SimpleFits/FitSoftware/interface/PDGInfo.h"
 #include "TauDataFormat/TauNtuple/interface/TauDecay.h"
@@ -103,7 +105,9 @@ class Ntuple_Controller{
   HistoConfig HConfig;
 
   // Interfaces
+#ifdef USE_TauSpinner  
   TauSpinerInterface TauSpinerInt;
+#endif
   HistoConfig HistoC;
 
   // Fit Variables
@@ -121,8 +125,12 @@ class Ntuple_Controller{
   ~Ntuple_Controller() ;
 
   //TauSpiner function
-    double TauSpinerGet(TauSpinerInterface::TauSpinerType SpinType);
-   void TauSpinerSetSignal(int signalcharge){TauSpinerInt.SetTauSignalCharge(signalcharge);}
+  double TauSpinerGet(int SpinType);
+  void TauSpinerSetSignal(int signalcharge){
+#ifdef USE_TauSpinner
+TauSpinerInt.SetTauSignalCharge(signalcharge);
+#endif
+}
    enum beamspot{BS_x0,BS_y0,BS_z0,BS_sigmaZ,BS_dxdz,BS_dydz,BS_BeamWidthX,NBS_par};
    enum TrackQuality {
      undefQuality = -1, loose = 0, tight = 1, highPurity = 2,

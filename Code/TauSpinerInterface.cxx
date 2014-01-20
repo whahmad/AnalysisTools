@@ -1,6 +1,6 @@
 #include "TauSpinerInterface.h"
 
-//#include "HepMC/IO_GenEvent.h"
+#ifdef USE_TauSpinner
 #include "Tauola.h"
 #include "LHAPDF/LHAPDF.h"
 #include "tau_reweight_lib.h"
@@ -10,6 +10,7 @@
 
 int TauSpinerInterface::signalcharge=-1;
 bool TauSpinerInterface::initialized=false;
+#endif
 
 TauSpinerInterface::TauSpinerInterface(){
 }
@@ -17,7 +18,7 @@ TauSpinerInterface::TauSpinerInterface(){
 TauSpinerInterface::~TauSpinerInterface(){
 
 }
-
+#ifdef USE_TauSpinner
 void TauSpinerInterface::Initialize(){
   Tauolapp::Tauola::initialize();
   string name="MSTW2008nnlo90cl.LHgrid";
@@ -36,7 +37,7 @@ void TauSpinerInterface::Initialize(){
 
 
 
-double TauSpinerInterface::Get(TauSpinerType type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
+double TauSpinerInterface::Get(int type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
   if(!initialized){
     Initialize();
     initialized=true;
@@ -87,4 +88,4 @@ double TauSpinerInterface::Get(TauSpinerType type, SimpleParticle X, SimpleParti
   return 1.0;
 }
 
-
+#endif
