@@ -47,6 +47,39 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH2D> eleg_denominator_rebin;
   std::vector<TH2D> muleg_eff;
   std::vector<TH2D> eleg_eff;
+  std::vector<TH2D> muleg_scale;
+  std::vector<TH2D> eleg_scale;
+
+  std::vector<TH1D> muleg_eff_09;
+  std::vector<TH1D> muleg_eff_12;
+  std::vector<TH1D> muleg_eff_21;
+  std::vector<TH1D> muleg_eff_24;
+  std::vector<TH1D> muleg_eff_all;
+
+  std::vector<TH1D> muleg_denom_09;
+  std::vector<TH1D> muleg_denom_12;
+  std::vector<TH1D> muleg_denom_21;
+  std::vector<TH1D> muleg_denom_24;
+  std::vector<TH1D> muleg_denom_all;
+  std::vector<TH1D> muleg_num_09;
+  std::vector<TH1D> muleg_num_12;
+  std::vector<TH1D> muleg_num_21;
+  std::vector<TH1D> muleg_num_24;
+  std::vector<TH1D> muleg_num_all;
+
+  std::vector<TH1D> eleg_eff_10;
+  std::vector<TH1D> eleg_eff_15;
+  std::vector<TH1D> eleg_eff_25;
+  std::vector<TH1D> eleg_eff_all;
+
+  std::vector<TH1D> eleg_denom_10;
+  std::vector<TH1D> eleg_denom_15;
+  std::vector<TH1D> eleg_denom_25;
+  std::vector<TH1D> eleg_denom_all;
+  std::vector<TH1D> eleg_num_10;
+  std::vector<TH1D> eleg_num_15;
+  std::vector<TH1D> eleg_num_25;
+  std::vector<TH1D> eleg_num_all;
 
   //control plots
   std::vector<TH1D> tagmupt;
@@ -57,20 +90,14 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH1D> probemueta;
   std::vector<TH1D> probeept;
   std::vector<TH1D> probeeeta;
-  std::vector<TH1D> drtagmuprobee;
-  std::vector<TH1D> drtageprobemu;
   std::vector<TH1D> drmumu;
   std::vector<TH1D> dree;
-  std::vector<TH1D> ptbaltagmuprobee;
-  std::vector<TH1D> ptbaltageprobemu;
   std::vector<TH1D> ptbalmumu;
   std::vector<TH1D> ptbalee;
   std::vector<TH1D> mttagmu;
   std::vector<TH1D> mttage;
   std::vector<TH1D> mtprobemu;
   std::vector<TH1D> mtprobee;
-  std::vector<TH1D> mtagmuprobee;
-  std::vector<TH1D> mtageprobemu;
   std::vector<TH1D> mmumu;
   std::vector<TH1D> mee;
 
@@ -87,6 +114,7 @@ class ZtoEMu_Fakerate : public Selection {
   bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
   bool isGoodVtx(unsigned int i);
   double vertexSignificance(TVector3 vec, unsigned int vertex);
+  bool passZVeto(unsigned int vertex, std::string object);
   
   void triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator,
 		  TH1D &tagmupt, TH1D &tagmueta, TH1D &tagept, TH1D & tageeta, TH1D &probemupt, TH1D &probemueta, TH1D &probeept, TH1D &probeeeta,

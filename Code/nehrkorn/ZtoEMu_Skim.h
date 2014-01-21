@@ -16,11 +16,7 @@ class ZtoEMu_Skim : public Selection {
 
   enum cuts {TriggerOk=0,
 	     PrimeVtx,
-	     NMuPt,
-	     NMuEta,
 		 NMu,
-	     NEPt,
-	     NEEta,
 		 NE,
 		 ptthreshold,
 		 charge,
@@ -38,6 +34,11 @@ class ZtoEMu_Skim : public Selection {
   std::vector<TH1D> mueta;
   std::vector<TH1D> ept;
   std::vector<TH1D> eeta;
+
+  std::vector<TH1D> mupt_n0;
+  std::vector<TH1D> mueta_n0;
+  std::vector<TH1D> ept_n0;
+  std::vector<TH1D> eeta_n0;
 
   std::vector<TH1D> muptw;
   std::vector<TH1D> muetaw;
@@ -88,7 +89,6 @@ class ZtoEMu_Skim : public Selection {
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   
-  bool MVA_ID;
   TFile* FRFile;
   TFile* EmbEffFile;
   TH2D* ElectronFakeRate;

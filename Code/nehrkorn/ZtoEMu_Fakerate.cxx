@@ -72,29 +72,62 @@ void  ZtoEMu_Fakerate::Configure(){
   // Setup NPassed Histogams
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
   // Setup Extra Histograms
-  tightmu=HConfig.GetTH2D(Name+"_tightmu","tightmu",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  tightmu_rebin=HConfig.GetTH2D(Name+"_tightmu_rebin","tightmu_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  tighte=HConfig.GetTH2D(Name+"_tighte","tighte",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  tighte_rebin=HConfig.GetTH2D(Name+"_tighte_rebin","tighte_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  fakemu=HConfig.GetTH2D(Name+"_fakemu","fakemu",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  fakemu_rebin=HConfig.GetTH2D(Name+"_fakemu_rebin","fakemu_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  fakee=HConfig.GetTH2D(Name+"_fakee","fakee",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  fakee_rebin=HConfig.GetTH2D(Name+"_fakee_rebin","fakee_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  mueff=HConfig.GetTH2D(Name+"_mueff","mueff",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eeff=HConfig.GetTH2D(Name+"_eeff","eeff",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  tightmu=HConfig.GetTH2D(Name+"_tightmu","tightmu",100,0.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  tightmu_rebin=HConfig.GetTH2D(Name+"_tightmu_rebin","tightmu_rebin",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  tighte=HConfig.GetTH2D(Name+"_tighte","tighte",100,0.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  tighte_rebin=HConfig.GetTH2D(Name+"_tighte_rebin","tighte_rebin",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  fakemu=HConfig.GetTH2D(Name+"_fakemu","fakemu",100,0.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  fakemu_rebin=HConfig.GetTH2D(Name+"_fakemu_rebin","fakemu_rebin",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  fakee=HConfig.GetTH2D(Name+"_fakee","fakee",100,0.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  fakee_rebin=HConfig.GetTH2D(Name+"_fakee_rebin","fakee_rebin",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  mueff=HConfig.GetTH2D(Name+"_mueff","mueff",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eeff=HConfig.GetTH2D(Name+"_eeff","eeff",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
 
-  muleg_numerator=HConfig.GetTH2D(Name+"_muleg_numerator","muleg_numerator",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  muleg_denominator=HConfig.GetTH2D(Name+"_muleg_denominator","muleg_denominator",90,10.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eleg_numerator=HConfig.GetTH2D(Name+"_eleg_numerator","eleg_numerator",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  eleg_denominator=HConfig.GetTH2D(Name+"_eleg_denominator","eleg_denominator",90,10.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  muleg_numerator=HConfig.GetTH2D(Name+"_muleg_numerator","muleg_numerator",100,0.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  muleg_denominator=HConfig.GetTH2D(Name+"_muleg_denominator","muleg_denominator",100,0.,100.,48,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_numerator=HConfig.GetTH2D(Name+"_eleg_numerator","eleg_numerator",10,0.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  eleg_denominator=HConfig.GetTH2D(Name+"_eleg_denominator","eleg_denominator",10,0.,100.,50,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
 
-  muleg_numerator_rebin=HConfig.GetTH2D(Name+"_muleg_numerator_rebin","muleg_numerator_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  muleg_denominator_rebin=HConfig.GetTH2D(Name+"_muleg_denominator_rebin","muleg_denominator_rebin",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eleg_numerator_rebin=HConfig.GetTH2D(Name+"_eleg_numerator_rebin","eleg_numerator_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
-  eleg_denominator_rebin=HConfig.GetTH2D(Name+"_eleg_denominator_rebin","eleg_denominator_rebin",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  muleg_numerator_rebin=HConfig.GetTH2D(Name+"_muleg_numerator_rebin","muleg_numerator_rebin",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  muleg_denominator_rebin=HConfig.GetTH2D(Name+"_muleg_denominator_rebin","muleg_denominator_rebin",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_numerator_rebin=HConfig.GetTH2D(Name+"_eleg_numerator_rebin","eleg_numerator_rebin",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  eleg_denominator_rebin=HConfig.GetTH2D(Name+"_eleg_denominator_rebin","eleg_denominator_rebin",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
 
-  muleg_eff=HConfig.GetTH2D(Name+"_muleg_eff","muleg_eff",18,10.,100.,8,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
-  eleg_eff=HConfig.GetTH2D(Name+"_eleg_eff","eleg_eff",18,10.,100.,8,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  muleg_eff=HConfig.GetTH2D(Name+"_muleg_eff","muleg_eff",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_eff=HConfig.GetTH2D(Name+"_eleg_eff","eleg_eff",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+  muleg_scale=HConfig.GetTH2D(Name+"_muleg_scale","muleg_scale",20,0.,100.,16,-2.4,2.4,"p_{T}^{#mu} / GeV","#eta_{#mu}");
+  eleg_scale=HConfig.GetTH2D(Name+"_eleg_scale","eleg_scale",20,0.,100.,10,-2.5,2.5,"p_{T}^{e} / GeV","#eta_{e}");
+
+  muleg_eff_09=HConfig.GetTH1D(Name+"_muleg_eff_09","muleg_eff_09",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_eff_12=HConfig.GetTH1D(Name+"_muleg_eff_12","muleg_eff_12",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_eff_21=HConfig.GetTH1D(Name+"_muleg_eff_21","muleg_eff_21",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_eff_24=HConfig.GetTH1D(Name+"_muleg_eff_24","muleg_eff_24",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_eff_all=HConfig.GetTH1D(Name+"_muleg_eff_all","muleg_eff_all",20,0.,100.,"p_{T}^{#mu} / GeV");
+
+  muleg_denom_09=HConfig.GetTH1D(Name+"_muleg_denom_09","muleg_denom_09",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_denom_12=HConfig.GetTH1D(Name+"_muleg_denom_12","muleg_denom_12",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_denom_21=HConfig.GetTH1D(Name+"_muleg_denom_21","muleg_denom_21",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_denom_24=HConfig.GetTH1D(Name+"_muleg_denom_24","muleg_denom_24",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_denom_all=HConfig.GetTH1D(Name+"_muleg_denom_all","muleg_denom_all",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_num_09=HConfig.GetTH1D(Name+"_muleg_num_09","muleg_num_09",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_num_12=HConfig.GetTH1D(Name+"_muleg_num_12","muleg_num_12",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_num_21=HConfig.GetTH1D(Name+"_muleg_num_21","muleg_num_21",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_num_24=HConfig.GetTH1D(Name+"_muleg_num_24","muleg_num_24",20,0.,100.,"p_{T}^{#mu} / GeV");
+  muleg_num_all=HConfig.GetTH1D(Name+"_muleg_num_all","muleg_num_all",20,0.,100.,"p_{T}^{#mu} / GeV");
+
+  eleg_eff_10=HConfig.GetTH1D(Name+"_eleg_eff_10","eleg_eff_10",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_eff_15=HConfig.GetTH1D(Name+"_eleg_eff_15","eleg_eff_15",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_eff_25=HConfig.GetTH1D(Name+"_eleg_eff_25","eleg_eff_25",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_eff_all=HConfig.GetTH1D(Name+"_eleg_eff_all","eleg_eff_all",20,0.,100.,"p_{T}^{#mu} / GeV");
+
+  eleg_denom_10=HConfig.GetTH1D(Name+"_eleg_denom_10","eleg_denom_10",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_denom_15=HConfig.GetTH1D(Name+"_eleg_denom_15","eleg_denom_15",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_denom_25=HConfig.GetTH1D(Name+"_eleg_denom_25","eleg_denom_25",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_denom_all=HConfig.GetTH1D(Name+"_eleg_denom_all","eleg_denom_all",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_num_10=HConfig.GetTH1D(Name+"_eleg_num_10","eleg_num_10",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_num_15=HConfig.GetTH1D(Name+"_eleg_num_15","eleg_num_15",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_num_25=HConfig.GetTH1D(Name+"_eleg_num_25","eleg_num_25",20,0.,100.,"p_{T}^{#mu} / GeV");
+  eleg_num_all=HConfig.GetTH1D(Name+"_eleg_num_all","eleg_num_all",20,0.,100.,"p_{T}^{#mu} / GeV");
 
   tagmupt=HConfig.GetTH1D(Name+"_tagmupt","tagmupt",40,0.,100.,"p_{T}^{#mu} / GeV");
   tagmueta=HConfig.GetTH1D(Name+"_tagmueta","tagmueta",25,-2.5,2.5,"#eta_{#mu}");
@@ -104,20 +137,14 @@ void  ZtoEMu_Fakerate::Configure(){
   probemueta=HConfig.GetTH1D(Name+"_probemueta","probemueta",25,-2.5,2.5,"#eta_{#mu}");
   probeept=HConfig.GetTH1D(Name+"_probeept","probeept",40,0.,100.,"p_{T}^{e} / GeV");
   probeeeta=HConfig.GetTH1D(Name+"_probeeeta","probeeeta",25,-2.5,2.5,"#eta_{e}");
-  drtagmuprobee=HConfig.GetTH1D(Name+"_drtagmuprobee","drtagmuprobee",20,0.,1.,"#DeltaR(e,#mu)");
-  drtageprobemu=HConfig.GetTH1D(Name+"_drtageprobemu","drtageprobemu",20,0.,1.,"#DeltaR(e,#mu)");
   drmumu=HConfig.GetTH1D(Name+"_drmumu","drmumu",60,0.,3.,"#DeltaR(#mu,#mu)");
   dree=HConfig.GetTH1D(Name+"_dree","dree",60,0.,3.,"#DeltaR(e,e)");
-  ptbaltagmuprobee=HConfig.GetTH1D(Name+"_ptbaltagmuprobee","ptbaltagmuprobee",40,0.,200.,"p_{T}^{e#mu} / GeV");
-  ptbaltageprobemu=HConfig.GetTH1D(Name+"_ptbaltageprobemu","ptbaltageprobemu",40,0.,200.,"p_{T}^{e#mu} / GeV");
   ptbalmumu=HConfig.GetTH1D(Name+"_ptbalmumu","ptbalmumu",40,0.,200.,"p_{T}^{#mu#mu} / GeV");
   ptbalee=HConfig.GetTH1D(Name+"_ptbalee","ptbalee",40,0.,200.,"p_{T}^{ee} / GeV");
   mttagmu=HConfig.GetTH1D(Name+"_mttagmu","mttagmu",40,0.,160.,"m_{t}^{#mu} / GeV");
   mttage=HConfig.GetTH1D(Name+"_mttage","mttage",40,0.,160.,"m_{t}^{e} / GeV");
   mtprobemu=HConfig.GetTH1D(Name+"_mtprobemu","mtprobemu",40,0.,160.,"m_{t}^{#mu} / GeV");
   mtprobee=HConfig.GetTH1D(Name+"_mtprobee","mtprobee",40,0.,160.,"m_{t}^{e} / GeV");
-  mtagmuprobee=HConfig.GetTH1D(Name+"_mtagmuprobee","mtagmuprobee",30,30.,90.,"m_{e,#mu} / GeV");
-  mtageprobemu=HConfig.GetTH1D(Name+"_mtageprobemu","mtageprobemu",30,30.,90.,"m_{e,#mu} / GeV");
   mmumu=HConfig.GetTH1D(Name+"_mmumu","mmumu",30,60.,120.,"m_{#mu,#mu} / GeV");
   mee=HConfig.GetTH1D(Name+"_mee","mee",30,60.,120.,"m_{e,e} / GeV");
 
@@ -158,6 +185,39 @@ void  ZtoEMu_Fakerate::Store_ExtraDist(){
 
 	Extradist2d.push_back(&muleg_eff);
 	Extradist2d.push_back(&eleg_eff);
+	Extradist2d.push_back(&muleg_scale);
+	Extradist2d.push_back(&eleg_scale);
+
+	Extradist1d.push_back(&muleg_eff_09);
+	Extradist1d.push_back(&muleg_eff_12);
+	Extradist1d.push_back(&muleg_eff_21);
+	Extradist1d.push_back(&muleg_eff_24);
+	Extradist1d.push_back(&muleg_eff_all);
+
+	Extradist1d.push_back(&muleg_denom_09);
+	Extradist1d.push_back(&muleg_denom_12);
+	Extradist1d.push_back(&muleg_denom_21);
+	Extradist1d.push_back(&muleg_denom_24);
+	Extradist1d.push_back(&muleg_denom_all);
+	Extradist1d.push_back(&muleg_num_09);
+	Extradist1d.push_back(&muleg_num_12);
+	Extradist1d.push_back(&muleg_num_21);
+	Extradist1d.push_back(&muleg_num_24);
+	Extradist1d.push_back(&muleg_num_all);
+
+	Extradist1d.push_back(&eleg_eff_10);
+	Extradist1d.push_back(&eleg_eff_15);
+	Extradist1d.push_back(&eleg_eff_25);
+	Extradist1d.push_back(&eleg_eff_all);
+
+	Extradist1d.push_back(&eleg_denom_10);
+	Extradist1d.push_back(&eleg_denom_15);
+	Extradist1d.push_back(&eleg_denom_25);
+	Extradist1d.push_back(&eleg_denom_all);
+	Extradist1d.push_back(&eleg_num_10);
+	Extradist1d.push_back(&eleg_num_15);
+	Extradist1d.push_back(&eleg_num_25);
+	Extradist1d.push_back(&eleg_num_all);
 
 	Extradist1d.push_back(&tagmupt);
 	Extradist1d.push_back(&tagmueta);
@@ -167,20 +227,14 @@ void  ZtoEMu_Fakerate::Store_ExtraDist(){
 	Extradist1d.push_back(&probemueta);
 	Extradist1d.push_back(&probeept);
 	Extradist1d.push_back(&probeeeta);
-	Extradist1d.push_back(&drtagmuprobee);
-	Extradist1d.push_back(&drtageprobemu);
 	Extradist1d.push_back(&drmumu);
 	Extradist1d.push_back(&dree);
-	Extradist1d.push_back(&ptbaltagmuprobee);
-	Extradist1d.push_back(&ptbaltageprobemu);
 	Extradist1d.push_back(&ptbalmumu);
 	Extradist1d.push_back(&ptbalee);
 	Extradist1d.push_back(&mttagmu);
 	Extradist1d.push_back(&mttage);
 	Extradist1d.push_back(&mtprobemu);
 	Extradist1d.push_back(&mtprobee);
-	Extradist1d.push_back(&mtagmuprobee);
-	Extradist1d.push_back(&mtageprobemu);
 	Extradist1d.push_back(&mmumu);
 	Extradist1d.push_back(&mee);
 
@@ -237,59 +291,52 @@ void  ZtoEMu_Fakerate::doEvent(){
   //
 
   // muon fakerate
-  for(unsigned i=0;i<Ntp->NMuons();i++){
-	  if(Ntp->Muons_p4(i).Pt()>mu_pt
-			  && fabs(Ntp->Muons_p4(i).Eta())<mu_eta
-			  && vertex>=0
-			  && (Ntp->TriggerAccept("HLT_Mu8_v")
-					  || Ntp->TriggerAccept("HLT_Mu12_v")
-					  || Ntp->TriggerAccept("HLT_Mu17_v")
-					  || Ntp->TriggerAccept("HLT_Mu40_v")
-					  || Ntp->TriggerAccept("HLT_QuadJet80_v"))
-					  && Ntp->isData()
-			  ){
-		  if(isFakeMuon(i,vertex)){
-			  fakemu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-			  fakemu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-			  if(isTightMuon(i,vertex)
-					  && Muon_RelIso(i)<0.12){
-				  /*if(fabs(Ntp->Muons_p4(i).Eta())<1.479 && Muon_RelIso(i)<0.15){
+  if(Ntp->isData()){
+	  for(unsigned i=0;i<Ntp->NMuons();i++){
+		  if(Ntp->Muons_p4(i).Pt()>mu_pt
+				  && fabs(Ntp->Muons_p4(i).Eta())<mu_eta
+				  && vertex>=0
+				  && (Ntp->TriggerAccept("HLT_Mu8_v")
+						  || Ntp->TriggerAccept("HLT_Mu12_v")
+						  || Ntp->TriggerAccept("HLT_Mu17_v")
+						  || Ntp->TriggerAccept("HLT_Mu40_v")
+						  || Ntp->TriggerAccept("HLT_QuadJet80_v"))
+				  && passZVeto(vertex,"muon")
+				  ){
+			  if(isFakeMuon(i,vertex)){
+				  fakemu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+				  fakemu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+				  if(isTightMuon(i,vertex)
+						  && Muon_RelIso(i)<0.12){
 					  tightmu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
 					  tightmu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-				  }else if(fabs(Ntp->Muons_p4(i).Eta())>=1.479 && Muon_RelIso(i)<0.1){
-					  tightmu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-					  tightmu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-				  }*/
-				  tightmu.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
-				  tightmu_rebin.at(t).Fill(Ntp->Muons_p4(i).Pt(),Ntp->Muons_p4(i).Eta());
+				  }
 			  }
 		  }
 	  }
-  }
 
-  // electron fakerate
-  for(unsigned i=0;i<Ntp->NElectrons();i++){
-	  if(Ntp->Electron_p4(i).Et()>e_pt
-			  && fabs(Ntp->Electron_supercluster_eta(i))<e_eta
-			  && vertex>=0
-			  && (Ntp->TriggerAccept("HLT_Ele8_CaloIdT_TrkIdVL_v")
-					  || Ntp->TriggerAccept("HLT_Ele8_CaloIdL_CaloIsoVL_v")
-					  || Ntp->TriggerAccept("HLT_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")
-					  || Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v")
-					  || Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v")
-					  || Ntp->TriggerAccept("HLT_Ele27_WP80_v")
-					  || Ntp->TriggerAccept("HLT_QuadJet80_v"))
-					  && Ntp->isData()
-			  ){
-		  if(isFakeElectron(i,vertex)){
-			  fakee.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
-			  fakee_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
-			  if(isMVANonTrigElectron(i,vertex)// &&
-					  //dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.1 &&
-					  //dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
-					  ){
-				  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
-				  tighte_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+	  // electron fakerate
+	  for(unsigned i=0;i<Ntp->NElectrons();i++){
+		  if(Ntp->Electron_p4(i).Et()>e_pt
+				  && fabs(Ntp->Electron_supercluster_eta(i))<e_eta
+				  && vertex>=0
+				  && (Ntp->TriggerAccept("HLT_Ele8_CaloIdT_TrkIdVL_v")
+						  || Ntp->TriggerAccept("HLT_Ele8_CaloIdL_CaloIsoVL_v")
+						  || Ntp->TriggerAccept("HLT_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")
+						  || Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v")
+						  || Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v")
+						  || Ntp->TriggerAccept("HLT_Ele27_WP80_v")
+						  || Ntp->TriggerAccept("HLT_QuadJet80_v"))
+				  && passZVeto(vertex,"electron")
+				  ){
+			  if(isFakeElectron(i,vertex)){
+				  fakee.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+				  fakee_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+				  if(isMVANonTrigElectron(i,vertex)
+						  ){
+					  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+					  tighte_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),Ntp->Electron_supercluster_eta(i));
+				  }
 			  }
 		  }
 	  }
@@ -313,11 +360,6 @@ void  ZtoEMu_Fakerate::doEvent(){
 			  && isTightMuon(i,vertex)
 			  && Muon_RelIso(i)<0.12
 			  ){
-		  /*if(fabs(Ntp->Muons_p4(i).Eta())<1.479 && Muon_RelIso(i)<0.15){
-			  SingleMuons.push_back(i);
-		  }else if(fabs(Ntp->Muons_p4(i).Eta())>=1.479 && Muon_RelIso(i)<0.1){
-			  SingleMuons.push_back(i);
-		  }*/
 		  SingleMuons.push_back(i);
 	  }
   }
@@ -325,9 +367,7 @@ void  ZtoEMu_Fakerate::doEvent(){
 	  if(vertex>=0)sip.at(t).Fill(vertexSignificance(Ntp->Electron_Poca(i),vertex),w);
 	  if(Ntp->Electron_p4(i).Et()>e_pt
 			  && fabs(Ntp->Electron_supercluster_eta(i))<e_eta
-			  && vertex>=0// &&
-			  //dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.1 &&
-			  //dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.02
+			  && vertex>=0
 			  ){
 		  if(isMVANonTrigElectron(i,vertex)){
 			  SingleElectrons.push_back(i);
@@ -335,54 +375,38 @@ void  ZtoEMu_Fakerate::doEvent(){
 	  }
   }
 
-  /*triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu17_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_eta2p1_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-  		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu30_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-  		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu40_v","HLT_Mu17_Ele8_","muon",eleg_denominator.at(t),eleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-  		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu17_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_eta2p1_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu24_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_IsoMu30_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleMuons,SingleElectrons,"HLT_Mu40_v","HLT_Mu17_Ele8_","muon",eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),w);
-
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Mu8_Ele17_","electron",muleg_denominator.at(t),muleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v","HLT_Mu8_Ele17_","electron",muleg_denominator.at(t),muleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-  		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v","HLT_Mu8_Ele17_","electron",muleg_denominator.at(t),muleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-  		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele27_WP80_v","HLT_Mu8_Ele17_","electron",muleg_denominator.at(t),muleg_numerator.at(t),tagmupt.at(t),tagmueta.at(t),tagept.at(t),tageeta.at(t),probemupt.at(t),probemueta.at(t),probeept.at(t),probeeeta.at(t),
-    		  drtagmuprobee.at(t),drtageprobemu.at(t),ptbaltagmuprobee.at(t),ptbaltageprobemu.at(t),mttagmu.at(t),mttage.at(t),mtprobemu.at(t),mtprobee.at(t),mtagmuprobee.at(t),mtageprobemu.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Mu8_Ele17_","electron",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v","HLT_Mu8_Ele17_","electron",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v","HLT_Mu8_Ele17_","electron",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),w);
-  triggerMatch(SingleElectrons,SingleMuons,"HLT_Ele27_WP80_v","HLT_Mu8_Ele17_","electron",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),w);*/
-
-  doubleMuE(SingleMuons,"muon","HLT_Mu17_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
-		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
-  doubleMuE(SingleMuons,"muon","HLT_Mu40_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
-  		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
-  doubleMuE(SingleMuons,"muon","HLT_IsoMu24_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
-  		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
-  doubleMuE(SingleMuons,"muon","HLT_IsoMu24_eta2p1_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
+  // muon trigger leg
+  if(Ntp->TriggerAccept("HLT_Mu17_v")){
+	  doubleMuE(SingleMuons,"muon","HLT_Mu17_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
+			  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_Mu40_v")){
+	  doubleMuE(SingleMuons,"muon","HLT_Mu40_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
+	  		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_IsoMu24_v")){
+	  doubleMuE(SingleMuons,"muon","HLT_IsoMu24_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
+	  		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_IsoMu24_eta2p1_v")){
+	  doubleMuE(SingleMuons,"muon","HLT_IsoMu24_eta2p1_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
     		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
-  doubleMuE(SingleMuons,"muon","HLT_IsoMu30_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
+  }else if(Ntp->TriggerAccept("HLT_IsoMu30_v")){
+	  doubleMuE(SingleMuons,"muon","HLT_IsoMu30_v","HLT_Mu17_Mu8_v",muleg_denominator_rebin.at(t),muleg_numerator_rebin.at(t),tagmupt.at(t),tagmueta.at(t),probemupt.at(t),probemueta.at(t),
     		  drmumu.at(t),ptbalmumu.at(t),mttagmu.at(t),mtprobemu.at(t),mmumu.at(t),w);
+  }
 
-  doubleMuE(SingleElectrons,"electron","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
-		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
-  doubleMuE(SingleElectrons,"electron","HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
-  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
-  doubleMuE(SingleElectrons,"electron","HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
-  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
-  doubleMuE(SingleElectrons,"electron","HLT_Ele27_WP80_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
-  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
+  // electron trigger leg
+  if(Ntp->TriggerAccept("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")){
+	  doubleMuE(SingleElectrons,"electron","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
+			  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v")){
+	  doubleMuE(SingleElectrons,"electron","HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
+	  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v")){
+	  doubleMuE(SingleElectrons,"electron","HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralPFNoPUJet30_BTagIPIter_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
+	  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
+  }else if(Ntp->TriggerAccept("HLT_Ele27_WP80_v")){
+	  doubleMuE(SingleElectrons,"electron","HLT_Ele27_WP80_v","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
+	  		  eleg_denominator_rebin.at(t),eleg_numerator_rebin.at(t),tagept.at(t),tageeta.at(t),probeept.at(t),probeeeta.at(t),dree.at(t),ptbalee.at(t),mttage.at(t),mtprobee.at(t),mee.at(t),w);
+  }
 
   if(verbose)std::cout << "ZtoEMu_Fakerate::doEvent() doEvent END" << std::endl;
 }
@@ -433,6 +457,41 @@ double ZtoEMu_Fakerate::vertexSignificance(TVector3 vec, unsigned int vertex){
 	return 999;
 }
 
+bool ZtoEMu_Fakerate::passZVeto(unsigned int vertex, std::string object){
+	if(object=="muon"){
+		for(unsigned i=0;i<Ntp->NMuons();i++){
+			if(Ntp->Muons_p4(i).Pt()<20) continue;
+			if(fabs(Ntp->Muons_p4(i).Eta())>2.4) continue;
+			if(!isFakeMuon(i,vertex)) continue;
+			for(unsigned j=i+1;j<Ntp->NMuons();j++){
+				if(Ntp->Muon_Charge(i)==Ntp->Muon_Charge(j)) continue;
+				if(Ntp->Muons_p4(j).Pt()>20) continue;
+				if(fabs(Ntp->Muons_p4(j).Eta())>2.4) continue;
+				if(!isFakeMuon(j,vertex)) continue;
+				return false;
+			}
+		}
+		return true;
+	}else if(object=="electron"){
+		for(unsigned i=0;i<Ntp->NElectrons();i++){
+			if(Ntp->Electron_p4(i).Et()<20) continue;
+			if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
+			if(!isFakeElectron(i,vertex)) continue;
+			for(unsigned j=i+1;j<Ntp->NElectrons();j++){
+				if(Ntp->Electron_Charge(i)==Ntp->Electron_Charge(j)) continue;
+				if(Ntp->Electron_p4(j).Et()>20) continue;
+				if(fabs(Ntp->Electron_supercluster_eta(j))) continue;
+				if(!isFakeElectron(j,vertex)) continue;
+				return false;
+			}
+		}
+		return true;
+	}else{
+		std::cout << "WARNING: no known object given" << std::endl;
+		return false;
+	}
+}
+
 int ZtoEMu_Fakerate::getxbin(double pt){
 	if(pt<15.) return 1;
 	else if(pt>=15. && pt<20.) return 2;
@@ -477,10 +536,10 @@ int ZtoEMu_Fakerate::getybin(double eta,std::string object){
 void ZtoEMu_Fakerate::doubleMuE(std::vector<unsigned int> objects, std::string particle,std::string tagtrigger, std::string probetrigger, TH2D &denominator, TH2D &numerator,
 		  TH1D &tagpt, TH1D &tageta, TH1D &probept, TH1D &probeeta, TH1D &dr, TH1D &ptbal, TH1D &mttag, TH1D &mtprobe, TH1D &m, double w){
 	unsigned int tag = 999;
+	unsigned int probe = 999;
 	bool flag;
 	float testdr;
 	std::vector<unsigned int> probes;
-	unsigned int probe = 999;
 	// match tag to trigger for probe leg measurement
 	if(Ntp->TriggerAccept(tagtrigger)){
 		flag = false;
@@ -558,9 +617,8 @@ void ZtoEMu_Fakerate::doubleMuE(std::vector<unsigned int> objects, std::string p
 				}
 			}
 		}
-		// pick probe electron with highest pt
-		float testpt = 8;
-		unsigned int probe = 999;
+		// pick probe with highest pt
+		float testpt = 3;
 		for(unsigned i=0;i<probes.size();i++){
 			if(particle=="muon"){
 				if(Ntp->Muons_p4(probes.at(i)).Pt()>testpt){
@@ -605,7 +663,7 @@ void ZtoEMu_Fakerate::doubleMuE(std::vector<unsigned int> objects, std::string p
 										Ntp->HLTTrigger_objs_Eta(i,j),
 										Ntp->HLTTrigger_objs_Phi(i,j),
 										Ntp->HLTTrigger_objs_E(i,j));
-								//if(testprobe.DeltaR(testtag)>testdr)flag = true;
+								if(testprobe.DeltaR(testtag)>testdr)flag = true;
 							}
 						}
 						if(particle=="electron"){
@@ -614,7 +672,7 @@ void ZtoEMu_Fakerate::doubleMuE(std::vector<unsigned int> objects, std::string p
 										Ntp->HLTTrigger_objs_Eta(i,j),
 										Ntp->HLTTrigger_objs_Phi(i,j),
 										Ntp->HLTTrigger_objs_E(i,j));
-								//if(testprobe.DeltaR(testtag)>testdr)flag = true;
+								if(testprobe.DeltaR(testtag)>testdr)flag = true;
 							}
 						}
 						if(flag) break;
@@ -1103,7 +1161,7 @@ bool ZtoEMu_Fakerate::isTightElectron(unsigned int i, unsigned int j){
 bool ZtoEMu_Fakerate::isFakeElectron(unsigned int i){
 	if(Ntp->Electron_p4(i).Pt()<=10) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
-	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(Ntp->Electron_numberOfMissedHits(i)>1) return false;
 	if(Ntp->Electron_tkSumPt03(i)/Ntp->Electron_p4(i).Pt()>=0.2) return false;
 	if(std::max(Ntp->Electron_ecalRecHitSumEt03(i)-1.,0.)/Ntp->Electron_p4(i).Pt()>=0.2) return false;
 	if((Ntp->Electron_hcalDepth1TowerSumEt03(i)+Ntp->Electron_hcalDepth2TowerSumEt03(i))/Ntp->Electron_p4(i).Pt()>=0.2) return false;
@@ -1185,7 +1243,7 @@ void ZtoEMu_Fakerate::Finish(){
 		for(unsigned int j=1;j<=fakemu_rebin.at(0).GetNbinsY();j++){
 			if(fakemu_rebin.at(0).GetBinContent(i,j)!=0){
 				muprob = tightmu_rebin.at(0).GetBinContent(i,j)/fakemu_rebin.at(0).GetBinContent(i,j);
-				mueff.at(0).SetBinContent(i,j,muprob/(1.-muprob));
+				mueff.at(0).SetBinContent(i,j,muprob);
 			}
 		}
 	}
@@ -1193,41 +1251,359 @@ void ZtoEMu_Fakerate::Finish(){
 		for(unsigned int j=1;j<=fakee_rebin.at(0).GetNbinsY();j++){
 			if(fakee_rebin.at(0).GetBinContent(i,j)!=0){
 				eprob = tighte_rebin.at(0).GetBinContent(i,j)/fakee_rebin.at(0).GetBinContent(i,j);
-				eeff.at(0).SetBinContent(i,j,eprob/(1.-eprob));
+				eeff.at(0).SetBinContent(i,j,eprob);
 			}
 		}
 	}
+	double mueff_data, mueff_mumu, mueff_tautau;
+	double eeff_data, eeff_ee, eeff_tautau;
 	for(unsigned i=1;i<=muleg_numerator_rebin.at(0).GetNbinsX();i++){
 		for(unsigned j=1;j<=muleg_numerator_rebin.at(0).GetNbinsY();j++){
-			if(muleg_denominator_rebin.at(0).GetBinContent(i,j)!=0){
-				muleg_eff.at(0).SetBinContent(i,j,muleg_numerator_rebin.at(0).GetBinContent(i,j)/muleg_denominator_rebin.at(0).GetBinContent(i,j));
-			}
-			if(muleg_denominator_rebin.at(11).GetBinContent(i,j)!=0){
-				muleg_eff.at(11).SetBinContent(i,j,muleg_numerator_rebin.at(11).GetBinContent(i,j)/muleg_denominator_rebin.at(11).GetBinContent(i,j));
-			}
-			if(muleg_denominator_rebin.at(12).GetBinContent(i,j)!=0){
-				muleg_eff.at(12).SetBinContent(i,j,muleg_numerator_rebin.at(12).GetBinContent(i,j)/muleg_denominator_rebin.at(12).GetBinContent(i,j));
-			}
-			if(muleg_denominator_rebin.at(13).GetBinContent(i,j)!=0){
-				muleg_eff.at(13).SetBinContent(i,j,muleg_numerator_rebin.at(13).GetBinContent(i,j)/muleg_denominator_rebin.at(13).GetBinContent(i,j));
-			}
+			if(muleg_denominator_rebin.at(0).GetBinContent(i,j)==0) mueff_data = 0;
+			if(muleg_denominator_rebin.at(0).GetBinContent(i,j)>0) mueff_data = muleg_numerator_rebin.at(0).GetBinContent(i,j)/muleg_denominator_rebin.at(0).GetBinContent(i,j);
+			if(muleg_denominator_rebin.at(12).GetBinContent(i,j)==0) mueff_tautau = 0;
+			if(muleg_denominator_rebin.at(12).GetBinContent(i,j)>0) mueff_tautau = muleg_numerator_rebin.at(12).GetBinContent(i,j)/muleg_denominator_rebin.at(12).GetBinContent(i,j);
+			if(muleg_denominator_rebin.at(13).GetBinContent(i,j)==0) mueff_mumu = 0;
+			if(muleg_denominator_rebin.at(13).GetBinContent(i,j)>0) mueff_mumu = muleg_numerator_rebin.at(13).GetBinContent(i,j)/muleg_denominator_rebin.at(13).GetBinContent(i,j);
+
+			muleg_eff.at(0).SetBinContent(i,j,mueff_data);
+			muleg_eff.at(12).SetBinContent(i,j,mueff_tautau);
+			muleg_eff.at(13).SetBinContent(i,j,mueff_mumu);
 		}
 	}
 	for(unsigned i=1;i<=eleg_numerator_rebin.at(0).GetNbinsX();i++){
 		for(unsigned j=1;j<=eleg_numerator_rebin.at(0).GetNbinsY();j++){
-			if(eleg_denominator_rebin.at(0).GetBinContent(i,j)!=0){
-				eleg_eff.at(0).SetBinContent(i,j,eleg_numerator_rebin.at(0).GetBinContent(i,j)/eleg_denominator_rebin.at(0).GetBinContent(i,j));
-			}
-			if(eleg_denominator_rebin.at(11).GetBinContent(i,j)!=0){
-				eleg_eff.at(11).SetBinContent(i,j,eleg_numerator_rebin.at(11).GetBinContent(i,j)/eleg_denominator_rebin.at(11).GetBinContent(i,j));
-			}
-			if(eleg_denominator_rebin.at(12).GetBinContent(i,j)!=0){
-				eleg_eff.at(12).SetBinContent(i,j,eleg_numerator_rebin.at(12).GetBinContent(i,j)/eleg_denominator_rebin.at(12).GetBinContent(i,j));
-			}
-			if(eleg_denominator_rebin.at(13).GetBinContent(i,j)!=0){
-				eleg_eff.at(13).SetBinContent(i,j,eleg_numerator_rebin.at(13).GetBinContent(i,j)/eleg_denominator_rebin.at(13).GetBinContent(i,j));
-			}
+			if(eleg_denominator_rebin.at(0).GetBinContent(i,j)==0) eeff_data = 0;
+			if(eleg_denominator_rebin.at(0).GetBinContent(i,j)>0) eeff_data = eleg_numerator_rebin.at(0).GetBinContent(i,j)/eleg_denominator_rebin.at(0).GetBinContent(i,j);
+			if(eleg_denominator_rebin.at(12).GetBinContent(i,j)==0) eeff_tautau = 0;
+			if(eleg_denominator_rebin.at(12).GetBinContent(i,j)>0) eeff_tautau = eleg_numerator_rebin.at(12).GetBinContent(i,j)/eleg_denominator_rebin.at(12).GetBinContent(i,j);
+			if(eleg_denominator_rebin.at(14).GetBinContent(i,j)==0) eeff_ee = 0;
+			if(eleg_denominator_rebin.at(14).GetBinContent(i,j)>0) eeff_ee = eleg_numerator_rebin.at(14).GetBinContent(i,j)/eleg_denominator_rebin.at(14).GetBinContent(i,j);
+
+			eleg_eff.at(0).SetBinContent(i,j,eeff_data);
+			eleg_eff.at(12).SetBinContent(i,j,eeff_tautau);
+			eleg_eff.at(14).SetBinContent(i,j,eeff_ee);
 		}
+	}
+
+	double muscale(0);
+	double escale(0);
+	for(unsigned i=1;i<=muleg_scale.at(0).GetNbinsX();i++){
+		for(unsigned j=1;j<=muleg_scale.at(0).GetNbinsY();j++){
+			if(muleg_eff.at(13).GetBinContent(i,j)>0) muscale = muleg_eff.at(0).GetBinContent(i,j)/muleg_eff.at(13).GetBinContent(i,j);
+			muleg_scale.at(0).SetBinContent(i,j,muscale);
+		}
+	}
+	for(unsigned i=1;i<=eleg_scale.at(0).GetNbinsX();i++){
+		for(unsigned j=1;j<=eleg_scale.at(0).GetNbinsY();j++){
+			if(eleg_eff.at(14).GetBinContent(i,j)>0) escale = eleg_eff.at(0).GetBinContent(i,j)/eleg_eff.at(14).GetBinContent(i,j);
+			eleg_scale.at(0).SetBinContent(i,j,escale);
+		}
+	}
+
+	double mudata_09, mudata_12, mudata_21, mudata_24, mudata_all;
+	double mumc_09, mumc_12, mumc_21, mumc_24, mumc_all;
+	int count09(6), count12(2), count21(6), count24(2);
+	for(unsigned i=1;i<=muleg_eff.at(0).GetNbinsX();i++){
+		mudata_09=0.;
+		mudata_12=0.;
+		mudata_21=0.;
+		mudata_24=0.;
+		mudata_all=0.;
+		mumc_09=0.;
+		mumc_12=0.;
+		mumc_21=0.;
+		mumc_24=0.;
+		mumc_all=0.;
+		for(unsigned j=1;j<=muleg_eff.at(0).GetNbinsY();j++){
+			//std::cout << "bin " << j << " corresponds to eta " << muleg_eff.at(0).GetYaxis()->GetBinLowEdge(j) << std::endl;
+			if(j>5 && j<12){
+				mudata_09+=muleg_eff.at(0).GetBinContent(i,j);
+				mumc_09+=muleg_eff.at(13).GetBinContent(i,j);
+			}
+			if((j>4 && j<6) || (j>11 && j<13)){
+				mudata_12+=muleg_eff.at(0).GetBinContent(i,j);
+				mumc_12+=muleg_eff.at(13).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				mudata_21+=muleg_eff.at(0).GetBinContent(i,j);
+				mumc_21+=muleg_eff.at(13).GetBinContent(i,j);
+			}
+			if(j<2 || j>15){
+				mudata_24+=muleg_eff.at(0).GetBinContent(i,j);
+				mumc_24+=muleg_eff.at(13).GetBinContent(i,j);
+			}
+			mudata_all+=muleg_eff.at(0).GetBinContent(i,j);
+			mumc_all+=muleg_eff.at(13).GetBinContent(i,j);
+		}
+		mudata_09*=1./count09;
+		mudata_12*=1./count12;
+		mudata_21*=1./count21;
+		mudata_24*=1./count24;
+		mudata_all*=1./muleg_eff.at(0).GetNbinsY();
+		mumc_09*=1./count09;
+		mumc_12*=1./count12;
+		mumc_21*=1./count21;
+		mumc_24*=1./count24;
+		mumc_all*=1./muleg_eff.at(13).GetNbinsY();
+
+		muleg_eff_09.at(0).SetBinContent(i,mudata_09);
+		muleg_eff_12.at(0).SetBinContent(i,mudata_12);
+		muleg_eff_21.at(0).SetBinContent(i,mudata_21);
+		muleg_eff_24.at(0).SetBinContent(i,mudata_24);
+		muleg_eff_all.at(0).SetBinContent(i,mudata_all);
+		muleg_eff_09.at(13).SetBinContent(i,mumc_09);
+		muleg_eff_12.at(13).SetBinContent(i,mumc_12);
+		muleg_eff_21.at(13).SetBinContent(i,mumc_21);
+		muleg_eff_24.at(13).SetBinContent(i,mumc_24);
+		muleg_eff_all.at(13).SetBinContent(i,mumc_all);
+	}
+
+	for(unsigned i=1;i<=muleg_denominator_rebin.at(0).GetNbinsX();i++){
+		mudata_09=0.;
+		mudata_12=0.;
+		mudata_21=0.;
+		mudata_24=0.;
+		mudata_all=0.;
+		mumc_09=0.;
+		mumc_12=0.;
+		mumc_21=0.;
+		mumc_24=0.;
+		mumc_all=0.;
+		for(unsigned j=1;j<=muleg_denominator_rebin.at(0).GetNbinsY();j++){
+			if(j>5 && j<12){
+				mudata_09+=muleg_denominator_rebin.at(0).GetBinContent(i,j);
+				mumc_09+=muleg_denominator_rebin.at(13).GetBinContent(i,j);
+			}
+			if((j>4 && j<6) || (j>11 && j<13)){
+				mudata_12+=muleg_denominator_rebin.at(0).GetBinContent(i,j);
+				mumc_12+=muleg_denominator_rebin.at(13).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				mudata_21+=muleg_denominator_rebin.at(0).GetBinContent(i,j);
+				mumc_21+=muleg_denominator_rebin.at(13).GetBinContent(i,j);
+			}
+			if(j<2 || j>15){
+				mudata_24+=muleg_denominator_rebin.at(0).GetBinContent(i,j);
+				mumc_24+=muleg_denominator_rebin.at(13).GetBinContent(i,j);
+			}
+			mudata_all+=muleg_denominator_rebin.at(0).GetBinContent(i,j);
+			mumc_all+=muleg_denominator_rebin.at(13).GetBinContent(i,j);
+		}
+		mudata_09*=1./count09;
+		mudata_12*=1./count12;
+		mudata_21*=1./count21;
+		mudata_24*=1./count24;
+		mudata_all*=1./muleg_denominator_rebin.at(0).GetNbinsY();
+		mumc_09*=1./count09;
+		mumc_12*=1./count12;
+		mumc_21*=1./count21;
+		mumc_24*=1./count24;
+		mumc_all*=1./muleg_denominator_rebin.at(13).GetNbinsY();
+
+		muleg_denom_09.at(0).SetBinContent(i,mudata_09);
+		muleg_denom_12.at(0).SetBinContent(i,mudata_12);
+		muleg_denom_21.at(0).SetBinContent(i,mudata_21);
+		muleg_denom_24.at(0).SetBinContent(i,mudata_24);
+		muleg_denom_all.at(0).SetBinContent(i,mudata_all);
+		muleg_denom_09.at(13).SetBinContent(i,mumc_09);
+		muleg_denom_12.at(13).SetBinContent(i,mumc_12);
+		muleg_denom_21.at(13).SetBinContent(i,mumc_21);
+		muleg_denom_24.at(13).SetBinContent(i,mumc_24);
+		muleg_denom_all.at(13).SetBinContent(i,mumc_all);
+	}
+
+	for(unsigned i=1;i<=muleg_numerator_rebin.at(0).GetNbinsX();i++){
+		mudata_09=0.;
+		mudata_12=0.;
+		mudata_21=0.;
+		mudata_24=0.;
+		mudata_all=0.;
+		mumc_09=0.;
+		mumc_12=0.;
+		mumc_21=0.;
+		mumc_24=0.;
+		mumc_all=0.;
+		for(unsigned j=1;j<=muleg_numerator_rebin.at(0).GetNbinsY();j++){
+			if(j>5 && j<12){
+				mudata_09+=muleg_numerator_rebin.at(0).GetBinContent(i,j);
+				mumc_09+=muleg_numerator_rebin.at(13).GetBinContent(i,j);
+			}
+			if((j>4 && j<6) || (j>11 && j<13)){
+				mudata_12+=muleg_numerator_rebin.at(0).GetBinContent(i,j);
+				mumc_12+=muleg_numerator_rebin.at(13).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				mudata_21+=muleg_numerator_rebin.at(0).GetBinContent(i,j);
+				mumc_21+=muleg_numerator_rebin.at(13).GetBinContent(i,j);
+			}
+			if(j<2 || j>15){
+				mudata_24+=muleg_numerator_rebin.at(0).GetBinContent(i,j);
+				mumc_24+=muleg_numerator_rebin.at(13).GetBinContent(i,j);
+			}
+			mudata_all+=muleg_numerator_rebin.at(0).GetBinContent(i,j);
+			mumc_all+=muleg_numerator_rebin.at(13).GetBinContent(i,j);
+		}
+		mudata_09*=1./count09;
+		mudata_12*=1./count12;
+		mudata_21*=1./count21;
+		mudata_24*=1./count24;
+		mudata_all*=1./muleg_numerator_rebin.at(0).GetNbinsY();
+		mumc_09*=1./count09;
+		mumc_12*=1./count12;
+		mumc_21*=1./count21;
+		mumc_24*=1./count24;
+		mumc_all*=1./muleg_numerator_rebin.at(13).GetNbinsY();
+
+		muleg_num_09.at(0).SetBinContent(i,mudata_09);
+		muleg_num_12.at(0).SetBinContent(i,mudata_12);
+		muleg_num_21.at(0).SetBinContent(i,mudata_21);
+		muleg_num_24.at(0).SetBinContent(i,mudata_24);
+		muleg_num_all.at(0).SetBinContent(i,mudata_all);
+		muleg_num_09.at(13).SetBinContent(i,mumc_09);
+		muleg_num_12.at(13).SetBinContent(i,mumc_12);
+		muleg_num_21.at(13).SetBinContent(i,mumc_21);
+		muleg_num_24.at(13).SetBinContent(i,mumc_24);
+		muleg_num_all.at(13).SetBinContent(i,mumc_all);
+	}
+
+	// electron stuff
+	double edata_10, edata_15, edata_25, edata_all;
+	double emc_10, emc_15, emc_25, emc_all;
+	int count10(4), count15(2), count25(4);
+	for(unsigned i=1;i<=eleg_eff.at(0).GetNbinsX();i++){
+		edata_10=0.;
+		edata_15=0.;
+		edata_25=0.;
+		edata_all=0.;
+		emc_10=0.;
+		emc_15=0.;
+		emc_25=0.;
+		emc_all=0.;
+		for(unsigned j=1;j<=eleg_eff.at(0).GetNbinsY();j++){
+			//std::cout << "bin " << j << " corresponds to eta " << eleg_eff.at(0).GetYaxis()->GetBinLowEdge(j) << std::endl;
+			if(j>3 && j<8){
+				edata_10+=eleg_eff.at(0).GetBinContent(i,j);
+				emc_10+=eleg_eff.at(14).GetBinContent(i,j);
+			}
+			if((j>2 && j<4) || (j>7 && j<9)){
+				edata_15+=eleg_eff.at(0).GetBinContent(i,j);
+				emc_15+=eleg_eff.at(14).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				edata_25+=eleg_eff.at(0).GetBinContent(i,j);
+				emc_25+=eleg_eff.at(14).GetBinContent(i,j);
+			}
+			edata_all+=eleg_eff.at(0).GetBinContent(i,j);
+			emc_all+=eleg_eff.at(14).GetBinContent(i,j);
+		}
+		edata_10*=1./count10;
+		edata_15*=1./count15;
+		edata_25*=1./count25;
+		edata_all*=1./eleg_eff.at(0).GetNbinsY();
+		emc_10*=1./count10;
+		emc_15*=1./count15;
+		emc_25*=1./count25;
+		emc_all*=1./eleg_eff.at(14).GetNbinsY();
+
+		eleg_eff_10.at(0).SetBinContent(i,edata_10);
+		eleg_eff_15.at(0).SetBinContent(i,edata_15);
+		eleg_eff_25.at(0).SetBinContent(i,edata_25);
+		eleg_eff_all.at(0).SetBinContent(i,edata_all);
+		eleg_eff_10.at(14).SetBinContent(i,emc_10);
+		eleg_eff_15.at(14).SetBinContent(i,emc_15);
+		eleg_eff_25.at(14).SetBinContent(i,emc_25);
+		eleg_eff_all.at(14).SetBinContent(i,emc_all);
+	}
+
+	for(unsigned i=1;i<=eleg_denominator_rebin.at(0).GetNbinsX();i++){
+		edata_10=0.;
+		edata_15=0.;
+		edata_25=0.;
+		edata_all=0.;
+		emc_10=0.;
+		emc_15=0.;
+		emc_25=0.;
+		emc_all=0.;
+		for(unsigned j=1;j<=eleg_denominator_rebin.at(0).GetNbinsY();j++){
+			//std::cout << "bin " << j << " corresponds to eta " << eleg_eff.at(0).GetYaxis()->GetBinLowEdge(j) << std::endl;
+			if(j>3 && j<8){
+				edata_10+=eleg_denominator_rebin.at(0).GetBinContent(i,j);
+				emc_10+=eleg_denominator_rebin.at(14).GetBinContent(i,j);
+			}
+			if((j>2 && j<4) || (j>7 && j<9)){
+				edata_15+=eleg_denominator_rebin.at(0).GetBinContent(i,j);
+				emc_15+=eleg_denominator_rebin.at(14).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				edata_25+=eleg_denominator_rebin.at(0).GetBinContent(i,j);
+				emc_25+=eleg_denominator_rebin.at(14).GetBinContent(i,j);
+			}
+			edata_all+=eleg_denominator_rebin.at(0).GetBinContent(i,j);
+			emc_all+=eleg_denominator_rebin.at(14).GetBinContent(i,j);
+		}
+		edata_10*=1./count10;
+		edata_15*=1./count15;
+		edata_25*=1./count25;
+		edata_all*=1./eleg_denominator_rebin.at(0).GetNbinsY();
+		emc_10*=1./count10;
+		emc_15*=1./count15;
+		emc_25*=1./count25;
+		emc_all*=1./eleg_denominator_rebin.at(14).GetNbinsY();
+
+		eleg_denom_10.at(0).SetBinContent(i,edata_10);
+		eleg_denom_15.at(0).SetBinContent(i,edata_15);
+		eleg_denom_25.at(0).SetBinContent(i,edata_25);
+		eleg_denom_all.at(0).SetBinContent(i,edata_all);
+		eleg_denom_10.at(14).SetBinContent(i,emc_10);
+		eleg_denom_15.at(14).SetBinContent(i,emc_15);
+		eleg_denom_25.at(14).SetBinContent(i,emc_25);
+		eleg_denom_all.at(14).SetBinContent(i,emc_all);
+	}
+
+	for(unsigned i=1;i<=eleg_numerator_rebin.at(0).GetNbinsX();i++){
+		edata_10=0.;
+		edata_15=0.;
+		edata_25=0.;
+		edata_all=0.;
+		emc_10=0.;
+		emc_15=0.;
+		emc_25=0.;
+		emc_all=0.;
+		for(unsigned j=1;j<=eleg_numerator_rebin.at(0).GetNbinsY();j++){
+			//std::cout << "bin " << j << " corresponds to eta " << eleg_eff.at(0).GetYaxis()->GetBinLowEdge(j) << std::endl;
+			if(j>3 && j<8){
+				edata_10+=eleg_numerator_rebin.at(0).GetBinContent(i,j);
+				emc_10+=eleg_numerator_rebin.at(14).GetBinContent(i,j);
+			}
+			if((j>2 && j<4) || (j>7 && j<9)){
+				edata_15+=eleg_numerator_rebin.at(0).GetBinContent(i,j);
+				emc_15+=eleg_numerator_rebin.at(14).GetBinContent(i,j);
+			}
+			if((j>1 && j<5) || (j>12 && j<16)){
+				edata_25+=eleg_numerator_rebin.at(0).GetBinContent(i,j);
+				emc_25+=eleg_numerator_rebin.at(14).GetBinContent(i,j);
+			}
+			edata_all+=eleg_numerator_rebin.at(0).GetBinContent(i,j);
+			emc_all+=eleg_numerator_rebin.at(14).GetBinContent(i,j);
+		}
+		edata_10*=1./count10;
+		edata_15*=1./count15;
+		edata_25*=1./count25;
+		edata_all*=1./eleg_numerator_rebin.at(0).GetNbinsY();
+		emc_10*=1./count10;
+		emc_15*=1./count15;
+		emc_25*=1./count25;
+		emc_all*=1./eleg_numerator_rebin.at(14).GetNbinsY();
+
+		eleg_num_10.at(0).SetBinContent(i,edata_10);
+		eleg_num_15.at(0).SetBinContent(i,edata_15);
+		eleg_num_25.at(0).SetBinContent(i,edata_25);
+		eleg_num_all.at(0).SetBinContent(i,edata_all);
+		eleg_num_10.at(14).SetBinContent(i,emc_10);
+		eleg_num_15.at(14).SetBinContent(i,emc_15);
+		eleg_num_25.at(14).SetBinContent(i,emc_25);
+		eleg_num_all.at(14).SetBinContent(i,emc_all);
 	}
 
 	//mueff.at(0).Write();
