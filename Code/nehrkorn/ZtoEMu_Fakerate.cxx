@@ -15,8 +15,8 @@
 
 ZtoEMu_Fakerate::ZtoEMu_Fakerate(TString Name_, TString id_):
   Selection(Name_,id_)
-  ,mu_pt(8)
-  ,e_pt(8)
+  ,mu_pt(3)
+  ,e_pt(3)
   ,mu_eta(2.4)
   ,e_eta(2.5)
 {
