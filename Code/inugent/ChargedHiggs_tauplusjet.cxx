@@ -377,7 +377,7 @@ void  ChargedHiggs_tauplusjet::doEvent(){
   //
   // Event Shape and Energy Cuts
   //
-  double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
+  double MET_Ex(Ntp->MET_CorrMVA_ex()),MET_Ey(Ntp->MET_CorrMVA_ey());
   // correct for neutrino from taus
   for(unsigned int i=0; i<GoodTaus.size();i++){
     MET_Ex+=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Px();
@@ -448,8 +448,8 @@ void  ChargedHiggs_tauplusjet::doEvent(){
   for(unsigned int i=0;i<GoodBJets.size();i++){
     if(GoodBJets.at(i)!=HadTopB){
       BTau=Ntp->PFJet_p4(GoodBJets.at(i));
-      MET_Ex=Ntp->MET_ex();
-      MET_Ey=Ntp->MET_ey();
+      MET_Ex=Ntp->MET_CorrMVA_ex();
+      MET_Ey=Ntp->MET_CorrMVA_ey();
       // correct for neutrino from taus   
       if(GoodTaus.size()>0){
 	Tau=Ntp->KFTau_TauFit_p4(GoodTaus.at(0)).Pt();
