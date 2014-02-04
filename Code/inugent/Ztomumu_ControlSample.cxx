@@ -359,7 +359,7 @@ void  Ztomumu_ControlSample::doEvent(){
   //
   // Event Shape and Energy Cuts
   //
-  double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
+  double MET_Ex(Ntp->MET_CorrMVA_ex()),MET_Ey(Ntp->MET_CorrMVA_ey());
   // correct for neutrino from mus
   value.at(MET)=sqrt(MET_Ex*MET_Ex+MET_Ey*MET_Ey);
   pass.at(MET)=(value.at(MET)<cut.at(MET));

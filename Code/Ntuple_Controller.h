@@ -349,14 +349,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
        LorentzVectorParticle a1=PFTau_a1_lvp(i);
        TauA1NuConstrainedFitter TauA1NU(j,a1,pv,pvcov);
-       TauA1NU.SetMaxDelta(0.01);
-       TauA1NU.SetNIterMax(1000);
-
-	 bool fitStatus= TauA1NU.Fit();
-       if(fitStatus && TauA1NU.isConverged()){
+       bool fitStatus= TauA1NU.Fit();
+       if(fitStatus){
 	 theTau=TauA1NU.GetMother();
 	 daughter=TauA1NU.GetReFitDaughters();
-	 LC_chi2=TauA1NU.ChiSquare();
 	 return  true;
        }
      }

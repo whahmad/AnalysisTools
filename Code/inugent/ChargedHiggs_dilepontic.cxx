@@ -464,7 +464,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
   // 1) compute variables
   // 2) run cuts
 
-  double MET_Ex(Ntp->MET_ex()),MET_Ey(Ntp->MET_ey());
+  double MET_Ex(Ntp->MET_CorrMVA_ex()),MET_Ey(Ntp->MET_CorrMVA_ey());
   // correct for neutrino from taus
   for(unsigned int i=0; i<GoodTaus.size();i++){
     MET_Ex-=Ntp->KFTau_Neutrino_p4(GoodTaus.at(i)).Px();
@@ -480,7 +480,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
 
   value.at(MT)=0;
   if(mu_idx.size()>0){
-    value.at(MT)=sqrt(2*(Ntp->MET_et())*Ntp->Muons_p4(mu_idx.at(0)).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx.at(0)).Phi()-Ntp->MET_phi())));
+    value.at(MT)=sqrt(2*(Ntp->MET_CorrMVA_et())*Ntp->Muons_p4(mu_idx.at(0)).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx.at(0)).Phi()-Ntp->MET_CorrMVA_phi())));
     pass.at(MT)=(value.at(MT)>cut.at(MT));
   }
   pass.at(MT)=true;
@@ -547,7 +547,7 @@ void  ChargedHiggs_dilepontic::doEvent(){
     MTvsMuMETdphi.at(t).Fill(dphiMuMET,value.at(MT),w*wobs);
     METvsMuMETdphi.at(t).Fill(dphiMuMET,value.at(MET),w*wobs);
     METvsMTvsMuMETdphi.at(t).Fill(value.at(MT),value.at(MET),dphiMuMET,w*wobs);
-    METWHypvsMT.at(t).Fill(value.at(MT),Ntp->MET_et(),w*wobs);
+    METWHypvsMT.at(t).Fill(value.at(MT),Ntp->MET_CorrMVA_et(),w*wobs);
   }
 
 }
