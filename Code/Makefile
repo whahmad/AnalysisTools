@@ -57,32 +57,31 @@ ifdef USE_TauSpinner
 				-I./TauSpiner/tauola++/1.1.3/include/ \
 				-I./TauSpiner/lhapdf/include/ \
 				-I./TauSpiner/pythia8/176/include/
-	CXXFLAGS += -DUSE_TauSpinner
+	DEFS += -DUSE_TauSpinner=1
 endif
 
 ifdef USE_cherepanov
 	TARGETS += Ztotautau_hadmu_ControlSample Tau_momentum_calculation Validation
-	CXXFLAGS += -DUSE_cherepanov
-	
+	DEFS += -DUSE_cherepanov=1
 endif
 
 ifdef USE_inugent
 	TARGETS += TauLifeTime TriggerStudy TriggerStudyMC ZDouble3prong Ztotautau_ControlSample Ztomumu_ControlSample ChargedHiggs_dilepontic ChargedHiggs_tauplusjet 
-	CXXFLAGS += -DUSE_inugent
+	DEFS += -DUSE_inugent=1
 endif
 
 ifdef USE_kargoll
 	TARGETS += HToTaumuTauh
-	CXXFLAGS += -DUSE_kargoll
+	DEFS += -DUSE_kargoll=1
 endif 
 
 ifdef USE_nehrkorn
 	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate
-	CXXFLAGS += -DUSE_nehrkorn
+	DEFS += -DUSE_nehrkorn=1
 endif
 
 ifdef USE_pistone
-        CXXFLAGS += -DUSE_pistone
+        DEFS += -DUSE_pistone=1
 endif
 
 
