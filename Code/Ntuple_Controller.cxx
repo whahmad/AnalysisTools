@@ -529,8 +529,9 @@ TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(unsigned int 
   int l=0;
   for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
     for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
-      if(j==k)V_cov(i,j)=pow(0.0001,2.0);
-      //V_cov(i,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
+      //if(j==k) V_cov(i,j)=pow(0.0001,2.0);
+      V_cov(j,k)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
+      V_cov(k,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
       l++;
     }
   }
@@ -542,7 +543,8 @@ TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_secondaryVertex_cov(unsigned in
   int l=0;
   for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
     for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
-      V_cov(i,j)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
+      V_cov(j,k)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
+      V_cov(k,j)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
       l++;
     }
   }
@@ -558,6 +560,7 @@ LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
       a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
       for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
 	a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
+	a1_cov(j,k)=Ntp->PFTau_a1_cov->at(i).at(l);
 	l++;
       } 
     }
@@ -575,6 +578,7 @@ std::vector<TrackParticle> Ntuple_Controller::PFTau_daughterTracks(unsigned int 
       a1_par(k,0)=Ntp->PFTau_daughterTracks->at(i).at(d).at(k);
       for(int j=k; j<TrackParticle::NHelixPar; j++){
 	a1_cov(k,j)=Ntp->PFTau_daughterTracks->at(i).at(d).at(l);
+	a1_cov(j,k)=Ntp->PFTau_daughterTracks->at(i).at(d).at(l);
 	l++;
       }
     }
