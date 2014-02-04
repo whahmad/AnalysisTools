@@ -631,25 +631,25 @@ TauPlusX
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/TauPlusX/TauNtuple_Production_Production_2013_Dec_12_dataTauPlusX_2012B_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/TauPlusX/TauNtuple_Production_Production_2013_Dec_12_dataTauPlusX_2012C_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/TauPlusX/TauNtuple_Production_Production_2013_Dec_12_dataTauPlusX_2012D_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
-ID= 1 AllEvt= 153409868.000000 AllEvtErr= 12385.873813 SelEvt= 37484108.000000 SelEvtErr= 6122.427050 AllEvtnoweight= 153409868.000000 SelEvtnoweight=37484108.000000 Eff(weight)= 0.244340 Eff(noweight)= 0.244340 Nfile= 2496
+ID= 1 AllEvt= 153409868.000000 AllEvtErr= 12385.873813 SelEvt= 37484108.000000 SelEvtErr= 6122.427050 AllEvtnoweight= 153409868.000000 SelEvtnoweight= 37484108.000000 Eff(weight)= 0.244340 Eff(noweight)= 0.244340 Nfile= 2496
 
 MuEG
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/MuEG/TauNtuple_Production_Production_2013_Dec_12_dataMuEG_2012A_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/MuEG/TauNtuple_Production_Production_2013_Dec_12_dataMuEG_2012B_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/MuEG/TauNtuple_Production_Production_2013_Dec_12_dataMuEG_2012C_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/MuEG/TauNtuple_Production_Production_2013_Dec_12_dataMuEG_2012D_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
-ID= 1 AllEvt= 57357651.000000 AllEvtErr= 7573.483363 SelEvt= 27238868.000000 SelEvtErr= 5219.086723 AllEvtnoweight= 57357651.000000 SelEvtnoweight=27238868.000000 Eff(weight)= 0.474895 Eff(noweight)= 0.474895 Nfile= 1705
+ID= 1 AllEvt= 57357651.000000 AllEvtErr= 7573.483363 SelEvt= 27238868.000000 SelEvtErr= 5219.086723 AllEvtnoweight= 57357651.000000 SelEvtnoweight= 27238868.000000 Eff(weight)= 0.474895 Eff(noweight)= 0.474895 Nfile= 1705
 
 DoubleE
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleElectron/TauNtuple_Production_Production_2013_Dec_12_dataDoubleElectron_2012A_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleElectron/TauNtuple_Production_Production_2013_Dec_12_dataDoubleElectron_2012B_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleElectron/TauNtuple_Production_Production_2013_Dec_12_dataDoubleElectron_2012C_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleElectron/TauNtuple_Production_Production_2013_Dec_12_dataDoubleElectron_2012D_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
-ID= 1 AllEvt= 96103100.000000 AllEvtErr= 9803.218804 SelEvt= 5384960.000000 SelEvtErr= 2320.551681 AllEvtnoweight= 96103100.000000 SelEvtnoweight=5384960.000000 Eff(weight)= 0.056033 Eff(noweight)= 0.056033 Nfile= 1530
+ID= 1 AllEvt= 96103100.000000 AllEvtErr= 9803.218804 SelEvt= 5384960.000000 SelEvtErr= 2320.551681 AllEvtnoweight= 96103100.000000 SelEvtnoweight= 5384960.000000 Eff(weight)= 0.056033 Eff(noweight)= 0.056033 Nfile= 1530
 
 DoubleMu
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleMu/TauNtuple_Production_Production_2013_Dec_12_dataDoubleMu_2012A_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleMuParked/TauNtuple_Production_Production_2013_Dec_12_dataDoubleMu_2012B_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleMuParked/TauNtuple_Production_Production_2013_Dec_12_dataDoubleMu_2012C_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
 /pnfs/physik.rwth-aachen.de/cms/store/user/bkargoll/DoubleMuParked/TauNtuple_Production_Production_2013_Dec_12_dataDoubleMu_2012D_Dec_12_2013_hr18_min27/2cd54f6c2bb6f8650b88f25e0188221c
-ID= 1 AllEvt= 96103100.000000 AllEvtErr= 9803.218804 SelEvt= 5384960.000000 SelEvtErr= 2320.551681 AllEvtnoweight= 96103100.000000 SelEvtnoweight=5384960.000000 Eff(weight)= 0.056033 Eff(noweight)= 0.056033 Nfile= 1530
+ID= 1 AllEvt= 102216463.000000 AllEvtErr= 10110.215527 SelEvt= 18503250.000000 SelEvtErr= 4301.539920 AllEvtnoweight= 102216463.000000 SelEvtnoweight= 18503250.000000 Eff(weight)= 0.181020 Eff(noweight)= 0.181020 Nfile= 2316
