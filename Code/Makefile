@@ -72,7 +72,7 @@ ifdef USE_kargoll
 endif 
 
 ifdef USE_nehrkorn
-	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate
+	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate ZtoEMu_ABCD
 endif
 
 HDRS          = $(TARGETS:=.h) 		

@@ -984,7 +984,7 @@ double ZtoEMu_Skim::ElectronNonTrigIDeff(unsigned int i){
 	return eff;
 }
 
-double ZtoEMu::ElectronHiggsIDeff(unsigned int i){
+double ZtoEMu_Skim::ElectronHiggsIDeff(unsigned int i){
 	double pt = Ntp->Electron_p4(i).Pt();
 	double eta = Ntp->Electron_supercluster_eta(i);
 	double eff = 1.;

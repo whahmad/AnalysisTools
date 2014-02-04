@@ -18,6 +18,7 @@
 #include "inugent/TauLifeTime.h"
 #endif
 #ifdef USE_nehrkorn
+#include "nehrkorn/ZtoEMu_ABCD.h"
 #include "nehrkorn/ZtoEMu_Fakerate.h"
 #include "nehrkorn/ZtoEMu_Skim.h"
 #include "nehrkorn/ZtoEMu.h"
@@ -55,6 +56,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("taulifetime"))s=new TauLifeTime(Analysis,UncertType);
 #endif
 #ifdef USE_nehrkorn
+  else if(Analysis.Contains("ztoemu_abcd")) s=new ZtoEMu_ABCD(Analysis,UncertType);
   else if(Analysis.Contains("ztoemu_fakerate"))s=new ZtoEMu_Fakerate(Analysis,UncertType);
   else if(Analysis.Contains("ztoemu_skim"))s=new ZtoEMu_Skim(Analysis,UncertType);
   else if(Analysis.Contains("ztoemu_mcsample"))s=new ZtoEMu(Analysis,UncertType);
