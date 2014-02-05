@@ -9,6 +9,7 @@ if [ "${1}"  == "--help" ]; then
     echo "--inugent                 Configures the make file to compile files in the directory inugent"
     echo "--kargoll                 Configures the make file to compile files in the directory kargoll"
     echo "--nehrkorn                Configures the make file to compile files in the directory nehrkorn"
+    echo "--pistone                 Configures the make file to compile files in the directory pistone"
 else
 
     echo "Configuring Environment...."
@@ -63,7 +64,7 @@ else
 		echo "USE_nehrkorn=1" >> make.inc
 	    fi
 	    if [ "${var}" == "--pistone" ]; then
-		echo "Configuring Code to use directory nehrkorn"
+		echo "Configuring Code to use directory pistone"
 		echo "USE_pistone=1" >> make.inc
 	    fi
 	done
@@ -84,7 +85,7 @@ else
 	cd ../
 	
 	git init
-	git clone https://github.com/bkargoll/TauDataFormat.git TauDataFormat
+	git clone https://github.com/inugent/TauDataFormat.git TauDataFormat
 	cd TauDataFormat
 	git checkout
 	cd ../
