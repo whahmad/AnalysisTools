@@ -57,23 +57,34 @@ ifdef USE_TauSpinner
 				-I./TauSpiner/tauola++/1.1.3/include/ \
 				-I./TauSpiner/lhapdf/include/ \
 				-I./TauSpiner/pythia8/176/include/
+	DEFS += -DUSE_TauSpinner=1
 endif
 
 ifdef USE_cherepanov
 	TARGETS += Ztotautau_hadmu_ControlSample Tau_momentum_calculation Validation
+	DEFS += -DUSE_cherepanov=1
 endif
 
 ifdef USE_inugent
 	TARGETS += TauLifeTime TriggerStudy TriggerStudyMC ZDouble3prong Ztotautau_ControlSample Ztomumu_ControlSample ChargedHiggs_dilepontic ChargedHiggs_tauplusjet 
+	DEFS += -DUSE_inugent=1
 endif
 
 ifdef USE_kargoll
 	TARGETS += HToTaumuTauh
+	DEFS += -DUSE_kargoll=1
 endif 
 
 ifdef USE_nehrkorn
 	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate
+	DEFS += -DUSE_nehrkorn=1
 endif
+
+ifdef USE_pistone
+        DEFS += -DUSE_pistone=1
+endif
+
+
 
 HDRS          = $(TARGETS:=.h) 		
 SRCS          = $(TARGETS:=.cxx)  Analysis.cxx

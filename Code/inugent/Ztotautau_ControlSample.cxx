@@ -514,11 +514,11 @@ void  Ztotautau_ControlSample::doEvent(){
   pass.at(deltaPhi)=(fabs(value.at(deltaPhi))>=cut.at(deltaPhi));
 
 
-  value.at(MET)=Ntp->MET_et();
+  value.at(MET)=Ntp->MET_CorrMVA_et();
   pass.at(MET)=(value.at(MET)<cut.at(MET));
 
   if(mu_idx!=999){
-    value.at(MT)=sqrt(2*(Ntp->MET_et())*Ntp->Muons_p4(mu_idx).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx).Phi()-Ntp->MET_phi())));
+    value.at(MT)=sqrt(2*(Ntp->MET_CorrMVA_et())*Ntp->Muons_p4(mu_idx).Pt()*fabs(1-cos(Ntp->Muons_p4(mu_idx).Phi()-Ntp->MET_CorrMVA_phi())));
   }
   else{
     value.at(MT)=999;
@@ -560,7 +560,7 @@ void  Ztotautau_ControlSample::doEvent(){
     value.at(HT)=0;
     value.at(HT)+=Ntp->PFJet_p4(jet_idx).Pt();
     value.at(HT)+=Ntp->Muons_p4(mu_idx).Pt();
-    value.at(HT)+=Ntp->MET_et();
+    value.at(HT)+=Ntp->MET_CorrMVA_et();
     for(int i=0;i<Ntp->NPFJets();i++){
       if(i!=jet_idx){
 	if(Ntp->isGoodJet(i))value.at(HT)+=Ntp->PFJet_p4(jet_idx).Pt();

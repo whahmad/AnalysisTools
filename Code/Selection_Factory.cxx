@@ -25,6 +25,9 @@
 #ifdef USE_kargoll
 
 #endif
+#ifdef USE_pistone
+
+#endif
 
 Selection_Factory::Selection_Factory(){
 }
@@ -60,6 +63,9 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("ztoemu_mcsample"))s=new ZtoEMu(Analysis,UncertType);
 #endif
 #ifdef USE_kargoll
+
+#endif
+#ifdef USE_pistone
 
 #endif
   else{

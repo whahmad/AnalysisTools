@@ -340,28 +340,22 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
-   /*bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
-     ndof=0;
-     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&  
-	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
+   bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
+     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 && Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
        // Tau Solver
        TVector3 pv=PFTau_TIP_primaryVertex_pos(i);
        TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
        LorentzVectorParticle a1=PFTau_a1_lvp(i);
        TauA1NuConstrainedFitter TauA1NU(j,a1,pv,pvcov);
-       TauA1NU.SetMaxDelta(0.01);
-       TauA1NU.SetNIterMax(1000);
-
-	 bool fitStatus= TauA1NU.Fit();
-       if(fitStatus && TauA1NU.isConverged()){
+       bool fitStatus= TauA1NU.Fit();
+       if(fitStatus){
 	 theTau=TauA1NU.GetMother();
 	 daughter=TauA1NU.GetReFitDaughters();
-	 LC_chi2=TauA1NU.ChiSquare();
 	 return  true;
        }
      }
      return false;
-   }*/
+   }
    
    ////////////////////////////////////////////////
    // wrapper for backwards compatibility to KFit do not use in new code!!!
@@ -372,7 +366,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      return false;
    }
 
-   /*bool KFTau_discriminatorByKFit(unsigned int i, unsigned int j=0){
+   bool KFTau_discriminatorByKFit(unsigned int i, unsigned int j=0){
      LorentzVectorParticle theTau;
      std::vector<LorentzVectorParticle> daughter;
      double LC_chi2;
@@ -400,15 +394,15 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        }
      }
      return false;
-   }*/
+   }
    
    TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j=0){return PFTau_a1_lvp(i).LV();}
-   //TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (KFTau_TauFit_p4(i,j)-PFTau_a1_lvp(i).LV());}
+   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (KFTau_TauFit_p4(i,j)-PFTau_a1_lvp(i).LV());}
    int      KFTau_nKinTaus(){return NKFTau();}
    int      KFTau_indexOfFitInfo(unsigned int i){return i;}
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return PFTau_TIP_primaryVertex_pos(i);}
    float    KFTau_Fit_ndf(unsigned int i,unsigned int j=0){return PFTau_TIP_secondaryVertex_vtxndof(i);}
-   /*float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){
+   float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){
      LorentzVectorParticle theTau;
      std::vector<LorentzVectorParticle> daughter;
      double LC_chi2;
@@ -416,8 +410,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        return PFTau_TIP_secondaryVertex_vtxchi2(i)+LC_chi2;
      }
      return 999;
-   }*/
-   //float    KFTau_Fit_Chi2Prob(unsigned int i,unsigned int j=0){return TMath::Prob(KFTau_Fit_chi2(i,j),(int)KFTau_Fit_ndf(i,j));}
+   }
+   float    KFTau_Fit_Chi2Prob(unsigned int i,unsigned int j=0){return TMath::Prob(KFTau_Fit_chi2(i,j),(int)KFTau_Fit_ndf(i,j));}
    int      KFTau_Fit_charge(unsigned int i){if(Ntp->PFTau_a1_charge->at(i).size()>0) return Ntp->PFTau_a1_charge->at(i).at(0); return 0;}
    int      KFTau_Fit_csum(unsigned int i,unsigned int j=0){return 0;}
    int      KFTau_Fit_iterations(unsigned int i, unsigned int j=0){return 0;}
