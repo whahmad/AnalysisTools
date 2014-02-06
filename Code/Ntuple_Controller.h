@@ -202,9 +202,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   TMatrixF     Vtx_Cov(unsigned int i);
   std::vector<int>  Vtx_Track_idx(unsigned int i){return Ntp->Vtx_Track_idx->at(i);}
   float Vtx_isFake(unsigned int i){return Ntp->Vtx_isFake->at(i);}
-  bool isVtxGood(unsigned int i);
   TLorentzVector Vtx_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->Vtx_TracksP4->at(i).at(j).at(1),Ntp->Vtx_TracksP4->at(i).at(j).at(2),Ntp->Vtx_TracksP4->at(i).at(j).at(3),Ntp->Vtx_TracksP4->at(i).at(j).at(0));}
 
+  bool isVtxGood(unsigned int i);
+  bool isGoodVtx(unsigned int i);
 
   // Muon information
   unsigned int   NMuons(){return Ntp->Muon_p4->size();}
@@ -242,9 +243,6 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   float          Muon_numberOfMatches(unsigned int i){return Ntp->Muon_numberOfMatches->at(i);}
   int            Muon_numberOfChambers(unsigned int i){return Ntp->Muon_numberOfChambers->at(i);}
   int            Muon_Charge(unsigned int i){return Ntp->Muon_charge->at(i);}
-  bool           isGoodMuon(unsigned int i);
-  bool           isGoodMuon_nooverlapremoval(unsigned int i);
-  float          Muon_RelIso(unsigned int i);
 
   bool           Muon_isPFMuon(unsigned int i){return Ntp->Muon_isPFMuon->at(i);}                                                     
   float          Muon_sumChargedHadronPt03(unsigned int i){return Ntp->Muon_sumChargedHadronPt03->at(i);}                             // sum-pt of charged Hadron					                               
@@ -280,6 +278,15 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
     }
     return TrackParticle(mu_par,mu_cov,Ntp->Muon_pdgid->at(i),Ntp->Muon_M->at(i),Ntp->Muon_charge->at(i),Ntp->Muon_B->at(i));
   }
+
+  bool           isGoodMuon(unsigned int i);
+  bool           isGoodMuon_nooverlapremoval(unsigned int i);
+
+  bool			 isTightMuon(unsigned int i);
+  bool			 isTightMuon(unsigned int i, unsigned int j);
+  bool           isHiggsMuon(unsigned int i, unsigned int j);
+  bool			 isLooseMuon(unsigned int i);
+  float          Muon_RelIso(unsigned int i);
 
 
   //Base Tau Information (PF)
@@ -340,7 +347,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
-   /*bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
+   bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
      ndof=0;
      if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&  
 	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
@@ -357,7 +364,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        }
      }
      return false;
-   }*/
+   }
    
    ////////////////////////////////////////////////
    // wrapper for backwards compatibility to KFit do not use in new code!!!
@@ -368,7 +375,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      return false;
    }
 
-   /*bool KFTau_discriminatorByKFit(unsigned int i, unsigned int j=0){
+   bool KFTau_discriminatorByKFit(unsigned int i, unsigned int j=0){
      LorentzVectorParticle theTau;
      std::vector<LorentzVectorParticle> daughter;
      double LC_chi2;
@@ -396,15 +403,15 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        }
      }
      return false;
-   }*/
+   }
    
    TLorentzVector   KFTau_TauVis_p4(unsigned int i,unsigned int j=0){return PFTau_a1_lvp(i).LV();}
-   //TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (KFTau_TauFit_p4(i,j)-PFTau_a1_lvp(i).LV());}
+   TLorentzVector   KFTau_Neutrino_p4(unsigned int i,unsigned int j=0){return (KFTau_TauFit_p4(i,j)-PFTau_a1_lvp(i).LV());}
    int      KFTau_nKinTaus(){return NKFTau();}
    int      KFTau_indexOfFitInfo(unsigned int i){return i;}
    TVector3 KFTau_Fit_TauPrimVtx(unsigned int i){return PFTau_TIP_primaryVertex_pos(i);}
    float    KFTau_Fit_ndf(unsigned int i,unsigned int j=0){return PFTau_TIP_secondaryVertex_vtxndof(i);}
-   /*float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){
+   float    KFTau_Fit_chi2(unsigned int i,unsigned int j=0){
      LorentzVectorParticle theTau;
      std::vector<LorentzVectorParticle> daughter;
      double LC_chi2;
@@ -412,8 +419,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
        return PFTau_TIP_secondaryVertex_vtxchi2(i)+LC_chi2;
      }
      return 999;
-   }*/
-   //float    KFTau_Fit_Chi2Prob(unsigned int i,unsigned int j=0){return TMath::Prob(KFTau_Fit_chi2(i,j),(int)KFTau_Fit_ndf(i,j));}
+   }
+   float    KFTau_Fit_Chi2Prob(unsigned int i,unsigned int j=0){return TMath::Prob(KFTau_Fit_chi2(i,j),(int)KFTau_Fit_ndf(i,j));}
    int      KFTau_Fit_charge(unsigned int i){if(Ntp->PFTau_a1_charge->at(i).size()>0) return Ntp->PFTau_a1_charge->at(i).at(0); return 0;}
    int      KFTau_Fit_csum(unsigned int i,unsigned int j=0){return 0;}
    int      KFTau_Fit_iterations(unsigned int i, unsigned int j=0){return 0;}
@@ -682,6 +689,18 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      return TrackParticle(e_par,e_cov,Ntp->Electron_pdgid->at(i),Ntp->Electron_M->at(i),Ntp->Electron_charge->at(i),Ntp->Electron_B->at(i));
    }
 
+   bool isTrigPreselElectron(unsigned int i);
+   bool isTrigNoIPPreselElectron(unsigned int i);
+   bool isMVATrigElectron(unsigned int i);
+   bool isMVATrigNoIPElectron(unsigned int i);
+   bool isMVANonTrigElectron(unsigned int i, unsigned int j);
+   bool isTightElectron(unsigned int i);
+   bool isTightElectron(unsigned int i, unsigned int j);
+   float Electron_RelIso(unsigned int i);
+   float Electron_Aeff_R04(double Eta);
+   float Electron_Aeff_R03(double Eta);
+   bool isHiggsElectron(unsigned int i, unsigned int j);
+
    // Trigger
    bool         TriggerAccept(TString n);
    unsigned int HLTPrescale(TString n);
@@ -715,6 +734,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    int          HLTTrigger_objs_Id(unsigned int i,unsigned int j){return Ntp->HLTTrigger_objs_Id->at(i).at(j);}
    std::string  HLTTrigger_objs_trigger(unsigned int i){return Ntp->HLTTrigger_objs_trigger->at(i);}
 
+   // helper functions
+   float        dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+   float        dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+   float        vertexSignificance(TVector3 vec, unsigned int vertex);
 
 };
 
