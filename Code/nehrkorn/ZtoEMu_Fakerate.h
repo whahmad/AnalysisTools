@@ -129,6 +129,8 @@ class ZtoEMu_Fakerate : public Selection {
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
+  bool isTrigPreselElectron(unsigned int i);
+  bool isTrigNoIPPreselElectron(unsigned int i);
   bool isMVATrigElectron(unsigned int i);
   bool isMVATrigNoIPElectron(unsigned int i);
   bool isMVANonTrigElectron(unsigned int i, unsigned int j);

@@ -544,7 +544,7 @@ void  ZtoEMu::doEvent(){
 			  }
 			  if(!notThisOne && Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(j))<0.3) matchRecoMuon = true;
 		  }
-		  if(matchRecoMuon) continue;
+		  //if(matchRecoMuon) continue;
 		  if(doHiggsObjects){
 			  if(isHiggsElectron(i,vertex)
 					  && ((fabs(Ntp->Electron_supercluster_eta(i))<1.479 && Electron_RelIso(i)<0.15) || (fabs(Ntp->Electron_supercluster_eta(i))>=1.479 && Electron_RelIso(i)<0.10))
@@ -1465,6 +1465,7 @@ bool ZtoEMu::isMVATrigNoIPElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(!isTrigNoIPPreselElectron(i)) return false;
 	if(mvapt<20){
 		if(mvaeta<0.8){
 			if(Electron_RelIso(i)>=0.15) return false;
@@ -1540,6 +1541,7 @@ bool ZtoEMu::isMVATrigElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
+	if(!isTrigPreselElectron(i)) return false;
 	//if(Electron_RelIso(i)>=0.15) return false;
 	if(mvapt>10. && mvapt<20.){
 		if(mvaeta<0.8 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.00) return false;

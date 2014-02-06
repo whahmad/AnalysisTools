@@ -378,10 +378,11 @@ void  ZtoEMu_Fakerate::doEvent(){
 					  }
 				  }else{
 					  if(isMVATrigElectron(i)
+							  && Electron_RelIso(i)<0.15
 					  ){
 				  tighte.at(t).Fill(Ntp->Electron_p4(i).Pt(),fabs(Ntp->Electron_supercluster_eta(i)));
 				  tighte_rebin.at(t).Fill(Ntp->Electron_p4(i).Pt(),fabs(Ntp->Electron_supercluster_eta(i)));
-			  }
+					  }
 				  }
 			  }
 		  }
@@ -704,6 +705,7 @@ void ZtoEMu_Fakerate::doubleTrigger(std::string tagtrigger, std::string probetri
 				if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
 				if(!Ntp->isData() && Ntp->Electron_p4(i).Pt()<20 && !matchTruth(i,0.2,"electron")) continue;
 				if(!isMVATrigElectron(i)) continue;
+				if(Electron_RelIso(i)>=0.15) continue;
 				if(matchTrigger(i,0.2,tagtrigger,"electron")
 						&& Ntp->Electron_p4(i).Pt()>29.
 						&& matchFirstLeg(i,0.2,probetrigger,"electron")
@@ -835,11 +837,52 @@ double ZtoEMu_Fakerate::Muon_AbsIso(unsigned int i){
 // Electron related functions
 //
 
+bool ZtoEMu_Fakerate::isTrigPreselElectron(unsigned int i){
+	if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) return false;
+	if(fabs(Ntp->Electron_supercluster_eta(i))<1.479){
+		if(Ntp->Electron_sigmaIetaIeta(i)>0.014) return false;
+		if(Ntp->Electron_hadronicOverEm(i)>0.15) return false;
+		if(Ntp->Electron_Gsf_dr03TkSumPt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_Gsf_dr03HcalTowerSumEt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	}else{
+		if(Ntp->Electron_sigmaIetaIeta(i)>0.035) return false;
+		if(Ntp->Electron_hadronicOverEm(i)>0.1) return false;
+		if(Ntp->Electron_Gsf_dr03TkSumPt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_Gsf_dr03HcalTowerSumEt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	}
+	return true;
+}
+
+bool ZtoEMu_Fakerate::isTrigNoIPPreselElectron(unsigned int i){
+	if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) return false;
+	if(fabs(Ntp->Electron_supercluster_eta(i))<1.479){
+		if(Ntp->Electron_sigmaIetaIeta(i)>0.01) return false;
+		if(Ntp->Electron_hadronicOverEm(i)>0.12) return false;
+		if(fabs(Ntp->Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(i))>0.007) return false;
+		if(fabs(Ntp->Electron_Gsf_deltaPhiSuperClusterTrackAtVtx(i))>0.15) return false;
+		if(Ntp->Electron_Gsf_dr03TkSumPt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_Gsf_dr03HcalTowerSumEt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	}else{
+		if(Ntp->Electron_sigmaIetaIeta(i)>0.03) return false;
+		if(Ntp->Electron_hadronicOverEm(i)>0.1) return false;
+		if(fabs(Ntp->Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(i))>0.009) return false;
+		if(fabs(Ntp->Electron_Gsf_deltaPhiSuperClusterTrackAtVtx(i))>0.1) return false;
+		if(Ntp->Electron_Gsf_dr03TkSumPt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_Gsf_dr03HcalTowerSumEt(i)/Ntp->Electron_p4(i).Pt()>0.2) return false;
+		if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	}
+	return true;
+}
+
 bool ZtoEMu_Fakerate::isMVATrigNoIPElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(!isTrigNoIPPreselElectron(i)) return false;
 	if(mvapt<20){
 		if(mvaeta<0.8){
 			if(Electron_RelIso(i)>=0.15) return false;
@@ -915,7 +958,8 @@ bool ZtoEMu_Fakerate::isMVATrigElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
-	if(Electron_RelIso(i)>=0.15) return false;
+	if(!isTrigPreselElectron(i)) return false;
+	//if(Electron_RelIso(i)>=0.15) return false;
 	if(mvapt>10. && mvapt<20.){
 		if(mvaeta<0.8 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.00) return false;
 		else if(mvaeta>=0.8 && mvaeta<1.479 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.10) return false;

@@ -257,15 +257,15 @@ void  ZtoEMu_Skim::doEvent(){
 		  }else{
 			  if(isTightMuon(i,vertex)
 					  && Muon_RelIso(i)<0.12){
-				  if((Ntp->GetMCID()==31 || Ntp->GetMCID()==32) && !matchTruth(Ntp->Muons_p4(i),13,0.2)) continue;
-				  if(Ntp->GetMCID()==33 && !matchTruth(Ntp->Muons_p4(i),13,0.2) && !matchTruth(Ntp->Muons_p4(i),15,0.2)) continue;
+				  //if((Ntp->GetMCID()==31 || Ntp->GetMCID()==32) && !matchTruth(Ntp->Muons_p4(i),13,0.2)) continue;
+				  //if(Ntp->GetMCID()==33 && !matchTruth(Ntp->Muons_p4(i),13,0.2) && !matchTruth(Ntp->Muons_p4(i),15,0.2)) continue;
 				  GoodMuons.push_back(i);
-			  }else if(isFakeMuon(i,vertex)
+			  }/*else if(isFakeMuon(i,vertex)
 					  && Ntp->isData()
 					  ){
 				  Fakemuons.push_back(i);
 				  FakeRateMuVec.push_back(Fakerate(Ntp->Muons_p4(i),MuonFakeRate,"muon"));
-			  }
+			  }*/
 		  }
 	  }
   }
@@ -334,7 +334,7 @@ void  ZtoEMu_Skim::doEvent(){
 			  }
 			  if(!notThisOne && Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(j))<0.3) matchRecoMuon = true;
 		  }
-		  if(matchRecoMuon) continue;
+		  //if(matchRecoMuon) continue;
 		  if(doHiggsObjects){
 			  if(isHiggsElectron(i,vertex)
 					  && ((fabs(Ntp->Electron_supercluster_eta(i))<1.479 && Electron_RelIso(i)<0.15) || (fabs(Ntp->Electron_supercluster_eta(i))>=1.479 && Electron_RelIso(i)<0.10))
@@ -349,16 +349,16 @@ void  ZtoEMu_Skim::doEvent(){
 				  FakeRateEVec.push_back(Fakerate(Ntp->Electron_p4(i),ElectronFakeRate,"electron"));
 			  }
 		  }else{
-			  if(isMVATrigElectron(i)){
-				  if((Ntp->GetMCID()==31 || Ntp->GetMCID()==32) && !matchTruth(Ntp->Electron_p4(i),11,0.2) && !matchTruth(Ntp->Electron_p4(i),13,0.2) && !matchTruth(Ntp->Electron_p4(i),22,0.2)) continue;
-				  if(Ntp->GetMCID()==33 && !matchTruth(Ntp->Electron_p4(i),11,0.2) && !matchTruth(Ntp->Electron_p4(i),13,0.2) && !matchTruth(Ntp->Electron_p4(i),22,0.2) && !matchTruth(Ntp->Electron_p4(i),15,0.2)) continue;
+			  if(isMVATrigElectron(i) && Electron_RelIso(i)<0.15){
+				  //if((Ntp->GetMCID()==31 || Ntp->GetMCID()==32) && !matchTruth(Ntp->Electron_p4(i),11,0.2) && !matchTruth(Ntp->Electron_p4(i),13,0.2) && !matchTruth(Ntp->Electron_p4(i),22,0.2)) continue;
+				  //if(Ntp->GetMCID()==33 && !matchTruth(Ntp->Electron_p4(i),11,0.2) && !matchTruth(Ntp->Electron_p4(i),13,0.2) && !matchTruth(Ntp->Electron_p4(i),22,0.2) && !matchTruth(Ntp->Electron_p4(i),15,0.2)) continue;
 				  GoodElectrons.push_back(i);
-			  }else if(isFakeElectron(i,vertex)
+			  }/*else if(isFakeElectron(i,vertex)
 					  && Ntp->isData()
 					  ){
 				  Fakeelectrons.push_back(i);
 				  FakeRateEVec.push_back(Fakerate(Ntp->Electron_p4(i),ElectronFakeRate,"electron"));
-			  }
+			  }*/
 		  }
 	  }
   }
@@ -438,7 +438,7 @@ void  ZtoEMu_Skim::doEvent(){
 	  }
   }
   fakeRate = 1.;
-  if(pass.at(charge)
+  /*if(pass.at(charge)
 		  && Ntp->isData()
 		  ){
 	  if(fakemu || fakee) fakeRate = 0.;
@@ -459,7 +459,7 @@ void  ZtoEMu_Skim::doEvent(){
 		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
 		  pass.at(charge) = true;
 	  }
-  }
+  }*/
   
   //////////////////////////////////////////////////////////
   if(verbose) std::cout << "do weights" << std::endl;
@@ -733,6 +733,7 @@ bool ZtoEMu_Skim::isMVATrigNoIPElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(!isTrigNoIPPreselElectron(i)) return false;
 	if(mvapt<20){
 		if(mvaeta<0.8){
 			if(Electron_RelIso(i)>=0.15) return false;
@@ -809,7 +810,8 @@ bool ZtoEMu_Skim::isMVATrigElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
-	if(Electron_RelIso(i)>=0.15) return false;
+	if(!isTrigPreselElectron(i)) return false;
+	//if(Electron_RelIso(i)>=0.15) return false;
 	if(mvapt>10. && mvapt<20.){
 		if(mvaeta<0.8 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.00) return false;
 		else if(mvaeta>=0.8 && mvaeta<1.479 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.10) return false;

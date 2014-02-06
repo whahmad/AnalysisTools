@@ -328,7 +328,6 @@ void  ZtoEMu_ABCD::doEvent(){
   for(unsigned i=0;i<Ntp->NElectrons();i++){
 	  if(Ntp->Electron_p4(i).Et()>e_ptlow
 			  && fabs(Ntp->Electron_supercluster_eta(i))<e_eta
-			  //&& isTrigPreselElectron(i)
 			  && (matchTrigger(i,0.2,"HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","electron") || matchTrigger(i,0.2,"HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v","electron"))
 			  && vertex>=0
 			  ){
@@ -422,7 +421,6 @@ void  ZtoEMu_ABCD::doEvent(){
 		  if(vertex<0) continue;
 		  if(Ntp->Electron_p4(i).Pt()<10) continue;
 		  if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
-		  //if(!isTrigPreselElectron(i)) continue;
 		  if(!isMVATrigElectron(i)) continue;
 		  if(Electron_RelIso(i)>0.3) continue;
 		  trilep++;
@@ -884,6 +882,7 @@ bool ZtoEMu_ABCD::isMVATrigNoIPElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
+	if(!isTrigNoIPPreselElectron(i)) return false;
 	if(mvapt<20){
 		if(mvaeta<0.8){
 			if(Electron_RelIso(i)>=0.15) return false;
@@ -960,6 +959,7 @@ bool ZtoEMu_ABCD::isMVATrigElectron(unsigned int i){
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
+	if(!isTrigPreselElectron(i)) return false;
 	//if(Electron_RelIso(i)>=0.15) return false;
 	if(mvapt>10. && mvapt<20.){
 		if(mvaeta<0.8 && Ntp->Electron_MVA_Trig_discriminator(i)<=0.00) return false;
