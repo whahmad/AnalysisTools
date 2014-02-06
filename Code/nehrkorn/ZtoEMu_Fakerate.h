@@ -50,12 +50,6 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH2D> muleg_scale;
   std::vector<TH2D> eleg_scale;
 
-  std::vector<TH1D> muleg_eff_09;
-  std::vector<TH1D> muleg_eff_12;
-  std::vector<TH1D> muleg_eff_21;
-  std::vector<TH1D> muleg_eff_24;
-  std::vector<TH1D> muleg_eff_all;
-
   std::vector<TH1D> muleg_denom_09;
   std::vector<TH1D> muleg_denom_12;
   std::vector<TH1D> muleg_denom_21;
@@ -67,17 +61,16 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH1D> muleg_num_24;
   std::vector<TH1D> muleg_num_all;
 
-  std::vector<TH1D> eleg_eff_10;
-  std::vector<TH1D> eleg_eff_15;
-  std::vector<TH1D> eleg_eff_25;
-  std::vector<TH1D> eleg_eff_all;
-
-  std::vector<TH1D> eleg_denom_10;
+  std::vector<TH1D> eleg_denom_08;
+  std::vector<TH1D> eleg_denom_14;
   std::vector<TH1D> eleg_denom_15;
+  std::vector<TH1D> eleg_denom_20;
   std::vector<TH1D> eleg_denom_25;
   std::vector<TH1D> eleg_denom_all;
-  std::vector<TH1D> eleg_num_10;
+  std::vector<TH1D> eleg_num_08;
+  std::vector<TH1D> eleg_num_14;
   std::vector<TH1D> eleg_num_15;
+  std::vector<TH1D> eleg_num_20;
   std::vector<TH1D> eleg_num_25;
   std::vector<TH1D> eleg_num_all;
 
@@ -99,15 +92,20 @@ class ZtoEMu_Fakerate : public Selection {
   std::vector<TH1D> mtprobemu;
   std::vector<TH1D> mtprobee;
   std::vector<TH1D> mmumu;
+  std::vector<TH1D> mmumupass;
+  std::vector<TH1D> mmumufail;
   std::vector<TH1D> mee;
+  std::vector<TH1D> meepass;
+  std::vector<TH1D> meefail;
+  std::vector<TH1D> nprobes;
+  std::vector<TH1D> ntags;
+  std::vector<TH1D> met;
 
-  std::vector<TH1D> sip;
-  std::vector<TH1D> nmu;
-  std::vector<TH1D> ne;
-
-  double mu_pt,mu_eta,e_pt,e_eta;
+  double mu_pt,mu_eta,e_pt,e_eta,jet_pt;
   int n_mu,n_e;
   
+  bool doHiggsObjects;
+
   double cosphi2d(double px1, double py1, double px2, double py2);
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
@@ -116,25 +114,27 @@ class ZtoEMu_Fakerate : public Selection {
   double vertexSignificance(TVector3 vec, unsigned int vertex);
   bool passZVeto(unsigned int vertex, std::string object);
   
-  void triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator,
-		  TH1D &tagmupt, TH1D &tagmueta, TH1D &tagept, TH1D & tageeta, TH1D &probemupt, TH1D &probemueta, TH1D &probeept, TH1D &probeeeta,
-		  TH1D &drtagmuprobee, TH1D &drtageprobemu, TH1D &ptbaltagmuprobee, TH1D &ptbaltageprobemu, TH1D &mttagmu, TH1D &mttage, TH1D &mtprobemu, TH1D &mtprobee, TH1D &mtagmuprobee, TH1D &mtageprobemu, double w);
-  void triggerMatch(std::vector<unsigned int> tags, std::vector<unsigned int> probes, std::string tagtrigger, std::string probetrigger, std::string tagname, TH2D &denominator, TH2D &numerator, double w);
-
-  void doubleMuE(std::vector<unsigned int> objects, std::string particle,std::string tagtrigger, std::string probetrigger, TH2D &denominator, TH2D &numerator,
-		  TH1D &tagpt, TH1D &tageta, TH1D &probept, TH1D &probeeta, TH1D &dr, TH1D &ptbal, TH1D &mttag, TH1D &mtprobe, TH1D &m, double w);
+  void doubleTrigger(std::string tagtrigger, std::string probetrigger, int vertex, std::string object, int t, double w);
+  bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
+  bool matchFirstLeg(unsigned int i, double dr, std::string trigger, std::string object);
+  bool matchSecondLeg(unsigned int i, double dr, std::string trigger, std::string object);
+  bool matchTruth(unsigned int i, double dr, std::string object);
 
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
+  bool isHiggsMuon(unsigned int i, unsigned int j);
   bool isLooseMuon(unsigned int i);
   bool isFakeMuon(unsigned int i);
   bool isFakeMuon(unsigned int i, unsigned int j);
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
+  bool isTrigPreselElectron(unsigned int i);
+  bool isTrigNoIPPreselElectron(unsigned int i);
   bool isMVATrigElectron(unsigned int i);
   bool isMVATrigNoIPElectron(unsigned int i);
   bool isMVANonTrigElectron(unsigned int i, unsigned int j);
+  bool isHiggsElectron(unsigned int i, unsigned int j);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
   bool isFakeElectron(unsigned int i);
@@ -144,8 +144,6 @@ class ZtoEMu_Fakerate : public Selection {
   double Electron_Aeff_R03(double Eta);
   
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
-  int getxbin(double pt);
-  int getybin(double eta, std::string object);
   
   TFile* outfile;
 

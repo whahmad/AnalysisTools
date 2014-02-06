@@ -465,7 +465,7 @@ if( $ARGV[0] eq "--DCache" ){
 		printf("Accessing Directory  $DS \n");
 		system(sprintf("touch junk"));
 		system(sprintf("uberftp grid-ftp.physik.rwth-aachen.de \"cd $DS; ls */  \" | grep root >& junk "));
-		system(sprintf("cat junk | awk '{print \$9}' >& junk1")); 
+		system(sprintf("cat junk | awk '{print \$8}' >& junk1")); 
 
 		# Get list of files in dcache dir
 		@files=();
