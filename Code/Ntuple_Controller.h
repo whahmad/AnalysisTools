@@ -348,9 +348,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
-     ndof=0;
-     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&  
-	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
+     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 && Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
        // Tau Solver
        TVector3 pv=PFTau_TIP_primaryVertex_pos(i);
        TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i);
