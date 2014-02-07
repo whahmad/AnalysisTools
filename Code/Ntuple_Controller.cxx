@@ -338,11 +338,16 @@ float Ntuple_Controller::Muon_RelIso(unsigned int i){
 
 /////////////////////////////////////////////////////////////////////
 
-bool Ntuple_Controller::isHiggsMuon(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isHiggsMuon(unsigned int i, unsigned int j, bool isMuTau){
 	if(j<0 || j>=NVtx()) return false;
 	if(!isTightMuon(i)) return false;
-	if(dxy(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.02) return false;
-	if(dz(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.1) return false;
+	if(isMuTau){
+		if(dxy(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.045) return false;
+		if(dz(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.2) return false;
+	}else{
+		if(dxy(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.02) return false;
+		if(dz(Muons_p4(i),Muon_Poca(i),Vtx(j))>=0.1) return false;
+	}
 	return true;
 }
 
@@ -506,13 +511,18 @@ float Ntuple_Controller::Electron_Aeff_R03(double Eta){
 
 /////////////////////////////////////////////////////////////////////
 
-bool Ntuple_Controller::isHiggsElectron(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isHiggsElectron(unsigned int i, unsigned int j, bool isETau){
 	double mvapt = Electron_p4(i).Pt();
 	double mvaeta = fabs(Electron_supercluster_eta(i));
 	if(Electron_numberOfMissedHits(i)>0) return false;
 	if(Electron_HasMatchedConversions(i)) return false;
-	if(dxy(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.02) return false;
-	if(dz(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.1) return false;
+	if(isETau){
+		if(dxy(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.045) return false;
+		if(dz(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.2) return false;
+	}else{
+		if(dxy(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.02) return false;
+		if(dz(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.1) return false;
+	}
 	if(mvapt<20.){
 		if(mvaeta<0.8 && Electron_MVA_NonTrig_discriminator(i)<=0.925) return false;
 		else if(mvaeta>=0.8 && mvaeta<1.479 && Electron_MVA_NonTrig_discriminator(i)<=0.915) return false;

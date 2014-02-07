@@ -284,7 +284,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
 
   bool			 isTightMuon(unsigned int i);
   bool			 isTightMuon(unsigned int i, unsigned int j);
-  bool           isHiggsMuon(unsigned int i, unsigned int j);
+  bool           isHiggsMuon(unsigned int i, unsigned int j, bool isMuTau);
   bool			 isLooseMuon(unsigned int i);
   float          Muon_RelIso(unsigned int i);
 
@@ -697,7 +697,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    float Electron_RelIso(unsigned int i);
    float Electron_Aeff_R04(double Eta);
    float Electron_Aeff_R03(double Eta);
-   bool isHiggsElectron(unsigned int i, unsigned int j);
+   bool isHiggsElectron(unsigned int i, unsigned int j, bool isETau);
 
    // Trigger
    bool         TriggerAccept(TString n);
