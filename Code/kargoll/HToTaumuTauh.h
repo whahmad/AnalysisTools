@@ -130,20 +130,12 @@ class HToTaumuTauh : public Selection {
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
 
-  bool selectVertex(unsigned i);
-
-  double Muon_AbsIso(unsigned int i);
-  double Muon_RelIso(unsigned int i);
-  bool isTightMuon(unsigned i);
-  bool isTightMuon(unsigned i, unsigned i_vtx);
   bool selectMuon_Id(unsigned i, unsigned vertex);
   bool selectMuon_Kinematics(unsigned i);
 
   bool selectMuon_diMuonVeto(unsigned i, unsigned i_vtx);
   bool selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsigned i_vtx);
 
-  bool isLooseMVAElectron(unsigned i);
-  double Electron_RelIso(unsigned i);
   bool selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int>);
 
   bool selectPFTau_Id(unsigned i);
