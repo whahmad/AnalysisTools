@@ -209,7 +209,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
 
   // Muon information
   unsigned int   NMuons(){return Ntp->Muon_p4->size();}
-  TLorentzVector Muons_p4(unsigned int i){return TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));}
+  TLorentzVector Muon_p4(unsigned int i){return TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));}
   TVector3       Muon_Poca(unsigned int i){return TVector3(Ntp->Muon_Poca->at(i).at(0),Ntp->Muon_Poca->at(i).at(1),Ntp->Muon_Poca->at(i).at(2));}
   bool           Muon_isGlobalMuon(unsigned int i){return Ntp->Muon_isGlobalMuon->at(i);}
   bool           Muon_isStandAloneMuon(unsigned int i){return Ntp->Muon_isStandAloneMuon->at(i);}
@@ -284,7 +284,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
 
   bool			 isTightMuon(unsigned int i);
   bool			 isTightMuon(unsigned int i, unsigned int j);
-  bool           isHiggsMuon(unsigned int i, unsigned int j, bool isMuTau);
+  bool           isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z);
   bool			 isLooseMuon(unsigned int i);
   float          Muon_RelIso(unsigned int i);
 
@@ -694,10 +694,11 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    bool isMVANonTrigElectron(unsigned int i, unsigned int j);
    bool isTightElectron(unsigned int i);
    bool isTightElectron(unsigned int i, unsigned int j);
-   float Electron_RelIso(unsigned int i);
+   float Electron_RelIso03(unsigned int i);
+   float Electron_RelIso04(unsigned int i);
    float Electron_Aeff_R04(double Eta);
    float Electron_Aeff_R03(double Eta);
-   bool isHiggsElectron(unsigned int i, unsigned int j, bool isETau);
+   bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z);
 
    // Trigger
    bool         TriggerAccept(TString n);

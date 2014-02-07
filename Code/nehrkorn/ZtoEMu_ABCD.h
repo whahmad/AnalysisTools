@@ -23,6 +23,7 @@ class ZtoEMu_ABCD : public Selection {
 		 diMuonVeto,
  		 triLeptonVeto,
  		 charge,
+ 		 mass,
  		 jetVeto,
 		 mtmu,
 		 ptbal,
