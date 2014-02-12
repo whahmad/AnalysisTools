@@ -1,9 +1,15 @@
 #ifndef HToTaumuTauh_h
 #define HToTaumuTauh_h
 
-#include "Selection.h"
+#include <TH1.h>
+#include <TString.h>
+#include <cmath>
 #include <vector>
-#include "TString.h"
+
+#include "../Selection.h"
+
+class TLorentzVector;
+class TVector3;
 
 class HToTaumuTauh : public Selection {
 
@@ -22,8 +28,8 @@ class HToTaumuTauh : public Selection {
 	  NTauId,
 	  NTauIso,
 	  NTauKin,
-	  OppCharge,
 	  TriLeptonVeto,
+	  OppCharge,
 	  MT,
 	  CatCut1,
 	  CatCut2,
@@ -61,7 +67,6 @@ class HToTaumuTauh : public Selection {
   virtual void Store_ExtraDist();
   virtual void  Finish();
 
- private:
   // Selection Variables
   std::vector<TH1D> NCatFired;
 
@@ -171,6 +176,10 @@ class HToTaumuTauh : public Selection {
 
   void configure_NoCategory();
   bool category_NoCategory();
+
+
+ private:
+  // everything is in protected to be accessible by derived classes
 
 };
 #endif

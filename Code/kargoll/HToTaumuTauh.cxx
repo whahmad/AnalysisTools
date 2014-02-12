@@ -31,7 +31,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 
 	// implemented categories:
 	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement b-tagging categories
-	categoryFlag = "ZeroJetLow";
+	categoryFlag = "NoCategory";
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -57,8 +57,8 @@ void  HToTaumuTauh::Configure(){
     if(i==NTauId)			cut.at(NTauId)=1;
     if(i==NTauIso)			cut.at(NTauIso)=1;
     if(i==NTauKin)			cut.at(NTauKin)=1;
-    if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
+    if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==MT)				cut.at(MT)=20.0;
     //category-specific values are set in the corresponding configure function
     // set them to dummy value -10.0 here
@@ -68,10 +68,6 @@ void  HToTaumuTauh::Configure(){
     if(i>=CatCut1){
     	cut.at(i)=-10.0;
     }
-  }
-  std::cout << "after initial setting:" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
   }
 
   // Setup Category Cut Values
@@ -188,16 +184,6 @@ void  HToTaumuTauh::Configure(){
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i_cut==OppCharge){
-    	title.at(i_cut)="$q(\\mu)+q(\\tau) =$";
-    	title.at(i_cut)+=cut.at(OppCharge);
-    	htitle=title.at(i_cut);
-    	htitle.ReplaceAll("$","");
-    	htitle.ReplaceAll("\\","#");
-    	hlabel="q(#mu)+q(#tau)";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
-    }
     else if(i_cut==TriLeptonVeto){
     	title.at(i_cut)="3 lepton veto: $N(\\mu)+N(e) =$";
     	title.at(i_cut)+=cut.at(TriLeptonVeto);
@@ -207,6 +193,16 @@ void  HToTaumuTauh::Configure(){
     	hlabel="Number of tri-lepton veto leptons";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
+    }
+    else if(i_cut==OppCharge){
+    	title.at(i_cut)="$q(\\mu)+q(\\tau) =$";
+    	title.at(i_cut)+=cut.at(OppCharge);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="q(#mu)+q(#tau)";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
     }
     else if(i_cut==MT){
     	title.at(i_cut)="$m_{T}(\\mu,E_{T}^{miss}) <$";
@@ -301,11 +297,6 @@ void  HToTaumuTauh::Configure(){
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
-
-  std::cout << "end of Configure:" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i-CatCut1 << ") = " << pass.at(i)  << endl;
-  }
 }
 
 
@@ -363,12 +354,9 @@ void  HToTaumuTauh::Store_ExtraDist(){
 }
 
 void  HToTaumuTauh::doEvent(){
-	  std::cout << "beginning of doEvent():" << std::endl;
-	  for (int i = CatCut1; i<NCuts; i++){
-		  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
-	  }
   unsigned int t;
   int id(Ntp->GetMCID());
+  std::cout << "ID before = " << id << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
   
   double wobs=1;
@@ -397,7 +385,7 @@ void  HToTaumuTauh::doEvent(){
 	  if(Ntp->TriggerAccept(*it_trig)){
 		  if ( value.at(TriggerOk) == -1 )
 			  value.at(TriggerOk) = it_trig - cTriggerNames.begin();
-		  else // more than 1 trigger fired, save this seperately
+		  else // more than 1 trigger fired, save this separately
 			  value.at(TriggerOk) = cTriggerNames.size();
 	  }
   }
@@ -474,13 +462,6 @@ void  HToTaumuTauh::doEvent(){
   pass.at(NTauKin)=(value.at(NTauKin)>=cut.at(NTauKin));
   int selTau = (selectedTaus.size() > 0) ? selectedTaus.at(0) : -1;
 
-  // Opposite charge
-  if (selMuon != -1 && selTau != -1){
-	  value.at(OppCharge) = Ntp->Muon_Charge(selMuon) + Ntp->PFTau_Charge(selTau);
-  }
-  else value.at(OppCharge) = -9;
-  pass.at(OppCharge) = (value.at(OppCharge) == cut.at(OppCharge));
-
   // Tri-lepton veto
   std::vector<int> triLepVetoMuons;
   triLepVetoMuons.clear();
@@ -499,6 +480,16 @@ void  HToTaumuTauh::doEvent(){
   value.at(TriLeptonVeto) = triLepVetoMuons.size() + triLepVetoElecs.size();
   pass.at(TriLeptonVeto) = (value.at(TriLeptonVeto) <= cut.at(TriLeptonVeto));
 
+  // Opposite charge
+  if (selMuon != -1 && selTau != -1){
+	  value.at(OppCharge) = Ntp->Muon_Charge(selMuon) + Ntp->PFTau_Charge(selTau);
+  }
+  else value.at(OppCharge) = -9;
+  if (cut.at(OppCharge) == 999) // set to 999 to disable oppcharge cut
+	  pass.at(OppCharge) = true;
+  else
+	  pass.at(OppCharge) = (value.at(OppCharge) == cut.at(OppCharge));
+
   // Transverse mass
   if(selMuon == -1){ // no good muon in event: set MT to high value -> fail MT cut
 	  value.at(MT) = 500.0;
@@ -510,7 +501,10 @@ void  HToTaumuTauh::doEvent(){
 	  double eTmPhi = Ntp->MET_CorrMVA_phi();
 	  value.at(MT)	= transverseMass(pT,phi,eTmiss,eTmPhi);
   }
-  pass.at(MT) = (value.at(MT) < cut.at(MT));
+  if (cut.at(MT) == 999) // set to 999 to disable mt cut
+	  pass.at(MT) = true;
+  else
+	  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
   // select objects for categories
   std::vector<int> selectedJetsCategories;
@@ -658,16 +652,9 @@ void  HToTaumuTauh::doEvent(){
   //////// plots filled after full selection
   if(status){
     NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
+    std::cout << "ID after = " << id << std::endl;
   }
-
-  std::cout << "end of doEvent():" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
-  }
-
 }
-
-
 
 
 void  HToTaumuTauh::Finish(){
@@ -747,7 +734,9 @@ bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std:
 	}
 
 	if ( 	Ntp->isSelectedElectron(i,i_vtx,0.045,0.2) &&
-			Ntp->Electron_RelIso03(i) < 0.3 && //TODO: This electron isolation is using rho corrections, but should use deltaBeta corrections
+			//TODO: This electron isolation is using rho corrections, but should use deltaBeta corrections
+			//documentation: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaEARhoCorrection
+			Ntp->Electron_RelIso04(i) < 0.3 &&
 			Ntp->Electron_p4(i).Pt() > 10.0 &&
 			fabs(Ntp->Electron_p4(i).Eta()) < 2.5
 			){

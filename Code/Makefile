@@ -71,7 +71,7 @@ ifdef USE_inugent
 endif
 
 ifdef USE_kargoll
-	TARGETS += HToTaumuTauh
+	TARGETS += HToTaumuTauh MuTauSync
 	DEFS += -DUSE_kargoll=1
 endif 
 

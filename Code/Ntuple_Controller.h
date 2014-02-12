@@ -435,7 +435,6 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
       // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}
    TLorentzVector     PFJet_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));}
-   TVector3           PFJet_Poca(unsigned int i){return TVector3(Ntp->PFJet_Poca->at(i).at(0),Ntp->PFJet_Poca->at(i).at(1),Ntp->PFJet_Poca->at(i).at(2));}
    float              PFJet_chargedEmEnergy(unsigned int i){return Ntp->PFJet_chargedEmEnergy->at(i);}
    float              PFJet_chargedHadronEnergy(unsigned int i){return Ntp->PFJet_chargedHadronEnergy->at(i);}
    float              PFJet_chargedHadronMultiplicity(unsigned int i){return Ntp->PFJet_chargedHadronMultiplicity->at(i);}
@@ -480,7 +479,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
 
    float              PFJet_partonFlavour(unsigned int i){return Ntp->PFJet_partonFlavour->at(i);}
    float              PFJet_bDiscriminator(unsigned int i){return Ntp->PFJet_bDiscriminator->at(i);}
-   float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);}
+   //float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);} // not implemented at the moment
 
    //MET information
    float              MET_Uncorr_et(){return Ntp->MET_Uncorr_et;}

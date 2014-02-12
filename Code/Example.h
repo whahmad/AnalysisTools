@@ -12,13 +12,13 @@ class Example : public Selection {
   virtual ~Example();
 
   virtual void  Configure();
+  virtual void  Finish();
 
   enum cuts {TriggerOk=0,PrimeVtx,NCuts};
 
  protected:
   virtual void doEvent();
   virtual void Store_ExtraDist();
-  virtual void  Finish();
 
  private:
   // Selection Variables
