@@ -75,7 +75,7 @@ double TauSpinerInterface::Get(int type, SimpleParticle X, SimpleParticle tau, s
     */
     WT = calculateWeightFromParticlesH(X, tau, tau2, tau_daughters,tau_daughters2);
     double polSM=getTauSpin();
-    std::cout << "polSM=getTauSpin() " <<  polSM << " " << getTauSpin() << " WT " << WT << std::endl;
+    //std::cout << "polSM=getTauSpin() " <<  polSM << " " << getTauSpin() << " WT " << WT << std::endl;
   if(type==hminus || type==hplus) WT=1.0;
     if(type==hminus && polSM>0.0) WT=0; // sign definition flipped in TauSpiner
     if(type==hplus && polSM<0.0) WT=0;

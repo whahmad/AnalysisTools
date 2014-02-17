@@ -184,11 +184,8 @@ if( $ARGV[0] eq "--TauNtuple"){
     
     # embedding: seems that there is nothing to do
 
-    # allow access to old code in cvs
-    system(sprintf("echo \"export CVSROOT=\":ext:$UserIDCern\@lxplus5.cern.ch:/afs/cern.ch/user/c/cvscmssw/public/CMSSW\"\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    #EGamma MVA variable: https://twiki.cern.ch/twiki/bin/view/CMS/ElectronMVAIDForH2Tau
-    system(sprintf("echo \"cvs co -r V09-00-01 RecoEgamma/EgammaTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"cvs co -r V00-00-09 EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # Electron Tools
+    system(sprintf("echo \"git cms-addpkg EgammaAnalysis/ElectronTools\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd EgammaAnalysis/ElectronTools/data/\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cat download.url | xargs wget\" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cd ../../../\" >> Install_TauNtuple_$CMSSWRel-$time"));
@@ -201,8 +198,8 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"rm -rf Jets_Short\" >> Install_TauNtuple_$CMSSWRel-$time"));
 
 	# Ntuple code
-    system(sprintf("echo \"git clone -b Production_2014_Jan_21 https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
-    system(sprintf("echo \"git clone -b Production_2014_Jan_21 https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # SimpleFits
     system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
@@ -224,7 +221,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     printf("\ngit config --global credential.helper 'cache --timeout=3600'");
     printf("\ngit config --global credential.helper cache");
     printf("\ngit config --global user.github $UserIDCern ");
-    printf("\nkinit $UserIDCern ");
+    #printf("\nkinit $UserIDCern ");
     printf("\nsource Install_TauNtuple_$CMSSWRel-$time"); 
     printf("\nYou can now go to the Production Directory and submit jobs.");
     printf("\ncd  $basedir/SkimProduction/CRAB/");
