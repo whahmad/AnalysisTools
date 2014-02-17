@@ -23,7 +23,6 @@ class ZtoEMu : public Selection {
 		 ptthreshold,
 		 diMuonVeto,
 		 triLeptonVeto,
-		 looseMuonVeto,
 		 charge,
 		 jetVeto,
 		 MtMu,
@@ -49,6 +48,9 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> etaE;
   std::vector<TH1D> jetsum;
   std::vector<TH1D> NJets;
+  std::vector<TH1D> NJetsLoose;
+  std::vector<TH1D> NJetsMedium;
+  std::vector<TH1D> NJetsTight;
   std::vector<TH1D> chargesum;
   std::vector<TH1D> drmue;
   std::vector<TH1D> deltaphi;
@@ -62,10 +64,8 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_ptbalance;
   std::vector<TH1D> invmass_mtmu;
   std::vector<TH1D> invmass_jetveto;
-  std::vector<TH1D> invmass_charge;
-  std::vector<TH1D> invmass_loosemuonveto;
+  std::vector<TH1D> invmass_vetos;
   std::vector<TH1D> invmass_only_object_id;
-  std::vector<TH1D> invmass_unblinded;
   
   std::vector<TH1D> nm0_met;
   std::vector<TH1D> nm0_jetsum;
@@ -73,15 +73,10 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nm0_mtmu;
   std::vector<TH1D> nm0_ptbalance;
   
-  std::vector<TH1D> ptbal2;
-  
   std::vector<TH1D> NPV;
-  std::vector<TH1D> NPV_noweight;
-  
-  std::vector<TH1D> frMu;
-  std::vector<TH1D> frE;
   
   std::vector<TH1D> met;
+  std::vector<TH1D> met_xycorr;
   std::vector<TH1D> met_uncorr;
   std::vector<TH1D> onejet;
   std::vector<TH1D> mte_mtmu;
@@ -92,31 +87,18 @@ class ZtoEMu : public Selection {
   // comparison of generators
 
   std::vector<TH1D> zpt;
-  std::vector<TH1D> zpt_mc;
   std::vector<TH1D> zeta;
-  std::vector<TH1D> zeta_mc;
   std::vector<TH1D> zmass;
-  std::vector<TH1D> zmass_mc;
   std::vector<TH1D> leadingjet_pt;
-  std::vector<TH1D> leadingjet_pt_mc;
   std::vector<TH1D> subleadingjet_pt;
-  std::vector<TH1D> subleadingjet_pt_mc;
   std::vector<TH1D> leadingjet_eta;
-  std::vector<TH1D> leadingjet_eta_mc;
   std::vector<TH1D> subleadingjet_eta;
-  std::vector<TH1D> subleadingjet_eta_mc;
   std::vector<TH1D> jetsumcustom;
-  std::vector<TH1D> jetsummc;
 
-  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance,dRmue;
+  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance;
   int n_mu,n_e;
-  double pex,pey,pmux,pmuy,phie,phimu;
-  double combpt;
-  double aemu; //angle between electron and muon
-  double beta; //angle between combined pt and bisector of electron and muon
-  double gamma; //angle between MET and bisector of electron and muon
-  double phismall; //smaller angle (electron or muon)
-  double pvis,pmiss;
+  bool doHiggsObjects;
+  bool runOverSkim;
   
   double calculatePzeta(int muiterator, int eiterator);
   double calculatePzetaDQM(int muiterator, int eiterator);
@@ -129,19 +111,24 @@ class ZtoEMu : public Selection {
   double vertexSignificance(TVector3 vec, unsigned int vertex);
   bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
   int matchTruth(TLorentzVector tvector);
+  bool matchTruth(TLorentzVector tvector, int pid, double dr);
   int findBin(TGraphAsymmErrors* graph, double xval);
   
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
+  bool isHiggsMuon(unsigned int i, unsigned int j);
   bool isLooseMuon(unsigned int i);
   bool isFakeMuon(unsigned int i);
   bool isFakeMuon(unsigned int i, unsigned int j);
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
   
+  bool isTrigPreselElectron(unsigned int i);
+  bool isTrigNoIPPreselElectron(unsigned int i);
   bool isMVATrigElectron(unsigned int i);
   bool isMVATrigNoIPElectron(unsigned int i);
   bool isMVANonTrigElectron(unsigned int i, unsigned int j);
+  bool isHiggsElectron(unsigned int i, unsigned int j);
   bool isTightElectron(unsigned int i);
   bool isTightElectron(unsigned int i, unsigned int j);
   bool isLooseElectron(unsigned int i);
@@ -154,6 +141,7 @@ class ZtoEMu : public Selection {
   double MuonIDeff(unsigned int i);
   double MuonIDerrUp(unsigned int i);
   double MuonIDerrDown(unsigned int i);
+  double MuonHiggsIDeff(unsigned int i);
   double MuonTriggerEff(unsigned int i);
   double MuonTriggerErr(unsigned int i);
   double ElectronIDeff(unsigned int i, std::string id);
@@ -162,6 +150,7 @@ class ZtoEMu : public Selection {
   double ElectronTrigIDerr(unsigned int i);
   double ElectronNonTrigIDeff(unsigned int i);
   double ElectronNonTrigIDerr(unsigned int i);
+  double ElectronHiggsIDeff(unsigned int i);
   double ElectronTriggerEff(unsigned int i);
   double ElectronTriggerErr(unsigned int i);
   
@@ -204,8 +193,6 @@ class ZtoEMu : public Selection {
   TH1D* mures;
   double eleres;
   double muonres;
-
-  bool twod;
 
 };
 #endif

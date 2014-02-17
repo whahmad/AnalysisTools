@@ -202,13 +202,14 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   TMatrixF     Vtx_Cov(unsigned int i);
   std::vector<int>  Vtx_Track_idx(unsigned int i){return Ntp->Vtx_Track_idx->at(i);}
   float Vtx_isFake(unsigned int i){return Ntp->Vtx_isFake->at(i);}
-  bool isVtxGood(unsigned int i);
   TLorentzVector Vtx_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->Vtx_TracksP4->at(i).at(j).at(1),Ntp->Vtx_TracksP4->at(i).at(j).at(2),Ntp->Vtx_TracksP4->at(i).at(j).at(3),Ntp->Vtx_TracksP4->at(i).at(j).at(0));}
 
+  bool isVtxGood(unsigned int i);
+  bool isGoodVtx(unsigned int i);
 
   // Muon information
   unsigned int   NMuons(){return Ntp->Muon_p4->size();}
-  TLorentzVector Muons_p4(unsigned int i){return TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));}
+  TLorentzVector Muon_p4(unsigned int i){return TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));}
   TVector3       Muon_Poca(unsigned int i){return TVector3(Ntp->Muon_Poca->at(i).at(0),Ntp->Muon_Poca->at(i).at(1),Ntp->Muon_Poca->at(i).at(2));}
   bool           Muon_isGlobalMuon(unsigned int i){return Ntp->Muon_isGlobalMuon->at(i);}
   bool           Muon_isStandAloneMuon(unsigned int i){return Ntp->Muon_isStandAloneMuon->at(i);}
@@ -242,9 +243,6 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   float          Muon_numberOfMatches(unsigned int i){return Ntp->Muon_numberOfMatches->at(i);}
   int            Muon_numberOfChambers(unsigned int i){return Ntp->Muon_numberOfChambers->at(i);}
   int            Muon_Charge(unsigned int i){return Ntp->Muon_charge->at(i);}
-  bool           isGoodMuon(unsigned int i);
-  bool           isGoodMuon_nooverlapremoval(unsigned int i);
-  float          Muon_RelIso(unsigned int i);
 
   bool           Muon_isPFMuon(unsigned int i){return Ntp->Muon_isPFMuon->at(i);}                                                     
   float          Muon_sumChargedHadronPt03(unsigned int i){return Ntp->Muon_sumChargedHadronPt03->at(i);}                             // sum-pt of charged Hadron					                               
@@ -280,6 +278,15 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
     }
     return TrackParticle(mu_par,mu_cov,Ntp->Muon_pdgid->at(i),Ntp->Muon_M->at(i),Ntp->Muon_charge->at(i),Ntp->Muon_B->at(i));
   }
+
+  bool           isGoodMuon(unsigned int i);
+  bool           isGoodMuon_nooverlapremoval(unsigned int i);
+
+  bool			 isTightMuon(unsigned int i);
+  bool			 isTightMuon(unsigned int i, unsigned int j);
+  bool           isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z);
+  bool			 isLooseMuon(unsigned int i);
+  float          Muon_RelIso(unsigned int i);
 
 
   //Base Tau Information (PF)
@@ -680,6 +687,19 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      return TrackParticle(e_par,e_cov,Ntp->Electron_pdgid->at(i),Ntp->Electron_M->at(i),Ntp->Electron_charge->at(i),Ntp->Electron_B->at(i));
    }
 
+   bool isTrigPreselElectron(unsigned int i);
+   bool isTrigNoIPPreselElectron(unsigned int i);
+   bool isMVATrigElectron(unsigned int i);
+   bool isMVATrigNoIPElectron(unsigned int i);
+   bool isMVANonTrigElectron(unsigned int i, unsigned int j);
+   bool isTightElectron(unsigned int i);
+   bool isTightElectron(unsigned int i, unsigned int j);
+   float Electron_RelIso03(unsigned int i);
+   float Electron_RelIso04(unsigned int i);
+   float Electron_Aeff_R04(double Eta);
+   float Electron_Aeff_R03(double Eta);
+   bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z);
+
    // Trigger
    bool         TriggerAccept(TString n);
    unsigned int HLTPrescale(TString n);
@@ -713,6 +733,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    int          HLTTrigger_objs_Id(unsigned int i,unsigned int j){return Ntp->HLTTrigger_objs_Id->at(i).at(j);}
    std::string  HLTTrigger_objs_trigger(unsigned int i){return Ntp->HLTTrigger_objs_trigger->at(i);}
 
+   // helper functions
+   float        dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+   float        dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+   float        vertexSignificance(TVector3 vec, unsigned int vertex);
 
 };
 

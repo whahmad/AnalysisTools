@@ -1,16 +1,16 @@
-#ifndef ZtoEMu_Skim_h
-#define ZtoEMu_Skim_h
+#ifndef ZtoEMu_ABCD_h
+#define ZtoEMu_ABCD_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 #include "TGraphAsymmErrors.h"
 
-class ZtoEMu_Skim : public Selection {
+class ZtoEMu_ABCD : public Selection {
 
  public:
-  ZtoEMu_Skim(TString Name_, TString id_);
-  virtual ~ZtoEMu_Skim();
+  ZtoEMu_ABCD(TString Name_, TString id_);
+  virtual ~ZtoEMu_ABCD();
 
   virtual void  Configure();
   virtual void Finish();
@@ -20,7 +20,13 @@ class ZtoEMu_Skim : public Selection {
 		 NMu,
 		 NE,
 		 ptthreshold,
-		 charge,
+		 diMuonVeto,
+ 		 triLeptonVeto,
+ 		 charge,
+ 		 mass,
+ 		 jetVeto,
+		 mtmu,
+		 ptbal,
 	     NCuts};
 
  protected:
@@ -29,24 +35,26 @@ class ZtoEMu_Skim : public Selection {
 
  private:
   // Selection Variables
-  
-  std::vector<TH1D> NPV;
-  std::vector<TH1D> mupt;
-  std::vector<TH1D> mueta;
-  std::vector<TH1D> ept;
-  std::vector<TH1D> eeta;
 
-  std::vector<TH1D> nontriggr20;
-  std::vector<TH1D> nontrigsm20;
-  std::vector<TH1D> triggr20;
-  std::vector<TH1D> trigsm20;
-  std::vector<TH1D> trignoipgr20;
-  std::vector<TH1D> trignoipsm20;
+  // wjets
+  std::vector<TH1D> wjets_a;
+  std::vector<TH1D> wjets_b;
+  std::vector<TH1D> wjets_c;
+  std::vector<TH1D> wjets_d;
+  std::vector<TH1D> wa;
+  std::vector<TH1D> wb;
+  std::vector<TH1D> wc;
+  std::vector<TH1D> wd;
+
+  std::vector<TH1D> wjets_control_a;
+  std::vector<TH1D> wjets_control_b;
+  std::vector<TH1D> wjets_control_c;
+  std::vector<TH1D> wjets_control_d;
+
+  std::vector<TH2D> wjets;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;
-
-  bool doHiggsObjects;
 
   double cosphi2d(double px1, double py1, double px2, double py2);
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
@@ -57,7 +65,7 @@ class ZtoEMu_Skim : public Selection {
   bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
   int matchTruth(TLorentzVector tvector);
   bool matchTruth(TLorentzVector tvector, int pid, double dr);
-  
+
   bool isTightMuon(unsigned int i);
   bool isTightMuon(unsigned int i, unsigned int j);
   bool isHiggsMuon(unsigned int i, unsigned int j);
@@ -66,7 +74,7 @@ class ZtoEMu_Skim : public Selection {
   bool isFakeMuon(unsigned int i, unsigned int j);
   double Muon_RelIso(unsigned int i);
   double Muon_AbsIso(unsigned int i);
-  
+
   bool isTrigPreselElectron(unsigned int i);
   bool isTrigNoIPPreselElectron(unsigned int i);
   bool isMVATrigElectron(unsigned int i);
@@ -80,7 +88,7 @@ class ZtoEMu_Skim : public Selection {
   double Electron_RelIso(unsigned int i);
   double Electron_Aeff_R04(double Eta);
   double Electron_Aeff_R03(double Eta);
-  
+
   double MuonIDeff(unsigned int i);
   double MuonHiggsIDeff(unsigned int i);
   double ElectronIDeff(unsigned int i, std::string id);
@@ -89,15 +97,13 @@ class ZtoEMu_Skim : public Selection {
   double ElectronHiggsIDeff(unsigned int i);
 
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
-  
+  double rundependentJetPtCorrection(double jeteta, int runnumber);
+
   TFile* FRFile;
   TFile* EmbEffFile;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
   TH2D* EmbEff;
-  double fakeRate;
-  double fakeRateMu;
-  double fakeRateE;
 
   TFile* MuIdEffFile;
   TFile* MuIsoEffFile;
