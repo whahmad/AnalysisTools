@@ -932,10 +932,12 @@ void  ZtoEMu::doEvent(){
     		w*=MuonIDeff(muidx);//*MuonTriggerEff(muidx);
     	}
     }
+	#ifdef USE_TauSpinner
     if(Ntp->GetMCID()==33){
     	double wt = Ntp->TauSpinerGet(0);
     	if(wt>=0 && wt<=2)w*=wt;
     }
+	#endif
     if(verbose)std::cout << "void  ZtoEMu::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1*fakeRate;wobs=1;}
