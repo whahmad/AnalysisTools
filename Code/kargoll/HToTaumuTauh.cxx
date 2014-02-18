@@ -31,7 +31,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 
 	// implemented categories:
 	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement b-tagging categories
-	categoryFlag = "ZeroJetLow";
+	categoryFlag = "NoCategory";
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -57,8 +57,8 @@ void  HToTaumuTauh::Configure(){
     if(i==NTauId)			cut.at(NTauId)=1;
     if(i==NTauIso)			cut.at(NTauIso)=1;
     if(i==NTauKin)			cut.at(NTauKin)=1;
-    if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
+    if(i==OppCharge)		cut.at(OppCharge)=0;
     if(i==MT)				cut.at(MT)=20.0;
     //category-specific values are set in the corresponding configure function
     // set them to dummy value -10.0 here
@@ -68,10 +68,6 @@ void  HToTaumuTauh::Configure(){
     if(i>=CatCut1){
     	cut.at(i)=-10.0;
     }
-  }
-  std::cout << "after initial setting:" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
   }
 
   // Setup Category Cut Values
@@ -188,16 +184,6 @@ void  HToTaumuTauh::Configure(){
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NTauKin_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
-    else if(i_cut==OppCharge){
-    	title.at(i_cut)="$q(\\mu)+q(\\tau) =$";
-    	title.at(i_cut)+=cut.at(OppCharge);
-    	htitle=title.at(i_cut);
-    	htitle.ReplaceAll("$","");
-    	htitle.ReplaceAll("\\","#");
-    	hlabel="q(#mu)+q(#tau)";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
-    }
     else if(i_cut==TriLeptonVeto){
     	title.at(i_cut)="3 lepton veto: $N(\\mu)+N(e) =$";
     	title.at(i_cut)+=cut.at(TriLeptonVeto);
@@ -207,6 +193,16 @@ void  HToTaumuTauh::Configure(){
     	hlabel="Number of tri-lepton veto leptons";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TriLeptonVeto_",htitle,5,-0.5,4.5,hlabel,"Events"));
+    }
+    else if(i_cut==OppCharge){
+    	title.at(i_cut)="$q(\\mu)+q(\\tau) =$";
+    	title.at(i_cut)+=cut.at(OppCharge);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="q(#mu)+q(#tau)";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_OppCharge_",htitle,5,-2.5,2.5,hlabel,"Events"));
     }
     else if(i_cut==MT){
     	title.at(i_cut)="$m_{T}(\\mu,E_{T}^{miss}) <$";
@@ -301,11 +297,6 @@ void  HToTaumuTauh::Configure(){
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
-
-  std::cout << "end of Configure:" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i-CatCut1 << ") = " << pass.at(i)  << endl;
-  }
 }
 
 
@@ -363,12 +354,9 @@ void  HToTaumuTauh::Store_ExtraDist(){
 }
 
 void  HToTaumuTauh::doEvent(){
-	  std::cout << "beginning of doEvent():" << std::endl;
-	  for (int i = CatCut1; i<NCuts; i++){
-		  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
-	  }
   unsigned int t;
   int id(Ntp->GetMCID());
+  std::cout << "ID before = " << id << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
   
   double wobs=1;
@@ -382,7 +370,7 @@ void  HToTaumuTauh::doEvent(){
   unsigned int nGoodVtx=0;
   int selVertex = -1;
   for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
-    if(selectVertex(i_vtx)){
+    if(Ntp->isGoodVtx(i_vtx)){
     	if(selVertex == -1) selVertex = i_vtx; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
     	nGoodVtx++;
     }
@@ -397,7 +385,7 @@ void  HToTaumuTauh::doEvent(){
 	  if(Ntp->TriggerAccept(*it_trig)){
 		  if ( value.at(TriggerOk) == -1 )
 			  value.at(TriggerOk) = it_trig - cTriggerNames.begin();
-		  else // more than 1 trigger fired, save this seperately
+		  else // more than 1 trigger fired, save this separately
 			  value.at(TriggerOk) = cTriggerNames.size();
 	  }
   }
@@ -474,13 +462,6 @@ void  HToTaumuTauh::doEvent(){
   pass.at(NTauKin)=(value.at(NTauKin)>=cut.at(NTauKin));
   int selTau = (selectedTaus.size() > 0) ? selectedTaus.at(0) : -1;
 
-  // Opposite charge
-  if (selMuon != -1 && selTau != -1){
-	  value.at(OppCharge) = Ntp->Muon_Charge(selMuon) + Ntp->PFTau_Charge(selTau);
-  }
-  else value.at(OppCharge) = -9;
-  pass.at(OppCharge) = (value.at(OppCharge) == cut.at(OppCharge));
-
   // Tri-lepton veto
   std::vector<int> triLepVetoMuons;
   triLepVetoMuons.clear();
@@ -499,22 +480,33 @@ void  HToTaumuTauh::doEvent(){
   value.at(TriLeptonVeto) = triLepVetoMuons.size() + triLepVetoElecs.size();
   pass.at(TriLeptonVeto) = (value.at(TriLeptonVeto) <= cut.at(TriLeptonVeto));
 
+  // Opposite charge
+  if (selMuon != -1 && selTau != -1){
+	  value.at(OppCharge) = Ntp->Muon_Charge(selMuon) + Ntp->PFTau_Charge(selTau);
+  }
+  else value.at(OppCharge) = -9;
+  if (cut.at(OppCharge) == 999) // set to 999 to disable oppcharge cut
+	  pass.at(OppCharge) = true;
+  else
+	  pass.at(OppCharge) = (value.at(OppCharge) == cut.at(OppCharge));
+
   // Transverse mass
-  // TODO: Switch to proper MET, i.e. corrected MET
   if(selMuon == -1){ // no good muon in event: set MT to high value -> fail MT cut
 	  value.at(MT) = 500.0;
   }
   else{
-	  double pT 	= Ntp->Muons_p4(selMuon).Pt();
-	  double phi	= Ntp->Muons_p4(selMuon).Phi();
-	  double eTmiss = Ntp->MET_et();
-	  double eTmPhi = Ntp->MET_phi();
+	  double pT 	= Ntp->Muon_p4(selMuon).Pt();
+	  double phi	= Ntp->Muon_p4(selMuon).Phi();
+	  double eTmiss = Ntp->MET_CorrMVA_et();
+	  double eTmPhi = Ntp->MET_CorrMVA_phi();
 	  value.at(MT)	= transverseMass(pT,phi,eTmiss,eTmPhi);
   }
-  pass.at(MT) = (value.at(MT) < cut.at(MT));
+  if (cut.at(MT) == 999) // set to 999 to disable mt cut
+	  pass.at(MT) = true;
+  else
+	  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
   // select objects for categories
-  // TODO: switch to JECorrected jets
   std::vector<int> selectedJetsCategories;
   selectedJetsCategories.clear();
   for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
@@ -568,10 +560,10 @@ void  HToTaumuTauh::doEvent(){
 
   if(pass.at(TriggerOk) && pass.at(PrimeVtx)){
 	  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
-		  if(	isTightMuon(i_mu,selVertex) ){
-			  MuDxy.at(t).Fill(dxy(Ntp->Muons_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
-			  MuDz.at(t).Fill(dz(Ntp->Muons_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
-			  MuRelIso.at(t).Fill(Muon_RelIso(i_mu), w);
+		  if(	Ntp->isTightMuon(i_mu,selVertex) ){
+			  MuDxy.at(t).Fill(dxy(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuDz.at(t).Fill(dz(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuRelIso.at(t).Fill(Ntp->Muon_RelIso(i_mu), w);
 		  }
 	  }
   }
@@ -579,23 +571,23 @@ void  HToTaumuTauh::doEvent(){
   //////// plots filled after muon ID selection: Muon Kinematics
   if(pass.at(TriggerOk) && pass.at(PrimeVtx) && pass.at(NMuId)){
 	  for(std::vector<int>::iterator it_mu = selectedMuonsId.begin();it_mu != selectedMuonsId.end(); ++it_mu){
-		  MuPt.at(t).Fill(Ntp->Muons_p4(*it_mu).Pt(), w);
-		  MuEta.at(t).Fill(Ntp->Muons_p4(*it_mu).Eta(), w);
-		  MuPhi.at(t).Fill(Ntp->Muons_p4(*it_mu).Phi(), w);
+		  MuPt.at(t).Fill(Ntp->Muon_p4(*it_mu).Pt(), w);
+		  MuEta.at(t).Fill(Ntp->Muon_p4(*it_mu).Eta(), w);
+		  MuPhi.at(t).Fill(Ntp->Muon_p4(*it_mu).Phi(), w);
 	  }
 
 	  //////// plots filled only with selected muon
 	  if(pass.at(NMuKin)){
-		  MuSelPt.at(t).Fill(Ntp->Muons_p4(selMuon).Pt(), w);
-		  MuSelEta.at(t).Fill(Ntp->Muons_p4(selMuon).Eta(), w);
-		  MuSelPhi.at(t).Fill(Ntp->Muons_p4(selMuon).Phi(), w);
+		  MuSelPt.at(t).Fill(Ntp->Muon_p4(selMuon).Pt(), w);
+		  MuSelEta.at(t).Fill(Ntp->Muon_p4(selMuon).Eta(), w);
+		  MuSelPhi.at(t).Fill(Ntp->Muon_p4(selMuon).Phi(), w);
 
 		  // Does the muon fake the tau_ID+Iso?
 		  bool fakes = false;
 		  for( unsigned  i_tau = 0; i_tau < Ntp->NPFTaus(); i_tau++){
 			  if (	  selectPFTau_Id(i_tau) &&
 					  selectPFTau_Iso(i_tau) &&
-					  Ntp->Muons_p4(selMuon).DeltaR(Ntp->PFTau_p4(i_tau)) < cMuTau_dR){
+					  Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(i_tau)) < cMuTau_dR){
 				  fakes = true;
 				  break;
 			  }
@@ -626,25 +618,25 @@ void  HToTaumuTauh::doEvent(){
 	  if(!pass.at(DiMuonVeto)){
 		  // Investigate events discarded by the DiMuon Veto
 		  if (Ntp->Muon_Charge(selMuon) == 1){
-			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsNegative.at(0)).Pt() - Ntp->Muons_p4(selMuon).Pt(), w );
-			  MuVetoDRTau.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsNegative.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+			  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
 		  }
 		  else if (Ntp->Muon_Charge(selMuon) == -1){
-			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsPositive.at(0)).Pt() - Ntp->Muons_p4(selMuon).Pt(), w );
-			  MuVetoDRTau.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+			  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
 		  }
-		  MuVetoInvM.at(t).Fill( (Ntp->Muons_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muons_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
-		  MuVetoPtPositive.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
-		  MuVetoPtNegative.at(t).Fill( Ntp->Muons_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
+		  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
+		  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
+		  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
 	  }
 
 	  if(pass.at(DiMuonVeto)){
 		  // Mu-Tau correlations
-		  MuTauDR    .at(t).Fill( Ntp->Muons_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
-		  MuTauDPhi  .at(t).Fill( Ntp->Muons_p4(selMuon).DeltaPhi(Ntp->PFTau_p4(selTau)), w );
-		  MuTauDEta  .at(t).Fill( Ntp->Muons_p4(selMuon).Eta() - Ntp->PFTau_p4(selTau).Eta(), w );
-		  MuTauDPt   .at(t).Fill( Ntp->Muons_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt(), w );
-		  MuTauRelDPt.at(t).Fill( (Ntp->Muons_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt()) / Ntp->Muons_p4(selMuon).Pt() , w);
+		  MuTauDR    .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
+		  MuTauDPhi  .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaPhi(Ntp->PFTau_p4(selTau)), w );
+		  MuTauDEta  .at(t).Fill( Ntp->Muon_p4(selMuon).Eta() - Ntp->PFTau_p4(selTau).Eta(), w );
+		  MuTauDPt   .at(t).Fill( Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt(), w );
+		  MuTauRelDPt.at(t).Fill( (Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt()) / Ntp->Muon_p4(selMuon).Pt() , w);
 		  // Tri-lepton vetoes
 		  NMuonTriLepVeto.at(t).Fill(triLepVetoMuons.size(), w);
 		  NElecTriLepVeto.at(t).Fill(triLepVetoElecs.size(), w);
@@ -653,23 +645,16 @@ void  HToTaumuTauh::doEvent(){
 		  TauCharge.at(t).Fill( Ntp->PFTau_Charge(selMuon), w);
 	  }
 
-	  MetPt.at(t).Fill(Ntp->MET_et(), w);
-	  MetPhi.at(t).Fill(Ntp->MET_phi(), w);
+	  MetPt.at(t).Fill(Ntp->MET_CorrMVA_et(), w);
+	  MetPhi.at(t).Fill(Ntp->MET_CorrMVA_phi(), w);
   }
 
   //////// plots filled after full selection
   if(status){
     NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
+    std::cout << "ID after = " << id << std::endl;
   }
-
-  std::cout << "end of doEvent():" << std::endl;
-  for (int i = CatCut1; i<NCuts; i++){
-	  std::cout << "pass.at(CatCut" << i+1 << ") = " << pass.at(i)  << endl;
-  }
-
 }
-
-
 
 
 void  HToTaumuTauh::Finish(){
@@ -690,61 +675,11 @@ double HToTaumuTauh::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2);
 }
 
-///////// Vertices
-bool HToTaumuTauh::selectVertex(unsigned i){
-	if(verbose)std::cout << "selectVertex(unsigned i)" << std::endl;
-	if( 	(fabs(Ntp->Vtx(i).z()) < 24)
-			&& (Ntp->Vtx(i).Perp() < 2)
-			&& (Ntp->Vtx_ndof(i) > 4)
-			&& (Ntp->Vtx_isFake(i) == 0)
-			) return true;
-	return false;
-}
-
 ///////// Muons
 
-// isolation
-double HToTaumuTauh::Muon_AbsIso(unsigned int i){
-	return Ntp->Muon_sumChargedHadronPt04(i)+std::max(0.,Ntp->Muon_sumNeutralHadronEt04(i)+Ntp->Muon_sumPhotonEt04(i)-0.5*Ntp->Muon_sumPUPt04(i));
-}
-
-double HToTaumuTauh::Muon_RelIso(unsigned int i){
-	return (Ntp->Muon_sumChargedHadronPt04(i)+std::max(0.,Ntp->Muon_sumNeutralHadronEt04(i)+Ntp->Muon_sumPhotonEt04(i)-0.5*Ntp->Muon_sumPUPt04(i)))/Ntp->Muons_p4(i).Pt();
-}
-
-
-// tightMuon without vertex constrains
-bool HToTaumuTauh::isTightMuon(unsigned i){
-	if(verbose)std::cout << "isTightMuon(unsigned i, unsigned i_vtx)" << std::endl;
-	if(		Ntp->Muon_isGlobalMuon(i) &&
-			Ntp->Muon_isPFMuon(i) &&
-			Ntp->Muon_normChi2(i)<10.0 &&
-			Ntp->Muon_hitPattern_numberOfValidMuonHits(i)>0 &&
-			Ntp->Muon_numberOfMatchedStations(i)>1 &&
-			Ntp->Muon_numberofValidPixelHits(i)>0 &&
-			Ntp->Muon_trackerLayersWithMeasurement(i)>5
-			  ){
-		return true;
-	}
-	return false;
-}
-
-// tightMuon with vertex constrains
-bool HToTaumuTauh::isTightMuon(unsigned i, unsigned i_vtx){
-	if(			isTightMuon(i) &&
-				fabs(dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)))<0.2 &&
-				fabs(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)))<0.5
-				  ){
-			return true;
-	}
-	return false;
-}
-
 bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
-	if(	isTightMuon(i,vertex) &&
-		fabs(dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(vertex))) < cMu_dxy &&
-		fabs(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(vertex))) < cMu_dz &&
-		Muon_RelIso(i) < cMu_relIso
+	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
+		Ntp->Muon_RelIso(i) < cMu_relIso
 			){
 		return true;
 	}
@@ -752,8 +687,8 @@ bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 }
 
 bool HToTaumuTauh::selectMuon_Kinematics(unsigned i){
-	if(	Ntp->Muons_p4(i).Pt() >= cMu_pt &&
-		fabs(Ntp->Muons_p4(i).Eta()) <= cMu_eta
+	if(	Ntp->Muon_p4(i).Pt() >= cMu_pt &&
+		fabs(Ntp->Muon_p4(i).Eta()) <= cMu_eta
 			){
 		return true;
 	}
@@ -761,13 +696,13 @@ bool HToTaumuTauh::selectMuon_Kinematics(unsigned i){
 }
 
 bool HToTaumuTauh::selectMuon_diMuonVeto(unsigned i, unsigned i_vtx){
-	if(	Ntp->Muons_p4(i).Pt() > 15.0 &&
-		fabs(Ntp->Muons_p4(i).Eta()) < 2.4 &&
+	if(	Ntp->Muon_p4(i).Pt() > 15.0 &&
+		fabs(Ntp->Muon_p4(i).Eta()) < 2.4 &&
 		Ntp->Muon_isPFMuon(i) &&
 		Ntp->Muon_isGlobalMuon(i) &&
 		Ntp->Muon_isTrackerMuon(i) &&
-		Muon_RelIso(i) < 0.3 &&
-		fabs(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < 0.2
+		Ntp->Muon_RelIso(i) < 0.3 &&
+		fabs(dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < 0.2
 		) {
 	  return true;
 	}
@@ -776,12 +711,12 @@ bool HToTaumuTauh::selectMuon_diMuonVeto(unsigned i, unsigned i_vtx){
 
 bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsigned i_vtx){
 	if(	i != selectedMuon &&
-		isTightMuon(i,i_vtx) &&
-		fabs(dxy(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dxy &&
-		fabs(dz(Ntp->Muons_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dz &&
-		Muon_RelIso(i) < 0.3 &&
-		Ntp->Muons_p4(i).Pt() > cMuTriLep_pt &&
-		fabs(Ntp->Muons_p4(i).Eta()) < cMuTriLep_eta
+		Ntp->isTightMuon(i,i_vtx) &&
+		fabs(dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dxy &&
+		fabs(dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dz &&
+		Ntp->Muon_RelIso(i) < 0.3 &&
+		Ntp->Muon_p4(i).Pt() > cMuTriLep_pt &&
+		fabs(Ntp->Muon_p4(i).Eta()) < cMuTriLep_eta
 			){
 			return true;
 	}
@@ -790,54 +725,18 @@ bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsign
 
 
 ///////// Electrons
-
-bool HToTaumuTauh::isLooseMVAElectron(unsigned i){
-	double mvapt = Ntp->Electron_p4(i).Pt();
-	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
-
-//	TODO: uncomment as soon as Electron_MVA_discriminator is in Ntuple and Ntuple_Controller (was implemented already by Alex)
-//	if(mvapt<20){
-//		if(mvaeta<0.8 && Ntp->Electron_MVA_discriminator(i)>0.925){ // Cat. 1
-//			return true;
-//		}else if(mvaeta>=0.8 && mvaeta<1.479 && Ntp->Electron_MVA_discriminator(i)>0.915){ // Cat. 2
-//			return true;
-//		}else if(mvaeta>=1.479 && Ntp->Electron_MVA_discriminator(i)>0.965){ // Cat. 3
-//			return true;
-//		}
-//	}else if(mvapt>=20){
-//		if(mvaeta<0.8 && Ntp->Electron_MVA_discriminator(i)>0.905){ // Cat. 4
-//			return true;
-//		}else if(mvaeta>=0.8 && mvaeta<1.479 && Ntp->Electron_MVA_discriminator(i)>0.955){ // Cat. 5
-//			return true;
-//		}else if(mvaeta>=1.479 && Ntp->Electron_MVA_discriminator(i)>0.975){ // Cat. 6
-//			return true;
-//		}
-//	}
-//	return false;
-	return false;
-}
-
-double HToTaumuTauh::Electron_RelIso(unsigned i){
-	//	TODO: uncomment as soon as Electron_MVA_discriminator is in Ntuple and Ntuple_Controller (was implemented already by Alex)
-	//return (Ntp->Electron_chargedHadronIso(i)+std::max((double)0.,Ntp->Electron_neutralHadronIso(i)+Ntp->Electron_photonIso(i)-Ntp->RhoIsolationAllInputTags()*Electron_Aeff(Ntp->Electron_supercluster_eta(i))))/Ntp->Electron_p4(i).Pt();
-
-	return -1.0;
-}
-
 bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int> muonCollection){
 	// check if elec is matched to a muon, if so this is not a good elec (should become obsolete when using top projections)
 	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
-	  if( Ntp->Electron_p4(i).DeltaR(Ntp->Muons_p4(*it_mu)) < cMuTau_dR ) {
+	  if( Ntp->Electron_p4(i).DeltaR(Ntp->Muon_p4(*it_mu)) < cMuTau_dR ) {
 		  return false;
 	  }
 	}
 
-	if ( 	Ntp->Electron_numberOfMissedHits(i) < 0.1 && // no missing hits
-			!Ntp->Electron_HasMatchedConversions(i) &&
-			fabs( dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(i_vtx)) ) < 0.2 &&
-			fabs( dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(i_vtx)) ) < 0.045 &&
-			isLooseMVAElectron(i) &&
-			Electron_RelIso(i) < 0.3 &&
+	if ( 	Ntp->isSelectedElectron(i,i_vtx,0.045,0.2) &&
+			//TODO: This electron isolation is using rho corrections, but should use deltaBeta corrections
+			//documentation: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaEARhoCorrection
+			Ntp->Electron_RelIso04(i) < 0.3 &&
 			Ntp->Electron_p4(i).Pt() > 10.0 &&
 			fabs(Ntp->Electron_p4(i).Eta()) < 2.5
 			){
@@ -861,7 +760,7 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i){
 bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	// check if tau is matched to a muon, if so this is not a good tau (should become obsolete when using top projections)
 	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
-	  if( Ntp->PFTau_p4(i).DeltaR(Ntp->Muons_p4(*it_mu)) < cMuTau_dR ) {
+	  if( Ntp->PFTau_p4(i).DeltaR(Ntp->Muon_p4(*it_mu)) < cMuTau_dR ) {
 		  return false;
 	  }
 	}
@@ -976,7 +875,6 @@ bool HToTaumuTauh::category_VBF(){
 	value_VBF.push_back(-10.);
 	pass_VBF.push_back(false);
 	}
-	// TODO: Switch to JECorrected jets
 	std::vector<int> selectedVBFJets;
 	selectedVBFJets.clear();
 	for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
@@ -1096,7 +994,6 @@ bool HToTaumuTauh::category_OneJetHigh(int selTau, std::vector<int> jetCollectio
 	pass_OneJetHigh.push_back(false);
 	}
 
-	// TODO: Switch to JECorrected jets
 	value_OneJetHigh.at(OneJetNJet) = jetCollection.size();
 	pass_OneJetHigh.at(OneJetNJet) = ( value_OneJetHigh.at(OneJetNJet) >= cut_OneJet.at(OneJetNJet) );
 
@@ -1201,7 +1098,6 @@ bool HToTaumuTauh::category_OneJetLow(int selTau, std::vector<int> jetCollection
 	pass_OneJetLow.push_back(false);
 	}
 
-	// TODO: Switch to JECorrected jets
 	value_OneJetLow.at(OneJetNJet) = jetCollection.size();
 	pass_OneJetLow.at(OneJetNJet) = ( value_OneJetLow.at(OneJetNJet) >= cut_OneJet.at(OneJetNJet) );
 
@@ -1295,7 +1191,6 @@ bool HToTaumuTauh::category_ZeroJetHigh(int selTau, std::vector<int> jetCollecti
 	pass_ZeroJetHigh.push_back(false);
 	}
 
-	// TODO: Switch to JECorrected jets
 	value_ZeroJetHigh.at(ZeroJetNJet) = jetCollection.size();
 	pass_ZeroJetHigh.at(ZeroJetNJet) = ( value_ZeroJetHigh.at(ZeroJetNJet) <= cut_ZeroJet.at(ZeroJetNJet) );
 
@@ -1386,7 +1281,6 @@ bool HToTaumuTauh::category_ZeroJetLow(int selTau, std::vector<int> jetCollectio
 	pass_ZeroJetLow.push_back(false);
 	}
 
-	// TODO: Switch to JECorrected jets
 	value_ZeroJetLow.at(ZeroJetNJet) = jetCollection.size();
 	pass_ZeroJetLow.at(ZeroJetNJet) = ( value_ZeroJetLow.at(ZeroJetNJet) <= cut_ZeroJet.at(ZeroJetNJet) );
 

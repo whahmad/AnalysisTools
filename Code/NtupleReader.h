@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Dec 19 09:13:38 2013 by ROOT version 5.34/13
+// Thu Feb  6 15:39:58 2014 by ROOT version 5.34/14
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -187,7 +187,7 @@ public :
    vector<bool>    *PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits;
    vector<bool>    *PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits;
    vector<bool>    *PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits;
-   vector<float>   *PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits;
+   vector<float>   *PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits;
    vector<bool>    *PFTau_HPSPFTauDiscriminationByLooseIsolationMVA;
    vector<bool>    *PFTau_HPSPFTauDiscriminationByMediumIsolationMVA;
    vector<bool>    *PFTau_HPSPFTauDiscriminationByTightIsolationMVA;
@@ -227,6 +227,8 @@ public :
    vector<vector<float> > *PFTau_3PS_LCchi2;
    vector<vector<int> > *PFTau_3PS_has3ProngSolution;
    vector<vector<vector<float> > > *PFTau_3PS_Tau_LV;
+   vector<vector<vector<float> > > *PFTau_PionsP4;
+   vector<vector<double> > *PFTau_PionsCharge;
    vector<vector<vector<float> > > *PFTau_PiZeroP4;
    vector<vector<int> > *PFTau_PiZeroNumOfPhotons;
    vector<vector<int> > *PFTau_PiZeroNumOfElectrons;
@@ -238,9 +240,15 @@ public :
    vector<vector<vector<float> > > *PFTau_MatchedPFJetSCVariables;
    vector<vector<vector<float> > > *PFTau_MatchedPFJetPhotonVariables;
    vector<float>   *PFTau_PhotonEnergyFraction;
+   vector<vector<int> > *PFTau_photon_hasPixelSeed;
+   vector<vector<float> > *PFTau_photon_hadronicOverEm;
+   vector<vector<float> > *PFTau_photon_sigmaIetaIeta;
+   vector<vector<float> > *PFTau_photon_trkSumPtHollowConeDR04;
+   vector<vector<float> > *PFTau_photon_ecalRecHitSumEtConeDR04;
+   vector<vector<float> > *PFTau_photon_hcalTowerSumEtConeDR04;
+   vector<float>   *PFTau_photon_rho;
    Bool_t          isPatJet;
    vector<vector<float> > *PFJet_p4;
-   vector<vector<float> > *PFJet_Poca;
    vector<float>   *PFJet_chargedEmEnergy;
    vector<float>   *PFJet_chargedHadronEnergy;
    vector<float>   *PFJet_chargedHadronMultiplicity;
@@ -433,11 +441,6 @@ public :
    Float_t         MET_CorrCaloT1_significance_xx;
    Float_t         MET_CorrCaloT1_significance_xy;
    Float_t         MET_CorrCaloT1_significance_yy;
-   Float_t         MET_CorrCaloT1_MuonEtFraction;
-   Float_t         MET_CorrCaloT1_NeutralEMFraction;
-   Float_t         MET_CorrCaloT1_NeutralHadEtFraction;
-   Float_t         MET_CorrCaloT1_Type6EtFraction;
-   Float_t         MET_CorrCaloT1_Type7EtFraction;
    Float_t         MET_CorrCaloT1T2_et;
    Float_t         MET_CorrCaloT1T2_pt;
    Float_t         MET_CorrCaloT1T2_phi;
@@ -446,11 +449,6 @@ public :
    Float_t         MET_CorrCaloT1T2_significance_xx;
    Float_t         MET_CorrCaloT1T2_significance_xy;
    Float_t         MET_CorrCaloT1T2_significance_yy;
-   Float_t         MET_CorrCaloT1T2_MuonEtFraction;
-   Float_t         MET_CorrCaloT1T2_NeutralEMFraction;
-   Float_t         MET_CorrCaloT1T2_NeutralHadEtFraction;
-   Float_t         MET_CorrCaloT1T2_Type6EtFraction;
-   Float_t         MET_CorrCaloT1T2_Type7EtFraction;
    Float_t         MET_CorrMVA_et;
    Float_t         MET_CorrMVA_pt;
    Float_t         MET_CorrMVA_phi;
@@ -707,7 +705,7 @@ public :
    TBranch        *b_PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits;   //!
    TBranch        *b_PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits;   //!
    TBranch        *b_PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits;   //!
-   TBranch        *b_PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits;   //!
+   TBranch        *b_PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits;   //!
    TBranch        *b_PFTau_HPSPFTauDiscriminationByLooseIsolationMVA;   //!
    TBranch        *b_PFTau_HPSPFTauDiscriminationByMediumIsolationMVA;   //!
    TBranch        *b_PFTau_HPSPFTauDiscriminationByTightIsolationMVA;   //!
@@ -747,6 +745,8 @@ public :
    TBranch        *b_PFTau_3PS_LCchi2;   //!
    TBranch        *b_PFTau_3PS_has3ProngSolution;   //!
    TBranch        *b_PFTau_3PS_Tau_LV;   //!
+   TBranch        *b_PFTau_PionsP4;   //!
+   TBranch        *b_PFTau_PionsCharge;   //!
    TBranch        *b_PFTau_PiZeroP4;   //!
    TBranch        *b_PFTau_PiZeroNumOfPhotons;   //!
    TBranch        *b_PFTau_PiZeroNumOfElectrons;   //!
@@ -758,9 +758,15 @@ public :
    TBranch        *b_PFTau_MatchedPFJetSCVariables;   //!
    TBranch        *b_PFTau_MatchedPFJetPhotonVariables;   //!
    TBranch        *b_PFTau_PhotonEnergyFraction;   //!
+   TBranch        *b_PFTau_photon_hasPixelSeed;   //!
+   TBranch        *b_PFTau_photon_hadronicOverEm;   //!
+   TBranch        *b_PFTau_photon_sigmaIetaIeta;   //!
+   TBranch        *b_PFTau_photon_trkSumPtHollowConeDR04;   //!
+   TBranch        *b_PFTau_photon_ecalRecHitSumEtConeDR04;   //!
+   TBranch        *b_PFTau_photon_hcalTowerSumEtConeDR04;   //!
+   TBranch        *b_PFTau_photon_rho;   //!
    TBranch        *b_isPatJet;   //!
    TBranch        *b_PFJet_p4;   //!
-   TBranch        *b_PFJet_Poca;   //!
    TBranch        *b_PFJet_chargedEmEnergy;   //!
    TBranch        *b_PFJet_chargedHadronEnergy;   //!
    TBranch        *b_PFJet_chargedHadronMultiplicity;   //!
@@ -953,11 +959,6 @@ public :
    TBranch        *b_MET_CorrCaloT1_significance_xx;   //!
    TBranch        *b_MET_CorrCaloT1_significance_xy;   //!
    TBranch        *b_MET_CorrCaloT1_significance_yy;   //!
-   TBranch        *b_MET_CorrCaloT1_MuonEtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1_NeutralEMFraction;   //!
-   TBranch        *b_MET_CorrCaloT1_NeutralHadEtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1_Type6EtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1_Type7EtFraction;   //!
    TBranch        *b_MET_CorrCaloT1T2_et;   //!
    TBranch        *b_MET_CorrCaloT1T2_pt;   //!
    TBranch        *b_MET_CorrCaloT1T2_phi;   //!
@@ -966,11 +967,6 @@ public :
    TBranch        *b_MET_CorrCaloT1T2_significance_xx;   //!
    TBranch        *b_MET_CorrCaloT1T2_significance_xy;   //!
    TBranch        *b_MET_CorrCaloT1T2_significance_yy;   //!
-   TBranch        *b_MET_CorrCaloT1T2_MuonEtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1T2_NeutralEMFraction;   //!
-   TBranch        *b_MET_CorrCaloT1T2_NeutralHadEtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1T2_Type6EtFraction;   //!
-   TBranch        *b_MET_CorrCaloT1T2_Type7EtFraction;   //!
    TBranch        *b_MET_CorrMVA_et;   //!
    TBranch        *b_MET_CorrMVA_pt;   //!
    TBranch        *b_MET_CorrMVA_phi;   //!
@@ -1098,7 +1094,7 @@ NtupleReader::NtupleReader(TTree *tree) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/home/home2/institut_3b/nehrkorn/AnalysisTools/Code/macros/TauNtuple_85_1_5M5.root/t");
+      chain->Add("TauNtuple_20_1_2HK.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -1297,7 +1293,7 @@ void NtupleReader::Init(TTree *tree)
    PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits = 0;
    PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits = 0;
    PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits = 0;
-   PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits = 0;
+   PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits = 0;
    PFTau_HPSPFTauDiscriminationByLooseIsolationMVA = 0;
    PFTau_HPSPFTauDiscriminationByMediumIsolationMVA = 0;
    PFTau_HPSPFTauDiscriminationByTightIsolationMVA = 0;
@@ -1337,6 +1333,8 @@ void NtupleReader::Init(TTree *tree)
    PFTau_3PS_LCchi2 = 0;
    PFTau_3PS_has3ProngSolution = 0;
    PFTau_3PS_Tau_LV = 0;
+   PFTau_PionsP4 = 0;
+   PFTau_PionsCharge = 0;
    PFTau_PiZeroP4 = 0;
    PFTau_PiZeroNumOfPhotons = 0;
    PFTau_PiZeroNumOfElectrons = 0;
@@ -1348,8 +1346,14 @@ void NtupleReader::Init(TTree *tree)
    PFTau_MatchedPFJetSCVariables = 0;
    PFTau_MatchedPFJetPhotonVariables = 0;
    PFTau_PhotonEnergyFraction = 0;
+   PFTau_photon_hasPixelSeed = 0;
+   PFTau_photon_hadronicOverEm = 0;
+   PFTau_photon_sigmaIetaIeta = 0;
+   PFTau_photon_trkSumPtHollowConeDR04 = 0;
+   PFTau_photon_ecalRecHitSumEtConeDR04 = 0;
+   PFTau_photon_hcalTowerSumEtConeDR04 = 0;
+   PFTau_photon_rho = 0;
    PFJet_p4 = 0;
-   PFJet_Poca = 0;
    PFJet_chargedEmEnergy = 0;
    PFJet_chargedHadronEnergy = 0;
    PFJet_chargedHadronMultiplicity = 0;
@@ -1612,7 +1616,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits", &PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits, &b_PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits);
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits", &PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits, &b_PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits);
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits", &PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits, &b_PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits);
-   fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits", &PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits, &b_PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits);
+   fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits", &PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits, &b_PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits);
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByLooseIsolationMVA", &PFTau_HPSPFTauDiscriminationByLooseIsolationMVA, &b_PFTau_HPSPFTauDiscriminationByLooseIsolationMVA);
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByMediumIsolationMVA", &PFTau_HPSPFTauDiscriminationByMediumIsolationMVA, &b_PFTau_HPSPFTauDiscriminationByMediumIsolationMVA);
    fChain->SetBranchAddress("PFTau_HPSPFTauDiscriminationByTightIsolationMVA", &PFTau_HPSPFTauDiscriminationByTightIsolationMVA, &b_PFTau_HPSPFTauDiscriminationByTightIsolationMVA);
@@ -1652,6 +1656,8 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_3PS_LCchi2", &PFTau_3PS_LCchi2, &b_PFTau_3PS_LCchi2);
    fChain->SetBranchAddress("PFTau_3PS_has3ProngSolution", &PFTau_3PS_has3ProngSolution, &b_PFTau_3PS_has3ProngSolution);
    fChain->SetBranchAddress("PFTau_3PS_Tau_LV", &PFTau_3PS_Tau_LV, &b_PFTau_3PS_Tau_LV);
+   fChain->SetBranchAddress("PFTau_PionsP4", &PFTau_PionsP4, &b_PFTau_PionsP4);
+   fChain->SetBranchAddress("PFTau_PionsCharge", &PFTau_PionsCharge, &b_PFTau_PionsCharge);
    fChain->SetBranchAddress("PFTau_PiZeroP4", &PFTau_PiZeroP4, &b_PFTau_PiZeroP4);
    fChain->SetBranchAddress("PFTau_PiZeroNumOfPhotons", &PFTau_PiZeroNumOfPhotons, &b_PFTau_PiZeroNumOfPhotons);
    fChain->SetBranchAddress("PFTau_PiZeroNumOfElectrons", &PFTau_PiZeroNumOfElectrons, &b_PFTau_PiZeroNumOfElectrons);
@@ -1663,9 +1669,15 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_MatchedPFJetSCVariables", &PFTau_MatchedPFJetSCVariables, &b_PFTau_MatchedPFJetSCVariables);
    fChain->SetBranchAddress("PFTau_MatchedPFJetPhotonVariables", &PFTau_MatchedPFJetPhotonVariables, &b_PFTau_MatchedPFJetPhotonVariables);
    fChain->SetBranchAddress("PFTau_PhotonEnergyFraction", &PFTau_PhotonEnergyFraction, &b_PFTau_PhotonEnergyFraction);
+   fChain->SetBranchAddress("PFTau_photon_hasPixelSeed", &PFTau_photon_hasPixelSeed, &b_PFTau_photon_hasPixelSeed);
+   fChain->SetBranchAddress("PFTau_photon_hadronicOverEm", &PFTau_photon_hadronicOverEm, &b_PFTau_photon_hadronicOverEm);
+   fChain->SetBranchAddress("PFTau_photon_sigmaIetaIeta", &PFTau_photon_sigmaIetaIeta, &b_PFTau_photon_sigmaIetaIeta);
+   fChain->SetBranchAddress("PFTau_photon_trkSumPtHollowConeDR04", &PFTau_photon_trkSumPtHollowConeDR04, &b_PFTau_photon_trkSumPtHollowConeDR04);
+   fChain->SetBranchAddress("PFTau_photon_ecalRecHitSumEtConeDR04", &PFTau_photon_ecalRecHitSumEtConeDR04, &b_PFTau_photon_ecalRecHitSumEtConeDR04);
+   fChain->SetBranchAddress("PFTau_photon_hcalTowerSumEtConeDR04", &PFTau_photon_hcalTowerSumEtConeDR04, &b_PFTau_photon_hcalTowerSumEtConeDR04);
+   fChain->SetBranchAddress("PFTau_photon_rho", &PFTau_photon_rho, &b_PFTau_photon_rho);
    fChain->SetBranchAddress("isPatJet", &isPatJet, &b_isPatJet);
    fChain->SetBranchAddress("PFJet_p4", &PFJet_p4, &b_PFJet_p4);
-   fChain->SetBranchAddress("PFJet_Poca", &PFJet_Poca, &b_PFJet_Poca);
    fChain->SetBranchAddress("PFJet_chargedEmEnergy", &PFJet_chargedEmEnergy, &b_PFJet_chargedEmEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronEnergy", &PFJet_chargedHadronEnergy, &b_PFJet_chargedHadronEnergy);
    fChain->SetBranchAddress("PFJet_chargedHadronMultiplicity", &PFJet_chargedHadronMultiplicity, &b_PFJet_chargedHadronMultiplicity);
@@ -1858,11 +1870,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MET_CorrCaloT1_significance_xx", &MET_CorrCaloT1_significance_xx, &b_MET_CorrCaloT1_significance_xx);
    fChain->SetBranchAddress("MET_CorrCaloT1_significance_xy", &MET_CorrCaloT1_significance_xy, &b_MET_CorrCaloT1_significance_xy);
    fChain->SetBranchAddress("MET_CorrCaloT1_significance_yy", &MET_CorrCaloT1_significance_yy, &b_MET_CorrCaloT1_significance_yy);
-   fChain->SetBranchAddress("MET_CorrCaloT1_MuonEtFraction", &MET_CorrCaloT1_MuonEtFraction, &b_MET_CorrCaloT1_MuonEtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1_NeutralEMFraction", &MET_CorrCaloT1_NeutralEMFraction, &b_MET_CorrCaloT1_NeutralEMFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1_NeutralHadEtFraction", &MET_CorrCaloT1_NeutralHadEtFraction, &b_MET_CorrCaloT1_NeutralHadEtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1_Type6EtFraction", &MET_CorrCaloT1_Type6EtFraction, &b_MET_CorrCaloT1_Type6EtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1_Type7EtFraction", &MET_CorrCaloT1_Type7EtFraction, &b_MET_CorrCaloT1_Type7EtFraction);
    fChain->SetBranchAddress("MET_CorrCaloT1T2_et", &MET_CorrCaloT1T2_et, &b_MET_CorrCaloT1T2_et);
    fChain->SetBranchAddress("MET_CorrCaloT1T2_pt", &MET_CorrCaloT1T2_pt, &b_MET_CorrCaloT1T2_pt);
    fChain->SetBranchAddress("MET_CorrCaloT1T2_phi", &MET_CorrCaloT1T2_phi, &b_MET_CorrCaloT1T2_phi);
@@ -1871,11 +1878,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MET_CorrCaloT1T2_significance_xx", &MET_CorrCaloT1T2_significance_xx, &b_MET_CorrCaloT1T2_significance_xx);
    fChain->SetBranchAddress("MET_CorrCaloT1T2_significance_xy", &MET_CorrCaloT1T2_significance_xy, &b_MET_CorrCaloT1T2_significance_xy);
    fChain->SetBranchAddress("MET_CorrCaloT1T2_significance_yy", &MET_CorrCaloT1T2_significance_yy, &b_MET_CorrCaloT1T2_significance_yy);
-   fChain->SetBranchAddress("MET_CorrCaloT1T2_MuonEtFraction", &MET_CorrCaloT1T2_MuonEtFraction, &b_MET_CorrCaloT1T2_MuonEtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1T2_NeutralEMFraction", &MET_CorrCaloT1T2_NeutralEMFraction, &b_MET_CorrCaloT1T2_NeutralEMFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1T2_NeutralHadEtFraction", &MET_CorrCaloT1T2_NeutralHadEtFraction, &b_MET_CorrCaloT1T2_NeutralHadEtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1T2_Type6EtFraction", &MET_CorrCaloT1T2_Type6EtFraction, &b_MET_CorrCaloT1T2_Type6EtFraction);
-   fChain->SetBranchAddress("MET_CorrCaloT1T2_Type7EtFraction", &MET_CorrCaloT1T2_Type7EtFraction, &b_MET_CorrCaloT1T2_Type7EtFraction);
    fChain->SetBranchAddress("MET_CorrMVA_et", &MET_CorrMVA_et, &b_MET_CorrMVA_et);
    fChain->SetBranchAddress("MET_CorrMVA_pt", &MET_CorrMVA_pt, &b_MET_CorrMVA_pt);
    fChain->SetBranchAddress("MET_CorrMVA_phi", &MET_CorrMVA_phi, &b_MET_CorrMVA_phi);

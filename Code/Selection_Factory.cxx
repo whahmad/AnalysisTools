@@ -24,7 +24,8 @@
 #include "nehrkorn/ZtoEMu.h"
 #endif
 #ifdef USE_kargoll
-
+#include "kargoll/HToTaumuTauh.h"
+#include "kargoll/MuTauSync.h"
 #endif
 #ifdef USE_pistone
 
@@ -65,7 +66,8 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("ztoemu_mcsample"))s=new ZtoEMu(Analysis,UncertType);
 #endif
 #ifdef USE_kargoll
-
+  else if(Analysis.Contains("htotaumutauh")) s=new HToTaumuTauh(Analysis,UncertType);
+  else if(Analysis.Contains("mutausync")) s=new MuTauSync(Analysis,UncertType);
 #endif
 #ifdef USE_pistone
 
