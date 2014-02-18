@@ -349,6 +349,7 @@ void  ZtoEMu_ABCD::doEvent(){
 		  if(hasMuonTrack) continue;
 		  for(unsigned j=0;j<Ntp->NMuons();j++){
 			  for(unsigned k=0;k<GoodMuons.size();k++){
+				  notThisOne = false;
 				  if(j==k){
 					  notThisOne = true;
 				  }
@@ -356,7 +357,7 @@ void  ZtoEMu_ABCD::doEvent(){
 			  }
 			  if(!notThisOne && Ntp->Electron_p4(i).DeltaR(Ntp->Muon_p4(j))<0.3) matchRecoMuon = true;
 		  }
-		  //if(matchRecoMuon) continue;
+		  if(matchRecoMuon) continue;
 		  if(isMVATrigElectron(i) && Electron_RelIso(i)<0.15) GoodElectrons.push_back(i);
 	  }
   }

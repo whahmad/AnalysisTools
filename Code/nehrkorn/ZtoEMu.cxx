@@ -534,7 +534,7 @@ void  ZtoEMu::doEvent(){
 		  for(unsigned j=0;j<GoodMuons.size();j++){
 			  if(Ntp->Electron_Track_idx(i)==Ntp->Muon_Track_idx(GoodMuons.at(j))) hasMuonTrack = true;
 		  }
-		  if(GoodMuons.size()==0){
+		  if(GoodMuons.size()==0 && doHiggsObjects){
 			  for(unsigned j=0;j<Fakemuons.size();j++){
 				  if(Ntp->Electron_Track_idx(i)==Ntp->Muon_Track_idx(Fakemuons.at(j))) hasMuonTrack = true;
 			  }
@@ -542,6 +542,7 @@ void  ZtoEMu::doEvent(){
 		  if(hasMuonTrack) continue;
 		  for(unsigned j=0;j<Ntp->NMuons();j++){
 			  for(unsigned k=0;k<GoodMuons.size();k++){
+				  notThisOne = false;
 				  if(j==k){
 					  notThisOne = true;
 				  }
@@ -672,10 +673,11 @@ void  ZtoEMu::doEvent(){
 	  for(unsigned i=0;i<Ntp->NElectrons();i++){
 		  if(i==eidx) continue;
 		  if(vertex<0) continue;
-		  if(Ntp->Electron_p4(i).Pt()<10) continue;
+		  if(Ntp->Electron_p4(i).Et()<10) continue;
 		  if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
 		  if(doHiggsObjects){
 			  if(isHiggsElectron(i,vertex)
+					  && Electron_RelIso(i)<0.3
 					  && dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.045
 					  && dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(vertex))<0.2
 					  ){
@@ -683,7 +685,7 @@ void  ZtoEMu::doEvent(){
 			  }
 		  }else{
 			  if(isMVATrigElectron(i)
-					  && Electron_RelIso(i)>0.3
+					  && Electron_RelIso(i)<0.3
 					  ){
 				  trilep++;
 			  }
