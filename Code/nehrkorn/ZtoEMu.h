@@ -76,6 +76,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> NPV;
   
   std::vector<TH1D> met;
+  std::vector<TH1D> met_xycorr;
   std::vector<TH1D> met_uncorr;
   std::vector<TH1D> onejet;
   std::vector<TH1D> mte_mtmu;

@@ -792,7 +792,7 @@ bool ZtoEMu_ABCD::matchTruth(TLorentzVector tvector, int pid, double dr){
 
 bool ZtoEMu_ABCD::isTightMuon(unsigned int i){
 	if(!Ntp->Muon_isGlobalMuon(i)) return false;
-	if(!Ntp->Muon_isPFMuon(i)) return false;
+	//if(!Ntp->Muon_isPFMuon(i)) return false;
 	if(Ntp->Muon_normChi2(i)>=10.) return false;
 	if(Ntp->Muon_hitPattern_numberOfValidMuonHits(i)<=0) return false;
 	if(Ntp->Muon_numberOfMatchedStations(i)<=1) return false;
