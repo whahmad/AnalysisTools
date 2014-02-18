@@ -478,7 +478,7 @@ bool Ntuple_Controller::isTightElectron(unsigned int i, unsigned int j){
 }
 
 float Ntuple_Controller::Electron_RelIso03(unsigned int i){
-	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i).Pt();
+	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i).Pt();
 }
 
 float Ntuple_Controller::Electron_RelIso04(unsigned int i){

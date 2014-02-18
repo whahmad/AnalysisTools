@@ -164,14 +164,14 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   // Physics Varible Get Functions
   // Event Varibles
   int GetMCID();
-  unsigned int RunNumber(){return Ntp->Event_RunNumber;;}
+  unsigned int RunNumber(){return Ntp->Event_RunNumber;}
   unsigned int EventNumber(){ return Ntp->Event_EventNumber;}
   int BunchCrossing(){ return Ntp->Event_bunchCrossing;}
   int OrbitNumber(){ return Ntp->Event_orbitNumber;}
   unsigned int LuminosityBlock(){return Ntp->Event_luminosityBlock;}
-  int           PileupInfo_NumInteractions_nm1(){Ntp->PileupInfo_NumInteractions_nm1;}
-  int           PileupInfo_NumInteractions_n0(){Ntp->PileupInfo_NumInteractions_n0;}
-  int           PileupInfo_NumInteractions_np1(){Ntp->PileupInfo_NumInteractions_np1;}
+  int           PileupInfo_NumInteractions_nm1(){return Ntp->PileupInfo_NumInteractions_nm1;}
+  int           PileupInfo_NumInteractions_n0(){return Ntp->PileupInfo_NumInteractions_n0;}
+  int           PileupInfo_NumInteractions_np1(){return Ntp->PileupInfo_NumInteractions_np1;}
   double        EvtWeight3D(){return Ntp->EvtWeight3D;}
   double        EvtWeight3D_p5(){return Ntp->EvtWeight3D_p5;}
   double        EvtWeight3D_m5(){return Ntp->EvtWeight3D_m5;}
@@ -317,7 +317,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    bool PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits->at(i);}
    bool PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits->at(i);}
    bool PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits->at(i);}
-   float PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByCombinedIsolationDeltaBetaCorrRaw3Hits->at(i);}
+   float PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(unsigned int i){return Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits->at(i);}
    bool PFTau_HPSPFTauDiscriminationByLooseIsolationMVA(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByLooseIsolationMVA->at(i);}
    bool PFTau_HPSPFTauDiscriminationByMediumIsolationMVA(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByMediumIsolationMVA->at(i);}
    bool PFTau_HPSPFTauDiscriminationByTightIsolationMVA(unsigned int i){return  Ntp->PFTau_HPSPFTauDiscriminationByTightIsolationMVA->at(i);}
@@ -435,7 +435,6 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
       // Jet Information
    unsigned int       NPFJets(){return Ntp->PFJet_p4->size();}
    TLorentzVector     PFJet_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));}
-   TVector3           PFJet_Poca(unsigned int i){return TVector3(Ntp->PFJet_Poca->at(i).at(0),Ntp->PFJet_Poca->at(i).at(1),Ntp->PFJet_Poca->at(i).at(2));}
    float              PFJet_chargedEmEnergy(unsigned int i){return Ntp->PFJet_chargedEmEnergy->at(i);}
    float              PFJet_chargedHadronEnergy(unsigned int i){return Ntp->PFJet_chargedHadronEnergy->at(i);}
    float              PFJet_chargedHadronMultiplicity(unsigned int i){return Ntp->PFJet_chargedHadronMultiplicity->at(i);}
@@ -478,7 +477,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    float              PFJet_PUJetID_mediumWP(unsigned int i){return Ntp->PFJet_PUJetID_mediumWP->at(i);}
    float              PFJet_PUJetID_tightWP(unsigned int i){return Ntp->PFJet_PUJetID_tightWP->at(i);}
 
- 
+   float              PFJet_partonFlavour(unsigned int i){return Ntp->PFJet_partonFlavour->at(i);}
+   float              PFJet_bDiscriminator(unsigned int i){return Ntp->PFJet_bDiscriminator->at(i);}
+   //float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);} // not implemented at the moment
 
    //MET information
    float              MET_Uncorr_et(){return Ntp->MET_Uncorr_et;}
