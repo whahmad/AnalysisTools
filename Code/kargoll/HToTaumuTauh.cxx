@@ -13,6 +13,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cMu_eta(2.1),
   cTau_pt(20.0),
   cTau_eta(2.3),
+  cTau_rawIso(1.5),
   cMuTau_dR(0.3),
   cMuTriLep_pt(10.0),
   cMuTriLep_eta(2.4),
@@ -354,9 +355,14 @@ void  HToTaumuTauh::Store_ExtraDist(){
 }
 
 void  HToTaumuTauh::doEvent(){
+  // set variables to hold selected objects to default values
+  selVertex = -1;
+  selMuon = -1;
+  selTau = -1;
+
   unsigned int t;
   int id(Ntp->GetMCID());
-  std::cout << "ID before = " << id << std::endl;
+  //std::cout << "ID before = " << id << std::endl;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
   
   double wobs=1;
@@ -368,7 +374,6 @@ void  HToTaumuTauh::doEvent(){
 
   // Vertex
   unsigned int nGoodVtx=0;
-  int selVertex = -1;
   for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
     if(Ntp->isGoodVtx(i_vtx)){
     	if(selVertex == -1) selVertex = i_vtx; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
@@ -411,7 +416,7 @@ void  HToTaumuTauh::doEvent(){
   }
   value.at(NMuKin)=selectedMuons.size();
   pass.at(NMuKin)=(value.at(NMuKin)>=cut.at(NMuKin));
-  int selMuon = (selectedMuons.size() > 0) ? selectedMuons.at(0) : -1;
+  if (selectedMuons.size() > 0) selMuon = selectedMuons.at(0);
 
   std::vector<int> diMuonVetoMuonsPositive;	// muons selected for the dimuon veto
   diMuonVetoMuonsPositive.clear();
@@ -460,7 +465,7 @@ void  HToTaumuTauh::doEvent(){
   }
   value.at(NTauKin)=selectedTaus.size();
   pass.at(NTauKin)=(value.at(NTauKin)>=cut.at(NTauKin));
-  int selTau = (selectedTaus.size() > 0) ? selectedTaus.at(0) : -1;
+  if(selectedTaus.size() > 0) selTau = selectedTaus.at(0);
 
   // Tri-lepton veto
   std::vector<int> triLepVetoMuons;
@@ -652,7 +657,7 @@ void  HToTaumuTauh::doEvent(){
   //////// plots filled after full selection
   if(status){
     NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
-    std::cout << "ID after = " << id << std::endl;
+    //std::cout << "ID after = " << id << std::endl;
   }
 }
 
@@ -771,7 +776,7 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 }
 
 bool HToTaumuTauh::selectPFTau_Iso(unsigned i){
-	if ( 	Ntp->PFTau_HPSPFTauDiscriminationByLooseIsolationMVA(i)
+	if ( 	Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(i) < cTau_rawIso
 			){
 		return true;
 	}
@@ -1356,3 +1361,4 @@ bool HToTaumuTauh::category_NoCategory(){
 
 	return catPassed;
 }
+

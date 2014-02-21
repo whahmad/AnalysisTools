@@ -123,7 +123,7 @@ class HToTaumuTauh : public Selection {
 
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
-  double cTau_pt, cTau_eta, cMuTau_dR;
+  double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR;
   double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
   double cVBFJet_eta, cVBFJet_pt;
@@ -132,6 +132,13 @@ class HToTaumuTauh : public Selection {
   // flag for category to run
   TString categoryFlag;
 
+  // variables to hold selected objects (to be used e.g. for sync Ntuple)
+  int selVertex;
+  int selMuon;
+  int selTau;
+
+
+  // function definitions
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
 
