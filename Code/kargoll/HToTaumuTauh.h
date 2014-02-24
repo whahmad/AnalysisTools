@@ -126,8 +126,7 @@ class HToTaumuTauh : public Selection {
   double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR;
   double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
-  double cVBFJet_eta, cVBFJet_pt;
-  double cCat_jetPt, cCat_jetEta, cCat_btagPt, cCat_splitTauPt;
+  double cCat_jetPt, cCat_jetEta, cCat_bjetPt, cCat_bjetEta, cCat_btagDisc, cCat_splitTauPt;
 
   // flag for category to run
   TString categoryFlag;
@@ -136,6 +135,10 @@ class HToTaumuTauh : public Selection {
   int selVertex;
   int selMuon;
   int selTau;
+  int selJet1, selJet2;
+  int selBJet1;
+  double selMjj, selJetdeta;
+  int selNjetingap, selNjets, selNbtag;
 
 
   // function definitions
@@ -155,7 +158,6 @@ class HToTaumuTauh : public Selection {
   bool selectPFTau_Iso(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
 
-  bool selectPFJet_VBF(unsigned i);
   bool selectPFJet_Categories(unsigned i);
   bool selectBJet_Categories(unsigned i);
 
@@ -167,7 +169,7 @@ class HToTaumuTauh : public Selection {
   std::vector<float> cut_VBF, cut_OneJet, cut_ZeroJet, cut_NoCategory;
 
   void configure_VBF();
-  bool category_VBF();
+  bool category_VBF(std::vector<int> jetCollection, std::vector<int> bJetCollection);
 
   void configure_OneJetHigh();
   bool category_OneJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF);
@@ -189,4 +191,5 @@ class HToTaumuTauh : public Selection {
   // everything is in protected to be accessible by derived classes
 
 };
+
 #endif

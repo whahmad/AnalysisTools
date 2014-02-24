@@ -134,50 +134,82 @@ void MuTauSync::doEvent(){
 		mvacov10 = Ntp->MET_CorrMVA_significance_xy();
 		mvacov11 = Ntp->MET_CorrMVA_significance_yy();
 		// First jet: leading jet after applying Jet energy corrections (excluding hadronic Tau)
-		// TODO: everything with -99 was not yet defined
-		jpt_1 = -99;
-		jeta_1 = -99;
-		jphi_1 = -99;
-		jptraw_1 = -99;
-		jptunc_1 = -99;
-		jmva_1 = -99;
-		jlrm_1 = -99;
-		jctm_1 = -99;
-		jpass_1 = -99;
+		if (selJet1 != -1){
+			jpt_1 = Ntp->PFJet_p4(selJet1).Pt();
+			jeta_1 = Ntp->PFJet_p4(selJet1).Eta();
+			jphi_1 = Ntp->PFJet_p4(selJet1).Phi();
+			jptraw_1 = -10;
+			jptunc_1 = -10;
+			jmva_1 = Ntp->PFJet_PUJetID_discr(selJet1);
+			jlrm_1 = -10;
+			jctm_1 = -10;
+			jpass_1 = Ntp->PFJet_PUJetID_looseWP(selJet1);
+		}
+		else {
+			jpt_1 = -20;
+			jeta_1 = -20;
+			jphi_1 = -20;
+			jptraw_1 = -20;
+			jptunc_1 = -20;
+			jmva_1 = -20;
+			jlrm_1 = -20;
+			jctm_1 = -20;
+			jpass_1 = -20;
+		}
 		 // Second Jet : 2nd leading jet (in pt) afer applying Jet energy corrections (excluding Tau)
-		jpt_2 = -99;
-		jeta_2 = -99;
-		jphi_2 = -99;
-		jptraw_2 = -99;
-		jptunc_2 = -99;
-		jmva_2 = -99;
-		jlrm_2 = -99;
-		jctm_2 = -99;
-		jpass_2 = -99;
+		if (selJet1 != -1){
+			jpt_2 = Ntp->PFJet_p4(selJet2).Pt();
+			jeta_2 = Ntp->PFJet_p4(selJet2).Eta();
+			jphi_2 = Ntp->PFJet_p4(selJet2).Phi();
+			jptraw_2 = -10;
+			jptunc_2 = -10;
+			jmva_2 = Ntp->PFJet_PUJetID_discr(selJet2);
+			jlrm_2 = -10;
+			jctm_2 = -10;
+			jpass_2 = Ntp->PFJet_PUJetID_looseWP(selJet2);
+		}
+		else {
+			jpt_2 = -20;
+			jeta_2 = -20;
+			jphi_2 = -20;
+			jptraw_2 = -20;
+			jptunc_2 = -20;
+			jmva_2 = -20;
+			jlrm_2 = -20;
+			jctm_2 = -20;
+			jpass_2 = -20;
+		}
 		 // B Tagged Jet : leading btagged jet (in pt) passing btag wp (pt > 20 + cvs medium)
-		bpt = -99;
-		beta = -99;
-		bphi = -99;
+		if (selBJet1 != -1){
+			bpt = Ntp->PFJet_p4(selBJet1).Pt();
+			beta = Ntp->PFJet_p4(selBJet1).Eta();
+			bphi = Ntp->PFJet_p4(selBJet1).Phi();
+		}
+		else{
+			bpt = -20;
+			beta = -20;
+			bphi = -20;
+		}
 		 // Di Jet kinematic variables for VBF selection ==> Two leading pT Jets
-		mjj = -99;
-		jdeta = -99;
-		njetingap = -99;
-		 mva = -99;
+		mjj = selMjj;
+		jdeta = selJetdeta;
+		njetingap = selNjetingap;
+		 mva = -10;
 		 // variables that go into the VBF MVA
-		 jdphi = -99;
-		dijetpt = -99;
-		dijetphi = -99;
-		 hdijetphi = -99;
-		 visjeteta = -99;
-		 ptvis = -99;
+		 jdphi = -10;
+		dijetpt = -10;
+		dijetphi = -10;
+		 hdijetphi = -10;
+		 visjeteta = -10;
+		 ptvis = -10;
 		 // number of btags passing btag id (pt > 20)
-		nbtag = -99;
+		nbtag = selNbtag;
 		 // number of jets passing jet id ( pt > 30 )
-		njets = -99;
-		njetspt20 = -99;
+		njets = selNjets;
+		njetspt20 = -10;
 		 // mva output for e+mu channel
-		mva_gf = -99;
-		mva_vbf = -99;
+		mva_gf = -10;
+		mva_vbf = 10;
 
 
 		syncTree->Fill();

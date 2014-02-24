@@ -19,11 +19,11 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cMuTriLep_eta(2.4),
   cEleTriLep_pt(10.0),
   cEleTriLep_eta(2.5),
-  cVBFJet_eta(4.7),
-  cVBFJet_pt(30.0),
   cCat_jetPt(30.0),
   cCat_jetEta(4.7),
-  cCat_btagPt(20.0),
+  cCat_bjetPt(20.0),
+  cCat_bjetEta(2.4),
+  cCat_btagDisc(0.679), // medium WP, https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP#B_tagging_Operating_Points_for_5
   cCat_splitTauPt(40.0)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
@@ -32,6 +32,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 
 	// implemented categories:
 	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement b-tagging categories
+	// TODO: implement b-tag veto in all categories
 	categoryFlag = "NoCategory";
 }
 
@@ -359,6 +360,14 @@ void  HToTaumuTauh::doEvent(){
   selVertex = -1;
   selMuon = -1;
   selTau = -1;
+  selJet1 = -1;
+  selJet2 = -1;
+  selBJet1 = -1;
+  selMjj = -1;
+  selJetdeta = -100;
+  selNjetingap = -1;
+  selNjets = -1;
+  selNbtag = -1;
 
   unsigned int t;
   int id(Ntp->GetMCID());
@@ -512,20 +521,42 @@ void  HToTaumuTauh::doEvent(){
 	  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
   // select objects for categories
+  // PFJet and bjet collections can have mutual elements!
   std::vector<int> selectedJetsCategories;
   selectedJetsCategories.clear();
+  std::vector<int> selectedBJetsCategories;
+  selectedBJetsCategories.clear();
   for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
 	  if ( selectPFJet_Categories(i_jet) ) {
 		  selectedJetsCategories.push_back(i_jet);
 	  }
+	  if ( selectBJet_Categories(i_jet) ) {
+		  selectedBJetsCategories.push_back(i_jet);
+	  }
   }
-  std::vector<int> selectedBJetsCategories;
-  selectedBJetsCategories.clear();
-  //TODO: implement b-tagging jets
+  selNjets = selectedJetsCategories.size();
+  selNbtag = selectedBJetsCategories.size();
+  for (unsigned i_seljet = 0; i_seljet < selectedJetsCategories.size(); i_seljet++){
+	  unsigned jetIdx = selectedJetsCategories.at(i_seljet);
+	  if ( (selJet1 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selJet1).Pt()) ) {
+		  selJet2 = selJet1;
+		  selJet1 = jetIdx;
+	  }
+	  else if ((selJet2 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selJet2).Pt()) ) {
+		  selJet2 = jetIdx;
+	  }
+  }
+  for (unsigned i_bjet = 0; i_bjet < selectedBJetsCategories.size(); i_bjet++){
+	  unsigned jetIdx = selectedBJetsCategories.at(i_bjet);
+	  if ( (selBJet1 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selBJet1).Pt()) ) {
+		  selBJet1 = jetIdx;
+	  }
+  }
+
 
 
   // run categories
-  bool passed_VBF 			= category_VBF();
+  bool passed_VBF 			= category_VBF(selectedJetsCategories, selectedBJetsCategories);
   bool passed_OneJetHigh	= category_OneJetHigh(selTau, selectedJetsCategories, selectedBJetsCategories, passed_VBF);
   bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJetsCategories, selectedBJetsCategories, passed_VBF);
   bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJetsCategories, selectedBJetsCategories);
@@ -792,14 +823,6 @@ bool HToTaumuTauh::selectPFTau_Kinematics(unsigned i){
 	return false;
 }
 
-bool HToTaumuTauh::selectPFJet_VBF(unsigned i){
-	if (	fabs(Ntp->PFJet_p4(i).Eta()) < cVBFJet_eta &&
-			Ntp->PFJet_p4(i).Pt() > cVBFJet_pt){
-		return true;
-	}
-	return false;
-}
-
 bool HToTaumuTauh::selectPFJet_Categories(unsigned i){
 	if ( 	fabs(Ntp->PFJet_p4(i).Eta()) < cCat_jetEta &&
 			Ntp->PFJet_p4(i).Pt() > cCat_jetPt){
@@ -809,7 +832,11 @@ bool HToTaumuTauh::selectPFJet_Categories(unsigned i){
 }
 
 bool HToTaumuTauh::selectBJet_Categories(unsigned i){
-	// TODO: implement b-tagging
+	if (	fabs(Ntp->PFJet_p4(i).Eta()) < cCat_bjetEta &&
+			Ntp->PFJet_p4(i).Pt() > cCat_bjetPt &&
+			Ntp->PFJet_bDiscriminator(i) > cCat_btagDisc){
+		return true;
+	}
 	return false;
 }
 
@@ -871,7 +898,7 @@ void HToTaumuTauh::configure_VBF(){
 	Nminus1.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
 	Nminus0.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_VBF(){
+bool HToTaumuTauh::category_VBF(std::vector<int> jetCollection, std::vector<int> bJetCollection){
 	std::vector<float> value_VBF;
 	std::vector<float> pass_VBF;
 
@@ -880,37 +907,35 @@ bool HToTaumuTauh::category_VBF(){
 	value_VBF.push_back(-10.);
 	pass_VBF.push_back(false);
 	}
-	std::vector<int> selectedVBFJets;
-	selectedVBFJets.clear();
-	for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
-	  if( selectPFJet_VBF(i_jet) ){
-		  selectedVBFJets.push_back(i_jet);
-	  }
-	}
-	value_VBF.at(VbfNJet) = selectedVBFJets.size();
+
+	value_VBF.at(VbfNJet) = jetCollection.size();
 	pass_VBF.at(VbfNJet) = (value_VBF.at(VbfNJet) >= cut_VBF.at(VbfNJet));
 
 	if(pass_VBF.at(VbfNJet)){
-		double vbfJetEta1 = Ntp->PFJet_p4(selectedVBFJets.at(0)).Eta();
-		double vbfJetEta2 = Ntp->PFJet_p4(selectedVBFJets.at(1)).Eta();
+		double vbfJetEta1 = Ntp->PFJet_p4(selJet1).Eta();
+		double vbfJetEta2 = Ntp->PFJet_p4(selJet2).Eta();
 
 		value_VBF.at(VbfDeltaEta) = vbfJetEta1 - vbfJetEta2;
+		selJetdeta = value_VBF.at(VbfDeltaEta);
 		pass_VBF.at(VbfDeltaEta) = (fabs(value_VBF.at(VbfDeltaEta)) > cut_VBF.at(VbfDeltaEta));
 
 		int jetsInRapidityGap = 0;
-		for(std::vector<int>::iterator it_jet = selectedVBFJets.begin()+2; it_jet != selectedVBFJets.end(); ++it_jet){
-		  double etaPos = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
-		  double etaNeg = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
-		  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
-				Ntp->PFJet_p4(*it_jet).Eta() < etaPos){
-			  jetsInRapidityGap++;
-		  }
+		for(std::vector<int>::iterator it_jet = jetCollection.begin(); it_jet != jetCollection.end(); ++it_jet){
+			if ( (*it_jet == selJet1) || (*it_jet == selJet2) ) continue;
+			double etaPos = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
+			double etaNeg = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
+			  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
+					Ntp->PFJet_p4(*it_jet).Eta() < etaPos){
+				  jetsInRapidityGap++;
+			  }
 		}
 		value_VBF.at(VbfNJetRapGap) = jetsInRapidityGap;
+		selNjetingap = int(value_VBF.at(VbfNJetRapGap));
 		pass_VBF.at(VbfNJetRapGap) = (value_VBF.at(VbfNJetRapGap) <= cut_VBF.at(VbfNJetRapGap));
 
-		double invM = (Ntp->PFJet_p4(selectedVBFJets.at(0)) + Ntp->PFJet_p4(selectedVBFJets.at(1))).M();
+		double invM = (Ntp->PFJet_p4(selJet1) + Ntp->PFJet_p4(selJet2)).M();
 		value_VBF.at(VbfJetInvM) = invM;
+		selMjj = invM;
 		pass_VBF.at(VbfJetInvM) = (value_VBF.at(VbfJetInvM) > cut_VBF.at(VbfJetInvM));
 	}
 
