@@ -122,7 +122,7 @@ private:
 	float jmva_1;
 	float jlrm_1;
 	int jctm_1;
-	bool jpass_1;
+	int jpass_1;
 	 // Second Jet : 2nd leading jet (in pt) afer applying Jet energy corrections (excluding Tau)
 	float jpt_2;
 	float jeta_2;
@@ -132,7 +132,7 @@ private:
 	float jmva_2;
 	float jlrm_2;
 	int jctm_2;
-	bool jpass_2;
+	int jpass_2;
 	 // B Tagged Jet : leading btagged jet (in pt) passing btag wp (pt > 20 + cvs medium)
 	float bpt;
 	float beta;

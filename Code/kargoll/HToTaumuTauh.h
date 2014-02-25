@@ -11,6 +11,13 @@
 class TLorentzVector;
 class TVector3;
 
+// small struct needed to allow sorting indices by some value
+struct sortIdxByValue {
+    bool operator()(const std::pair<int,double> &left, const std::pair<int,double> &right) {
+        return left.second > right.second;
+    }
+};
+
 class HToTaumuTauh : public Selection {
 
  public:
@@ -120,13 +127,37 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MetPt;
   std::vector<TH1D> MetPhi;
 
+  std::vector<TH1D> NJetsKin;
+  std::vector<TH1D> JetKin1Pt;
+  std::vector<TH1D> JetKin1Eta;
+  std::vector<TH1D> JetKin1Phi;
+  std::vector<TH1D> JetKin1IsLooseId;
+  std::vector<TH1D> JetKin2IsLooseId;
+  std::vector<TH1D> JetKin2Pt;
+  std::vector<TH1D> JetKin2Eta;
+  std::vector<TH1D> JetKin2Phi;
+  std::vector<TH1D> NJetsId;
+  std::vector<TH1D> Jet1Pt;
+  std::vector<TH1D> Jet1Eta;
+  std::vector<TH1D> Jet1Phi;
+  std::vector<TH1D> Jet1IsB;
+  std::vector<TH1D> Jet2Pt;
+  std::vector<TH1D> Jet2Eta;
+  std::vector<TH1D> Jet2Phi;
+  std::vector<TH1D> Jet2IsB;
+
+  std::vector<TH1D> NBJets;
+  std::vector<TH1D> BJet1Pt;
+  std::vector<TH1D> BJet1Eta;
+  std::vector<TH1D> BJet1Phi;
+
 
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
   double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR;
   double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
-  double cCat_jetPt, cCat_jetEta, cCat_bjetPt, cCat_bjetEta, cCat_btagDisc, cCat_splitTauPt;
+  double cCat_jetPt, cCat_jetEta, cCat_bjetPt, cCat_bjetEta, cCat_btagDisc, cCat_splitTauPt, cJetClean_dR;
 
   // flag for category to run
   TString categoryFlag;
@@ -135,10 +166,9 @@ class HToTaumuTauh : public Selection {
   int selVertex;
   int selMuon;
   int selTau;
-  int selJet1, selJet2;
-  int selBJet1;
+  std::vector<int> selKinJets, selBJets;
   double selMjj, selJetdeta;
-  int selNjetingap, selNjets, selNbtag;
+  int selNjetingap;
 
 
   // function definitions
@@ -158,8 +188,10 @@ class HToTaumuTauh : public Selection {
   bool selectPFTau_Iso(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
 
-  bool selectPFJet_Categories(unsigned i);
-  bool selectBJet_Categories(unsigned i);
+  std::vector<int> sortPFjets();
+  bool selectPFJet_Kinematics(unsigned i, int selectedMuon, int selectedTau);
+  bool selectPFJet_Id(unsigned i);
+  bool selectBJet(unsigned i, int selectedMuon, int selectedTau);
 
   inline double transverseMass(double pt1, double phi1, double pt2, double phi2){
 	  return sqrt(2 * pt1 * pt2 * (1 - cos(phi1 - phi2)));

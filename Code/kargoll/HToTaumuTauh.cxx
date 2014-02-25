@@ -24,7 +24,8 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cCat_bjetPt(20.0),
   cCat_bjetEta(2.4),
   cCat_btagDisc(0.679), // medium WP, https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP#B_tagging_Operating_Points_for_5
-  cCat_splitTauPt(40.0)
+  cCat_splitTauPt(40.0),
+  cJetClean_dR(0.5)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
@@ -282,12 +283,36 @@ void  HToTaumuTauh::Configure(){
 
   MuTauDR=HConfig.GetTH1D(Name+"_MuTauDR","MuTauDR",50,0.,5.,"#DeltaR(#mu,#tau_{h})");
   MuTauDPhi=HConfig.GetTH1D(Name+"_MuTauDPhi","MuTauDPhi",50,0.,3.2,"#Delta#phi(#mu,#tau_{h})");
-  MuTauDEta=HConfig.GetTH1D(Name+"_MuTauDEta","MuTauDEta",50,-5.,5.,"#Delta#eta(#mu,#tau_{h})");
+  MuTauDEta=HConfig.GetTH1D(Name+"_MuTauDEta","MuTauDEta",50,0.,200.,"#Delta#eta(#mu,#tau_{h})");
   MuTauDPt=HConfig.GetTH1D(Name+"_MuTauDPt","MuTauDPt",100,-100.,100.,"#Deltap_{T}(#mu,#tau_{h})/GeV");
   MuTauRelDPt=HConfig.GetTH1D(Name+"_MuTauRelDPt","MuTauRelDPt",100,-2.,2.,"#Deltap_{T}(#mu,#tau_{h})/p_{T}(#mu)");
 
   MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
   MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
+
+  NJetsKin = HConfig.GetTH1D(Name+"_NJetsKin","NJetsKin",11,-0.5,10.5,"N(j_{kin})");
+  JetKin1Pt = HConfig.GetTH1D(Name+"_JetKin1Pt","JetKin1Pt",50,0.,200.,"p_{T}(j_{kin}^{1})/GeV");
+  JetKin1Eta = HConfig.GetTH1D(Name+"_JetKin1Eta","JetKin1Eta",50,0.,200.,"#eta(j_{kin}^{1})");
+  JetKin1Phi = HConfig.GetTH1D(Name+"_JetKin1Phi","JetKin1Phi",50,-3.14159,3.14159,"#phi(j_{kin}^{1})");
+  JetKin1IsLooseId = HConfig.GetTH1D(Name+"_JetKin1IsLooseId","JetKin1IsLooseId",2,-0.5,1.5,"isLoosePUJetID(j_{kin}^{1}");
+  JetKin2IsLooseId = HConfig.GetTH1D(Name+"_JetKin2IsLooseId","JetKin2IsLooseId",2,-0.5,1.5,"isLoosePUJetID(j_{kin}^{2}");
+  JetKin2Pt = HConfig.GetTH1D(Name+"_JetKin2Pt","JetKin2Pt",50,0.,200.,"p_{T}(j_{kin}^{2})/GeV");
+  JetKin2Eta = HConfig.GetTH1D(Name+"_JetKin2Eta","JetKin2Eta",50,0.,200.,"#eta(j_{kin}^{2})");
+  JetKin2Phi = HConfig.GetTH1D(Name+"_JetKin2Phi","JetKin2Phi",50,-3.14159,3.14159,"#phi(j_{kin}^{2})");
+  NJetsId = HConfig.GetTH1D(Name+"_NJetsId","NJetsId",11,-0.5,10.5,"N(jets)");
+  Jet1Pt = HConfig.GetTH1D(Name+"_Jet1Pt","Jet1Pt",50,0.,200.,"p_{T}(j^{1})/GeV");
+  Jet1Eta = HConfig.GetTH1D(Name+"_Jet1Eta","Jet1Eta",50,0.,200.,"#eta(j^{1})");
+  Jet1Phi = HConfig.GetTH1D(Name+"_Jet1Phi","Jet1Phi",50,-3.14159,3.14159,"#phi(j^{1})");
+  Jet1IsB = HConfig.GetTH1D(Name+"_Jet1IsB","Jet1IsB",2,-0.5,1.5,"isBJet(j^{1})");
+  Jet2Pt = HConfig.GetTH1D(Name+"_Jet2Pt","Jet2Pt",50,0.,200.,"p_{T}(j^{2})/GeV");
+  Jet2Eta = HConfig.GetTH1D(Name+"_Jet2Eta","Jet2Eta",50,0.,200.,"#eta(j^{2})");
+  Jet2Phi = HConfig.GetTH1D(Name+"_Jet2Phi","Jet2Phi",50,-3.14159,3.14159,"#phi(j^{2})");
+  Jet2IsB = HConfig.GetTH1D(Name+"_Jet2IsB","Jet2IsB",2,-0.5,1.5,"isBJet(j^{2})");
+
+  NBJets = HConfig.GetTH1D(Name+"_NBJets","NBJets",11,-0.5,10.5,"N(bjets)");
+  BJet1Pt = HConfig.GetTH1D(Name+"_BJet1Pt","BJet1Pt",50,0.,200.,"p_{T}(b^{1})/GeV");
+  BJet1Eta = HConfig.GetTH1D(Name+"_BJet1Eta","BJet1Eta",50,0.,200.,"#eta(b^{1})");
+  BJet1Phi = HConfig.GetTH1D(Name+"_BJet1Phi","BJet1Phi",50,-3.14159,3.14159,"#phi(b^{1})");
 
   // configure category
   if (categoryFlag == "VBF")		configure_VBF();
@@ -353,6 +378,30 @@ void  HToTaumuTauh::Store_ExtraDist(){
 
  Extradist1d.push_back(&MetPt);
  Extradist1d.push_back(&MetPhi);
+
+ Extradist1d.push_back(&NJetsKin);
+ Extradist1d.push_back(&JetKin1Pt);
+ Extradist1d.push_back(&JetKin1Eta);
+ Extradist1d.push_back(&JetKin1Phi);
+ Extradist1d.push_back(&JetKin1IsLooseId);
+ Extradist1d.push_back(&JetKin2IsLooseId);
+ Extradist1d.push_back(&JetKin2Pt);
+ Extradist1d.push_back(&JetKin2Eta);
+ Extradist1d.push_back(&JetKin2Phi);
+ Extradist1d.push_back(&NJetsId);
+ Extradist1d.push_back(&Jet1Pt);
+ Extradist1d.push_back(&Jet1Eta);
+ Extradist1d.push_back(&Jet1Phi);
+ Extradist1d.push_back(&Jet1IsB);
+ Extradist1d.push_back(&Jet2Pt);
+ Extradist1d.push_back(&Jet2Eta);
+ Extradist1d.push_back(&Jet2Phi);
+ Extradist1d.push_back(&Jet2IsB);
+
+ Extradist1d.push_back(&NBJets);
+ Extradist1d.push_back(&BJet1Pt);
+ Extradist1d.push_back(&BJet1Eta);
+ Extradist1d.push_back(&BJet1Phi);
 }
 
 void  HToTaumuTauh::doEvent(){
@@ -360,14 +409,11 @@ void  HToTaumuTauh::doEvent(){
   selVertex = -1;
   selMuon = -1;
   selTau = -1;
-  selJet1 = -1;
-  selJet2 = -1;
-  selBJet1 = -1;
+  selKinJets.clear();
+  selBJets.clear();
   selMjj = -1;
   selJetdeta = -100;
   selNjetingap = -1;
-  selNjets = -1;
-  selNbtag = -1;
 
   unsigned int t;
   int id(Ntp->GetMCID());
@@ -520,47 +566,46 @@ void  HToTaumuTauh::doEvent(){
   else
 	  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
-  // select objects for categories
+  // sort jets by corrected pt
+  std::vector<int> sortedPFJets = sortPFjets();
+//  bool print = false;
+//  for (unsigned j = 0; j < Ntp->NPFJets(); j++){
+//	  if (j != sortedPFJets.at(j)) print = true;
+//  }
+//  if (print){
+//	  printf("There are %d unsorted and %d sorted jets.\n", Ntp->NPFJets(), sortedPFJets.size());
+//	  for (unsigned j = 0; j < Ntp->NPFJets(); j++){
+//		  printf("   jet %2d with pt= %4.2f       jet %2d with pt= %4.2f \n", j, Ntp->PFJet_p4(j).Pt(), sortedPFJets.at(j), Ntp->PFJet_p4(sortedPFJets.at(j)).Pt());
+//	  }
+//  }
+  // select jets for categories
   // PFJet and bjet collections can have mutual elements!
-  std::vector<int> selectedJetsCategories;
-  selectedJetsCategories.clear();
-  std::vector<int> selectedBJetsCategories;
-  selectedBJetsCategories.clear();
+  std::vector<int> selectedJetsKin;
+  selectedJetsKin.clear();
+  std::vector<int> selectedJets;
+  selectedJets.clear();
+  std::vector<int> selectedBJets;
+  selectedBJets.clear();
   for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
-	  if ( selectPFJet_Categories(i_jet) ) {
-		  selectedJetsCategories.push_back(i_jet);
+	  if ( selectPFJet_Kinematics(sortedPFJets.at(i_jet), selMuon, selTau) ) {
+		  selectedJetsKin.push_back(sortedPFJets.at(i_jet));
+		  if ( selectPFJet_Id(sortedPFJets.at(i_jet)) ){
+			  selectedJets.push_back(sortedPFJets.at(i_jet));
+		  }
 	  }
-	  if ( selectBJet_Categories(i_jet) ) {
-		  selectedBJetsCategories.push_back(i_jet);
-	  }
-  }
-  selNjets = selectedJetsCategories.size();
-  selNbtag = selectedBJetsCategories.size();
-  for (unsigned i_seljet = 0; i_seljet < selectedJetsCategories.size(); i_seljet++){
-	  unsigned jetIdx = selectedJetsCategories.at(i_seljet);
-	  if ( (selJet1 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selJet1).Pt()) ) {
-		  selJet2 = selJet1;
-		  selJet1 = jetIdx;
-	  }
-	  else if ((selJet2 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selJet2).Pt()) ) {
-		  selJet2 = jetIdx;
+	  if ( selectBJet(sortedPFJets.at(i_jet), selMuon, selTau) ) {
+		  selectedBJets.push_back(sortedPFJets.at(i_jet));
 	  }
   }
-  for (unsigned i_bjet = 0; i_bjet < selectedBJetsCategories.size(); i_bjet++){
-	  unsigned jetIdx = selectedBJetsCategories.at(i_bjet);
-	  if ( (selBJet1 == -1) || (Ntp->PFJet_p4(jetIdx).Pt() > Ntp->PFJet_p4(selBJet1).Pt()) ) {
-		  selBJet1 = jetIdx;
-	  }
-  }
-
-
+  selKinJets = selectedJetsKin;
+  selBJets = selectedBJets;
 
   // run categories
-  bool passed_VBF 			= category_VBF(selectedJetsCategories, selectedBJetsCategories);
-  bool passed_OneJetHigh	= category_OneJetHigh(selTau, selectedJetsCategories, selectedBJetsCategories, passed_VBF);
-  bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJetsCategories, selectedBJetsCategories, passed_VBF);
-  bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJetsCategories, selectedBJetsCategories);
-  bool passed_ZeroJetLow	= category_ZeroJetLow(selTau,selectedJetsCategories, selectedBJetsCategories);
+  bool passed_VBF 			= category_VBF(selectedJetsKin, selectedBJets);
+  bool passed_OneJetHigh	= category_OneJetHigh(selTau, selectedJetsKin, selectedBJets, passed_VBF);
+  bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJetsKin, selectedBJets, passed_VBF);
+  bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJetsKin, selectedBJets);
+  bool passed_ZeroJetLow	= category_ZeroJetLow(selTau,selectedJetsKin, selectedBJets);
   bool passed_NoCategory	= category_NoCategory();
 
   // fill plot checking if multiple categories have passed, which should never happen
@@ -650,39 +695,79 @@ void  HToTaumuTauh::doEvent(){
 
   //////// plots filled after full muon and tau selection
   bool passedObjects = pass.at(TriggerOk) && pass.at(PrimeVtx) && pass.at(NMuId   ) && pass.at(NMuKin  ) && pass.at(NTauId  ) && pass.at(NTauIso ) && pass.at(NTauKin );
-  if(passedObjects){
-	  if(!pass.at(DiMuonVeto)){
-		  // Investigate events discarded by the DiMuon Veto
-		  if (Ntp->Muon_Charge(selMuon) == 1){
-			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-			  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
-		  }
-		  else if (Ntp->Muon_Charge(selMuon) == -1){
-			  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-			  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
-		  }
-		  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
-		  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
-		  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
+  if(passedObjects && !pass.at(DiMuonVeto)){
+	  // Investigate events discarded by the DiMuon Veto
+	  if (Ntp->Muon_Charge(selMuon) == 1){
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+	  }
+	  else if (Ntp->Muon_Charge(selMuon) == -1){
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+	  }
+	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
+	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
+	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
+  }
+
+  if(passedObjects && pass.at(DiMuonVeto)){
+	  // Tri-lepton vetoes
+	  NMuonTriLepVeto.at(t).Fill(triLepVetoMuons.size(), w);
+	  NElecTriLepVeto.at(t).Fill(triLepVetoElecs.size(), w);
+  }
+
+  //////// plots filled after full selection (without categories)
+  bool fullSel = passedObjects && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(MT);
+  if (fullSel){
+	  // Mu-Tau correlations
+	  MuTauDR    .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
+	  MuTauDPhi  .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaPhi(Ntp->PFTau_p4(selTau)), w );
+	  MuTauDEta  .at(t).Fill( Ntp->Muon_p4(selMuon).Eta() - Ntp->PFTau_p4(selTau).Eta(), w );
+	  MuTauDPt   .at(t).Fill( Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt(), w );
+	  MuTauRelDPt.at(t).Fill( (Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt()) / Ntp->Muon_p4(selMuon).Pt() , w);
+
+	  // lepton charge
+	  MuCharge.at(t).Fill( Ntp->Muon_Charge(selMuon), w);
+	  TauCharge.at(t).Fill( Ntp->PFTau_Charge(selMuon), w);
+
+	  // MET
+	  MetPt.at(t).Fill( Ntp->MET_CorrMVA_et(), w);
+	  MetPhi.at(t).Fill( Ntp->MET_CorrMVA_phi(), w);
+
+	  // Jets
+	  NJetsKin.at(t).Fill( selectedJetsKin.size(), w);
+	  if (selectedJetsKin.size() > 0){
+		  JetKin1Pt.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(0)).Pt(), w);
+		  JetKin1Eta.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(0)).Eta(), w);
+		  JetKin1Phi.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(0)).Phi(), w);
+		  JetKin1IsLooseId.at(t).Fill( Ntp->PFJet_PUJetID_looseWP(selectedJetsKin.at(0)), w);
+	  }
+	  if (selectedJetsKin.size() > 1){
+		  JetKin2IsLooseId.at(t).Fill( Ntp->PFJet_PUJetID_looseWP(selectedJetsKin.at(1)), w);
+		  JetKin2Pt.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(1)).Pt(), w);
+		  JetKin2Eta.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(1)).Eta(), w);
+		  JetKin2Phi.at(t).Fill( Ntp->PFJet_p4(selectedJetsKin.at(1)).Phi(), w);
+	  }
+	  NJetsId.at(t).Fill( selectedJets.size(), w);
+	  if (selectedJets.size() > 0){
+		  Jet1Pt.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(0)).Pt(), w);
+		  Jet1Eta.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(0)).Eta(), w);
+		  Jet1Phi.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(0)).Phi(), w);
+	  	  Jet1IsB.at(t).Fill( Ntp->PFJet_bDiscriminator(selectedJets.at(0)) > cCat_btagDisc , w);
+	  }
+	  if (selectedJets.size() > 1){
+		  Jet2Pt.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(1)).Pt(), w);
+		  Jet2Eta.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(1)).Eta(), w);
+		  Jet2Phi.at(t).Fill( Ntp->PFJet_p4(selectedJets.at(1)).Phi(), w);
+		  Jet2IsB.at(t).Fill( Ntp->PFJet_bDiscriminator(selectedJets.at(1)) > cCat_btagDisc, w);
 	  }
 
-	  if(pass.at(DiMuonVeto)){
-		  // Mu-Tau correlations
-		  MuTauDR    .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
-		  MuTauDPhi  .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaPhi(Ntp->PFTau_p4(selTau)), w );
-		  MuTauDEta  .at(t).Fill( Ntp->Muon_p4(selMuon).Eta() - Ntp->PFTau_p4(selTau).Eta(), w );
-		  MuTauDPt   .at(t).Fill( Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt(), w );
-		  MuTauRelDPt.at(t).Fill( (Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt()) / Ntp->Muon_p4(selMuon).Pt() , w);
-		  // Tri-lepton vetoes
-		  NMuonTriLepVeto.at(t).Fill(triLepVetoMuons.size(), w);
-		  NElecTriLepVeto.at(t).Fill(triLepVetoElecs.size(), w);
-		  // lepton charge
-		  MuCharge.at(t).Fill( Ntp->Muon_Charge(selMuon), w);
-		  TauCharge.at(t).Fill( Ntp->PFTau_Charge(selMuon), w);
+	  NBJets.at(t).Fill( selectedBJets.size(), w);
+	  if (selectedBJets.size() > 0){
+		  BJet1Pt.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Pt(), w);
+		  BJet1Eta.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Eta(), w);
+		  BJet1Phi.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Phi(), w);
 	  }
-
-	  MetPt.at(t).Fill(Ntp->MET_CorrMVA_et(), w);
-	  MetPhi.at(t).Fill(Ntp->MET_CorrMVA_phi(), w);
   }
 
   //////// plots filled after full selection
@@ -794,7 +879,8 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i){
 }
 
 bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
-	// check if tau is matched to a muon, if so this is not a good tau (should become obsolete when using top projections)
+	// check if tau is matched to a muon, if so this is not a good tau
+	// https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Sync_Issues
 	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
 	  if( Ntp->PFTau_p4(i).DeltaR(Ntp->Muon_p4(*it_mu)) < cMuTau_dR ) {
 		  return false;
@@ -823,7 +909,31 @@ bool HToTaumuTauh::selectPFTau_Kinematics(unsigned i){
 	return false;
 }
 
-bool HToTaumuTauh::selectPFJet_Categories(unsigned i){
+std::vector<int> HToTaumuTauh::sortPFjets(){
+	// create vector of pairs to allow for sorting by jet pt
+	std::vector< std::pair<int, double> > jetIdxPt;
+	for (unsigned i = 0; i<Ntp->NPFJets(); i++ ){
+		jetIdxPt.push_back( std::make_pair(i,Ntp->PFJet_p4(i).Pt()) );
+	}
+	// sort vector of pairs
+	std::sort(jetIdxPt.begin(), jetIdxPt.end(), sortIdxByValue());
+	// create vector of indices in correct order
+	std::vector<int> sortedJets;
+	for (unsigned i = 0; i<jetIdxPt.size(); i++){
+		sortedJets.push_back(jetIdxPt.at(i).first);
+	}
+	return sortedJets;
+}
+
+bool HToTaumuTauh::selectPFJet_Kinematics(unsigned i, int selectedMuon, int selectedTau){
+	// clean against selected muon and tau
+	if (selectedMuon >= 0) {
+		if (Ntp->PFJet_p4(i).DeltaR(Ntp->Muon_p4(selectedMuon)) < cJetClean_dR) return false;
+	}
+	if (selectedTau >= 0){
+		if (Ntp->PFJet_p4(i).DeltaR(Ntp->PFTau_p4(selectedTau)) < cJetClean_dR) return false;
+	}
+
 	if ( 	fabs(Ntp->PFJet_p4(i).Eta()) < cCat_jetEta &&
 			Ntp->PFJet_p4(i).Pt() > cCat_jetPt){
 		return true;
@@ -831,7 +941,22 @@ bool HToTaumuTauh::selectPFJet_Categories(unsigned i){
 	return false;
 }
 
-bool HToTaumuTauh::selectBJet_Categories(unsigned i){
+bool HToTaumuTauh::selectPFJet_Id(unsigned i){
+	if (	Ntp->PFJet_PUJetID_looseWP(i) ){
+		return true;
+	}
+	return false;
+}
+
+bool HToTaumuTauh::selectBJet(unsigned i, int selectedMuon, int selectedTau){
+	// clean against selected muon and tau
+	if (selectedMuon >= 0) {
+		if (Ntp->PFJet_p4(i).DeltaR(Ntp->Muon_p4(selectedMuon)) < cJetClean_dR) return false;
+	}
+	if (selectedTau >= 0){
+		if (Ntp->PFJet_p4(i).DeltaR(Ntp->PFTau_p4(selectedTau)) < cJetClean_dR) return false;
+	}
+
 	if (	fabs(Ntp->PFJet_p4(i).Eta()) < cCat_bjetEta &&
 			Ntp->PFJet_p4(i).Pt() > cCat_bjetPt &&
 			Ntp->PFJet_bDiscriminator(i) > cCat_btagDisc){
@@ -912,16 +1037,15 @@ bool HToTaumuTauh::category_VBF(std::vector<int> jetCollection, std::vector<int>
 	pass_VBF.at(VbfNJet) = (value_VBF.at(VbfNJet) >= cut_VBF.at(VbfNJet));
 
 	if(pass_VBF.at(VbfNJet)){
-		double vbfJetEta1 = Ntp->PFJet_p4(selJet1).Eta();
-		double vbfJetEta2 = Ntp->PFJet_p4(selJet2).Eta();
+		double vbfJetEta1 = Ntp->PFJet_p4(jetCollection.at(0)).Eta();
+		double vbfJetEta2 = Ntp->PFJet_p4(jetCollection.at(1)).Eta();
 
 		value_VBF.at(VbfDeltaEta) = vbfJetEta1 - vbfJetEta2;
 		selJetdeta = value_VBF.at(VbfDeltaEta);
 		pass_VBF.at(VbfDeltaEta) = (fabs(value_VBF.at(VbfDeltaEta)) > cut_VBF.at(VbfDeltaEta));
 
 		int jetsInRapidityGap = 0;
-		for(std::vector<int>::iterator it_jet = jetCollection.begin(); it_jet != jetCollection.end(); ++it_jet){
-			if ( (*it_jet == selJet1) || (*it_jet == selJet2) ) continue;
+		for(std::vector<int>::iterator it_jet = jetCollection.begin()+2; it_jet != jetCollection.end(); ++it_jet){
 			double etaPos = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta1 : vbfJetEta2;
 			double etaNeg = ( value_VBF.at(VbfDeltaEta) >= 0) ? vbfJetEta2 : vbfJetEta1;
 			  if (	Ntp->PFJet_p4(*it_jet).Eta() > etaNeg &&
@@ -933,7 +1057,7 @@ bool HToTaumuTauh::category_VBF(std::vector<int> jetCollection, std::vector<int>
 		selNjetingap = int(value_VBF.at(VbfNJetRapGap));
 		pass_VBF.at(VbfNJetRapGap) = (value_VBF.at(VbfNJetRapGap) <= cut_VBF.at(VbfNJetRapGap));
 
-		double invM = (Ntp->PFJet_p4(selJet1) + Ntp->PFJet_p4(selJet2)).M();
+		double invM = (Ntp->PFJet_p4(jetCollection.at(0)) + Ntp->PFJet_p4(jetCollection.at(1))).M();
 		value_VBF.at(VbfJetInvM) = invM;
 		selMjj = invM;
 		pass_VBF.at(VbfJetInvM) = (value_VBF.at(VbfJetInvM) > cut_VBF.at(VbfJetInvM));
