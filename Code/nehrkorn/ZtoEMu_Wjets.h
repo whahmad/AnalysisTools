@@ -1,16 +1,16 @@
-#ifndef ZtoEMu_ABCD_h
-#define ZtoEMu_ABCD_h
+#ifndef ZtoEMu_Wjets_h
+#define ZtoEMu_Wjets_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 #include "TGraphAsymmErrors.h"
 
-class ZtoEMu_ABCD : public Selection {
+class ZtoEMu_Wjets : public Selection {
 
  public:
-  ZtoEMu_ABCD(TString Name_, TString id_);
-  virtual ~ZtoEMu_ABCD();
+  ZtoEMu_Wjets(TString Name_, TString id_);
+  virtual ~ZtoEMu_Wjets();
 
   virtual void  Configure();
   virtual void Finish();
@@ -23,7 +23,6 @@ class ZtoEMu_ABCD : public Selection {
 		 diMuonVeto,
  		 triLeptonVeto,
  		 charge,
- 		 mass,
  		 jetVeto,
 		 mtmu,
 		 ptbal,

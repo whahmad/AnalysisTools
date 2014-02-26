@@ -95,6 +95,13 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> subleadingjet_eta;
   std::vector<TH1D> jetsumcustom;
 
+  #ifdef USE_TauSpinner
+  std::vector<TH1D> pmuetau;
+  std::vector<TH1D> peetau;
+  std::vector<TH1D> invmass_ptbal_wt;
+  std::vector<TH1D> invmass_tauspin_diff;
+  #endif
+
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance;
   int n_mu,n_e;
   bool doHiggsObjects;
@@ -161,6 +168,7 @@ class ZtoEMu : public Selection {
   //double JECuncertainty(unsigned int i, TString datamc);
 
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
+  double FakerateWW(unsigned int i, std::string type);
   
   TFile* FRFile;
   TFile* EmbEffFile;

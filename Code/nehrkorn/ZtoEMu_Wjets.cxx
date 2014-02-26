@@ -1,4 +1,4 @@
-#include "ZtoEMu_ABCD.h"
+#include "ZtoEMu_Wjets.h"
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
@@ -13,7 +13,7 @@
 
 #include <TFile.h>
 
-ZtoEMu_ABCD::ZtoEMu_ABCD(TString Name_, TString id_):
+ZtoEMu_Wjets::ZtoEMu_Wjets(TString Name_, TString id_):
   Selection(Name_,id_)
   ,mu_ptlow(10)
   ,mu_pthigh(20)
@@ -51,16 +51,16 @@ ZtoEMu_ABCD::ZtoEMu_ABCD(TString Name_, TString id_):
 	MuIsoEff24 = (TGraphAsymmErrors*)(MuIsoEffFile->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta2.1-2.4"));
 }
 
-ZtoEMu_ABCD::~ZtoEMu_ABCD(){
+ZtoEMu_Wjets::~ZtoEMu_Wjets(){
   for(int j=0; j<Npassed.size(); j++){
-    std::cout << "ZtoEMu_ABCD::~ZtoEMu_ABCD Selection Summary before: "
+    std::cout << "ZtoEMu_Wjets::~ZtoEMu_Wjets Selection Summary before: "
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
   }
-  std::cout << "ZtoEMu_ABCD::~ZtoEMu_ABCD()" << std::endl;
+  std::cout << "ZtoEMu_Wjets::~ZtoEMu_Wjets()" << std::endl;
 }
 
-void  ZtoEMu_ABCD::Configure(){
+void  ZtoEMu_Wjets::Configure(){
 
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
@@ -75,7 +75,6 @@ void  ZtoEMu_ABCD::Configure(){
     if(i==diMuonVeto)         cut.at(diMuonVeto)=0;
     if(i==triLeptonVeto)      cut.at(triLeptonVeto)=0;
     if(i==charge)             cut.at(charge)=0;
-    if(i==mass)               cut.at(mass)=20;
     if(i==jetVeto)            cut.at(jetVeto)=jet_sum;
     if(i==mtmu)               cut.at(mtmu)=50;
     if(i==ptbal)              cut.at(ptbal)=20;
@@ -175,17 +174,6 @@ void  ZtoEMu_ABCD::Configure(){
         Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_jetVeto_",htitle,33,35,200,hlabel,"Events"));
         Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_jetVeto_",htitle,33,35,200,hlabel,"Events"));
     }
-    else if(i==mass){
-        title.at(i)="$m_{e,\\mu} < $";
-        title.at(i)+=cut.at(mass);
-        title.at(i)+="(GeV)";
-        htitle=title.at(i);
-        htitle.ReplaceAll("$","");
-        htitle.ReplaceAll("\\","#");
-        hlabel="m_{e,#mu} / GeV";
-        Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_mass_",htitle,40,20,140,hlabel,"Events"));
-        Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_mass_",htitle,40,20,140,hlabel,"Events"));
-    }
     else if(i==mtmu){
         title.at(i)="$m_{T}^{\\mu,Miss} < $";
         title.at(i)+=cut.at(mtmu);
@@ -226,7 +214,7 @@ void  ZtoEMu_ABCD::Configure(){
   wjets_control_b=HConfig.GetTH1D(Name+"_wjets_control_b","wjets_control_b",40,20.,140.,"m_{e,#mu} / GeV");
   wjets_control_c=HConfig.GetTH1D(Name+"_wjets_control_c","wjets_control_c",40,20.,140.,"m_{e,#mu} / GeV");
   wjets_control_d=HConfig.GetTH1D(Name+"_wjets_control_d","wjets_control_d",40,20.,140.,"m_{e,#mu} / GeV");
-  wjets=HConfig.GetTH2D(Name+"_wjets","wjets",2,1,2,2,1,2,"ptbal<20 | ptbal>20 GeV","mt<50 GeV | 50<mt<120 GeV");
+  wjets=HConfig.GetTH2D(Name+"_wjets","wjets",2,1,2,2,1,2,"mt<50 GeV | 50<mt<120 GeV","ptbal<20 | ptbal>20 GeV");
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
   for(int i=0;i<CrossSectionandAcceptance.size();i++){
@@ -237,7 +225,7 @@ void  ZtoEMu_ABCD::Configure(){
 
 
 
-void  ZtoEMu_ABCD::Store_ExtraDist(){
+void  ZtoEMu_Wjets::Store_ExtraDist(){
 	Extradist1d.push_back(&wjets_a);
 	Extradist1d.push_back(&wjets_b);
 	Extradist1d.push_back(&wjets_c);
@@ -254,8 +242,8 @@ void  ZtoEMu_ABCD::Store_ExtraDist(){
 	Extradist2d.push_back(&wjets);
 }
 
-void  ZtoEMu_ABCD::doEvent(){
-  if(verbose)std::cout << "ZtoEMu_ABCD::doEvent() START" << std::endl;
+void  ZtoEMu_Wjets::doEvent(){
+  if(verbose)std::cout << "ZtoEMu_Wjets::doEvent() START" << std::endl;
   unsigned int t;
   int id(Ntp->GetMCID());
   if(verbose)std::cout << "id: " << id << std::endl;
@@ -455,17 +443,6 @@ void  ZtoEMu_ABCD::doEvent(){
 
   ///////////////////////////////////////////////
   //
-  // mass cut
-  //
-  if(verbose) std::cout << "Mass cut" << std::endl;
-  value.at(mass)=0.;
-  if(eidx!=999 && muidx!=999){
-	  value.at(mass)=(Ntp->Electron_p4(eidx)+Ntp->Muon_p4(muidx)).M();
-  }
-  pass.at(mass)=(value.at(mass)>cut.at(mass));
-
-  ///////////////////////////////////////////////
-  //
   // jet veto
   //
   /*if(verbose)std::cout << "jet veto" << std::endl;
@@ -619,7 +596,7 @@ void  ZtoEMu_ABCD::doEvent(){
   double wobs(1),w(1);
   if(!Ntp->isData() && Ntp->GetMCID()!=34){
     w*=Ntp->EvtWeight3D();
-    if(verbose)std::cout << "void  ZtoEMu_ABCD::doEvent() k" << w << " " << wobs << std::endl;
+    if(verbose)std::cout << "void  ZtoEMu_Wjets::doEvent() k" << w << " " << wobs << std::endl;
     if(pass.at(NMu)){
     	w*=MuonIDeff(muidx);
     }
@@ -644,7 +621,6 @@ void  ZtoEMu_ABCD::doEvent(){
 		  && pass.at(diMuonVeto)
 		  && pass.at(triLeptonVeto)
 		  && pass.at(charge)
-		  && pass.at(mass)
 		  && pass.at(jetVeto)
 		  ){
 	  double m = (Ntp->Muon_p4(muidx)+Ntp->Electron_p4(eidx)).M();
@@ -653,11 +629,11 @@ void  ZtoEMu_ABCD::doEvent(){
 			  wjets_a.at(t).AddBinContent(1);
 			  wjets_control_a.at(t).Fill(m,w);
 		  }
-		  if(pass.at(mtmu) && !pass.at(ptbal)){
+		  if(!pass.at(mtmu) && value.at(mtmu)<120. && pass.at(ptbal)){
 			  wjets_b.at(t).AddBinContent(1);
 			  wjets_control_b.at(t).Fill(m,w);
 		  }
-		  if(!pass.at(mtmu) && value.at(mtmu)<120. && pass.at(ptbal)){
+		  if(pass.at(mtmu) && !pass.at(ptbal)){
 			  wjets_c.at(t).AddBinContent(1);
 			  wjets_control_c.at(t).Fill(m,w);
 		  }
@@ -668,7 +644,7 @@ void  ZtoEMu_ABCD::doEvent(){
 	  //}
   }
 
-  if(verbose)std::cout << "ZtoEMu_ABCD::doEvent() doEvent END" << std::endl;
+  if(verbose)std::cout << "ZtoEMu_Wjets::doEvent() doEvent END" << std::endl;
 }
 
 //////////////////////
@@ -676,7 +652,7 @@ void  ZtoEMu_ABCD::doEvent(){
 // Utility functions
 //
 
-bool ZtoEMu_ABCD::isGoodVtx(unsigned int i){
+bool ZtoEMu_Wjets::isGoodVtx(unsigned int i){
 	if(fabs(Ntp->Vtx(i).z())>=24) return false;
 	if(Ntp->Vtx(i).Perp()>=2) return false;
 	if(Ntp->Vtx_ndof(i)<=4) return false;
@@ -684,14 +660,14 @@ bool ZtoEMu_ABCD::isGoodVtx(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx){
+bool ZtoEMu_Wjets::jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx){
 	for(unsigned i=0;i<vtx_track_idx.size();i++){
 		if(vtx_track_idx.at(i)==leadingtrack_idx)return true;
 	}
 	return false;
 }
 
-double ZtoEMu_ABCD::rundependentJetPtCorrection(double jeteta, int runnumber){
+double ZtoEMu_Wjets::rundependentJetPtCorrection(double jeteta, int runnumber){
 	if(!Ntp->isData()) return 1.;
 	const double corrs[5] = {0.0, -0.454e-6, -0.952e-6, 1.378e-6, 0.0};
 	const int run0 = 201000;
@@ -705,19 +681,19 @@ double ZtoEMu_ABCD::rundependentJetPtCorrection(double jeteta, int runnumber){
 	return (1.+corr*(runnumber-run0));
 }
 
-double ZtoEMu_ABCD::cosphi2d(double px1, double py1, double px2, double py2){
+double ZtoEMu_Wjets::cosphi2d(double px1, double py1, double px2, double py2){
 	return (px1*px2+py1*py2)/(sqrt(pow(px1,2)+pow(py1,2))*sqrt(pow(px2,2)+pow(py2,2)));
 }
 
-double ZtoEMu_ABCD::dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double ZtoEMu_Wjets::dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return fabs((-(poca.X()-vtx.X())*fourvector.Py()+(poca.Y()-vtx.Y())*fourvector.Px())/fourvector.Pt());
 }
 
-double ZtoEMu_ABCD::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double ZtoEMu_Wjets::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return fabs(poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2));
 }
 
-double ZtoEMu_ABCD::vertexSignificance(TVector3 vec, unsigned int vertex){
+double ZtoEMu_Wjets::vertexSignificance(TVector3 vec, unsigned int vertex){
 	if(vertex>=0 && vertex<Ntp->NVtx()){
 		const float elm[3] = {(vec.X()-Ntp->Vtx(vertex).X()),(vec.Y()-Ntp->Vtx(vertex).Y()),(vec.Z()-Ntp->Vtx(vertex).Z())};
 		TVectorF diff(3,elm);
@@ -731,7 +707,7 @@ double ZtoEMu_ABCD::vertexSignificance(TVector3 vec, unsigned int vertex){
 	return 999;
 }
 
-bool ZtoEMu_ABCD::matchTrigger(unsigned int i, double dr, std::string trigger, std::string object){
+bool ZtoEMu_Wjets::matchTrigger(unsigned int i, double dr, std::string trigger, std::string object){
 	unsigned int id = 0;
 	TLorentzVector particle(0.,0.,0.,0.);
 	TLorentzVector triggerObj(0.,0.,0.,0.);
@@ -761,7 +737,7 @@ bool ZtoEMu_ABCD::matchTrigger(unsigned int i, double dr, std::string trigger, s
 	return false;
 }
 
-int ZtoEMu_ABCD::matchTruth(TLorentzVector tvector){
+int ZtoEMu_Wjets::matchTruth(TLorentzVector tvector){
 	double testdr=1.;
 	int pdgid = 0;
 	for(unsigned i=0;i<Ntp->NMCParticles();i++){
@@ -775,7 +751,7 @@ int ZtoEMu_ABCD::matchTruth(TLorentzVector tvector){
 	return pdgid;
 }
 
-bool ZtoEMu_ABCD::matchTruth(TLorentzVector tvector, int pid, double dr){
+bool ZtoEMu_Wjets::matchTruth(TLorentzVector tvector, int pid, double dr){
 	for(unsigned i=0;i<Ntp->NMCParticles();i++){
 		if(Ntp->MCParticle_p4(i).Pt()>0.){
 			if(fabs(Ntp->MCParticle_pdgid(i))==pid){
@@ -791,9 +767,9 @@ bool ZtoEMu_ABCD::matchTruth(TLorentzVector tvector, int pid, double dr){
 // Muon related functions
 //
 
-bool ZtoEMu_ABCD::isTightMuon(unsigned int i){
+bool ZtoEMu_Wjets::isTightMuon(unsigned int i){
 	if(!Ntp->Muon_isGlobalMuon(i)) return false;
-	//if(!Ntp->Muon_isPFMuon(i)) return false;
+	if(!Ntp->Muon_isPFMuon(i)) return false;
 	if(Ntp->Muon_normChi2(i)>=10.) return false;
 	if(Ntp->Muon_hitPattern_numberOfValidMuonHits(i)<=0) return false;
 	if(Ntp->Muon_numberOfMatchedStations(i)<=1) return false;
@@ -802,7 +778,7 @@ bool ZtoEMu_ABCD::isTightMuon(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isTightMuon(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isTightMuon(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()) return false;
 	if(!isTightMuon(i)) return false;
 	if(dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(j))>=0.2) return false;
@@ -810,7 +786,7 @@ bool ZtoEMu_ABCD::isTightMuon(unsigned int i, unsigned int j){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isHiggsMuon(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isHiggsMuon(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()) return false;
 	if(!isTightMuon(i)) return false;
 	if(dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(j))>=0.02) return false;
@@ -818,13 +794,13 @@ bool ZtoEMu_ABCD::isHiggsMuon(unsigned int i, unsigned int j){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isLooseMuon(unsigned int i){
+bool ZtoEMu_Wjets::isLooseMuon(unsigned int i){
 	if(!Ntp->Muon_isPFMuon(i)) return false;
 	if(!(Ntp->Muon_isGlobalMuon(i) || Ntp->Muon_isTrackerMuon(i))) return false;
 	return true;
 }
 
-bool ZtoEMu_ABCD::isFakeMuon(unsigned int i){
+bool ZtoEMu_Wjets::isFakeMuon(unsigned int i){
 	if(!Ntp->Muon_isGlobalMuon(i)) return false;
 	if(Ntp->Muon_p4(i).Pt()<=10) return false;
 	if(fabs(Ntp->Muon_p4(i).Eta())>2.4) return false;
@@ -841,7 +817,7 @@ bool ZtoEMu_ABCD::isFakeMuon(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isFakeMuon(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isFakeMuon(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()) return false;
 	if(!isFakeMuon(i)) return false;
 	if(dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(j))>=0.2) return false;
@@ -849,11 +825,11 @@ bool ZtoEMu_ABCD::isFakeMuon(unsigned int i, unsigned int j){
 	return true;
 }
 
-double ZtoEMu_ABCD::Muon_RelIso(unsigned int i){
+double ZtoEMu_Wjets::Muon_RelIso(unsigned int i){
 	return (Ntp->Muon_sumChargedHadronPt04(i)+std::max(0.,Ntp->Muon_sumNeutralHadronEt04(i)+Ntp->Muon_sumPhotonEt04(i)-0.5*Ntp->Muon_sumPUPt04(i)))/Ntp->Muon_p4(i).Pt();
 }
 
-double ZtoEMu_ABCD::Muon_AbsIso(unsigned int i){
+double ZtoEMu_Wjets::Muon_AbsIso(unsigned int i){
 	return Ntp->Muon_sumChargedHadronPt04(i)+std::max(0.,Ntp->Muon_sumNeutralHadronEt04(i)+Ntp->Muon_sumPhotonEt04(i)-0.5*Ntp->Muon_sumPUPt04(i));
 }
 
@@ -862,7 +838,7 @@ double ZtoEMu_ABCD::Muon_AbsIso(unsigned int i){
 // Electron related functions
 //
 
-bool ZtoEMu_ABCD::isTrigPreselElectron(unsigned int i){
+bool ZtoEMu_Wjets::isTrigPreselElectron(unsigned int i){
 	if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) return false;
 	if(fabs(Ntp->Electron_supercluster_eta(i))<1.479){
 		if(Ntp->Electron_sigmaIetaIeta(i)>0.014) return false;
@@ -880,7 +856,7 @@ bool ZtoEMu_ABCD::isTrigPreselElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isTrigNoIPPreselElectron(unsigned int i){
+bool ZtoEMu_Wjets::isTrigNoIPPreselElectron(unsigned int i){
 	if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) return false;
 	if(fabs(Ntp->Electron_supercluster_eta(i))<1.479){
 		if(Ntp->Electron_sigmaIetaIeta(i)>0.01) return false;
@@ -902,7 +878,7 @@ bool ZtoEMu_ABCD::isTrigNoIPPreselElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isMVATrigNoIPElectron(unsigned int i){
+bool ZtoEMu_Wjets::isMVATrigNoIPElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
@@ -939,7 +915,7 @@ bool ZtoEMu_ABCD::isMVATrigNoIPElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isMVANonTrigElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isMVANonTrigElectron(unsigned int i, unsigned int j){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>1) return false;
@@ -957,7 +933,7 @@ bool ZtoEMu_ABCD::isMVANonTrigElectron(unsigned int i, unsigned int j){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isHiggsElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isHiggsElectron(unsigned int i, unsigned int j){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
@@ -978,7 +954,7 @@ bool ZtoEMu_ABCD::isHiggsElectron(unsigned int i, unsigned int j){
 }
 
 
-bool ZtoEMu_ABCD::isMVATrigElectron(unsigned int i){
+bool ZtoEMu_Wjets::isMVATrigElectron(unsigned int i){
 	double mvapt = Ntp->Electron_p4(i).Pt();
 	double mvaeta = fabs(Ntp->Electron_supercluster_eta(i));
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
@@ -996,7 +972,7 @@ bool ZtoEMu_ABCD::isMVATrigElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isTightElectron(unsigned int i){
+bool ZtoEMu_Wjets::isTightElectron(unsigned int i){
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
 	if(Ntp->Electron_numberOfMissedHits(i)>0) return false;
 	if(Electron_RelIso(i)>=0.1) return false;
@@ -1017,7 +993,7 @@ bool ZtoEMu_ABCD::isTightElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isTightElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isTightElectron(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()) return false;
 	if(!isTightElectron(i)) return false;
 	if(dxy(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(j))>=0.02) return false;
@@ -1025,7 +1001,7 @@ bool ZtoEMu_ABCD::isTightElectron(unsigned int i, unsigned int j){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isFakeElectron(unsigned int i){
+bool ZtoEMu_Wjets::isFakeElectron(unsigned int i){
 	if(Ntp->Electron_p4(i).Pt()<=10) return false;
 	if(fabs(Ntp->Electron_supercluster_eta(i))>=2.5) return false;
 	if(Ntp->Electron_HasMatchedConversions(i)) return false;
@@ -1048,7 +1024,7 @@ bool ZtoEMu_ABCD::isFakeElectron(unsigned int i){
 	return true;
 }
 
-bool ZtoEMu_ABCD::isFakeElectron(unsigned int i, unsigned int j){
+bool ZtoEMu_Wjets::isFakeElectron(unsigned int i, unsigned int j){
 	if(j<0 || j>=Ntp->NVtx()) return false;
 	if(!isFakeElectron(i)) return false;
 	if(dz(Ntp->Electron_p4(i),Ntp->Electron_Poca(i),Ntp->Vtx(j))>=0.1) return false;
@@ -1056,11 +1032,11 @@ bool ZtoEMu_ABCD::isFakeElectron(unsigned int i, unsigned int j){
 	return true;
 }
 
-double ZtoEMu_ABCD::Electron_RelIso(unsigned int i){
+double ZtoEMu_Wjets::Electron_RelIso(unsigned int i){
 	return (Ntp->Electron_chargedHadronIso(i)+std::max((double)0.,Ntp->Electron_neutralHadronIso(i)+Ntp->Electron_photonIso(i)-Ntp->RhoIsolationAllInputTags()*Electron_Aeff_R04(Ntp->Electron_supercluster_eta(i))))/Ntp->Electron_p4(i).Pt();
 }
 
-double ZtoEMu_ABCD::Electron_Aeff_R04(double Eta){
+double ZtoEMu_Wjets::Electron_Aeff_R04(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.208;
 	else if(eta>=1. && eta<1.479) return 0.209;
@@ -1071,7 +1047,7 @@ double ZtoEMu_ABCD::Electron_Aeff_R04(double Eta){
 	else if(eta>=2.4) return 0.261;
 }
 
-double ZtoEMu_ABCD::Electron_Aeff_R03(double Eta){
+double ZtoEMu_Wjets::Electron_Aeff_R03(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.13;
 	else if(eta>=1. && eta<1.479) return 0.14;
@@ -1087,7 +1063,7 @@ double ZtoEMu_ABCD::Electron_Aeff_R03(double Eta){
 // Trigger & ID efficiencies
 //
 
-double ZtoEMu_ABCD::MuonIDeff(unsigned int i){
+double ZtoEMu_Wjets::MuonIDeff(unsigned int i){
 	double pt = Ntp->Muon_p4(i).Pt();
 	double eta = fabs(Ntp->Muon_p4(i).Eta());
 	double eff = 1.;
@@ -1100,7 +1076,7 @@ double ZtoEMu_ABCD::MuonIDeff(unsigned int i){
 	return eff;
 }
 
-double ZtoEMu_ABCD::MuonHiggsIDeff(unsigned int i){
+double ZtoEMu_Wjets::MuonHiggsIDeff(unsigned int i){
 	double pt = Ntp->Muon_p4(i).Pt();
 	double eta = fabs(Ntp->Muon_p4(i).Eta());
 	double eff = 1.;
@@ -1168,14 +1144,14 @@ double ZtoEMu_ABCD::MuonHiggsIDeff(unsigned int i){
 	return eff;
 }
 
-double ZtoEMu_ABCD::ElectronIDeff(unsigned int i, std::string id){
+double ZtoEMu_Wjets::ElectronIDeff(unsigned int i, std::string id){
 	if(id=="Trig") return ElectronTrigIDeff(i);
 	if(id=="NonTrig") return ElectronNonTrigIDeff(i);
 	if(id=="Higgs") return ElectronHiggsIDeff(i);
 	return 1.;
 }
 
-double ZtoEMu_ABCD::ElectronTrigIDeff(unsigned int i){
+double ZtoEMu_Wjets::ElectronTrigIDeff(unsigned int i){
 	double pt = Ntp->Electron_p4(i).Pt();
 	double eta = fabs(Ntp->Electron_supercluster_eta(i));
 	double eff = 1.;
@@ -1185,7 +1161,7 @@ double ZtoEMu_ABCD::ElectronTrigIDeff(unsigned int i){
 	return eff;
 }
 
-double ZtoEMu_ABCD::ElectronNonTrigIDeff(unsigned int i){
+double ZtoEMu_Wjets::ElectronNonTrigIDeff(unsigned int i){
 	double pt = Ntp->Electron_p4(i).Pt();
 	double eta = Ntp->Electron_supercluster_eta(i);
 	double eff = 1.;
@@ -1195,7 +1171,7 @@ double ZtoEMu_ABCD::ElectronNonTrigIDeff(unsigned int i){
 	return eff;
 }
 
-double ZtoEMu_ABCD::ElectronHiggsIDeff(unsigned int i){
+double ZtoEMu_Wjets::ElectronHiggsIDeff(unsigned int i){
 	double pt = Ntp->Electron_p4(i).Pt();
 	double eta = Ntp->Electron_supercluster_eta(i);
 	double eff = 1.;
@@ -1258,7 +1234,7 @@ double ZtoEMu_ABCD::ElectronHiggsIDeff(unsigned int i){
 // Calculate fakerate
 //
 
-double ZtoEMu_ABCD::Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type){
+double ZtoEMu_Wjets::Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type){
 
 	double eta1, eta2;
 	int ptbin = 0;
@@ -1304,7 +1280,7 @@ double ZtoEMu_ABCD::Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string
 // Finish function
 //
 
-void ZtoEMu_ABCD::Finish(){
+void ZtoEMu_Wjets::Finish(){
 	unsigned int nhistos = 13;
 
 	double lumi = 19712.;
@@ -1363,6 +1339,13 @@ void ZtoEMu_ABCD::Finish(){
 	wjets.at(0).SetBinContent(2,1,wb.at(0).Integral());
 	wjets.at(0).SetBinContent(1,2,wc.at(0).Integral());
 	wjets.at(0).SetBinContent(2,2,wd.at(0).Integral());
+
+	std::cout << "events in region a: " << wjets.at(0).GetBinContent(1,1) << std::endl;
+	std::cout << "events in region b: " << wjets.at(0).GetBinContent(2,1) << std::endl;
+	std::cout << "events in region c: " << wjets.at(0).GetBinContent(1,2) << std::endl;
+	std::cout << "events in region d: " << wjets.at(0).GetBinContent(2,2) << std::endl;
+	std::cout << "Use ratio of " << (double)wjets.at(0).GetBinContent(1,2)/(double)wjets.at(0).GetBinContent(2,2) << " to extrapolate shape of region b to region a" << std::endl;
+	std::cout << "Uncertainty on ratio: " << TMath::Sqrt(TMath::Power(wjets.at(0).GetBinError(1,2)/wjets.at(0).GetBinContent(2,2),2)+TMath::Power(wjets.at(0).GetBinContent(1,2)*wjets.at(0).GetBinError(2,2)/wjets.at(0).GetBinContent(2,2)/wjets.at(0).GetBinContent(2,2),2)) << std::endl;
 
 	Selection::Finish();
 }
