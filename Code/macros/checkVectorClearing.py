@@ -52,3 +52,4 @@ if notCleaned != []:
         print i
 else:
     print "Don't worry: All vectors are cleared."
+
