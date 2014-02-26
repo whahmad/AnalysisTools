@@ -1,16 +1,16 @@
-#ifndef ZtoEMu_ABCD_h
-#define ZtoEMu_ABCD_h
+#ifndef ZtoEMu_QCD_h
+#define ZtoEMu_QCD_h
 
 #include "Selection.h"
 #include <vector>
 #include "TString.h"
 #include "TGraphAsymmErrors.h"
 
-class ZtoEMu_ABCD : public Selection {
+class ZtoEMu_QCD : public Selection {
 
  public:
-  ZtoEMu_ABCD(TString Name_, TString id_);
-  virtual ~ZtoEMu_ABCD();
+  ZtoEMu_QCD(TString Name_, TString id_);
+  virtual ~ZtoEMu_QCD();
 
   virtual void  Configure();
   virtual void Finish();
@@ -23,7 +23,6 @@ class ZtoEMu_ABCD : public Selection {
 		 diMuonVeto,
  		 triLeptonVeto,
  		 charge,
- 		 mass,
  		 jetVeto,
 		 mtmu,
 		 ptbal,
@@ -36,22 +35,22 @@ class ZtoEMu_ABCD : public Selection {
  private:
   // Selection Variables
 
-  // wjets
-  std::vector<TH1D> wjets_a;
-  std::vector<TH1D> wjets_b;
-  std::vector<TH1D> wjets_c;
-  std::vector<TH1D> wjets_d;
+  // qcd
+  std::vector<TH1D> qcd_a;
+  std::vector<TH1D> qcd_b;
+  std::vector<TH1D> qcd_c;
+  std::vector<TH1D> qcd_d;
   std::vector<TH1D> wa;
   std::vector<TH1D> wb;
   std::vector<TH1D> wc;
   std::vector<TH1D> wd;
 
-  std::vector<TH1D> wjets_control_a;
-  std::vector<TH1D> wjets_control_b;
-  std::vector<TH1D> wjets_control_c;
-  std::vector<TH1D> wjets_control_d;
+  std::vector<TH1D> qcd_control_a;
+  std::vector<TH1D> qcd_control_b;
+  std::vector<TH1D> qcd_control_c;
+  std::vector<TH1D> qcd_control_d;
 
-  std::vector<TH2D> wjets;
+  std::vector<TH2D> qcd;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax;
   int n_mu,n_e;

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Feb  6 15:39:58 2014 by ROOT version 5.34/14
+// Wed Feb 26 13:55:40 2014 by ROOT version 5.34/14
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -156,7 +156,6 @@ public :
    vector<float>   *Electron_M;
    vector<vector<float> > *Electron_par;
    vector<vector<float> > *Electron_cov;
-   vector<float>   *Electron_Track_dR;
    vector<float>   *Electron_Rho_kt6PFJets;
    vector<float>   *Electron_MVA_TrigNoIP_discriminator;
    vector<float>   *Electron_MVA_NonTrig_discriminator;
@@ -205,6 +204,8 @@ public :
    vector<vector<float> > *PFTau_TIP_secondaryVertex_vtxndof;
    vector<vector<float> > *PFTau_TIP_primaryVertex_vtxchi2;
    vector<vector<float> > *PFTau_TIP_primaryVertex_vtxndof;
+   vector<vector<float> > *PFTau_TIP_flightLength;
+   vector<vector<float> > *PFTau_TIP_flightLengthSig;
    vector<vector<float> > *PFTau_a1_lvp;
    vector<vector<float> > *PFTau_a1_cov;
    vector<vector<int> > *PFTau_a1_charge;
@@ -235,6 +236,7 @@ public :
    vector<vector<vector<float> > > *PFTau_ChargedHadronsP4;
    vector<vector<vector<int> > > *PFTau_ChargedHadronsCharge;
    vector<vector<vector<float> > > *PFTau_GammaP4;
+   vector<vector<vector<float> > > *PFTau_Photons_p4_inDR05;
    vector<vector<float> > *PFTau_MatchedPFJetP4;
    vector<vector<vector<float> > > *PFTau_MatchedPFJetGammasP4;
    vector<vector<vector<float> > > *PFTau_MatchedPFJetSCVariables;
@@ -286,7 +288,6 @@ public :
    vector<float>   *PFJet_PUJetID_tightWP;
    vector<float>   *PFJet_partonFlavour;
    vector<float>   *PFJet_bDiscriminator;
-   vector<vector<float> > *PFJet_BTagWeight;
    vector<vector<vector<float> > > *PFJet_TracksP4;
    vector<float>   *PFJet_nTrk;
    Bool_t          isPatMET;
@@ -506,8 +507,10 @@ public :
    vector<int>     *MC_charge;
    vector<unsigned int> *MC_midx;
    vector<vector<int> > *MC_childpdgid;
+   vector<int>     *MC_status;
    vector<vector<float> > *MCSignalParticle_p4;
    vector<int>     *MCSignalParticle_pdgid;
+   vector<vector<int> > *MCSignalParticle_childpdgid;
    vector<int>     *MCSignalParticle_charge;
    vector<vector<float> > *MCSignalParticle_Poca;
    vector<vector<unsigned int> > *MCSignalParticle_Tauidx;
@@ -527,10 +530,9 @@ public :
    vector<unsigned int> *L1SEEDPrescale;
    vector<bool>    *L1SEEDInvalidPrescale;
    vector<unsigned int> *L1SEEDisTechBit;
-   vector<vector<float> > *MuonTriggerMatch;
-   vector<vector<float> > *ElectronTriggerMatch;
-   vector<vector<float> > *JetTriggerMatch;
-   vector<vector<float> > *TauTriggerMatch;
+   vector<vector<float> > *TriggerMatchMuon;
+   vector<vector<float> > *TriggerMatchJet;
+   vector<vector<float> > *TriggerMatchTau;
    vector<vector<float> > *HLTTrigger_objs_Pt;
    vector<vector<float> > *HLTTrigger_objs_Eta;
    vector<vector<float> > *HLTTrigger_objs_Phi;
@@ -674,7 +676,6 @@ public :
    TBranch        *b_Electron_M;   //!
    TBranch        *b_Electron_par;   //!
    TBranch        *b_Electron_cov;   //!
-   TBranch        *b_Electron_Track_dR;   //!
    TBranch        *b_Electron_Rho_kt6PFJets;   //!
    TBranch        *b_Electron_MVA_TrigNoIP_discriminator;   //!
    TBranch        *b_Electron_MVA_NonTrig_discriminator;   //!
@@ -723,6 +724,8 @@ public :
    TBranch        *b_PFTau_TIP_secondaryVertex_vtxndof;   //!
    TBranch        *b_PFTau_TIP_primaryVertex_vtxchi2;   //!
    TBranch        *b_PFTau_TIP_primaryVertex_vtxndof;   //!
+   TBranch        *b_PFTau_TIP_flightLength;   //!
+   TBranch        *b_PFTau_TIP_flightLengthSig;   //!
    TBranch        *b_PFTau_a1_lvp;   //!
    TBranch        *b_PFTau_a1_cov;   //!
    TBranch        *b_PFTau_a1_charge;   //!
@@ -753,6 +756,7 @@ public :
    TBranch        *b_PFTau_ChargedHadronsP4;   //!
    TBranch        *b_PFTau_ChargedHadronsCharge;   //!
    TBranch        *b_PFTau_GammaP4;   //!
+   TBranch        *b_PFTau_Photons_p4_inDR05;   //!
    TBranch        *b_PFTau_MatchedPFJetP4;   //!
    TBranch        *b_PFTau_MatchedPFJetGammasP4;   //!
    TBranch        *b_PFTau_MatchedPFJetSCVariables;   //!
@@ -804,7 +808,6 @@ public :
    TBranch        *b_PFJet_PUJetID_tightWP;   //!
    TBranch        *b_PFJet_partonFlavour;   //!
    TBranch        *b_PFJet_bDiscriminator;   //!
-   TBranch        *b_PFJet_BTagWeight;   //!
    TBranch        *b_PFJet_TracksP4;   //!
    TBranch        *b_PFJet_nTrk;   //!
    TBranch        *b_isPatMET;   //!
@@ -1024,8 +1027,10 @@ public :
    TBranch        *b_MC_charge;   //!
    TBranch        *b_MC_midx;   //!
    TBranch        *b_MC_childpdgid;   //!
+   TBranch        *b_MC_status;   //!
    TBranch        *b_MCSignalParticle_p4;   //!
    TBranch        *b_MCSignalParticle_pdgid;   //!
+   TBranch        *b_MCSignalParticle_childpdgid;   //!
    TBranch        *b_MCSignalParticle_charge;   //!
    TBranch        *b_MCSignalParticle_Poca;   //!
    TBranch        *b_MCSignalParticle_Tauidx;   //!
@@ -1045,10 +1050,9 @@ public :
    TBranch        *b_L1SEEDPrescale;   //!
    TBranch        *b_L1SEEDInvalidPrescale;   //!
    TBranch        *b_L1SEEDisTechBit;   //!
-   TBranch        *b_MuonTriggerMatch;   //!
-   TBranch        *b_ElectronTriggerMatch;   //!
-   TBranch        *b_JetTriggerMatch;   //!
-   TBranch        *b_TauTriggerMatch;   //!
+   TBranch        *b_TriggerMatchMuon;   //!
+   TBranch        *b_TriggerMatchJet;   //!
+   TBranch        *b_TriggerMatchTau;   //!
    TBranch        *b_HLTTrigger_objs_Pt;   //!
    TBranch        *b_HLTTrigger_objs_Eta;   //!
    TBranch        *b_HLTTrigger_objs_Phi;   //!
@@ -1094,7 +1098,7 @@ NtupleReader::NtupleReader(TTree *tree) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("TauNtuple_20_1_2HK.root/t");
+      chain->Add("/user/scratch/kargoll/TauNtuple_118_2_uzn.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -1262,7 +1266,6 @@ void NtupleReader::Init(TTree *tree)
    Electron_M = 0;
    Electron_par = 0;
    Electron_cov = 0;
-   Electron_Track_dR = 0;
    Electron_Rho_kt6PFJets = 0;
    Electron_MVA_TrigNoIP_discriminator = 0;
    Electron_MVA_NonTrig_discriminator = 0;
@@ -1311,6 +1314,8 @@ void NtupleReader::Init(TTree *tree)
    PFTau_TIP_secondaryVertex_vtxndof = 0;
    PFTau_TIP_primaryVertex_vtxchi2 = 0;
    PFTau_TIP_primaryVertex_vtxndof = 0;
+   PFTau_TIP_flightLength = 0;
+   PFTau_TIP_flightLengthSig = 0;
    PFTau_a1_lvp = 0;
    PFTau_a1_cov = 0;
    PFTau_a1_charge = 0;
@@ -1341,6 +1346,7 @@ void NtupleReader::Init(TTree *tree)
    PFTau_ChargedHadronsP4 = 0;
    PFTau_ChargedHadronsCharge = 0;
    PFTau_GammaP4 = 0;
+   PFTau_Photons_p4_inDR05 = 0;
    PFTau_MatchedPFJetP4 = 0;
    PFTau_MatchedPFJetGammasP4 = 0;
    PFTau_MatchedPFJetSCVariables = 0;
@@ -1391,7 +1397,6 @@ void NtupleReader::Init(TTree *tree)
    PFJet_PUJetID_tightWP = 0;
    PFJet_partonFlavour = 0;
    PFJet_bDiscriminator = 0;
-   PFJet_BTagWeight = 0;
    PFJet_TracksP4 = 0;
    PFJet_nTrk = 0;
    Track_p4 = 0;
@@ -1413,8 +1418,10 @@ void NtupleReader::Init(TTree *tree)
    MC_charge = 0;
    MC_midx = 0;
    MC_childpdgid = 0;
+   MC_status = 0;
    MCSignalParticle_p4 = 0;
    MCSignalParticle_pdgid = 0;
+   MCSignalParticle_childpdgid = 0;
    MCSignalParticle_charge = 0;
    MCSignalParticle_Poca = 0;
    MCSignalParticle_Tauidx = 0;
@@ -1434,10 +1441,9 @@ void NtupleReader::Init(TTree *tree)
    L1SEEDPrescale = 0;
    L1SEEDInvalidPrescale = 0;
    L1SEEDisTechBit = 0;
-   MuonTriggerMatch = 0;
-   ElectronTriggerMatch = 0;
-   JetTriggerMatch = 0;
-   TauTriggerMatch = 0;
+   TriggerMatchMuon = 0;
+   TriggerMatchJet = 0;
+   TriggerMatchTau = 0;
    HLTTrigger_objs_Pt = 0;
    HLTTrigger_objs_Eta = 0;
    HLTTrigger_objs_Phi = 0;
@@ -1585,7 +1591,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Electron_M", &Electron_M, &b_Electron_M);
    fChain->SetBranchAddress("Electron_par", &Electron_par, &b_Electron_par);
    fChain->SetBranchAddress("Electron_cov", &Electron_cov, &b_Electron_cov);
-   fChain->SetBranchAddress("Electron_Track_dR", &Electron_Track_dR, &b_Electron_Track_dR);
    fChain->SetBranchAddress("Electron_Rho_kt6PFJets", &Electron_Rho_kt6PFJets, &b_Electron_Rho_kt6PFJets);
    fChain->SetBranchAddress("Electron_MVA_TrigNoIP_discriminator", &Electron_MVA_TrigNoIP_discriminator, &b_Electron_MVA_TrigNoIP_discriminator);
    fChain->SetBranchAddress("Electron_MVA_NonTrig_discriminator", &Electron_MVA_NonTrig_discriminator, &b_Electron_MVA_NonTrig_discriminator);
@@ -1634,6 +1639,8 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_TIP_secondaryVertex_vtxndof", &PFTau_TIP_secondaryVertex_vtxndof, &b_PFTau_TIP_secondaryVertex_vtxndof);
    fChain->SetBranchAddress("PFTau_TIP_primaryVertex_vtxchi2", &PFTau_TIP_primaryVertex_vtxchi2, &b_PFTau_TIP_primaryVertex_vtxchi2);
    fChain->SetBranchAddress("PFTau_TIP_primaryVertex_vtxndof", &PFTau_TIP_primaryVertex_vtxndof, &b_PFTau_TIP_primaryVertex_vtxndof);
+   fChain->SetBranchAddress("PFTau_TIP_flightLength", &PFTau_TIP_flightLength, &b_PFTau_TIP_flightLength);
+   fChain->SetBranchAddress("PFTau_TIP_flightLengthSig", &PFTau_TIP_flightLengthSig, &b_PFTau_TIP_flightLengthSig);
    fChain->SetBranchAddress("PFTau_a1_lvp", &PFTau_a1_lvp, &b_PFTau_a1_lvp);
    fChain->SetBranchAddress("PFTau_a1_cov", &PFTau_a1_cov, &b_PFTau_a1_cov);
    fChain->SetBranchAddress("PFTau_a1_charge", &PFTau_a1_charge, &b_PFTau_a1_charge);
@@ -1664,6 +1671,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFTau_ChargedHadronsP4", &PFTau_ChargedHadronsP4, &b_PFTau_ChargedHadronsP4);
    fChain->SetBranchAddress("PFTau_ChargedHadronsCharge", &PFTau_ChargedHadronsCharge, &b_PFTau_ChargedHadronsCharge);
    fChain->SetBranchAddress("PFTau_GammaP4", &PFTau_GammaP4, &b_PFTau_GammaP4);
+   fChain->SetBranchAddress("PFTau_Photons_p4_inDR05", &PFTau_Photons_p4_inDR05, &b_PFTau_Photons_p4_inDR05);
    fChain->SetBranchAddress("PFTau_MatchedPFJetP4", &PFTau_MatchedPFJetP4, &b_PFTau_MatchedPFJetP4);
    fChain->SetBranchAddress("PFTau_MatchedPFJetGammasP4", &PFTau_MatchedPFJetGammasP4, &b_PFTau_MatchedPFJetGammasP4);
    fChain->SetBranchAddress("PFTau_MatchedPFJetSCVariables", &PFTau_MatchedPFJetSCVariables, &b_PFTau_MatchedPFJetSCVariables);
@@ -1715,7 +1723,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("PFJet_PUJetID_tightWP", &PFJet_PUJetID_tightWP, &b_PFJet_PUJetID_tightWP);
    fChain->SetBranchAddress("PFJet_partonFlavour", &PFJet_partonFlavour, &b_PFJet_partonFlavour);
    fChain->SetBranchAddress("PFJet_bDiscriminator", &PFJet_bDiscriminator, &b_PFJet_bDiscriminator);
-   fChain->SetBranchAddress("PFJet_BTagWeight", &PFJet_BTagWeight, &b_PFJet_BTagWeight);
    fChain->SetBranchAddress("PFJet_TracksP4", &PFJet_TracksP4, &b_PFJet_TracksP4);
    fChain->SetBranchAddress("PFJet_nTrk", &PFJet_nTrk, &b_PFJet_nTrk);
    fChain->SetBranchAddress("isPatMET", &isPatMET, &b_isPatMET);
@@ -1935,8 +1942,10 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MC_charge", &MC_charge, &b_MC_charge);
    fChain->SetBranchAddress("MC_midx", &MC_midx, &b_MC_midx);
    fChain->SetBranchAddress("MC_childpdgid", &MC_childpdgid, &b_MC_childpdgid);
+   fChain->SetBranchAddress("MC_status", &MC_status, &b_MC_status);
    fChain->SetBranchAddress("MCSignalParticle_p4", &MCSignalParticle_p4, &b_MCSignalParticle_p4);
    fChain->SetBranchAddress("MCSignalParticle_pdgid", &MCSignalParticle_pdgid, &b_MCSignalParticle_pdgid);
+   fChain->SetBranchAddress("MCSignalParticle_childpdgid", &MCSignalParticle_childpdgid, &b_MCSignalParticle_childpdgid);
    fChain->SetBranchAddress("MCSignalParticle_charge", &MCSignalParticle_charge, &b_MCSignalParticle_charge);
    fChain->SetBranchAddress("MCSignalParticle_Poca", &MCSignalParticle_Poca, &b_MCSignalParticle_Poca);
    fChain->SetBranchAddress("MCSignalParticle_Tauidx", &MCSignalParticle_Tauidx, &b_MCSignalParticle_Tauidx);
@@ -1956,10 +1965,9 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("L1SEEDPrescale", &L1SEEDPrescale, &b_L1SEEDPrescale);
    fChain->SetBranchAddress("L1SEEDInvalidPrescale", &L1SEEDInvalidPrescale, &b_L1SEEDInvalidPrescale);
    fChain->SetBranchAddress("L1SEEDisTechBit", &L1SEEDisTechBit, &b_L1SEEDisTechBit);
-   fChain->SetBranchAddress("MuonTriggerMatch", &MuonTriggerMatch, &b_MuonTriggerMatch);
-   fChain->SetBranchAddress("ElectronTriggerMatch", &ElectronTriggerMatch, &b_ElectronTriggerMatch);
-   fChain->SetBranchAddress("JetTriggerMatch", &JetTriggerMatch, &b_JetTriggerMatch);
-   fChain->SetBranchAddress("TauTriggerMatch", &TauTriggerMatch, &b_TauTriggerMatch);
+   fChain->SetBranchAddress("TriggerMatchMuon", &TriggerMatchMuon, &b_TriggerMatchMuon);
+   fChain->SetBranchAddress("TriggerMatchJet", &TriggerMatchJet, &b_TriggerMatchJet);
+   fChain->SetBranchAddress("TriggerMatchTau", &TriggerMatchTau, &b_TriggerMatchTau);
    fChain->SetBranchAddress("HLTTrigger_objs_Pt", &HLTTrigger_objs_Pt, &b_HLTTrigger_objs_Pt);
    fChain->SetBranchAddress("HLTTrigger_objs_Eta", &HLTTrigger_objs_Eta, &b_HLTTrigger_objs_Eta);
    fChain->SetBranchAddress("HLTTrigger_objs_Phi", &HLTTrigger_objs_Phi, &b_HLTTrigger_objs_Phi);

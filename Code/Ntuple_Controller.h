@@ -715,10 +715,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    unsigned int NHLTL1GTSeeds(unsigned int i){return Ntp->NHLTL1GTSeeds->at(i);}
    unsigned int L1SEEDPrescale(unsigned int i){return Ntp->L1SEEDPrescale->at(i);}
    bool         L1SEEDInvalidPrescale(unsigned int i){return Ntp->L1SEEDInvalidPrescale->at(i);}
-   float        MuonTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->MuonTriggerMatch->at(i).size()) return Ntp->MuonTriggerMatch->at(i).at(j); return 999;}
-   float        ElectronTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->ElectronTriggerMatch->at(i).size()) return Ntp->ElectronTriggerMatch->at(i).at(j);return 999;}
-   float        JetTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->JetTriggerMatch->at(i).size()) return Ntp->JetTriggerMatch->at(i).at(j);return 999;}
-   float        TauTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TauTriggerMatch->at(i).size()) return Ntp->TauTriggerMatch->at(i).at(j);return 999;}
+   float        MuonTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TriggerMatchMuon->at(i).size()) return Ntp->TriggerMatchMuon->at(i).at(j); return 999;}
+   //float        ElectronTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->ElectronTriggerMatch->at(i).size()) return Ntp->ElectronTriggerMatch->at(i).at(j);return 999;}
+   float        JetTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TriggerMatchJet->at(i).size()) return Ntp->TriggerMatchJet->at(i).at(j);return 999;}
+   float        TauTriggerMatch(unsigned int i, unsigned int j){if(j<Ntp->TriggerMatchTau->at(i).size()) return Ntp->TriggerMatchTau->at(i).at(j);return 999;}
    unsigned int NHLTTriggerObject(unsigned int i){return Ntp->HLTTrigger_objs_Eta->at(i).size();}
    TLorentzVector HLTTriggerObject_p4(unsigned int i, unsigned int j){
      TLorentzVector L(0,0,0,0); 
