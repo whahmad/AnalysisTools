@@ -193,7 +193,7 @@ void MuTauSync::doEvent(){
 		}
 		 // Di Jet kinematic variables for VBF selection ==> Two leading pT Jets
 		mjj = selMjj;
-		jdeta = selJetdeta;
+		jdeta = fabs(selJetdeta);
 		njetingap = selNjetingap;
 		 mva = -10;
 		 // variables that go into the VBF MVA
