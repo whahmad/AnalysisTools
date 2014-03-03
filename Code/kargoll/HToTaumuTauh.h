@@ -38,6 +38,7 @@ class HToTaumuTauh : public Selection {
 	  TriLeptonVeto,
 	  OppCharge,
 	  MT,
+	  BJetVeto,
 	  CatCut1,
 	  CatCut2,
 	  CatCut3,
@@ -55,13 +56,11 @@ class HToTaumuTauh : public Selection {
 	enum cuts_OneJetHigh {
 		OneJetNJet = CatCut1,
 		OneJetNoVBF,
-		OneJetNBtagJets,
 		OneJetTauPt,
 		OneJetNCuts
 	};
 	enum cuts_ZeroJetHigh {
 		ZeroJetNJet = CatCut1,
-		ZeroJetNBtagJets,
 		ZeroJetTauPt,
 		ZeroJetNCuts
 	};
@@ -166,7 +165,7 @@ class HToTaumuTauh : public Selection {
   int selVertex;
   int selMuon;
   int selTau;
-  std::vector<int> selKinJets, selBJets;
+  std::vector<int> selJets, selBJets;
   double selMjj, selJetdeta;
   int selNjetingap;
 
@@ -189,7 +188,8 @@ class HToTaumuTauh : public Selection {
   bool selectPFTau_Kinematics(unsigned i);
 
   std::vector<int> sortPFjets();
-  bool selectPFJet_Kinematics(unsigned i, int selectedMuon, int selectedTau);
+  bool selectPFJet_Cleaning(unsigned i, int selectedMuon, int selectedTau);
+  bool selectPFJet_Kinematics(unsigned i);
   bool selectPFJet_Id(unsigned i);
   bool selectBJet(unsigned i, int selectedMuon, int selectedTau);
 
@@ -201,19 +201,19 @@ class HToTaumuTauh : public Selection {
   std::vector<float> cut_VBF, cut_OneJet, cut_ZeroJet, cut_NoCategory;
 
   void configure_VBF();
-  bool category_VBF(std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool category_VBF(std::vector<int> jetCollection);
 
   void configure_OneJetHigh();
-  bool category_OneJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF);
+  bool category_OneJetHigh(int selTau, std::vector<int> jetCollection, bool passedVBF);
 
   void configure_OneJetLow();
-  bool category_OneJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF);
+  bool category_OneJetLow(int selTau, std::vector<int> jetCollection, bool passedVBF);
 
   void configure_ZeroJetHigh();
-  bool category_ZeroJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool category_ZeroJetHigh(int selTau, std::vector<int> jetCollection);
 
   void configure_ZeroJetLow();
-  bool category_ZeroJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool category_ZeroJetLow(int selTau, std::vector<int> jetCollection);
 
   void configure_NoCategory();
   bool category_NoCategory();

@@ -62,7 +62,8 @@ void  HToTaumuTauh::Configure(){
     if(i==NTauKin)			cut.at(NTauKin)=1;
     if(i==TriLeptonVeto)	cut.at(TriLeptonVeto)=0;
     if(i==OppCharge)		cut.at(OppCharge)=0;
-    if(i==MT)				cut.at(MT)=20.0;
+    if(i==MT)				cut.at(MT)=30.0; // https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Event_Categories_SM
+    if(i==BJetVeto)			cut.at(BJetVeto)=0;
     //category-specific values are set in the corresponding configure function
     // set them to dummy value -10.0 here
     cut_VBF.push_back(-10.);
@@ -82,11 +83,9 @@ void  HToTaumuTauh::Configure(){
 
 	  if(i==OneJetNJet) 	cut_OneJet.at(OneJetNJet) = 1;
 	  if(i==OneJetNoVBF)	cut_OneJet.at(OneJetNoVBF)= true;
-	  if(i==OneJetNBtagJets)cut_OneJet.at(OneJetNBtagJets) = 0;
 	  if(i==OneJetTauPt)	cut_OneJet.at(OneJetTauPt) = cCat_splitTauPt;
 
 	  if(i==ZeroJetNJet) 		cut_ZeroJet.at(ZeroJetNJet) = 5;// 0;
-	  if(i==ZeroJetNBtagJets)	cut_ZeroJet.at(ZeroJetNBtagJets)= 0;
 	  if(i==ZeroJetTauPt)		cut_ZeroJet.at(ZeroJetTauPt) = cCat_splitTauPt;
   }
 
@@ -217,6 +216,16 @@ void  HToTaumuTauh::Configure(){
     	hlabel="m_{T}(#mu,E_{T}^{miss})/GeV";
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,50,0.,100.,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,50,0.,100.,hlabel,"Events"));
+    }
+    else if(i_cut==BJetVeto){
+    	title.at(i_cut)="Number b-Jets $<=$";
+    	title.at(i_cut)+=cut.at(BJetVeto);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="Number of b-Jets";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i_cut>=CatCut1){
     	// set histograms to dummy values
@@ -409,7 +418,7 @@ void  HToTaumuTauh::doEvent(){
   selVertex = -1;
   selMuon = -1;
   selTau = -1;
-  selKinJets.clear();
+  selJets.clear();
   selBJets.clear();
   selMjj = -1;
   selJetdeta = -100;
@@ -568,18 +577,10 @@ void  HToTaumuTauh::doEvent(){
 
   // sort jets by corrected pt
   std::vector<int> sortedPFJets = sortPFjets();
-//  bool print = false;
-//  for (unsigned j = 0; j < Ntp->NPFJets(); j++){
-//	  if (j != sortedPFJets.at(j)) print = true;
-//  }
-//  if (print){
-//	  printf("There are %d unsorted and %d sorted jets.\n", Ntp->NPFJets(), sortedPFJets.size());
-//	  for (unsigned j = 0; j < Ntp->NPFJets(); j++){
-//		  printf("   jet %2d with pt= %4.2f       jet %2d with pt= %4.2f \n", j, Ntp->PFJet_p4(j).Pt(), sortedPFJets.at(j), Ntp->PFJet_p4(sortedPFJets.at(j)).Pt());
-//	  }
-//  }
   // select jets for categories
   // PFJet and bjet collections can have mutual elements!
+  std::vector<int> selectedJetsClean;
+  selectedJetsClean.clear();
   std::vector<int> selectedJetsKin;
   selectedJetsKin.clear();
   std::vector<int> selectedJets;
@@ -587,25 +588,32 @@ void  HToTaumuTauh::doEvent(){
   std::vector<int> selectedBJets;
   selectedBJets.clear();
   for (unsigned i_jet = 0; i_jet < Ntp->NPFJets(); i_jet++){
-	  if ( selectPFJet_Kinematics(sortedPFJets.at(i_jet), selMuon, selTau) ) {
-		  selectedJetsKin.push_back(sortedPFJets.at(i_jet));
-		  if ( selectPFJet_Id(sortedPFJets.at(i_jet)) ){
-			  selectedJets.push_back(sortedPFJets.at(i_jet));
+	  if ( selectPFJet_Cleaning(sortedPFJets.at(i_jet), selMuon, selTau)){
+		  selectedJetsClean.push_back(sortedPFJets.at(i_jet));
+		  if ( selectPFJet_Kinematics(sortedPFJets.at(i_jet)) ) {
+			  selectedJetsKin.push_back(sortedPFJets.at(i_jet));
+			  if ( selectPFJet_Id(sortedPFJets.at(i_jet)) ){
+				  selectedJets.push_back(sortedPFJets.at(i_jet));
+			  }
 		  }
 	  }
 	  if ( selectBJet(sortedPFJets.at(i_jet), selMuon, selTau) ) {
 		  selectedBJets.push_back(sortedPFJets.at(i_jet));
 	  }
   }
-  selKinJets = selectedJetsKin;
+  selJets = selectedJetsClean;
   selBJets = selectedBJets;
 
+  // b-Jet veto
+  value.at(BJetVeto) = selectedBJets.size();
+  pass.at(BJetVeto) = (value.at(BJetVeto) <= cut.at(BJetVeto));
+
   // run categories
-  bool passed_VBF 			= category_VBF(selectedJetsKin, selectedBJets);
-  bool passed_OneJetHigh	= category_OneJetHigh(selTau, selectedJetsKin, selectedBJets, passed_VBF);
-  bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJetsKin, selectedBJets, passed_VBF);
-  bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJetsKin, selectedBJets);
-  bool passed_ZeroJetLow	= category_ZeroJetLow(selTau,selectedJetsKin, selectedBJets);
+  bool passed_VBF 			= category_VBF(selectedJets);
+  bool passed_OneJetHigh	= category_OneJetHigh(selTau, selectedJets, passed_VBF);
+  bool passed_OneJetLow		= category_OneJetLow(selTau, selectedJets, passed_VBF);
+  bool passed_ZeroJetHigh	= category_ZeroJetHigh(selTau,selectedJets);
+  bool passed_ZeroJetLow	= category_ZeroJetLow(selTau,selectedJets);
   bool passed_NoCategory	= category_NoCategory();
 
   // fill plot checking if multiple categories have passed, which should never happen
@@ -925,7 +933,7 @@ std::vector<int> HToTaumuTauh::sortPFjets(){
 	return sortedJets;
 }
 
-bool HToTaumuTauh::selectPFJet_Kinematics(unsigned i, int selectedMuon, int selectedTau){
+bool HToTaumuTauh::selectPFJet_Cleaning(unsigned i, int selectedMuon, int selectedTau){
 	// clean against selected muon and tau
 	if (selectedMuon >= 0) {
 		if (Ntp->PFJet_p4(i).DeltaR(Ntp->Muon_p4(selectedMuon)) < cJetClean_dR) return false;
@@ -933,7 +941,11 @@ bool HToTaumuTauh::selectPFJet_Kinematics(unsigned i, int selectedMuon, int sele
 	if (selectedTau >= 0){
 		if (Ntp->PFJet_p4(i).DeltaR(Ntp->PFTau_p4(selectedTau)) < cJetClean_dR) return false;
 	}
+	return true;
+}
 
+
+bool HToTaumuTauh::selectPFJet_Kinematics(unsigned i){
 	if ( 	fabs(Ntp->PFJet_p4(i).Eta()) < cCat_jetEta &&
 			Ntp->PFJet_p4(i).Pt() > cCat_jetPt){
 		return true;
@@ -1023,7 +1035,7 @@ void HToTaumuTauh::configure_VBF(){
 	Nminus1.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
 	Nminus0.at(VbfJetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfJetInvM_",htitle,50,0.,2000.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_VBF(std::vector<int> jetCollection, std::vector<int> bJetCollection){
+bool HToTaumuTauh::category_VBF(std::vector<int> jetCollection){
 	std::vector<float> value_VBF;
 	std::vector<float> pass_VBF;
 
@@ -1089,7 +1101,6 @@ void HToTaumuTauh::configure_OneJetHigh(){
 	// set cut values to be the cut values of this category
 	cut.at(OneJetNJet) = cut_OneJet.at(OneJetNJet);
 	cut.at(OneJetNoVBF) = cut_OneJet.at(OneJetNoVBF);
-	cut.at(OneJetNBtagJets) = cut_OneJet.at(OneJetNBtagJets);
 	cut.at(OneJetTauPt) = cut_OneJet.at(OneJetTauPt);
 
 	// set histograms of category cuts
@@ -1117,16 +1128,6 @@ void HToTaumuTauh::configure_OneJetHigh(){
 	Nminus1.at(OneJetNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetNoVBF_",htitle,2,-0.5,1.5,hlabel,"Events");
 	Nminus0.at(OneJetNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus0__OneJetNoVBF",htitle,2,-0.5,1.5,hlabel,"Events");
 
-	title.at(OneJetNBtagJets)="Number btag jets $<=$";
-	title.at(OneJetNBtagJets)+=cut.at(OneJetNBtagJets);
-	htitle=title.at(OneJetNBtagJets);
-	htitle.ReplaceAll("$","");
-	htitle.ReplaceAll("\\","#");
-	hlabel="Number of btag jets";
-	c="_Cut_";c+=OneJetNBtagJets;
-	Nminus1.at(OneJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(OneJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-
 	title.at(OneJetTauPt)="$p_{T}(\\tau_{h}) >=$";
 	title.at(OneJetTauPt)+=cut.at(OneJetTauPt);
 	title.at(OneJetTauPt)+=" GeV";
@@ -1138,7 +1139,7 @@ void HToTaumuTauh::configure_OneJetHigh(){
 	Nminus1.at(OneJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 	Nminus0.at(OneJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_OneJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF){
+bool HToTaumuTauh::category_OneJetHigh(int selTau, std::vector<int> jetCollection, bool passedVBF){
 	std::vector<float> value_OneJetHigh;
 	std::vector<float> pass_OneJetHigh;
 
@@ -1153,9 +1154,6 @@ bool HToTaumuTauh::category_OneJetHigh(int selTau, std::vector<int> jetCollectio
 
 	value_OneJetHigh.at(OneJetNoVBF) = !passedVBF;
 	pass_OneJetHigh.at(OneJetNoVBF) = ( value_OneJetHigh.at(OneJetNoVBF) == cut_OneJet.at(OneJetNoVBF) );
-
-	value_OneJetHigh.at(OneJetNBtagJets) = bJetCollection.size();
-	pass_OneJetHigh.at(OneJetNBtagJets) = ( value_OneJetHigh.at(OneJetNBtagJets) <= cut_OneJet.at(OneJetNBtagJets) );
 
 	if (selTau == -1){
 		value_OneJetHigh.at(OneJetTauPt) = -10.;
@@ -1193,7 +1191,6 @@ void HToTaumuTauh::configure_OneJetLow(){
 	// set cut values to be the cut values of this category
 	cut.at(OneJetNJet) = cut_OneJet.at(OneJetNJet);
 	cut.at(OneJetNoVBF) = cut_OneJet.at(OneJetNoVBF);
-	cut.at(OneJetNBtagJets) = cut_OneJet.at(OneJetNBtagJets);
 	cut.at(OneJetTauPt) = cut_OneJet.at(OneJetTauPt);
 
 	// set histograms of category cuts
@@ -1221,16 +1218,6 @@ void HToTaumuTauh::configure_OneJetLow(){
 	Nminus1.at(OneJetNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetNoVBF_",htitle,2,-0.5,1.5,hlabel,"Events");
 	Nminus0.at(OneJetNoVBF) = HConfig.GetTH1D(Name+c+"_Nminus0__OneJetNoVBF",htitle,2,-0.5,1.5,hlabel,"Events");
 
-	title.at(OneJetNBtagJets)="Number btag jets $<=$";
-	title.at(OneJetNBtagJets)+=cut.at(OneJetNBtagJets);
-	htitle=title.at(OneJetNBtagJets);
-	htitle.ReplaceAll("$","");
-	htitle.ReplaceAll("\\","#");
-	hlabel="Number of btag jets";
-	c="_Cut_";c+=OneJetNBtagJets;
-	Nminus1.at(OneJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(OneJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-
 	title.at(OneJetTauPt)="$p_{T}(\\tau_{h}) <$";
 	title.at(OneJetTauPt)+=cut.at(OneJetTauPt);
 	title.at(OneJetTauPt)+=" GeV";
@@ -1242,7 +1229,7 @@ void HToTaumuTauh::configure_OneJetLow(){
 	Nminus1.at(OneJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus1_OneJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 	Nminus0.at(OneJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_OneJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF){
+bool HToTaumuTauh::category_OneJetLow(int selTau, std::vector<int> jetCollection, bool passedVBF){
 	std::vector<float> value_OneJetLow;
 	std::vector<float> pass_OneJetLow;
 
@@ -1257,9 +1244,6 @@ bool HToTaumuTauh::category_OneJetLow(int selTau, std::vector<int> jetCollection
 
 	value_OneJetLow.at(OneJetNoVBF) = !passedVBF;
 	pass_OneJetLow.at(OneJetNoVBF) = ( value_OneJetLow.at(OneJetNoVBF) == cut_OneJet.at(OneJetNoVBF) );
-
-	value_OneJetLow.at(OneJetNBtagJets) = bJetCollection.size();
-	pass_OneJetLow.at(OneJetNBtagJets) = ( value_OneJetLow.at(OneJetNBtagJets) <= cut_OneJet.at(OneJetNBtagJets) );
 
 	if (selTau == -1){
 		value_OneJetLow.at(OneJetTauPt) = -10.;
@@ -1296,7 +1280,6 @@ void HToTaumuTauh::configure_ZeroJetHigh(){
 
 	// set cut values to be the cut values of this category
 	cut.at(ZeroJetNJet) = cut_ZeroJet.at(ZeroJetNJet);
-	cut.at(ZeroJetNBtagJets) = cut_ZeroJet.at(ZeroJetNBtagJets);
 	cut.at(ZeroJetTauPt) = cut_ZeroJet.at(ZeroJetTauPt);
 
 	// set histograms of category cuts
@@ -1314,16 +1297,6 @@ void HToTaumuTauh::configure_ZeroJetHigh(){
 	Nminus1.at(ZeroJetNJet) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
 	Nminus0.at(ZeroJetNJet) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
 
-	title.at(ZeroJetNBtagJets)="Number btag jets $<=$";
-	title.at(ZeroJetNBtagJets)+=cut.at(ZeroJetNBtagJets);
-	htitle=title.at(ZeroJetNBtagJets);
-	htitle.ReplaceAll("$","");
-	htitle.ReplaceAll("\\","#");
-	hlabel="Number of btag jets";
-	c="_Cut_";c+=ZeroJetNBtagJets;
-	Nminus1.at(ZeroJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(ZeroJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-
 	title.at(ZeroJetTauPt)="$p_{T}(\\tau_{h}) >=$";
 	title.at(ZeroJetTauPt)+=cut.at(ZeroJetTauPt);
 	title.at(ZeroJetTauPt)+=" GeV";
@@ -1335,7 +1308,7 @@ void HToTaumuTauh::configure_ZeroJetHigh(){
 	Nminus1.at(ZeroJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 	Nminus0.at(ZeroJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_ZeroJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection){
+bool HToTaumuTauh::category_ZeroJetHigh(int selTau, std::vector<int> jetCollection){
 	std::vector<float> value_ZeroJetHigh;
 	std::vector<float> pass_ZeroJetHigh;
 
@@ -1347,9 +1320,6 @@ bool HToTaumuTauh::category_ZeroJetHigh(int selTau, std::vector<int> jetCollecti
 
 	value_ZeroJetHigh.at(ZeroJetNJet) = jetCollection.size();
 	pass_ZeroJetHigh.at(ZeroJetNJet) = ( value_ZeroJetHigh.at(ZeroJetNJet) <= cut_ZeroJet.at(ZeroJetNJet) );
-
-	value_ZeroJetHigh.at(ZeroJetNBtagJets) = bJetCollection.size();
-	pass_ZeroJetHigh.at(ZeroJetNBtagJets) = ( value_ZeroJetHigh.at(ZeroJetNBtagJets) <= cut_ZeroJet.at(ZeroJetNBtagJets) );
 
 	if (selTau == -1){
 		value_ZeroJetHigh.at(ZeroJetTauPt) = -10.;
@@ -1386,7 +1356,6 @@ void HToTaumuTauh::configure_ZeroJetLow(){
 
 	// set cut values to be the cut values of this category
 	cut.at(ZeroJetNJet) = cut_ZeroJet.at(ZeroJetNJet);
-	cut.at(ZeroJetNBtagJets) = cut_ZeroJet.at(ZeroJetNBtagJets);
 	cut.at(ZeroJetTauPt) = cut_ZeroJet.at(ZeroJetTauPt);
 
 	// set histograms of category cuts
@@ -1404,16 +1373,6 @@ void HToTaumuTauh::configure_ZeroJetLow(){
 	Nminus1.at(ZeroJetNJet) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
 	Nminus0.at(ZeroJetNJet) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetNJet_",htitle,11,-0.5,10.5,hlabel,"Events");
 
-	title.at(ZeroJetNBtagJets)="Number btag jets $<=$";
-	title.at(ZeroJetNBtagJets)+=cut.at(ZeroJetNBtagJets);
-	htitle=title.at(ZeroJetNBtagJets);
-	htitle.ReplaceAll("$","");
-	htitle.ReplaceAll("\\","#");
-	hlabel="Number of btag jets";
-	c="_Cut_";c+=ZeroJetNBtagJets;
-	Nminus1.at(ZeroJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(ZeroJetNBtagJets) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetNBtagJets_",htitle,11,-0.5,10.5,hlabel,"Events");
-
 	title.at(ZeroJetTauPt)="$p_{T}(\\tau_{h}) <$";
 	title.at(ZeroJetTauPt)+=cut.at(ZeroJetTauPt);
 	title.at(ZeroJetTauPt)+=" GeV";
@@ -1425,7 +1384,7 @@ void HToTaumuTauh::configure_ZeroJetLow(){
 	Nminus1.at(ZeroJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus1_ZeroJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 	Nminus0.at(ZeroJetTauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetTauPt_",htitle,50,0.,200.,hlabel,"Events");
 }
-bool HToTaumuTauh::category_ZeroJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection){
+bool HToTaumuTauh::category_ZeroJetLow(int selTau, std::vector<int> jetCollection){
 	std::vector<float> value_ZeroJetLow;
 	std::vector<float> pass_ZeroJetLow;
 
@@ -1437,9 +1396,6 @@ bool HToTaumuTauh::category_ZeroJetLow(int selTau, std::vector<int> jetCollectio
 
 	value_ZeroJetLow.at(ZeroJetNJet) = jetCollection.size();
 	pass_ZeroJetLow.at(ZeroJetNJet) = ( value_ZeroJetLow.at(ZeroJetNJet) <= cut_ZeroJet.at(ZeroJetNJet) );
-
-	value_ZeroJetLow.at(ZeroJetNBtagJets) = bJetCollection.size();
-	pass_ZeroJetLow.at(ZeroJetNBtagJets) = ( value_ZeroJetLow.at(ZeroJetNBtagJets) <= cut_ZeroJet.at(ZeroJetNBtagJets) );
 
 	if (selTau == -1){
 		value_ZeroJetLow.at(ZeroJetTauPt) = -10.;
