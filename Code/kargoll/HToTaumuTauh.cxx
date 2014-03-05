@@ -11,10 +11,12 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   cMu_relIso(0.1),
   cMu_pt(20.0),
   cMu_eta(2.1),
+  cMu_dRHltMatch(0.5),
   cTau_pt(20.0),
   cTau_eta(2.3),
   cTau_rawIso(1.5),
-  cMuTau_dR(0.3),
+  cMuTau_dR(0.5),
+  cTau_dRHltMatch(0.5),
   cMuTriLep_pt(10.0),
   cMuTriLep_eta(2.4),
   cEleTriLep_pt(10.0),
@@ -32,8 +34,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	cTriggerNames = temp;
 
 	// implemented categories:
-	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement b-tagging categories
-	// TODO: implement b-tag veto in all categories
+	// VBF, OneJetHigh, OneJetLow, ZeroJetHigh, ZeroJetLow, NoCategory //TODO: implement new categories from legacy paper
 	categoryFlag = "NoCategory";
 }
 
@@ -56,7 +57,7 @@ void  HToTaumuTauh::Configure(){
     if(i==PrimeVtx)     	cut.at(PrimeVtx)=1;
     if(i==NMuId)			cut.at(NMuId)=1;
     if(i==NMuKin)			cut.at(NMuKin)=1;
-    if(i==DiMuonVeto)		cut.at(DiMuonVeto)=false;
+    if(i==DiMuonVeto)		cut.at(DiMuonVeto)=0.15;
     if(i==NTauId)			cut.at(NTauId)=1;
     if(i==NTauIso)			cut.at(NTauIso)=1;
     if(i==NTauKin)			cut.at(NTauKin)=1;
@@ -148,13 +149,14 @@ void  HToTaumuTauh::Configure(){
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_NMuKin_",htitle,6,-0.5,5.5,hlabel,"Events"));
     }
     else if(i_cut==DiMuonVeto){
-    	title.at(i_cut)="Veto on $\\mu_{veto}$ pair";
+    	title.at(i_cut)="$\\Delta R(\\mu_{veto}^{+},\\mu_{veto}^{-}) <$";
+    	title.at(i_cut)+=cut.at(DiMuonVeto);
     	htitle=title.at(i_cut);
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
-    	hlabel="Veto on #mu_{veto} pair";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_DiMuonVeto_",htitle,2,-0.5,1.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_DiMuonVeto_",htitle,2,-0.5,1.5,hlabel,"Events"));
+    	hlabel="#DeltaR(#mu_{veto}^{+},#mu_{veto}^{-})";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_DiMuonVeto_",htitle,100,0.,5.0,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_DiMuonVeto_",htitle,100,0.,5.0,hlabel,"Events"));
     }
     else if(i_cut==NTauId){
     	title.at(i_cut)="Number $\\tau_{ID} >=$";
@@ -214,7 +216,7 @@ void  HToTaumuTauh::Configure(){
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="m_{T}(#mu,E_{T}^{miss})/GeV";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,50,0.,100.,hlabel,"Events"));
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_BJetVeto_",htitle,50,0.,100.,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,50,0.,100.,hlabel,"Events"));
     }
     else if(i_cut==BJetVeto){
@@ -224,8 +226,8 @@ void  HToTaumuTauh::Configure(){
     	htitle.ReplaceAll("$","");
     	htitle.ReplaceAll("\\","#");
     	hlabel="Number of b-Jets";
-    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_",htitle,11,-0.5,10.5,hlabel,"Events"));
-    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_BJetVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_BJetVeto_",htitle,11,-0.5,10.5,hlabel,"Events"));
     }
     else if(i_cut>=CatCut1){
     	// set histograms to dummy values
@@ -269,6 +271,7 @@ void  HToTaumuTauh::Configure(){
   MuSelEta=HConfig.GetTH1D(Name+"_MuSelEta","MuSelEta",50,-2.5,2.5,"#eta(#mu_{sel})");
   MuSelPhi=HConfig.GetTH1D(Name+"_MuSelPhi","MuSelPhi",50,-3.14159,3.14159,"#phi(#mu_{sel})");
   MuSelFakesTauID=HConfig.GetTH1D(Name+"_MuSelFakesTauID","MuSelFakesTauID",2,-0.5,1.5,"#mu_{sel} fakes #tau_{h}");
+  MuSelDrHlt=HConfig.GetTH1D(Name+"_MuSelDrHlt","MuSelDrHLT",50,0.,1.,"#DeltaR(#mu_{sel},#mu_{HLT})");
 
   TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,200.,"p_{T}(#tau)/GeV");
   TauEta=HConfig.GetTH1D(Name+"_TauEta","TauEta",50,-2.5,2.5,"#eta(#tau)");
@@ -277,12 +280,14 @@ void  HToTaumuTauh::Configure(){
   TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,200.,"p_{T}(#tau_{sel})/GeV");
   TauSelEta=HConfig.GetTH1D(Name+"_TauSelEta","TauSelEta",50,-2.5,2.5,"#eta(#tau_{sel})");
   TauSelPhi=HConfig.GetTH1D(Name+"_TauSelPhi","TauSelPhi",50,-3.14159,3.14159,"#phi(#tau_{sel})");
+  TauSelDrHlt=HConfig.GetTH1D(Name+"_TauSelDrHlt","TauSelDrHLT",50,0.,1.,"#DeltaR(#tau_{sel},#tau_{HLT})");
 
   MuVetoDPtSelMuon=HConfig.GetTH1D(Name+"_MuVetoDPtSelMuon","MuVetoDPtSelMuon",100,-100.,100.,"#Deltap_{T}(#mu_{veto},#mu)/GeV");
   MuVetoInvM=HConfig.GetTH1D(Name+"_MuVetoInvM","MuVetoInvM",100,0.,200,"m_{inv}(#mu_{veto}^{1},#mu_{veto}^{2})/GeV");
   MuVetoPtPositive=HConfig.GetTH1D(Name+"_MuVetoPtPositive","MuVetoPtPositive",50,0.,200.,"p_{T}(#mu_{veto}^{+})/GeV");
   MuVetoPtNegative=HConfig.GetTH1D(Name+"_MuVetoPtNegative","MuVetoPtNegative",50,0.,200.,"p_{T}(#mu_{veto}^{-})/GeV");
   MuVetoDRTau=HConfig.GetTH1D(Name+"_MuVetoDRTau","MuVetoDRTau",50,0.,5.,"#DeltaR(#mu_{veto},#tau_{h})");
+  MuVetoDeltaR=HConfig.GetTH1D(Name+"_MuVetoDeltaR","MuVetoDeltaR",50,0.,5.,"#DeltaR(#mu^{+}_{veto},#mu^{-}_{veto})");
 
   NMuonTriLepVeto=HConfig.GetTH1D(Name+"_NMuonTriLepVeto","NMuonTriLepVeto",5,-0.5,4.5,"N(#mu_{3l veto})");
   NElecTriLepVeto=HConfig.GetTH1D(Name+"_NElecTriLepVeto","NElecTriLepVeto",5,-0.5,4.5,"N(e_{3l veto})");
@@ -372,6 +377,7 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MuVetoPtPositive);
  Extradist1d.push_back(&MuVetoPtNegative);
  Extradist1d.push_back(&MuVetoDRTau);
+ Extradist1d.push_back(&MuVetoDeltaR);
 
  Extradist1d.push_back(&NMuonTriLepVeto);
  Extradist1d.push_back(&NElecTriLepVeto);
@@ -496,8 +502,13 @@ void  HToTaumuTauh::doEvent(){
 		  }
 	  }
   }
-  value.at(DiMuonVeto) = (diMuonVetoMuonsPositive.size() >= 1 && diMuonVetoMuonsNegative.size() >= 1);
-  pass.at(DiMuonVeto)=(value.at(DiMuonVeto) == cut.at(DiMuonVeto));
+  if (diMuonVetoMuonsPositive.size() == 0 || diMuonVetoMuonsNegative.size() == 0){
+	  value.at(DiMuonVeto) = 0.0;
+  }
+  else{
+	  value.at(DiMuonVeto) = Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)) );
+  }
+  pass.at(DiMuonVeto) = (value.at(DiMuonVeto) < cut.at(DiMuonVeto));
 
   // Tau cuts
   std::vector<int> selectedTausId;
@@ -716,6 +727,7 @@ void  HToTaumuTauh::doEvent(){
 	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
 	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
 	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
+	  MuVetoDeltaR.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))), w );
   }
 
   if(passedObjects && pass.at(DiMuonVeto)){
@@ -804,11 +816,47 @@ double HToTaumuTauh::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2);
 }
 
+double HToTaumuTauh::matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType){
+	unsigned int id = 0;
+	TLorentzVector particle(0.,0.,0.,0.);
+	TLorentzVector triggerObj(0.,0.,0.,0.);
+	if(objectType=="tau"){
+		id = 84;
+		particle = Ntp->PFTau_p4(i_obj);
+	}
+	if(objectType=="muon"){
+		id = 83;
+		particle = Ntp->Muon_p4(i_obj);
+	}
+
+	double minDR = 100.;
+	for(unsigned i_trig = 0; i_trig < trigger.size(); i_trig++){
+		for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
+			if(Ntp->HLTTrigger_objs_trigger(i).find(trigger.at(i_trig)) != string::npos){
+				for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
+					if(Ntp->HLTTrigger_objs_Id(i,j)==id){
+						triggerObj.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
+								Ntp->HLTTrigger_objs_Eta(i,j),
+								Ntp->HLTTrigger_objs_Phi(i,j),
+								Ntp->HLTTrigger_objs_E(i,j));
+					}
+					if( triggerObj.Pt()>0. && particle.Pt()>0. ) {
+						double dr = particle.DeltaR(triggerObj);
+						if (dr < minDR) minDR = dr;
+					}
+				}
+			}
+		}
+	}
+	return minDR;
+}
+
 ///////// Muons
 
 bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
-		Ntp->Muon_RelIso(i) < cMu_relIso
+		Ntp->Muon_RelIso(i) < cMu_relIso &&
+		matchTrigger(i,cTriggerNames,"muon") < cMu_dRHltMatch
 			){
 		return true;
 	}
@@ -856,16 +904,16 @@ bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsign
 ///////// Electrons
 bool HToTaumuTauh::selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int> muonCollection){
 	// check if elec is matched to a muon, if so this is not a good elec (should become obsolete when using top projections)
-	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
-	  if( Ntp->Electron_p4(i).DeltaR(Ntp->Muon_p4(*it_mu)) < cMuTau_dR ) {
-		  return false;
-	  }
-	}
+//	for(std::vector<int>::iterator it_mu = muonCollection.begin(); it_mu != muonCollection.end(); ++it_mu){
+//	  if( Ntp->Electron_p4(i).DeltaR(Ntp->Muon_p4(*it_mu)) < cMuTau_dR ) {
+//		  return false;
+//	  }
+//	}
 
 	if ( 	Ntp->isSelectedElectron(i,i_vtx,0.045,0.2) &&
 			//TODO: This electron isolation is using rho corrections, but should use deltaBeta corrections
 			//documentation: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaEARhoCorrection
-			Ntp->Electron_RelIso04(i) < 0.3 &&
+			Ntp->Electron_RelIso03(i) < 0.3 && // "For electron the default cone size if 0.3" https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaPFBasedIsolation#Alternate_code_to_calculate_PF_I
 			Ntp->Electron_p4(i).Pt() > 10.0 &&
 			fabs(Ntp->Electron_p4(i).Eta()) < 2.5
 			){
@@ -894,6 +942,11 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 		  return false;
 	  }
 	}
+	// trigger matching
+	if (matchTrigger(i,cTriggerNames,"tau") > cMu_dRHltMatch) {
+		return false;
+	}
+
 	if ( 	selectPFTau_Id(i) ){
 		return true;
 	}

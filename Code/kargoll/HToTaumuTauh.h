@@ -96,6 +96,7 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuSelEta;
   std::vector<TH1D> MuSelPhi;
   std::vector<TH1D> MuSelFakesTauID;
+  std::vector<TH1D> MuSelDrHlt;
 
   std::vector<TH1D> TauPt;
   std::vector<TH1D> TauEta;
@@ -104,12 +105,14 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> TauSelPt;
   std::vector<TH1D> TauSelEta;
   std::vector<TH1D> TauSelPhi;
+  std::vector<TH1D> TauSelDrHlt;
 
   std::vector<TH1D> MuVetoDPtSelMuon;
   std::vector<TH1D> MuVetoInvM;
   std::vector<TH1D> MuVetoPtPositive;
   std::vector<TH1D> MuVetoPtNegative;
   std::vector<TH1D> MuVetoDRTau;
+  std::vector<TH1D> MuVetoDeltaR;
 
   std::vector<TH1D> NMuonTriLepVeto;
   std::vector<TH1D> NElecTriLepVeto;
@@ -152,8 +155,8 @@ class HToTaumuTauh : public Selection {
 
 
   // cut values
-  double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
-  double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR;
+  double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta, cMu_dRHltMatch;
+  double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR, cTau_dRHltMatch;
   double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
   double cCat_jetPt, cCat_jetEta, cCat_bjetPt, cCat_bjetEta, cCat_btagDisc, cCat_splitTauPt, cJetClean_dR;
@@ -173,6 +176,8 @@ class HToTaumuTauh : public Selection {
   // function definitions
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+
+  double matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType);
 
   bool selectMuon_Id(unsigned i, unsigned vertex);
   bool selectMuon_Kinematics(unsigned i);
