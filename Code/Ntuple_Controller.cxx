@@ -494,6 +494,19 @@ bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,u
   return false;
 }
 
+bool Ntuple_Controller::AmbiguitySolver(std::vector<bool> A1Fit, std::vector<bool> EventFit, std::vector<double> Probs,   int &IndexToReturn, bool &AmbuguityPoint){
+ 
+  if(EventFit.at(0) == true && EventFit.at(1) == false && EventFit.at(2) == false){IndexToReturn =0; AmbuguityPoint = true; return true;}
+  if(EventFit.at(1) == true && EventFit.at(2) == false){ IndexToReturn = 1;AmbuguityPoint = false;return true;}
+  if(EventFit.at(1) == false && EventFit.at(2) == true){ IndexToReturn = 2;AmbuguityPoint = false;return true;}
+  
+  if((A1Fit.at(1) == true && A1Fit.at(2) == true) && (EventFit.at(1) == true && EventFit.at(2) == true)){
+    if(Probs.at(1)  >Probs.at(2) ){ IndexToReturn  =1;AmbuguityPoint = false;return true;}
+    if(Probs.at(1)  <Probs.at(2) ){ IndexToReturn  =2;AmbuguityPoint = false;return true;}
+  }
+  return false; 
+}
+
 
 
 
@@ -631,4 +644,61 @@ TVector3 Ntuple_Controller::PF_Tau_FlightLegth3d_TauFrame(unsigned int i){
   Res(4,0)=f.Theta();
   TMatrixT<double> Resp=MultiProngTauSolver::RotateToTauFrame(Res);
   return TVector3(Resp(0,0),Resp(1,0),Resp(2,0));
+}
+
+
+bool Ntuple_Controller::CheckDecayID(int jak1, int jak2){
+  bool decayid= false;
+  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
+    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
+      std::cout<<" Ntp->MCTau_JAK-> "<< Ntp->MCTau_JAK->at(0)<<std::endl;
+      if(Ntp->MCTau_JAK->at(0) == jak1 and Ntp->MCTau_JAK->at(1) ==jak2 ){ decayid = true;}
+      else if(Ntp->MCTau_JAK->at(0) ==jak2  and Ntp->MCTau_JAK->at(1) ==jak1){decayid  = true;}
+    }
+  }
+  return decayid;
+}
+
+
+TLorentzVector Ntuple_Controller::GetTruthTauLV(int jak){
+  TLorentzVector tau(0,0,0,0);
+  bool DecayOK = false;
+  unsigned int tauIndex;
+  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
+    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
+      if(Ntp->MCTau_JAK->at(0) == jak){tauIndex=0; DecayOK = true;}
+      else if(  Ntp->MCTau_JAK->at(1) ==jak ){ tauIndex=1; DecayOK = true;}
+      if(DecayOK){
+	tau = TLorentzVector(Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(1),Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(2),
+			     Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(3),Ntp->MCTauandProd_p4->at(Ntp->MCSignalParticle_Tauidx->at(iz).at(tauIndex)).at(0).at(0));
+	
+      }
+    }
+  }
+  return tau; 
+}
+TLorentzVector Ntuple_Controller::GetTruthTauProductLV(int jak, int pdgID){
+  TLorentzVector tauProd(0,0,0,0);
+  bool DecayOK = false;
+  unsigned int tauIndex;
+  for(int iz =0; iz<Ntp->MCSignalParticle_p4->size(); iz++){
+    if(Ntp->MCSignalParticle_Tauidx->at(iz).size()!=0){
+      if(Ntp->MCTau_JAK->at(0) == jak){tauIndex=0; DecayOK = true;}
+      else if(  Ntp->MCTau_JAK->at(1) ==jak ){ tauIndex=1; DecayOK = true;}
+      if(DecayOK){
+	unsigned int NDec;
+	if(0<=tauIndex && tauIndex<NMCTaus()){ NDec = Ntp->MCTauandProd_p4->at(tauIndex).size();}
+	else NDec= 0;
+	for(int iProd =0; iProd < NDec; iProd++ ){
+	  if(abs( Ntp->MCTauandProd_pdgid->at(tauIndex).at(iProd))==pdgID){
+	    //if( Ntp->MCTauandProd_pdgid->at(tauIndex).at(iProd)==pdgID){
+	      tauProd = TLorentzVector(Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(1),Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(2),
+				       Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(3),Ntp->MCTauandProd_p4->at(tauIndex).at(iProd).at(0));
+	      // }
+	  }
+	}
+      }
+    }
+  }
+    return tauProd;
 }

@@ -43,6 +43,7 @@
 #include "SimpleFits/FitSoftware/interface/MultiProngTauSolver.h"
 #include "SimpleFits/FitSoftware/interface/ErrorMatrixPropagator.h"
 #include "SimpleFits/FitSoftware/interface/TauA1NuConstrainedFitter.h"
+#include "SimpleFits/FitSoftware/interface/DiTauConstrainedFitter.h"
 ///////////////////////////////////////////////////////////////////////////////
 //*****************************************************************************
 //*
@@ -340,6 +341,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
+
+
+
+
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
      if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 && Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
        // Tau Solver
@@ -356,7 +361,54 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      }
      return false;
    }
-   
+
+
+   bool EventFit(unsigned int i, unsigned int MuonIndex, LorentzVectorParticle TauA1, LorentzVectorParticle &theZ,std::vector<LorentzVectorParticle> &Daughters,double &LC_chi2, int &Niterat, double &csum){ 
+     TrackParticle Muon = Muon_TrackParticle(MuonIndex); 
+     
+     if(Ntp->PFTau_TIP_secondaryVertex_vtxchi2->at(i).size()==1 &&   
+ 	Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){ 
+       // Tau Solver 
+       TVector3 pv=PFTau_TIP_primaryVertex_pos(i); 
+       TMatrixTSym<double> pvcov=PFTau_TIP_primaryVertex_cov(i); 
+       TVector3 MuonPoca(Ntp->Muon_Poca->at(MuonIndex).at(0),Ntp->Muon_Poca->at(MuonIndex).at(1),Ntp->Muon_Poca->at(MuonIndex).at(2)); 
+       
+       DiTauConstrainedFitter Z2Tau(TauA1,Muon, pv,pvcov); 
+       
+       Z2Tau.SetMaxDelta(0.5); 
+       Z2Tau.SetNIterMax(1000); 
+       Z2Tau.SetEpsilon(0.001); 
+
+       bool fitStatus= Z2Tau.Fit(); 
+       if(fitStatus && Z2Tau.isConverged()){ 
+ 	 Daughters = Z2Tau.GetReFitDaughters(); 
+ 	 LorentzVectorParticle TZ=Z2Tau.GetMother(); 
+ 	 theZ = Z2Tau.GetMother(); 
+ 	 LorentzVectorParticle TauMuInitialEstimate =Z2Tau.GetTauMuEstimate(); 
+	 
+	 
+ 	 daughter=Z2Tau.GetReFitDaughters(); 
+ 	 LC_chi2=Z2Tau.ChiSquare(); 
+ 	 Niterat = (int)Z2Tau.NIter(); 
+ 	 csum = Z2Tau.CSum(); 
+	 
+ 	 return  true; 
+       } 
+     } 
+     return false; 
+   } 
+   bool AmbiguitySolver(std::vector<bool> A1Fit, std::vector<bool> EventFit, std::vector<double> Probs,   int &IndexToReturn, bool &AmbuguityPoint);
+
+
+
+
+
+
+
+
+
+
+
    ////////////////////////////////////////////////
    // wrapper for backwards compatibility to KFit do not use in new code!!!
    int NKFTau(){return NPFTaus();}
@@ -599,6 +651,12 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    }
    bool hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &idx);
    bool hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx);
+
+
+   TLorentzVector  GetTruthTauLV(int jak);
+   TLorentzVector  GetTruthTauProductLV(int jak, int pdgID);
+   bool         CheckDecayID(int jak1, int jak2);
+
 
    bool jethasMuonOverlap(unsigned int jet_idx,unsigned int &muon_idx);
    bool muonhasJetOverlap(unsigned int muon_idx,unsigned int &jet_idx);

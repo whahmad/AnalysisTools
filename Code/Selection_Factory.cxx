@@ -1,6 +1,7 @@
 #include "Selection_Factory.h"
 
 #include "Example.h"
+#include "EFExample.h"
 #include "TauSpinExample.h"
 #ifdef USE_cherepanov
 #include "cherepanov/Validation.h"
@@ -41,6 +42,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
 
   // ensuring code will compile independently of user code
   if(Analysis.Contains("example"))s=new Example(Analysis,UncertType);
+  if(Analysis.Contains("efexample"))s=new EFExample(Analysis,UncertType);
   else if(Analysis.Contains("tauspinexample"))s=new TauSpinExample(Analysis,UncertType);
 #ifdef USE_cherepanov
   else if(Analysis.Contains("validation"))s=new Validation(Analysis,UncertType);

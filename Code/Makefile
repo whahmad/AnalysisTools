@@ -41,6 +41,7 @@ TARGETS       =	Ntuple_Controller \
 		SkimConfig \
 		HistoConfig \
 		Example \
+		EFExample \
 		TauSolver \
 		TauSpinExample \
 		TauSpinerInterface
