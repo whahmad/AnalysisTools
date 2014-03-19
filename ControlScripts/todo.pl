@@ -889,7 +889,8 @@ if( $ARGV[0] eq "--GRID" ){
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
     printf("\nTo compile the code in the workdir: source compile --useRoot $OutputDir/workdir$set/root/ $UserDir ");
     printf("\nTo submit jobs to the GRID: source Submit ");
-    printf("\nTo combine jobs submitted to the batch queue: source Combine  \n");
+    printf("\nTo check the status of the GRID jobs and download finished jobs: source CheckandGet.sh");
+    printf("\nTo additionally print the details of all the jobs: source CheckandGet.sh  --detailed");
     printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile  --useRoot $OutputDir/workdir$set/root/ $UserDir; cd $OutputDir/workdir$set/Set_1; source Set_1.sh; cd ..\n");
     
 } 
