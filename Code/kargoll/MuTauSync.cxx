@@ -135,16 +135,16 @@ void MuTauSync::doEvent(){
 		mvacov10 = Ntp->MET_CorrMVA_significance_xy();
 		mvacov11 = Ntp->MET_CorrMVA_significance_yy();
 		// First jet: leading jet after applying Jet energy corrections (excluding hadronic Tau)
-		if (selKinJets.size() > 0){
-			jpt_1 = Ntp->PFJet_p4(selKinJets.at(0)).Pt();
-			jeta_1 = Ntp->PFJet_p4(selKinJets.at(0)).Eta();
-			jphi_1 = Ntp->PFJet_p4(selKinJets.at(0)).Phi();
+		if (selJets.size() > 0){
+			jpt_1 = Ntp->PFJet_p4(selJets.at(0)).Pt();
+			jeta_1 = Ntp->PFJet_p4(selJets.at(0)).Eta();
+			jphi_1 = Ntp->PFJet_p4(selJets.at(0)).Phi();
 			jptraw_1 = -10;
 			jptunc_1 = -10;
-			jmva_1 = Ntp->PFJet_PUJetID_discr(selKinJets.at(0));
+			jmva_1 = Ntp->PFJet_PUJetID_discr(selJets.at(0));
 			jlrm_1 = -10;
 			jctm_1 = -10;
-			jpass_1 = int(Ntp->PFJet_PUJetID_looseWP(selKinJets.at(0)));
+			jpass_1 = int(Ntp->PFJet_PUJetID_looseWP(selJets.at(0)));
 		}
 		else {
 			jpt_1 = -20;
@@ -158,16 +158,16 @@ void MuTauSync::doEvent(){
 			jpass_1 = -20;
 		}
 		 // Second Jet : 2nd leading jet (in pt) afer applying Jet energy corrections (excluding Tau)
-		if (selKinJets.size() > 1){
-			jpt_2 = Ntp->PFJet_p4(selKinJets.at(1)).Pt();
-			jeta_2 = Ntp->PFJet_p4(selKinJets.at(1)).Eta();
-			jphi_2 = Ntp->PFJet_p4(selKinJets.at(1)).Phi();
+		if (selJets.size() > 1){
+			jpt_2 = Ntp->PFJet_p4(selJets.at(1)).Pt();
+			jeta_2 = Ntp->PFJet_p4(selJets.at(1)).Eta();
+			jphi_2 = Ntp->PFJet_p4(selJets.at(1)).Phi();
 			jptraw_2 = -10;
 			jptunc_2 = -10;
-			jmva_2 = Ntp->PFJet_PUJetID_discr(selKinJets.at(1));
+			jmva_2 = Ntp->PFJet_PUJetID_discr(selJets.at(1));
 			jlrm_2 = -10;
 			jctm_2 = -10;
-			jpass_2 = int(Ntp->PFJet_PUJetID_looseWP(selKinJets.at(1)));
+			jpass_2 = int(Ntp->PFJet_PUJetID_looseWP(selJets.at(1)));
 		}
 		else {
 			jpt_2 = -20;
@@ -206,7 +206,7 @@ void MuTauSync::doEvent(){
 		 // number of btags passing btag id (pt > 20)
 		nbtag = selBJets.size();
 		 // number of jets passing jet id ( pt > 30 )
-		njets = selKinJets.size();
+		njets = selJets.size();
 		njetspt20 = -10;
 		 // mva output for e+mu channel
 		mva_gf = -10;

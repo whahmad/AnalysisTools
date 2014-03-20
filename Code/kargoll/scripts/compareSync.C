@@ -2,6 +2,11 @@
 #include "TTree.h"
 #include "TString.h"
 
+void runSync(){
+	compareSync("MuTau_TauPlusX","Aachen","/net/scratch_cms/institut_3b/kargoll/SyncExercise/TauPlusX2012A/workdirAnalysis_Feb_26_2014/","MuTauSyncTree_TauPlusX2012A","syncTree","London","/afs/cern.ch/work/a/agilbert/public/PaperSync_v6","SYNCFILE_Data_mt_2012","TauCheck");
+	compareSync("MuTau_VBF","Aachen","/net/scratch_cms/institut_3b/kargoll/SyncExercise/VBFHToTauTauM125/workdirAnalysis_Feb_26_2014","MuTauSyncTree_VBFHToTauTauM125","syncTree","London","/afs/cern.ch/work/a/agilbert/public/PaperSync_v6","SYNCFILE_VBF_HToTauTau_M-125_mt_2012","TauCheck");
+	gROOT->ProcessLine(".q");
+}
 
 void drawHistos(TCanvas * C, TString filename, TString category, TTree* Tmine, TTree* Tother,TString var, int nbins, float xmin, float xmax, TString selection, TString myGroup, TString myRootFile, TString group, TString groupRootFile,TString mySel="1",TString groupSel="1"){
 
@@ -83,6 +88,7 @@ void drawHistos(TCanvas * C, TString filename, TString category, TTree* Tmine, T
   HDiff->GetXaxis()->SetNdivisions(-1);
   HDiff->GetXaxis()->SetTitle("");
   HDiff->GetXaxis()->SetLabelSize(0.0001);
+  HDiff->SetMarkerStyle(kFullDotMedium);
   HDiff->SetMarkerColor(2);
   HDiff->Draw("histp");
   TLine line;
@@ -140,7 +146,7 @@ void compareSync(TString channel,TString myGroup,TString myPath,TString myRootFi
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"npv",50,0,50,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"rho",40,0,40,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"puweight",25,-.1,0.9,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"puweight",100,-.1,2.1,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"mvis",50,0,200,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
@@ -158,6 +164,8 @@ void compareSync(TString channel,TString myGroup,TString myPath,TString myRootFi
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"phi_2",60,-3.2,3.2,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"eta_2",60,-3,3,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"m_2",100,-0.5,3.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"m_2",80,0.130,0.150,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"m_2",50,0.139,0.140,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"q_2",3,-1.5,1.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"d0_2",80,-0.04,0.04,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"dZ_2",60,-0.15,0.15,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
@@ -178,29 +186,55 @@ void compareSync(TString channel,TString myGroup,TString myPath,TString myRootFi
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"mvacov01",40,0,1000,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"mvacov11",40,0,1000,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpt_1",50,0,300,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpt_1",50,0,200,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jeta_1",50,-5,5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jphi_1",60,-3.2,3.2,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jmva_1",200,-1.1,1.1,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpass_1",2,-.5,1.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpt_2",50,0,300,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpt_2",50,0,200,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jeta_2",50,-5,5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jphi_2",60,-3.2,3.2,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jmva_2",200,-1.1,1.1,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"jpass_2",2,-.5,1.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"bpt",200,0.,2.0,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"bpt",50,0.,200.0,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"beta",50,-5,5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
   drawHistos(&C,filename,"inclusive",Tmine,Tother,"bphi",60,-3.2,3.2,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"mjj",100,0.,1000.0,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"jdeta",50,0.,10.,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"njetingap",5,0.5,4.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  //drawHistos(&C,filename,"inclusive",Tmine,Tother,"mjj",100,0.,1000.0,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  //drawHistos(&C,filename,"inclusive",Tmine,Tother,"jdeta",50,0.,10.,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  //drawHistos(&C,filename,"inclusive",Tmine,Tother,"njetingap",5,-0.5,4.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"nbtag",6,0.5,5.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
-  drawHistos(&C,filename,"inclusive",Tmine,Tother,"njets",11,0.5,10.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"nbtag",6,-0.5,5.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"njets",11,-0.5,10.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+
+  // composite variables
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"q_1*q_2",3,-1.5,1.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"inclusive",Tmine,Tother,"q_1+q_2",5,-2.5,2.5,selection,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+
+  // other preselections
+  TString mtSel = "mt_1 < 30.";
+  drawHistos(&C,filename,"mTCut",Tmine,Tother,"q_1*q_2",3,-1.5,1.5,mtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,"mTCut",Tmine,Tother,"q_1+q_2",5,-2.5,2.5,mtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+
+  TString jet1PtSel = "jpt_1 > 30.";
+  drawHistos(&C,filename,jet1PtSel,Tmine,Tother,"jpt_1",50,0,200,jet1PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet1PtSel,Tmine,Tother,"jeta_1",50,-5,5,jet1PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet1PtSel,Tmine,Tother,"jphi_1",60,-3.2,3.2,jet1PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet1PtSel,Tmine,Tother,"jmva_1",200,-1.1,1.1,jet1PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet1PtSel,Tmine,Tother,"jpass_1",2,-.5,1.5,jet1PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  TString jet2PtSel = "jpt_2 > 30.";
+  drawHistos(&C,filename,jet2PtSel,Tmine,Tother,"jpt_2",50,0,200,jet2PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet2PtSel,Tmine,Tother,"jeta_2",50,-5,5,jet2PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet2PtSel,Tmine,Tother,"jphi_2",60,-3.2,3.2,jet2PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet2PtSel,Tmine,Tother,"jmva_2",200,-1.1,1.1,jet2PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jet2PtSel,Tmine,Tother,"jpass_2",2,-.5,1.5,jet2PtSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  TString jetSel = "(jpt_1>30)&&(jpt_2>30)&&(fabs(jeta_1)<4.7)&&(fabs(jeta_2)<4.7)&&(jpass_1)&&(jpass_2)";
+  drawHistos(&C,filename,jetSel,Tmine,Tother,"mjj",100,0.,1000.0,jetSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jetSel,Tmine,Tother,"jdeta",50,0.,10.,jetSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
+  drawHistos(&C,filename,jetSel,Tmine,Tother,"njetingap",5,-0.5,4.5,jetSel,myGroup,myRootFile,group,groupRootFile,mySel,groupSel);
 
   C.Print(filename+"]");
-  gROOT->ProcessLine(".q");
+  //gROOT->ProcessLine(".q");
 }

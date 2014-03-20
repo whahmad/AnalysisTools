@@ -38,35 +38,63 @@ class HToTaumuTauh : public Selection {
 	  TriLeptonVeto,
 	  OppCharge,
 	  MT,
+	  BJetVeto,
 	  CatCut1,
 	  CatCut2,
 	  CatCut3,
 	  CatCut4,
+	  CatCut5,
 	  NCuts};
 
   	// cuts in categories
-	enum cuts_VBF {
-		VbfNJet	= CatCut1,
-		VbfDeltaEta,
-		VbfNJetRapGap,
-		VbfJetInvM,
-		VbfNCuts
+	enum cuts_VBFTight {
+		VbfTight_NJet	= CatCut1,
+		VbfTight_DeltaEta,
+		VbfTight_NJetRapGap,
+		VbfTight_JetInvM,
+		VbfTight_HiggsPt,
+		VbfTight_NCuts
+	};
+	enum cuts_VBFLoose {
+		VbfLoose_NJet	= CatCut1,
+		VbfLoose_DeltaEta,
+		VbfLoose_NJetRapGap,
+		VbfLoose_JetInvM,
+		VbfLoose_NotVbfTight,
+		VbfLoose_NCuts
+	};
+	enum cuts_OneJetLow {
+		OneJetLow_NJet = CatCut1,
+		OneJetLow_NotVbf,
+		OneJetLow_TauPt,
+		OneJetLow_NCuts
 	};
 	enum cuts_OneJetHigh {
-		OneJetNJet = CatCut1,
-		OneJetNoVBF,
-		OneJetNBtagJets,
-		OneJetTauPt,
-		OneJetNCuts
+		OneJetHigh_NJet = CatCut1,
+		OneJetHigh_NotVbf,
+		OneJetHigh_TauPt,
+		OneJetHigh_HiggsPt,
+		OneJetHigh_NCuts
+	};
+	enum cuts_OneJetBoost {
+		OneJetBoost_NJet = CatCut1,
+		OneJetBoost_NotVbf,
+		OneJetBoost_TauPt,
+		OneJetBoost_HiggsPt,
+		OneJetBoost_NCuts
 	};
 	enum cuts_ZeroJetHigh {
-		ZeroJetNJet = CatCut1,
-		ZeroJetNBtagJets,
-		ZeroJetTauPt,
-		ZeroJetNCuts
+		ZeroJetHigh_NJet = CatCut1,
+		ZeroJetHigh_TauPt,
+		ZeroJetHigh_NCuts
+	};
+	enum cuts_ZeroJetLow {
+		ZeroJetLow_NJet = CatCut1,
+		ZeroJetLow_TauPt,
+		ZeroJetLow_NCuts
 	};
 	enum cuts_NoCategory {
-		NoCategoryNCuts = CatCut1
+		NoCategory_NCuts = CatCut1
 	};
 
  protected:
@@ -97,6 +125,7 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuSelEta;
   std::vector<TH1D> MuSelPhi;
   std::vector<TH1D> MuSelFakesTauID;
+  std::vector<TH1D> MuSelDrHlt;
 
   std::vector<TH1D> TauPt;
   std::vector<TH1D> TauEta;
@@ -105,12 +134,15 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> TauSelPt;
   std::vector<TH1D> TauSelEta;
   std::vector<TH1D> TauSelPhi;
+  std::vector<TH1D> TauSelDrHlt; // todo: not filled at the moment
+  std::vector<TH1D> TauSelDecayMode;
 
   std::vector<TH1D> MuVetoDPtSelMuon;
   std::vector<TH1D> MuVetoInvM;
   std::vector<TH1D> MuVetoPtPositive;
   std::vector<TH1D> MuVetoPtNegative;
   std::vector<TH1D> MuVetoDRTau;
+  std::vector<TH1D> MuVetoDeltaR;
 
   std::vector<TH1D> NMuonTriLepVeto;
   std::vector<TH1D> NElecTriLepVeto;
@@ -151,10 +183,15 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> BJet1Eta;
   std::vector<TH1D> BJet1Phi;
 
+  std::vector<TH1D> HiggsPt; // todo
+  std::vector<TH1D> HiggsPhi;
+  std::vector<TH1D> JetsDEta;
+  std::vector<TH1D> JetsInEtaGap;
+  std::vector<TH1D> JetsInvM;
 
   // cut values
-  double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta;
-  double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR;
+  double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta, cMu_dRHltMatch;
+  double cTau_pt, cTau_eta, cTau_rawIso, cMuTau_dR, cTau_dRHltMatch;
   double cMuTriLep_pt, cMuTriLep_eta, cEleTriLep_pt, cEleTriLep_eta;
   std::vector<TString> cTriggerNames;
   double cCat_jetPt, cCat_jetEta, cCat_bjetPt, cCat_bjetEta, cCat_btagDisc, cCat_splitTauPt, cJetClean_dR;
@@ -166,7 +203,7 @@ class HToTaumuTauh : public Selection {
   int selVertex;
   int selMuon;
   int selTau;
-  std::vector<int> selKinJets, selBJets;
+  std::vector<int> selJets, selBJets;
   double selMjj, selJetdeta;
   int selNjetingap;
 
@@ -174,6 +211,8 @@ class HToTaumuTauh : public Selection {
   // function definitions
   double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
   double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
+
+  double matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType);
 
   bool selectMuon_Id(unsigned i, unsigned vertex);
   bool selectMuon_Kinematics(unsigned i);
@@ -189,7 +228,8 @@ class HToTaumuTauh : public Selection {
   bool selectPFTau_Kinematics(unsigned i);
 
   std::vector<int> sortPFjets();
-  bool selectPFJet_Kinematics(unsigned i, int selectedMuon, int selectedTau);
+  bool selectPFJet_Cleaning(unsigned i, int selectedMuon, int selectedTau);
+  bool selectPFJet_Kinematics(unsigned i);
   bool selectPFJet_Id(unsigned i);
   bool selectBJet(unsigned i, int selectedMuon, int selectedTau);
 
@@ -198,26 +238,36 @@ class HToTaumuTauh : public Selection {
   }
 
   // categories
-  std::vector<float> cut_VBF, cut_OneJet, cut_ZeroJet, cut_NoCategory;
+  std::vector<float> cut_VBFTight, cut_VBFLoose;
+  std::vector<float> cut_OneJetHigh, cut_OneJetLow, cut_OneJetBoost;
+  std::vector<float> cut_ZeroJetHigh, cut_ZeroJetLow;
+  std::vector<float> cut_NoCategory;
 
-  void configure_VBF();
-  bool category_VBF(std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool migrateCategoryIntoMain(TString thisCategory, std::vector<float> categoryValueVector, std::vector<float> categoryPassVector, int categoryNCuts);
+
+  void configure_VBFTight();
+  bool category_VBFTight(unsigned NJets, double DEta, int NJetsInGap, double Mjj, double higgsPt);
+
+  void configure_VBFLoose();
+  bool category_VBFLoose(unsigned NJets, double DEta, int NJetsInGap, double Mjj, bool passedVBFTight);
 
   void configure_OneJetHigh();
-  bool category_OneJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF);
+  bool category_OneJetHigh(unsigned NJets, double TauPt, double higgsPt, bool passedVBF);
 
   void configure_OneJetLow();
-  bool category_OneJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection, bool passedVBF);
+  bool category_OneJetLow(unsigned NJets, double TauPt, bool passedVBF);
+
+  void configure_OneJetBoost();
+  bool category_OneJetBoost(unsigned NJets, double TauPt, double higgsPt, bool passedVBF);
 
   void configure_ZeroJetHigh();
-  bool category_ZeroJetHigh(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool category_ZeroJetHigh(unsigned NJets, double TauPt);
 
   void configure_ZeroJetLow();
-  bool category_ZeroJetLow(int selTau, std::vector<int> jetCollection, std::vector<int> bJetCollection);
+  bool category_ZeroJetLow(unsigned NJets, double TauPt);
 
   void configure_NoCategory();
   bool category_NoCategory();
-
 
  private:
   // everything is in protected to be accessible by derived classes
