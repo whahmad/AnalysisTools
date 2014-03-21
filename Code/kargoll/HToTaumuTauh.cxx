@@ -1167,8 +1167,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="Number of Jet_{VBF}";
 	c="_Cut_";c+=VbfTight_NJet;
-	Nminus1.at(VbfTight_NJet) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_NJet_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(VbfTight_NJet) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_NJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus1.at(VbfTight_NJet) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_NJet_",htitle,6,-0.5,5.5,hlabel,"Events");
+	Nminus0.at(VbfTight_NJet) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_NJet_",htitle,6,-0.5,5.5,hlabel,"Events");
 
 	title.at(VbfTight_DeltaEta)="$\\Delta\\eta(jj) >$";
 	title.at(VbfTight_DeltaEta)+=cut.at(VbfTight_DeltaEta);
@@ -1177,8 +1177,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="#Delta#eta(Jet_{VBF}^{1},Jet_{VBF}^{2})";
 	c="_Cut_";c+=VbfTight_DeltaEta;
-	Nminus1.at(VbfTight_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_DeltaEta_",htitle,50,-10.,10.,hlabel,"Events");
-	Nminus0.at(VbfTight_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus0__VbfTight_DeltaEta",htitle,50,-10.,10.,hlabel,"Events");
+	Nminus1.at(VbfTight_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_DeltaEta_",htitle,32,-8.,8.,hlabel,"Events");
+	Nminus0.at(VbfTight_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_DeltaEta_",htitle,32,-8.,8.,hlabel,"Events");
 
 	title.at(VbfTight_NJetRapGap)="Number Jets in $\\eta$ gap $<=$";
 	title.at(VbfTight_NJetRapGap)+=cut.at(VbfTight_NJetRapGap);
@@ -1187,8 +1187,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="Number of Jet_{VBF} in rapidity gap";
 	c="_Cut_";c+=VbfTight_NJetRapGap;
-	Nminus1.at(VbfTight_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_NJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(VbfTight_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_NJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus1.at(VbfTight_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_NJetRapGap_",htitle,6,-0.5,5.5,hlabel,"Events");
+	Nminus0.at(VbfTight_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_NJetRapGap_",htitle,6,-0.5,5.5,hlabel,"Events");
 
 	title.at(VbfTight_JetInvM)="$m_{jj}(VBF) >$";
 	title.at(VbfTight_JetInvM)+=cut.at(VbfTight_JetInvM);
@@ -1198,8 +1198,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="m_{inv}(jj) of VBF-jets";
 	c="_Cut_";c+=VbfTight_JetInvM;
-	Nminus1.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_JetInvM_",htitle,50,0.,2000.,hlabel,"Events");
-	Nminus0.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_JetInvM_",htitle,50,0.,2000.,hlabel,"Events");
+	Nminus1.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
+	Nminus0.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
 
 	title.at(VbfTight_HiggsPt)="$p_{T}(H) >$";
 	title.at(VbfTight_HiggsPt)+=cut.at(VbfTight_HiggsPt);
@@ -1209,8 +1209,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="p_{T} of Higgs candidate";
 	c="_Cut_";c+=VbfTight_HiggsPt;
-	Nminus1.at(VbfTight_HiggsPt) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_HiggsPt_",htitle,50,0.,200.,hlabel,"Events");
-	Nminus0.at(VbfTight_HiggsPt) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_HiggsPtM_",htitle,50,0.,200.,hlabel,"Events");
+	Nminus1.at(VbfTight_HiggsPt) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_HiggsPt_",htitle,25,0.,250.,hlabel,"Events");
+	Nminus0.at(VbfTight_HiggsPt) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_HiggsPt_",htitle,25,0.,250.,hlabel,"Events");
 }
 bool HToTaumuTauh::category_VBFTight(unsigned NJets, double DEta, int NJetsInGap, double Mjj, double higgsPt){
 	std::vector<float> value_VBFTight;
@@ -1270,8 +1270,8 @@ void HToTaumuTauh::configure_VBFLoose(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="Number of Jet_{VBF}";
 	c="_Cut_";c+=VbfLoose_NJet;
-	Nminus1.at(VbfLoose_NJet) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_NJet_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(VbfLoose_NJet) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_NJet_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus1.at(VbfLoose_NJet) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_NJet_",htitle,6,-0.5,5.5,hlabel,"Events");
+	Nminus0.at(VbfLoose_NJet) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_NJet_",htitle,6,-0.5,5.5,hlabel,"Events");
 
 	title.at(VbfLoose_DeltaEta)="$\\Delta\\eta(jj) >$";
 	title.at(VbfLoose_DeltaEta)+=cut.at(VbfLoose_DeltaEta);
@@ -1280,8 +1280,8 @@ void HToTaumuTauh::configure_VBFLoose(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="#Delta#eta(Jet_{VBF}^{1},Jet_{VBF}^{2})";
 	c="_Cut_";c+=VbfLoose_DeltaEta;
-	Nminus1.at(VbfLoose_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_DeltaEta_",htitle,50,-10.,10.,hlabel,"Events");
-	Nminus0.at(VbfLoose_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus0__VbfLoose_DeltaEta",htitle,50,-10.,10.,hlabel,"Events");
+	Nminus1.at(VbfLoose_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_DeltaEta_",htitle,32,-8.,8.,hlabel,"Events");
+	Nminus0.at(VbfLoose_DeltaEta) = HConfig.GetTH1D(Name+c+"_Nminus0__VbfLoose_DeltaEta",htitle,32,-8.,8.,hlabel,"Events");
 
 	title.at(VbfLoose_NJetRapGap)="Number Jets in $\\eta$ gap $<=$";
 	title.at(VbfLoose_NJetRapGap)+=cut.at(VbfLoose_NJetRapGap);
@@ -1290,8 +1290,8 @@ void HToTaumuTauh::configure_VBFLoose(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="Number of Jet_{VBF} in rapidity gap";
 	c="_Cut_";c+=VbfLoose_NJetRapGap;
-	Nminus1.at(VbfLoose_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_NJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
-	Nminus0.at(VbfLoose_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_NJetRapGap_",htitle,11,-0.5,10.5,hlabel,"Events");
+	Nminus1.at(VbfLoose_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_NJetRapGap_",htitle,6,-0.5,5.5,hlabel,"Events");
+	Nminus0.at(VbfLoose_NJetRapGap) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_NJetRapGap_",htitle,6,-0.5,5.5,hlabel,"Events");
 
 	title.at(VbfLoose_JetInvM)="$m_{jj}(VBF) >$";
 	title.at(VbfLoose_JetInvM)+=cut.at(VbfLoose_JetInvM);
@@ -1301,8 +1301,8 @@ void HToTaumuTauh::configure_VBFLoose(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="m_{inv}(jj) of VBF-jets";
 	c="_Cut_";c+=VbfLoose_JetInvM;
-	Nminus1.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_JetInvM_",htitle,50,0.,2000.,hlabel,"Events");
-	Nminus0.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_JetInvM_",htitle,50,0.,2000.,hlabel,"Events");
+	Nminus1.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
+	Nminus0.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
 
 	title.at(VbfLoose_NotVbfTight)="Not VBFTight $==$";
 	title.at(VbfLoose_NotVbfTight)+=cut.at(VbfLoose_NotVbfTight);
