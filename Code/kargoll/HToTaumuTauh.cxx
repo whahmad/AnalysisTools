@@ -676,9 +676,9 @@ void  HToTaumuTauh::doEvent(){
   pass.at(BJetVeto) = (value.at(BJetVeto) <= cut.at(BJetVeto));
 
   // store pt of selected tau for categories
-  double tauPt = -10;
+  double tauPt = -12;
   if (selTau != -1){
-	  double tauPt = Ntp->PFTau_p4(selTau).Pt();
+	  tauPt = Ntp->PFTau_p4(selTau).Pt();
   }
 
   // calculate pt of higgs candidate
@@ -744,7 +744,8 @@ void  HToTaumuTauh::doEvent(){
 
   NCatFired.at(t).Fill(nCat);
 
-
+  //if (!(passed_VBFTight || passed_VBFLoose || passed_OneJetHigh|| passed_OneJetLow || passed_OneJetBoost || passed_ZeroJetHigh || passed_ZeroJetLow))
+	//	  std::cout << "************* NO CATEGORY PASSED! ****************" << std::endl;
 
   bool status=AnalysisCuts(t,w,wobs); // true only if full selection passed
 
@@ -1428,7 +1429,7 @@ bool HToTaumuTauh::category_OneJetLow(unsigned NJets, double TauPt, bool passedV
 
 
 	// migrate into main analysis if this is chosen category
-	categoryPass = categoryPass && migrateCategoryIntoMain("OneJetLow",value_OneJetLow, pass_OneJetLow,OneJetLow_NCuts);
+	categoryPass = migrateCategoryIntoMain("OneJetLow",value_OneJetLow, pass_OneJetLow,OneJetLow_NCuts) && categoryPass;
 	return categoryPass;
 }
 
@@ -1521,7 +1522,7 @@ bool HToTaumuTauh::category_OneJetHigh(unsigned NJets, double TauPt, double higg
 	pass_OneJetHigh.at(OneJetHigh_HiggsPt) = (value_OneJetHigh.at(OneJetHigh_HiggsPt) < cut_OneJetHigh.at(OneJetHigh_HiggsPt));
 
 	// migrate into main analysis if this is chosen category
-	categoryPass = categoryPass && migrateCategoryIntoMain("OneJetHigh",value_OneJetHigh, pass_OneJetHigh,OneJetHigh_NCuts);
+	categoryPass = migrateCategoryIntoMain("OneJetHigh",value_OneJetHigh, pass_OneJetHigh,OneJetHigh_NCuts) && categoryPass;
 	return categoryPass;
 }
 
@@ -1582,7 +1583,7 @@ void HToTaumuTauh::configure_OneJetBoost(){
 	Nminus0.at(OneJetBoost_HiggsPt) = HConfig.GetTH1D(Name+c+"_Nminus0_OneJetBoost_HiggsPt_",htitle,50,0.,200.,hlabel,"Events");
 }
 bool HToTaumuTauh::category_OneJetBoost(unsigned NJets, double TauPt, double higgsPt, bool passedVBF){
-	bool categoryPass;
+	bool categoryPass = true;
 	std::vector<float> value_OneJetBoost;
 	std::vector<float> pass_OneJetBoost;
 
@@ -1614,7 +1615,7 @@ bool HToTaumuTauh::category_OneJetBoost(unsigned NJets, double TauPt, double hig
 	pass_OneJetBoost.at(OneJetBoost_HiggsPt) = (value_OneJetBoost.at(OneJetBoost_HiggsPt) >= cut_OneJetBoost.at(OneJetBoost_HiggsPt));
 
 	// migrate into main analysis if this is chosen category
-	categoryPass = categoryPass && migrateCategoryIntoMain("OneJetBoost",value_OneJetBoost, pass_OneJetBoost,OneJetBoost_NCuts);
+	categoryPass = migrateCategoryIntoMain("OneJetBoost",value_OneJetBoost, pass_OneJetBoost,OneJetBoost_NCuts) && categoryPass;
 	return categoryPass;
 }
 
@@ -1652,13 +1653,13 @@ void HToTaumuTauh::configure_ZeroJetHigh(){
 	Nminus0.at(ZeroJetHigh_TauPt) = HConfig.GetTH1D(Name+c+"_Nminus0_ZeroJetHigh_TauPt_",htitle,50,0.,200.,hlabel,"Events");
 }
 bool HToTaumuTauh::category_ZeroJetHigh(unsigned NJets, double TauPt){
-	bool categoryPass;
+	bool categoryPass = true;
 	std::vector<float> value_ZeroJetHigh;
 	std::vector<float> pass_ZeroJetHigh;
 
 	// cut implementation
 	for(int i=0; i<NCuts;i++){
-	value_ZeroJetHigh.push_back(-10.);
+	value_ZeroJetHigh.push_back(-11.);
 	pass_ZeroJetHigh.push_back(false);
 	}
 
@@ -1679,7 +1680,7 @@ bool HToTaumuTauh::category_ZeroJetHigh(unsigned NJets, double TauPt){
 
 
 	// migrate into main analysis if this is chosen category
-	categoryPass = categoryPass && migrateCategoryIntoMain("ZeroJetHigh",value_ZeroJetHigh, pass_ZeroJetHigh,ZeroJetHigh_NCuts);
+	categoryPass = migrateCategoryIntoMain("ZeroJetHigh",value_ZeroJetHigh, pass_ZeroJetHigh,ZeroJetHigh_NCuts) && categoryPass;
 	return categoryPass;
 }
 
@@ -1718,15 +1719,10 @@ void HToTaumuTauh::configure_ZeroJetLow(){
 }
 
 bool HToTaumuTauh::category_ZeroJetLow(unsigned NJets, double TauPt) {
-	bool categoryPass;
-	std::vector<float> value_ZeroJetLow;
-	std::vector<float> pass_ZeroJetLow;
+	bool categoryPass = true;
+	std::vector<float> value_ZeroJetLow(NCuts,-10);
+	std::vector<float> pass_ZeroJetLow(NCuts,false);
 
-	// cut implementation
-	for(int i=0; i<NCuts;i++){
-	value_ZeroJetLow.push_back(-10.);
-	pass_ZeroJetLow.push_back(false);
-	}
 
 	value_ZeroJetLow.at(ZeroJetLow_NJet) = NJets;
 	pass_ZeroJetLow.at(ZeroJetLow_NJet) = ( value_ZeroJetLow.at(ZeroJetLow_NJet) <= cut_ZeroJetLow.at(ZeroJetLow_NJet) );
@@ -1745,7 +1741,7 @@ bool HToTaumuTauh::category_ZeroJetLow(unsigned NJets, double TauPt) {
 
 
 	// migrate into main analysis if this is chosen category
-	categoryPass = categoryPass && migrateCategoryIntoMain("ZeroJetLow",value_ZeroJetLow, pass_ZeroJetLow,ZeroJetLow_NCuts);
+	categoryPass = migrateCategoryIntoMain("ZeroJetLow",value_ZeroJetLow, pass_ZeroJetLow,ZeroJetLow_NCuts) && categoryPass;
 	return categoryPass;
 }
 
@@ -1779,6 +1775,7 @@ bool HToTaumuTauh::category_NoCategory(){
 bool HToTaumuTauh::migrateCategoryIntoMain(TString thisCategory, std::vector<float> categoryValueVector, std::vector<float> categoryPassVector, int categoryNCuts) {
 	bool catPassed = true;
 	for (unsigned i_cut = CatCut1; i_cut < NCuts; i_cut++) {
+
 		// migrate only if this category is the chosen one
 		if (categoryFlag == thisCategory) {
 			if (i_cut < categoryNCuts) {
@@ -1790,8 +1787,10 @@ bool HToTaumuTauh::migrateCategoryIntoMain(TString thisCategory, std::vector<flo
 				pass.at(i_cut) = true;
 			}
 		}
-		// calculate if category passed
-		catPassed = catPassed && categoryPassVector.at(i_cut);
+		if (i_cut < categoryNCuts) {
+			catPassed = catPassed && categoryPassVector.at(i_cut);
+		}
 	}
+
 	return catPassed;
 }
