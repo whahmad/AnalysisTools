@@ -490,7 +490,7 @@ void  HToTaumuTauh::doEvent(){
   
   double wobs=1;
   double w;
-  if(!Ntp->isData()){w = Ntp->EvtWeight3D();}
+  if(!Ntp->isData()){w = Ntp->PUWeight();}
   else{w=1;}
 
   // Apply Selection
@@ -633,8 +633,8 @@ void  HToTaumuTauh::doEvent(){
   else{
 	  double pT 	= Ntp->Muon_p4(selMuon).Pt();
 	  double phi	= Ntp->Muon_p4(selMuon).Phi();
-	  double eTmiss = Ntp->MET_CorrMVA_et();
-	  double eTmPhi = Ntp->MET_CorrMVA_phi();
+	  double eTmiss = Ntp->MET_CorrMVAMuTau_et();
+	  double eTmPhi = Ntp->MET_CorrMVAMuTau_phi();
 	  value.at(MT)	= transverseMass(pT,phi,eTmiss,eTmPhi);
   }
   if (cut.at(MT) == 999) // set to 999 to disable mt cut
@@ -687,7 +687,7 @@ void  HToTaumuTauh::doEvent(){
   if (selMuon != -1 && selTau != -1){
 	  TVector3 muon3Vec = Ntp->Muon_p4(selMuon).Vect();
 	  TVector3 tau3Vec = Ntp->PFTau_p4(selTau).Vect();
-	  TVector3 met3Vec = TVector3(Ntp->MET_CorrMVA_ex(),Ntp->MET_CorrMVA_ey(),0);
+	  TVector3 met3Vec = TVector3(Ntp->MET_CorrMVAMuTau_ex(),Ntp->MET_CorrMVAMuTau_ey(),0);
 
 	  higgsPt = (muon3Vec + tau3Vec + met3Vec).Pt();
 	  higgsPhi = (muon3Vec + tau3Vec + met3Vec).Phi();
@@ -860,8 +860,8 @@ void  HToTaumuTauh::doEvent(){
 	  TauCharge.at(t).Fill( Ntp->PFTau_Charge(selTau), w);
 
 	  // MET
-	  MetPt.at(t).Fill( Ntp->MET_CorrMVA_et(), w);
-	  MetPhi.at(t).Fill( Ntp->MET_CorrMVA_phi(), w);
+	  MetPt.at(t).Fill( Ntp->MET_CorrMVAMuTau_et(), w);
+	  MetPhi.at(t).Fill( Ntp->MET_CorrMVAMuTau_phi(), w);
 
 	  // Jets
 	  NJetsKin.at(t).Fill( selectedJetsKin.size(), w);
