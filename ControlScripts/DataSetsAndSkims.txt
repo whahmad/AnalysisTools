@@ -346,7 +346,9 @@ HplusBWB
 /pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/TTToHplusBWB_M-80_8TeV_ext-pythia6-tauola/Production_2014_Feb_18_hplusbwb_m80_Feb_19_2014_hr13_min32/0fa4c5e0ec6a262b713d4835850c75bb
 /pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/TTToHplusBWB_M-120_8TeV_ext-pythia6-tauola/Production_2014_Feb_18_hplusbwb_m120_Feb_19_2014_hr13_min32/0fa4c5e0ec6a262b713d4835850c75bb
 /pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/TTToHplusBWB_M-160_8TeV_ext-pythia6-tauola/Production_2014_Feb_18_hplusbwb_m160_Feb_19_2014_hr13_min32/0fa4c5e0ec6a262b713d4835850c75bb
-ID= 16 AllEvt= 3000000.000000 AllEvtErr= 1732.050807 SelEvt= 945583.000000  SelEvtErr= 972.410978 AllEvtnoweight= 3000000.000000 SelEvtnoweight= 945583.000000 Eff(weight)= 0.315194 Eff(noweight)= 0.315194 Nfile= 1202 
+ID= 16 AllEvt= 1000000.000000 AllEvtErr= 1000.000001 SelEvt= 327815.000000 SelEvtErr= 572.551316 AllEvtnoweight= 1000000.000000 SelEvtnoweight= 327815.000000 Eff(weight)= 0.327815 Eff(noweight)= 0.327815 Nfile= 401
+ID= 16 AllEvt= 1000000.000000 AllEvtErr= 1000.000000 SelEvt= 320948.000000 SelEvtErr= 566.522768 AllEvtnoweight= 1000000.000000 SelEvtnoweight= 320948.000000 Eff(weight)= 0.320948 Eff(noweight)= 0.320948 Nfile= 400
+ID= 16 AllEvt= 1000000.000000 AllEvtErr= 999.999998  SelEvt= 296820.000000 SelEvtErr= 544.811945 AllEvtnoweight= 1000000.000000 SelEvtnoweight= 296820.000000 Eff(weight)= 0.296820 Eff(noweight)= 0.296820 Nfile= 401
 
 w_lnu
 /pnfs/physik.rwth-aachen.de/cms/store/user/cherepan/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/Production_2014_Feb_18_wlnu_v1_Feb_19_2014_hr13_min32/0fa4c5e0ec6a262b713d4835850c75bb
