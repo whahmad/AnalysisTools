@@ -589,7 +589,7 @@ if( $ARGV[0] eq "--DCache" ){
 		    if($c =~ m/root/){
                         $myfile=$c;
                     }
-		    system(sprintf("echo \"dccp  dcap://grid-dcap.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
+		    system(sprintf("echo \"dccp  dcap://grid-dcap-extern.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
 		    system(sprintf("echo \"File:  /user/scratch/$UserID/$myfile \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
 		    system(sprintf("echo \"rm -rf /user/scratch/$UserID/$myfile  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
 		    $A++;
@@ -864,7 +864,7 @@ if( $ARGV[0] eq "--GRID" ){
                         $myfile=$e;
                     }
 
-		    system(sprintf("echo \"dccp  dcap://$dcapgridsite/$DS$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
+		    system(sprintf("echo \"dccp  dcap://grid-dcap-extern.physik.rwth-aachen.de/$DS/$file . \"  >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
 		    system(sprintf("echo \"File:  /user/scratch/$UserID/$myfile \"     >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
 		    system(sprintf("echo \"File:  dcap://$dcapgridsite/$DS/$myfile \"     >> $OutputDir/workdir$set/Set_$B/Inputgrid.txt")) ;
 		    $A++;
