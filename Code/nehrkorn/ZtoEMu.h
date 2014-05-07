@@ -70,6 +70,27 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_vetos;
   std::vector<TH1D> invmass_only_object_id;
   
+  std::vector<TH1D> invmass_zmass_m;
+  std::vector<TH1D> invmass_ptbalance_m;
+  std::vector<TH1D> invmass_mtmu_m;
+  std::vector<TH1D> invmass_jetveto_m;
+  std::vector<TH1D> invmass_vetos_m;
+  std::vector<TH1D> invmass_only_object_id_m;
+
+  std::vector<TH1D> invmass_dimuon_only;
+  std::vector<TH1D> invmass_trilepton_only;
+  std::vector<TH1D> invmass_charge_only;
+  std::vector<TH1D> invmass_jetveto_only;
+  std::vector<TH1D> invmass_mtmu_only;
+  std::vector<TH1D> invmass_ptbalance_only;
+
+  std::vector<TH1D> invmass_ptmu_gr20;
+  std::vector<TH1D> invmass_ptmu_sm20;
+  std::vector<TH1D> invmass_jetsum_gr70;
+  std::vector<TH1D> invmass_jetsum_sm70;
+  std::vector<TH1D> invmass_ptbal_gr30;
+  std::vector<TH1D> invmass_ptbal_sm30;
+
   std::vector<TH1D> nm0_met;
   std::vector<TH1D> nm0_jetsum;
   std::vector<TH1D> nm0_onejet;
@@ -77,11 +98,16 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nm0_ptbalance;
   
   std::vector<TH1D> NPV;
+  std::vector<TH1D> NPV3d;
   std::vector<TH1D> num_interactions;
   std::vector<TH1D> evtweight;
   
   std::vector<TH1D> met;
   std::vector<TH1D> met_xycorr;
+  std::vector<TH1D> met_t1;
+  std::vector<TH1D> met_t1txy;
+  std::vector<TH1D> met_t0rtt1;
+  std::vector<TH1D> met_t0rtt1txy;
   std::vector<TH1D> met_uncorr;
   std::vector<TH1D> onejet;
   std::vector<TH1D> mte_mtmu;
@@ -93,6 +119,21 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> NbJetsVtxM;
   std::vector<TH1D> NbJetsVtxT;
 
+  // binning tests
+  std::vector<TH1D> etaE_offBins;
+  std::vector<TH1D> etaE_manyBins;
+  std::vector<TH1D> etaMu_offBins;
+  std::vector<TH1D> etaMu_manyBins;
+
+  // cross checks
+  std::vector<TH1D> mtmu_metgr30;
+  std::vector<TH1D> mtmu_metsm30;
+  std::vector<TH1D> fakelepton_ss;
+  std::vector<TH1D> fakelepton_os;
+  std::vector<TH1D> mtmu_t1;
+  std::vector<TH1D> mtmu_t1txy;
+  std::vector<TH1D> mtmu_t0pct1txy;
+
   // comparison of generators
 
   std::vector<TH1D> zpt;
@@ -103,6 +144,9 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> leadingjet_eta;
   std::vector<TH1D> subleadingjet_eta;
   std::vector<TH1D> jetsumcustom;
+
+  std::vector<TH1D> ptbal_chargepass;
+  std::vector<TH1D> ptbal_chargefail;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance;
   int n_mu,n_e;
@@ -182,6 +226,7 @@ class ZtoEMu : public Selection {
 
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   double FakerateWW(unsigned int idx, std::string type);
+  double FakerateWWerror(unsigned int idx, std::string type);
   
   TFile* FRFile;
   TFile* EmbEffFile;
@@ -210,7 +255,7 @@ class ZtoEMu : public Selection {
   TGraphAsymmErrors* MuIsoEff21;
   TGraphAsymmErrors* MuIsoEff24;
 
-  TGraphAsymmErrors* SingleEle15;
+  /*TGraphAsymmErrors* SingleEle15;
   TGraphAsymmErrors* SingleEle25;
   TGraphAsymmErrors* DoubleEleLead15;
   TGraphAsymmErrors* DoubleEleLead25;
@@ -225,7 +270,24 @@ class ZtoEMu : public Selection {
   TGraphAsymmErrors* DoubleMuLead25;
   TGraphAsymmErrors* DoubleMuTrail12;
   TGraphAsymmErrors* DoubleMuTrail21;
-  TGraphAsymmErrors* DoubleMuTrail25;
+  TGraphAsymmErrors* DoubleMuTrail25;*/
+
+  TH1D* SingleEle15;
+  TH1D* SingleEle25;
+  TH1D* DoubleEleLead15;
+  TH1D* DoubleEleLead25;
+  TH1D* DoubleEleTrail15;
+  TH1D* DoubleEleTrail25;
+  TH1D* SingleMu08;
+  TH1D* SingleMu12;
+  TH1D* SingleMu21;
+  TH1D* SingleMu25;
+  TH1D* DoubleMuLead12;
+  TH1D* DoubleMuLead21;
+  TH1D* DoubleMuLead25;
+  TH1D* DoubleMuTrail12;
+  TH1D* DoubleMuTrail21;
+  TH1D* DoubleMuTrail25;
 
   TGraphAsymmErrors* EleFake1;
   TGraphAsymmErrors* EleFake15;
