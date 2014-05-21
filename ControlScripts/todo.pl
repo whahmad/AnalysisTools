@@ -661,6 +661,7 @@ if( $ARGV[0] eq "--GRID" ){
     # Setup file to retrieve jobs
     system(sprintf("cp $dir/CheckandGet.sh $OutputDir/workdir$set/"));
     system(sprintf("cp $dir/Purge_Jobs.sh $OutputDir/workdir$set/"));
+    system(sprintf("cp $dir/JobStatus.sh $OutputDir/workdir$set/"));
 
     # generate compile script 
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/compile "));
@@ -890,6 +891,10 @@ if( $ARGV[0] eq "--GRID" ){
     
     # Finish Submit script
     system(sprintf("echo \"cd  $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit"));
+    system(sprintf("echo \"echo 'number of jobs submitted:'\" >> $OutputDir/workdir$set/Submit"));
+    system(sprintf("echo \"cat jobs_submitted | grep -c Set_\" >> $OutputDir/workdir$set/Submit"));
+    system(sprintf("echo \"echo 'total number of sets in this directory:'\" >> $OutputDir/workdir$set/Submit"));
+    system(sprintf("echo \"ls -l | grep -c Set_\" >> $OutputDir/workdir$set/Submit"));
     system(sprintf("echo \"rm -rf /user/scratch/$UserID/$myfile  \"    >> $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh"));
 
     # print Instructions
