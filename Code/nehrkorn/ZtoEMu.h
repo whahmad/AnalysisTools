@@ -42,6 +42,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> RelIsoE;
   std::vector<TH1D> RelIsoMu;
   std::vector<TH1D> EPt;
+  std::vector<TH1D> EEt;
   std::vector<TH1D> MuPt;
   std::vector<TH1D> mtMu;
   std::vector<TH1D> mtE;
@@ -52,7 +53,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> NJetsLoose;
   std::vector<TH1D> NJetsMedium;
   std::vector<TH1D> NJetsTight;
-  std::vector<TH1D> NJetsOwn;
   std::vector<TH1D> PUJetId;
   std::vector<TH1D> chargesum;
   std::vector<TH1D> drmue;
@@ -61,7 +61,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> chargesumsigned;
   std::vector<TH1D> FirstJetPt;
   std::vector<TH1D> SecondJetPt;
-  std::vector<TH1D> jeteta;
   
   std::vector<TH1D> invmass_zmass;
   std::vector<TH1D> invmass_ptbalance;
@@ -82,14 +81,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_charge_only;
   std::vector<TH1D> invmass_jetveto_only;
   std::vector<TH1D> invmass_mtmu_only;
-  std::vector<TH1D> invmass_ptbalance_only;
-
-  std::vector<TH1D> invmass_ptmu_gr20;
-  std::vector<TH1D> invmass_ptmu_sm20;
-  std::vector<TH1D> invmass_jetsum_gr70;
-  std::vector<TH1D> invmass_jetsum_sm70;
-  std::vector<TH1D> invmass_ptbal_gr30;
-  std::vector<TH1D> invmass_ptbal_sm30;
+  std::vector<TH1D> invmass_ptbal_only;
 
   std::vector<TH1D> nm0_met;
   std::vector<TH1D> nm0_jetsum;
@@ -99,21 +91,12 @@ class ZtoEMu : public Selection {
   
   std::vector<TH1D> NPV;
   std::vector<TH1D> NPV3d;
-  std::vector<TH1D> num_interactions;
   std::vector<TH1D> evtweight;
   
   std::vector<TH1D> met;
-  std::vector<TH1D> met_xycorr;
-  std::vector<TH1D> met_t1;
-  std::vector<TH1D> met_t1txy;
-  std::vector<TH1D> met_t0rtt1;
-  std::vector<TH1D> met_t0rtt1txy;
   std::vector<TH1D> met_uncorr;
   std::vector<TH1D> onejet;
   std::vector<TH1D> mte_mtmu;
-  std::vector<TH1D> leadingjet;
-  std::vector<TH1D> subleadingjet;
-  std::vector<TH1D> sumjets;
   std::vector<TH1D> NbJets;
   std::vector<TH1D> NbJetsVtxL;
   std::vector<TH1D> NbJetsVtxM;
@@ -128,11 +111,10 @@ class ZtoEMu : public Selection {
   // cross checks
   std::vector<TH1D> mtmu_metgr30;
   std::vector<TH1D> mtmu_metsm30;
-  std::vector<TH1D> fakelepton_ss;
-  std::vector<TH1D> fakelepton_os;
-  std::vector<TH1D> mtmu_t1;
-  std::vector<TH1D> mtmu_t1txy;
-  std::vector<TH1D> mtmu_t0pct1txy;
+  std::vector<TH1D> jet1E;
+  std::vector<TH1D> jet2E;
+  std::vector<TH1D> jet1Mu;
+  std::vector<TH1D> jet2Mu;
 
   // comparison of generators
 
@@ -152,7 +134,6 @@ class ZtoEMu : public Selection {
   int n_mu,n_e;
   bool doHiggsObjects;
   bool doWWObjects;
-  bool doOldJetVeto;
   
   double csvl,csvm,csvt;
 
@@ -220,6 +201,7 @@ class ZtoEMu : public Selection {
 
   double ElectronMassScale(unsigned int idx);
   double ZPtReweight(double zpt);
+  double PowhegReweight(double zpt);
   double rundependentJetPtCorrection(double jeteta, int runnumber);
 
   //double JECuncertainty(unsigned int i, TString datamc);
@@ -230,6 +212,8 @@ class ZtoEMu : public Selection {
   
   TFile* FRFile;
   TFile* EmbEffFile;
+  TFile* ZptCorrFile;
+  TH1D* ZptCorrection;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
   TH2D* EmbEff;
