@@ -245,6 +245,9 @@ if( $ARGV[0] eq "--TauNtuple"){
     system(sprintf("echo \"git clone https://github.com/inugent/TauDataFormat TauDataFormat; cd TauDataFormat; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"git clone https://github.com/inugent/SkimProduction SkimProduction; cd SkimProduction; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"cp SkimProduction/CRAB/*.root data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    # JEC uncertainties. Make sure to have the most up-to-date ones.
+    system(sprintf("echo \"cp SkimProduction/CRAB/JECuncertaintyData.txt data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
+    system(sprintf("echo \"cp SkimProduction/CRAB/JECuncertaintyMC.txt data/ \" >> Install_TauNtuple_$CMSSWRel-$time"));
     # SimpleFits
     system(sprintf("echo \"git clone https://github.com/inugent/SimpleFits SimpleFits; cd SimpleFits; git checkout; cd ../; \" >> Install_TauNtuple_$CMSSWRel-$time"));
 
