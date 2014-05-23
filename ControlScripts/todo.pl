@@ -663,6 +663,8 @@ if( $ARGV[0] eq "--GRID" ){
 
     # Setup file to retrieve jobs
     system(sprintf("cp $dir/CheckandGet.sh $OutputDir/workdir$set/"));
+    system(sprintf("cd $OutputDir/workdir$set/; $dir/subs USERNAME $UserIDCern CheckandGet.sh; cd $dir"));
+    system(sprintf("cd $OutputDir/workdir$set/; $dir/subs WORKDIR workdir$set CheckandGet.sh; cd $dir"));
     system(sprintf("cp $dir/Purge_Jobs.sh $OutputDir/workdir$set/"));
 
     # generate compile script 
@@ -710,6 +712,18 @@ if( $ARGV[0] eq "--GRID" ){
     system(sprintf("echo \"echo 'Configuring storage on the GRID...' \" >> $OutputDir/workdir$set/Submit"));
  system(sprintf("echo \"hasdir=\\\$(srmls -recursion_depth=2 srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/ | grep /pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/  | wc -l) \n if [ \\\$hasdir == 0 ]; then \" >> $OutputDir/workdir$set/Submit "));
     system(sprintf("echo \"srmmkdir srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set \n fi \" >> $OutputDir/workdir$set/Submit"));
+	# get file list from dcache
+	system(sprintf("echo \"rm listOfSrmlsFileNames \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"touch listOfSrmlsFileNames \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"filecount=0 \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"readfiles=1 \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"while [ \\\$readfiles -gt \\\$filecount ] \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"do \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"  srmls -count=999 -offset=\\\$filecount -recursion_depth=2 srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/ >& listOfSrmlsFileNames \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"  let filecount=filecount+999 \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"  readfiles=\\`cat listOfSrmlsFileNames | wc -l\\`; \" >> $OutputDir/workdir$set/Submit")) ;
+	system(sprintf("echo \"done \" >> $OutputDir/workdir$set/Submit")) ;
+
 
     $B=0;
     for($l=0;$l<2; $l++){
@@ -758,11 +772,11 @@ if( $ARGV[0] eq "--GRID" ){
 			$B++;
 
 
-       			# Add Set information to Combining scripts and Input.txt
+       		# Add Set information to Combining scripts and Input.txt
 			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/ \" >>  $OutputDir/workdir$set/Input.txt ")) ;
 			system(sprintf("echo \"cd $OutputDir/workdir$set/  \" >> $OutputDir/workdir$set/Submit")) ;
 			system(sprintf("echo \"echo 'Submitting Set_$B/GRIDJob.jdl' \" >> $OutputDir/workdir$set/Submit "));
-			system(sprintf("echo \"isSkim=\\\$(srmls -recursion_depth=2 srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/ | grep SKIMMED_NTUP_$B.root  | wc -l) \n if [ \\\$isSkim == 1 ]; then \" >> $OutputDir/workdir$set/Submit "));
+			system(sprintf("echo \"isSkim=\\\$(cat listOfSrmlsFileNames | grep SKIMMED_NTUP_$B.root  | wc -l) \n if [ \\\$isSkim == 1 ]; then \" >> $OutputDir/workdir$set/Submit "));
 			system(sprintf("echo \"srmrm  srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/SKIMMED_NTUP_$B.root \n fi \" >> $OutputDir/workdir$set/Submit "));
 			system(sprintf("echo \"glite-ce-job-submit -a -r grid-ce.physik.rwth-aachen.de:8443/cream-pbs-short $OutputDir/workdir$set/Set_$B/GRIDJob.jdl  | tee junk ; cat junk >> jobs_log; cat junk |  grep https | awk '{print \\\$1 \\\" $OutputDir/workdir$set/Set_$B \\\" }' >>  $OutputDir/workdir$set/jobs_submitted ; rm junk \" >> $OutputDir/workdir$set/Submit")) ;
 
@@ -809,9 +823,13 @@ if( $ARGV[0] eq "--GRID" ){
 			system(sprintf("echo \"echo 'Completed Job' \" >> $OutputDir/workdir$set/Set_$B/Set_$B-GRID.sh"));
                         #
 			system(sprintf("echo \"#! /bin/bash \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
-			system(sprintf("echo \"isSkim=\\\$(srmls -recursion_depth=2 srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/ | grep SKIMMED_NTUP_$B.root  | wc -l) \n if [ \\\$isSkim == 1 ]; then \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+			system(sprintf("echo \"if [ -f $OutputDir/workdir$set/fileListOnGrid ]; then \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+			system(sprintf("echo \"isSkim=\\\$(cat $OutputDir/workdir$set/fileListOnGrid | grep SKIMMED_NTUP_$B.root  | wc -l) \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+			system(sprintf("echo \"else \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+    		system(sprintf("echo \"isSkim=\\\$(srmls -recursion_depth=2 srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/ | grep SKIMMED_NTUP_$B.root  | wc -l) \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+			system(sprintf("echo \"fi \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
+			system(sprintf("echo \"if [ \\\$isSkim == 1 ]; then \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B; srmcp  srm://$gridsite:8443/pnfs/physik.rwth-aachen.de/cms/store/user/$UserIDCern/workdir$set/SKIMMED_NTUP_$B.root  file:////\\\$PWD/SKIMMED_NTUP.root; cd $OutputDir/workdir$set/ \n fi \" >> $OutputDir/workdir$set/Set_$B/GRIDRetrieve.sh "));
-
 			
                         # Setup Set_$B_get.sh Set_$B-getGRID and Set_$B_clean.sh
 			system(sprintf("echo \"#! /bin/bash\"         >> $OutputDir/workdir$set/Set_$B/Set_$B-get.sh"));
@@ -893,6 +911,7 @@ if( $ARGV[0] eq "--GRID" ){
     
     # Finish Submit script
     system(sprintf("echo \"cd  $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit"));
+    system(sprintf("echo \"rm  listOfSrmlsFileNames \" >> $OutputDir/workdir$set/Submit"));
     system(sprintf("echo \"echo 'number of jobs submitted:'\" >> $OutputDir/workdir$set/Submit"));
     system(sprintf("echo \"cat jobs_submitted | grep -c Set_\" >> $OutputDir/workdir$set/Submit"));
     system(sprintf("echo \"echo 'total number of sets in this directory:'\" >> $OutputDir/workdir$set/Submit"));
