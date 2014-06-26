@@ -70,7 +70,7 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 //	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",   151.2) );
 //	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",       62.9) );
 //	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",        4.6) );
-//	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",   13202.4) );
+//	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",   13283.5) );
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -614,7 +614,7 @@ void  HToTaumuTauh::doEvent(){
   
   double wobs=1;
   double w;
-  if(!Ntp->isData()){w = Ntp->PUWeight();}
+  if(!Ntp->isData()){w = Ntp->PUWeightFineBins();}
   else{w=1;}
 
   // Apply Selection
@@ -1205,7 +1205,10 @@ void  HToTaumuTauh::doEvent(){
 	  bool isC = isSS && passedObjects;
 	  bool isD = isSS && !passedObjects && hasRelaxedIsoTau && hasAntiIsoMuon;
 	  if (isA+isB+isC+isD > 1) printf("WARNING: Event %i enters more than 1 ABCD region! (A%i, B%i, C%i D%i)\n", Ntp->EventNumber(), isA, isB, isC, isD);
-	  if (isA+isB+isC+isD == 0) printf("ATTENTION: Event %i enters no ABCD region! Sum(q) = %i, passedMu = %i, passedTau = %i, hasRelTau = %i, hasAntiIsoMu = %i\n", Ntp->EventNumber(), value.at(OppCharge), passedMu, passedTau, hasRelaxedIsoTau, hasAntiIsoMuon);
+//	  if (isA+isB+isC+isD == 0) {
+//		  printf("ATTENTION: Event %9d enters no ABCD region! Sum(q) = %d, passedMu = %d, passedTau = %d\n", Ntp->EventNumber(), value.at(OppCharge), passedMu, passedTau);
+//		  printf("       		                                    hasRelTau = %d, hasAntiIsoMu = %d\n", hasRelaxedIsoTau, hasAntiIsoMuon);
+//	  }
 	  double iso(-10.), q(-10.);
 	  if (isA || isB) q = -0.5;
 	  if (isC || isD) q = +0.5;
@@ -1234,19 +1237,22 @@ void  HToTaumuTauh::Finish(){
 		std::cout << "WJet BG: Using data driven yield method." << std::endl;
 		double wJetsYieldMC;
 		unsigned histo;
-		printf("WJet BG: CategoryId = %i, WJet Yield Scale Factor = %.3f", categoryFlag.Data(), wJetsYieldScaleMap[categoryFlag]);
+		printf("WJet BG: CategoryId = %s, WJet Yield Scale Factor = %.3f\n", categoryFlag.Data(), wJetsYieldScaleMap[categoryFlag]);
 		for (unsigned id = 20; id < 24; id++){
 			// scale cross-sections for WJet backgrounds by DataYield/MCYield in HistoConfig
 			double oldXSec = HConfig.GetCrossSection(id);
 			double newXSec = oldXSec * wJetsYieldScaleMap[categoryFlag];
 			if( !HConfig.SetCrossSection(id, newXSec) ) std::cout << "WARNING: Could not change cross-section for id " << id << std::endl;
-			printf("WJet BG, id = %i: Scale from MC xsec = %.1f to data-driven xsec = %.1f");
+			printf("WJet BG, id = %i: Scale from MC xsec = %.1f to data-driven xsec = %.1f\n", id, oldXSec, newXSec);
 		}
 	}
 	else if (wJetsBGSource == "MC") std::cout << "WJet BG: Using MC." << std::endl;
 	else std::cout << "WJet BG: Please specify \"MC\" or \"Data\". Using MC for this run..." << std::endl;
 
 	Selection::Finish();
+
+	// todo: implement cross check: Integral in WJet plot <-> yield from background method
+
 }
 
 
