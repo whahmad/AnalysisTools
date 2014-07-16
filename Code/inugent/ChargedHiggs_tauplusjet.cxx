@@ -491,7 +491,7 @@ void  ChargedHiggs_tauplusjet::doEvent(){
   double wobs(1),w(1);
   if(!Ntp->isData()){
     if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() J" << std::endl;
-    // w*=Ntp->EvtWeight3D();
+    // w*=Ntp->PUWeightFineBins();
     if(verbose)std::cout << "void  ChargedHiggs_tauplusjet::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1;}
