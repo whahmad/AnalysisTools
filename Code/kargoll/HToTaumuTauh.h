@@ -104,6 +104,7 @@ class HToTaumuTauh : public Selection {
 
   // Selection Variables
   std::vector<TH1D> NCatFired;
+  std::vector<TH1D> CatFired;
 
   std::vector<TH1D> NVtx;
   std::vector<TH1D> NVtxFullSelection;
@@ -212,6 +213,20 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> CatVBFTightMtSideband;
   std::vector<TH1D> CatVBFTightRelaxMt;
   std::vector<TH1D> CatVBFTightRelaxMtExtrapolation;
+  std::vector<TH1D> CatInclusiveMt;
+  std::vector<TH1D> CatInclusiveMtSideband;
+  std::vector<TH1D> CatInclusiveMtExtrapolation;
+
+  std::vector<TH2D> Cat0JetLowQcdAbcd;
+  std::vector<TH2D> Cat0JetHighQcdAbcd;
+  std::vector<TH2D> Cat1JetLowQcdAbcd;
+  std::vector<TH2D> Cat1JetHighQcdAbcd;
+  std::vector<TH2D> Cat1JetBoostQcdAbcd;
+  std::vector<TH2D> CatVBFLooseQcdAbcd;
+  std::vector<TH2D> CatVBFTightQcdAbcd;
+  std::vector<TH2D> CatInclusiveQcdAbcd;
+
+  unsigned verbose;
 
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta, cMu_dRHltMatch;
@@ -222,6 +237,12 @@ class HToTaumuTauh : public Selection {
 
   // flag for category to run
   TString categoryFlag;
+  // flag for WJets background source
+  TString wJetsBGSource;
+
+  // map to hold WJets yields for each category
+  std::map<TString, double> wJetsYieldMap;
+  //std::map<TString, double> wJetsYieldScaleMap;
 
   // variables to hold selected objects (to be used e.g. for sync Ntuple)
   int selVertex;
@@ -241,15 +262,19 @@ class HToTaumuTauh : public Selection {
   bool selectMuon_Id(unsigned i, unsigned vertex);
   bool selectMuon_Kinematics(unsigned i);
 
+  bool selectMuon_antiIso(unsigned i, unsigned vertex);
+
   bool selectMuon_diMuonVeto(unsigned i, unsigned i_vtx);
   bool selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsigned i_vtx);
 
   bool selectElectron_triLeptonVeto(unsigned i, unsigned i_vtx, std::vector<int>);
 
   bool selectPFTau_Id(unsigned i);
-  bool selectPFTau_Id(unsigned i, std::vector<int>);
+  bool selectPFTau_Id(unsigned i, std::vector<int> muonCollection);
   bool selectPFTau_Iso(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
+
+  bool selectPFTau_relaxedIso(unsigned i, std::vector<int> muonCollection);
 
   std::vector<int> sortPFjets();
   bool selectPFJet_Cleaning(unsigned i, int selectedMuon, int selectedTau);
@@ -266,6 +291,8 @@ class HToTaumuTauh : public Selection {
   std::vector<float> cut_OneJetHigh, cut_OneJetLow, cut_OneJetBoost;
   std::vector<float> cut_ZeroJetHigh, cut_ZeroJetLow;
   std::vector<float> cut_NoCategory;
+  // relaxed categories for background methods
+  std::vector<float> cut_VBFTightRelaxed, cut_VBFLooseRelaxed;
 
   bool migrateCategoryIntoMain(TString thisCategory, std::vector<float> categoryValueVector, std::vector<float> categoryPassVector, int categoryNCuts);
 
@@ -293,8 +320,8 @@ class HToTaumuTauh : public Selection {
   void configure_NoCategory();
   bool category_NoCategory();
 
-  bool helperCategory_VBFLooseRelaxed(unsigned NJets, double DEta, int NJetsInGap, double Mjj);
-  bool helperCategory_VBFTightRelaxed(bool passVBFLooseRelaxed, double higgsPt);
+  bool helperCategory_VBFLooseRelaxed(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj);
+  bool helperCategory_VBFTightRelaxed(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj, double higgsPt);
 
  private:
   // everything is in protected to be accessible by derived classes

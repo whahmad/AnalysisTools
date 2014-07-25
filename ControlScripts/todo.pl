@@ -698,7 +698,7 @@ if( $ARGV[0] eq "--GRID" ){
     # Start Submit script
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Submit")) ; 
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit")) ;
-    system(sprintf("echo \"if [ -f $OutputDir/workdir$set/Set*/out ]; then \n rm $OutputDir/workdir$set/Set*/out; rm $OutputDir/workdir$set/Set*/err; rm $OutputDir/workdir$set/Set*/*.tar; \n fi  \" >> $OutputDir/workdir$set/Submit"));
+	system(sprintf("echo \"if [ -f $OutputDir/workdir$set/Set*/out ]; then \n rm $OutputDir/workdir$set/Set*/out; rm $OutputDir/workdir$set/Set*/err; rm $OutputDir/workdir$set/Set*/*.tar; \n fi  \" >> $OutputDir/workdir$set/Submit"));
 
 
     system(sprintf("echo \"echo 'Creating tarballs and installing on the GRID... '\" >> $OutputDir/workdir$set/Submit "));
