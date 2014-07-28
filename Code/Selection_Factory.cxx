@@ -27,6 +27,7 @@
 #ifdef USE_kargoll
 #include "kargoll/HToTaumuTauh.h"
 #include "kargoll/HToTaumuTauhSkim.h"
+#include "kargoll/HToTaumuTauhBackgrounds.h"
 #include "kargoll/MuTauSync.h"
 #include "kargoll/OneJetBoost.h"
 #include "kargoll/OneJetHigh.h"
@@ -35,6 +36,7 @@
 #include "kargoll/VBFLoose.h"
 #include "kargoll/ZeroJetHigh.h"
 #include "kargoll/ZeroJetLow.h"
+#include "kargoll/Inclusive.h"
 #endif
 #ifdef USE_pistone
 
@@ -78,6 +80,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
 #endif
 #ifdef USE_kargoll
   else if(Analysis.Contains("htotaumutauhskim")) s=new HToTaumuTauhSkim(Analysis,UncertType);
+  else if(Analysis.Contains("htotaumutauhbackgrounds")) s=new HToTaumuTauhBackgrounds(Analysis,UncertType);
   else if(Analysis.Contains("htotaumutauh")) s=new HToTaumuTauh(Analysis,UncertType);
   else if(Analysis.Contains("mutausync")) s=new MuTauSync(Analysis,UncertType);
   else if(Analysis.Contains("onejetboost")) s=new OneJetBoost(Analysis,UncertType);
@@ -87,6 +90,7 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
   else if(Analysis.Contains("vbfloose")) s=new VBFLoose(Analysis,UncertType);
   else if(Analysis.Contains("zerojethigh")) s=new ZeroJetHigh(Analysis,UncertType);
   else if(Analysis.Contains("zerojetlow")) s=new ZeroJetLow(Analysis,UncertType);
+  else if(Analysis.Contains("inclusive")) s=new Inclusive(Analysis,UncertType);
 #endif
 #ifdef USE_pistone
 
