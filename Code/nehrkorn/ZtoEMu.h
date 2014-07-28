@@ -139,6 +139,8 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> Dxy_trignoip;
   std::vector<TH1D> Dz_trignoip;
   std::vector<TH2D> eta_mu_e;
+  std::vector<TH2D> pt_vs_eta_mu;
+  std::vector<TH2D> pt_vs_eta_e;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,zmin,zmax,mtmu,ptbalance,mmin;
   int n_mu,n_e;
