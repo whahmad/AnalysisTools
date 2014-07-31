@@ -93,6 +93,7 @@ class ZtoEMu : public Selection {
   
   std::vector<TH1D> NPV;
   std::vector<TH1D> NPV3d;
+  std::vector<TH1D> NPVfine;
   std::vector<TH1D> evtweight;
   
   std::vector<TH1D> met;
