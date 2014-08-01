@@ -690,6 +690,7 @@ void Tables::GeneratePDF(){
   (output) << "\\documentclass[11pt]{article}" << std::endl;
   (output) << "\\usepackage[width=6.5in, height=8.5in]{geometry}" << std::endl;
   (output) << "\\usepackage{epsfig}" << std::endl;
+  (output) << "\\usepackage{xcolor}" << std::endl;
   (output) << "\\usepackage{cite}" << std::endl;
   (output) << "\\usepackage{fancyhdr}" << std::endl;
   (output) << "\\usepackage{lscape,graphicx}" << std::endl;
@@ -705,7 +706,7 @@ void Tables::GeneratePDF(){
   (output) << "\\newpage" << std::endl;
   (output) << "\\listoffigures" << std::endl;
   (output) << "\\clearpage" << std::endl;
-  
+  (output) << "\\input{DQM.tex}" << std::endl;  
   (output) << "\\input{"+Name+"NEvents.tex}" << std::endl;
   (output) << "\\input{"+Name+"LumiNormAndEffTable.tex}" << std::endl;
   (output) << "\\input{"+Name+"Plots.tex}" << std::endl;
