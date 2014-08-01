@@ -220,6 +220,10 @@ class ZtoEMu : public Selection {
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
   double rundependentJetPtCorrection(double jeteta, int runnumber);
+  double CorrectJER(unsigned int idx);
+  double JetEnergyResolutionCorr(double jeteta);
+  double JetEnergyResolutionCorrErr(double jeteta);
+  TLorentzVector GenJet(unsigned int recjet);
 
   double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
   double FakerateWW(unsigned int idx, std::string type);

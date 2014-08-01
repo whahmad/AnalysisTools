@@ -351,7 +351,7 @@ void  ZtoEMu::Configure(){
   etaE=HConfig.GetTH1D(Name+"_etaE","etaE",20,-2.5,2.5,"#eta_{e}");
   jetsum=HConfig.GetTH1D(Name+"_jetsum","jetsum",80,40.,440,"p_{T}^{leading jet}+p_{T}^{subleading jet} / GeV");
   chargesum=HConfig.GetTH1D(Name+"_chargesum","chargesum",21,-5.5,5.5,"charge sum");
-  drmue=HConfig.GetTH1D(Name+"_drmue","drmue",20,0.,1.,"dR(e,#mu)");
+  drmue=HConfig.GetTH1D(Name+"_drmue","drmue",50,0.,5.,"dR(e,#mu)");
   deltaphi=HConfig.GetTH1D(Name+"_deltaphi","deltaphi",40,0.,2,"#phi_{e#mu}");
   ptbal=HConfig.GetTH1D(Name+"_ptbal","ptbal",40,0.,200.,"p_{T}^{e#mu} / GeV");
   chargesumsigned=HConfig.GetTH1D(Name+"_chargesumsigned","chargesumsigned",21,-5.5,5.5,"charge sum");
@@ -1130,7 +1130,7 @@ void  ZtoEMu::doEvent(){
 		  && pass.at(NE)
 		  && pass.at(ptthreshold)
 		  && pass.at(mll)
-		  && pass.at(charge)
+		  //&& pass.at(charge)
 		  ){
 	  // often needed variables
 	  double m = (Ntp->Muon_p4(muidx)+Ntp->Electron_p4(eidx)).M();
@@ -1372,8 +1372,8 @@ double ZtoEMu::ElectronMassScale(unsigned int idx){
 	return corr;
 }
 
-double ZtoEMu::rundependentJetPtCorrection(double jeteta, int runnumber){ // TODO: implement corrections for embedded samples?
-	if(!Ntp->isData()) return 1.;
+double ZtoEMu::rundependentJetPtCorrection(double jeteta, int runnumber){
+	if(!Ntp->isData() && Ntp->GetMCID()!=DataMCType::DY_emu_embedded) return 1.;
 	const double corrs[5] = {0.0, -0.454e-6, -0.952e-6, 1.378e-6, 0.0};
 	const int run0 = 201000;
 	double eta = fabs(jeteta);
@@ -1381,9 +1381,59 @@ double ZtoEMu::rundependentJetPtCorrection(double jeteta, int runnumber){ // TOD
 	if(eta<1.3) corr = corrs[0];
 	else if(eta<2.0) corr = corrs[1];
 	else if(eta<2.5) corr = corrs[2];
-	else if(eta<3.) corr = corrs[3];
-	else if(eta<5.) corr = corrs[4];
+	else if(eta<3.0) corr = corrs[3];
+	else if(eta<5.0) corr = corrs[4];
 	return (1.+corr*(runnumber-run0));
+}
+
+double ZtoEMu::CorrectJER(unsigned int idx){
+	double sf = 1.;
+	double c = JetEnergyResolutionCorr(Ntp->PFJet_p4(idx).Eta());
+	if(GenJet(idx)==TLorentzVector(0.,0.,0.,0.)) std::cout << "ZtoEMu::CorrectJER - jet could not be matched to generator particles" << std::endl;
+	else sf = std::max(0.,c+(1-c)*GenJet(idx).Pt()/Ntp->PFJet_p4(idx).Pt());
+	return sf;
+}
+
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution
+double ZtoEMu::JetEnergyResolutionCorr(double jeteta){
+	double eta = fabs(jeteta);
+	double corr = 1.;
+	if(eta<0.5) corr = 1.079;
+	else if(eta<1.1) corr = 1.099;
+	else if(eta<1.7) corr = 1.121;
+	else if(eta<2.3) corr = 1.208;
+	else if(eta<2.8) corr = 1.254;
+	else if(eta<3.2) corr = 1.395;
+	else if(eta<5.0) corr = 1.056;
+	return corr;
+}
+
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution
+double ZtoEMu::JetEnergyResolutionCorrErr(double jeteta){
+	double eta = fabs(jeteta);
+	double err = 0.;
+	if(eta<0.5) err = 0.026;
+	else if(eta<1.1) err = 0.027;
+	else if(eta<1.7) err = 0.029;
+	else if(eta<2.3) err = 0.046;
+	else if(eta<2.8) err = 0.062;
+	else if(eta<3.2) err = 0.063;
+	else if(eta<5.0) err = 0.191;
+	return err;
+}
+
+TLorentzVector ZtoEMu::GenJet(unsigned int recjet){
+	TLorentzVector genjet(0.,0.,0.,0.);
+	// TODO: once new nTuples available, switch to GenJetNoNu
+	for(unsigned i=0;i<Ntp->NMCParticles();i++){
+		if(Ntp->MCParticle_p4(i).Vect()!=TVector3(0.,0.,0.)
+				&& Ntp->PFJet_p4(recjet).DeltaR(Ntp->MCParticle_p4(i))<0.1
+				&& fabs(Ntp->PFJet_p4(recjet).Pt()-Ntp->MCParticle_p4(i).Pt())<0.1
+				){
+			genjet = Ntp->MCParticle_p4(i);
+		}
+	}
+	return genjet;
 }
 
 double ZtoEMu::calculatePzeta(int muiterator, int eiterator){
