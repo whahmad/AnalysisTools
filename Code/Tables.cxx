@@ -706,7 +706,7 @@ void Tables::GeneratePDF(){
   (output) << "\\newpage" << std::endl;
   (output) << "\\listoffigures" << std::endl;
   (output) << "\\clearpage" << std::endl;
-  
+  (output) << "\\input{DQM.tex}" << std::endl;  
   (output) << "\\input{"+Name+"NEvents.tex}" << std::endl;
   (output) << "\\input{"+Name+"LumiNormAndEffTable.tex}" << std::endl;
   (output) << "\\input{"+Name+"Plots.tex}" << std::endl;
