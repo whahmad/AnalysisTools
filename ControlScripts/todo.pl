@@ -401,6 +401,20 @@ if( $ARGV[0] eq "--Local" ){
 	    }
 	}
     }
+    
+    printf("Setting up root....\n");
+    if($buildRoot==1){
+        printf("Building custom root $buildrootversion... Enjoy your coffee!!! ");
+	system(sprintf("wget ftp://root.cern.ch/root/root_v$buildrootversion.source.tar.gz"));
+	system(sprintf("gzip -dc root_v$buildrootversion.source.tar.gz | tar -xf -"));
+	system(sprintf("mkdir $OutputDir/workdir$set/root"));
+	system(sprintf("cd root_v$buildrootversion; ./configure --enable-python --enable-roofit --enable-minuit2 --disable-xrootd --disable-sqlite --disable-python --disable-mysql --prefix=$OutputDir/workdir$set/root; make & make install "));
+    }
+    else{
+        printf("Copying local root $MYROOTSYS ");
+        system(sprintf("mkdir $OutputDir/workdir$set/root/"));
+        system(sprintf("cp -r $MYROOTSYS/* $OutputDir/workdir$set/root/"));
+    }
 
     # Finish Submit script
     system(sprintf("echo \"cd  $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Submit"));
@@ -595,6 +609,20 @@ if( $ARGV[0] eq "--DCache" ){
 		}
 	    }
 	}
+    }
+
+    printf("Setting up root....\n");
+    if($buildRoot==1){
+        printf("Building custom root $buildrootversion... Enjoy your coffee!!! ");
+	system(sprintf("wget ftp://root.cern.ch/root/root_v$buildrootversion.source.tar.gz"));
+	system(sprintf("gzip -dc root_v$buildrootversion.source.tar.gz | tar -xf -"));
+	system(sprintf("mkdir $OutputDir/workdir$set/root"));
+	system(sprintf("cd root_v$buildrootversion; ./configure --enable-python --enable-roofit --enable-minuit2 --disable-xrootd --disable-sqlite --disable-python --disable-mysql --prefix=$OutputDir/workdir$set/root; make & make install "));
+    }
+    else{
+        printf("Copying local root $MYROOTSYS ");
+        system(sprintf("mkdir $OutputDir/workdir$set/root/"));
+        system(sprintf("cp -r $MYROOTSYS/* $OutputDir/workdir$set/root/"));
     }
 
     # Finish Submit script
