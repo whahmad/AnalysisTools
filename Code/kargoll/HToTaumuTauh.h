@@ -156,6 +156,7 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuTauDEta;
   std::vector<TH1D> MuTauDPt;
   std::vector<TH1D> MuTauRelDPt;
+  std::vector<TH2D> MuPtVsTauPt;
 
   std::vector<TH1D> MetPt;
   std::vector<TH1D> MetPhi;
