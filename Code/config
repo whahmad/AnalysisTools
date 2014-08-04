@@ -21,7 +21,8 @@ else
         export ROOTSYS=${2}
         ROOT="$PWD/../root/"
     fi
-
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTSYS/lib/
+    
     UseTauSpinner=0
     for var in $@ ; do
 	if [ "${var}" == "--ReBuild" ]; then
