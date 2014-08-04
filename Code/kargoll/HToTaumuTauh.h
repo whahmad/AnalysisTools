@@ -161,6 +161,13 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MetPt;
   std::vector<TH1D> MetPhi;
 
+  std::vector<TH1D> MetLepMuDr;
+  std::vector<TH1D> MetLepTauDr;
+  std::vector<TH1D> MetLepNMu;
+  std::vector<TH1D> MetLepNTau;
+  std::vector<TH1D> MetLepNMuMinusNMu;
+  std::vector<TH1D> MetLepNTauMinusNTau;
+
   std::vector<TH1D> NJetsKin;
   std::vector<TH1D> JetKin1Pt;
   std::vector<TH1D> JetKin1Eta;
@@ -226,6 +233,39 @@ class HToTaumuTauh : public Selection {
   std::vector<TH2D> CatVBFLooseQcdAbcd;
   std::vector<TH2D> CatVBFTightQcdAbcd;
   std::vector<TH2D> CatInclusiveQcdAbcd;
+
+  std::vector<TH1D> Cat0JetLowQcdOSMuIso;
+  std::vector<TH1D> Cat0JetLowQcdOSTauIso;
+  std::vector<TH1D> Cat0JetLowQcdSSMuIso;
+  std::vector<TH1D> Cat0JetLowQcdSSTauIso;
+  std::vector<TH1D> Cat0JetHighQcdOSMuIso;
+  std::vector<TH1D> Cat0JetHighQcdOSTauIso;
+  std::vector<TH1D> Cat0JetHighQcdSSMuIso;
+  std::vector<TH1D> Cat0JetHighQcdSSTauIso;
+  std::vector<TH1D> Cat1JetLowQcdOSMuIso;
+  std::vector<TH1D> Cat1JetLowQcdOSTauIso;
+  std::vector<TH1D> Cat1JetLowQcdSSMuIso;
+  std::vector<TH1D> Cat1JetLowQcdSSTauIso;
+  std::vector<TH1D> Cat1JetHighQcdOSMuIso;
+  std::vector<TH1D> Cat1JetHighQcdOSTauIso;
+  std::vector<TH1D> Cat1JetHighQcdSSMuIso;
+  std::vector<TH1D> Cat1JetHighQcdSSTauIso;
+  std::vector<TH1D> Cat1JetBoostQcdOSMuIso;
+  std::vector<TH1D> Cat1JetBoostQcdOSTauIso;
+  std::vector<TH1D> Cat1JetBoostQcdSSMuIso;
+  std::vector<TH1D> Cat1JetBoostQcdSSTauIso;
+  std::vector<TH1D> CatVBFLooseQcdOSMuIso;
+  std::vector<TH1D> CatVBFLooseQcdOSTauIso;
+  std::vector<TH1D> CatVBFLooseQcdSSMuIso;
+  std::vector<TH1D> CatVBFLooseQcdSSTauIso;
+  std::vector<TH1D> CatVBFTightQcdOSMuIso;
+  std::vector<TH1D> CatVBFTightQcdOSTauIso;
+  std::vector<TH1D> CatVBFTightQcdSSMuIso;
+  std::vector<TH1D> CatVBFTightQcdSSTauIso;
+  std::vector<TH1D> CatInclusiveQcdOSMuIso;
+  std::vector<TH1D> CatInclusiveQcdOSTauIso;
+  std::vector<TH1D> CatInclusiveQcdSSMuIso;
+  std::vector<TH1D> CatInclusiveQcdSSTauIso;
 
   unsigned verbose;
 

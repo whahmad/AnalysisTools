@@ -188,7 +188,6 @@ void HToTaumuTauhBackgrounds::Finish() {
 	std::cout << "  ##########################################################" << std::endl;
 	printf("Please copy the following numbers in order to use the data driven WJets yield:\n");
 	for (unsigned int icat = 0; icat < nCat; icat++){
-		if (icat != 5 && icat != 6) printf("%12s : %14.8f\n", catNames.at(icat).Data(), catWJetsMCRatio.at(icat));
-		else printf("%12s : %14.8f\n", catNames.at(icat).Data(), catWJetsYield.at(icat));
+		printf("%12s : %14.8f\n", catNames.at(icat).Data(), catWJetsYield.at(icat));
 	}
 }
