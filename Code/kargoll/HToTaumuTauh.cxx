@@ -382,6 +382,7 @@ void  HToTaumuTauh::Configure(){
   MuTauDEta=HConfig.GetTH1D(Name+"_MuTauDEta","MuTauDEta",100,-6.,6.,"#Delta#eta(#mu,#tau_{h})");
   MuTauDPt=HConfig.GetTH1D(Name+"_MuTauDPt","MuTauDPt",100,-100.,100.,"#Deltap_{T}(#mu,#tau_{h})/GeV");
   MuTauRelDPt=HConfig.GetTH1D(Name+"_MuTauRelDPt","MuTauRelDPt",100,-2.,2.,"#Deltap_{T}(#mu,#tau_{h})/p_{T}(#mu)");
+  MuPtVsTauPt=HConfig.GetTH2D(Name+"_MuPtVsTauPt","MuPtVsTauPt",50,0.,200.,50,0.,200.,"p_{T}(#mu)/GeV","p_{T}(#tau)/GeV");
 
   MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
   MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
@@ -524,6 +525,7 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MuTauDEta);
  Extradist1d.push_back(&MuTauDPt);
  Extradist1d.push_back(&MuTauRelDPt);
+ Extradist2d.push_back(&MuPtVsTauPt);
 
  Extradist1d.push_back(&MetPt);
  Extradist1d.push_back(&MetPhi);
@@ -1050,6 +1052,7 @@ void  HToTaumuTauh::doEvent(){
 	  MuTauDEta  .at(t).Fill( Ntp->Muon_p4(selMuon).Eta() - Ntp->PFTau_p4(selTau).Eta(), w );
 	  MuTauDPt   .at(t).Fill( Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt(), w );
 	  MuTauRelDPt.at(t).Fill( (Ntp->Muon_p4(selMuon).Pt() - Ntp->PFTau_p4(selTau).Pt()) / Ntp->Muon_p4(selMuon).Pt() , w);
+	  MuPtVsTauPt.at(t).Fill( Ntp->Muon_p4(selMuon).Pt(), Ntp->PFTau_p4(selTau).Pt(), w );
 
 	  // lepton charge
 	  MuCharge.at(t).Fill( Ntp->Muon_Charge(selMuon), w);

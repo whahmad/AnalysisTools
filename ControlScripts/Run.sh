@@ -33,7 +33,7 @@ else
 		rm Set_*/err
 	    fi
 	    
-	    source Submit
+	    source Submit --SetupAndSubmit
 	fi
 	myruntime=`echo "${nmin}*5/60" | bc`; 
 	echo "Will check jobs every 5 minutes for  ${myruntime}  hours.";
@@ -42,11 +42,16 @@ else
 	while (test "$nmin" -ge "$idx" )
 	  do
 	  sleep 300;
+	  nsets=$(ls | grep Set_ | wc -l)
+	  njobs=$(cat jobs_completeOrComplete | wc -l)
+	  if [[ ${nsets} -ne ${njobs} ]]; then
+	      echo "not all jobs were submitted. Retrying failed submissions..."
+	      source Submit --Submit > junk_S ; rm  junk_S 
+	  fi
 	  source CheckandGet.sh  --get >& junk_CG; rm junk_CG;
 	  eval=`cat jobs_submitted  | wc -l`
 	  echo ${eval} " jobs still running"
 	  if [[  ${eval} -eq 0 ]]; then
-	      source CheckandGet.sh  --status
 	      source Purge_Jobs.sh --all
 	      if [ "${1}"  == "--NoCombine" ] || [ "${2}"  == "--NoCombine" ] || [ "${3}"  == "--NoCombine" ] || [ "${4}"  == "--NoCombine" ]; then
 		  echo "Jobs Complete"
@@ -55,11 +60,12 @@ else
 		  source Combine >& log_Combine
 		  echo "Job Complete"
 	      fi
-	      idx=$nmin+1;
-	      echo "finished " $idx
+	      echo "finished in loop " $idx
+	      let idx=nmin+1
+	  else
+	      let idx=idx+1 
+	      echo "in loop " $idx
 	  fi
-	  let idx=idx+1 
-	  echo "in loop " $idx " " 
 	done	
 	echo "Running Complete. The output of Combine has been dumped to the file log_Combine."
     else
