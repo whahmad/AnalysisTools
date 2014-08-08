@@ -43,10 +43,10 @@ else
 	  do
 	  sleep 300;
 	  nsets=$(ls | grep Set_ | wc -l)
-	  njobs=$(cat jobs_completeOrComplete | wc -l)
+	  njobs=$(cat jobs_submittedOrComplete | wc -l)
 	  if [[ ${nsets} -ne ${njobs} ]]; then
 	      echo "not all jobs were submitted. Retrying failed submissions..."
-	      source Submit --Submit > junk_S ; rm  junk_S 
+	      source Submit --Submit 
 	  fi
 	  source CheckandGet.sh  --get >& junk_CG; rm junk_CG;
 	  eval=`cat jobs_submitted  | wc -l`
