@@ -426,10 +426,10 @@ if( $ARGV[0] eq "--Local" ){
     printf("\ngit config --global credential.helper cache");
     printf("\nNow you can run the analysis using dcache.");
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
-    printf("\nTo compile the code in the workdir: source compile ");
+    printf("\nTo compile the code in the workdir: source compile  --useRoot $OutputDir/workdir$set/root/ $UserDir ");
     printf("\nTo submit jobs to the batch queue: source Submit ");
     printf("\nTo combine jobs submitted to the batch queue: source Combine \n");
-    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile; cd $OutputDir/workdir$set/Set_1; source Set_1 | tee log; cd ..\n");
+    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile  --useRoot $OutputDir/workdir$set/root/ $UserDir; cd $OutputDir/workdir$set/Set_1; source Set_1 | tee log; cd ..\n");
 
 } 
 
@@ -637,10 +637,10 @@ if( $ARGV[0] eq "--DCache" ){
     printf("\ngit config --global credential.helper cache");
     printf("\nNow you can run the analysis using dcache.");
     printf("\nTo go to the Test workdir: cd  $OutputDir/workdir$set ");
-    printf("\nTo compile the code in the workdir: source compile ");
+    printf("\nTo compile the code in the workdir: source compile --useRoot $OutputDir/workdir$set/root/ $UserDir ");
     printf("\nTo submit jobs to the batch queue: source Submit ");
     printf("\nTo combine jobs submitted to the batch queue: source Combine \n");
-    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile; cd $OutputDir/workdir$set/Set_1; source Set_1 | tee log; cd ..\n");
+    printf("\nTo test a single job: cd  $OutputDir/workdir$set; source compile  --useRoot $OutputDir/workdir$set/root/ $UserDir; cd $OutputDir/workdir$set/Set_1; source Set_1 | tee log; cd ..\n");
 } 
 
 if( $ARGV[0] eq "--GRID" ){
