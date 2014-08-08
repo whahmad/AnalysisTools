@@ -511,7 +511,7 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 				}
 				if (integral != 0) {
 					types.push_back((i!=0) ? i+1: i); // +1 as later on the TotalMC histo is added
-					std::cout << "adding one type to types list" << std::endl;
+					if (verbose) std::cout << "adding one type to types list" << std::endl;
 				}
 				integral = 0;
 			}
