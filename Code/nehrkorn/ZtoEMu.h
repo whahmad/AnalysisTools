@@ -6,6 +6,7 @@
 #include "TString.h"
 #include "TF1.h"
 #include "TGraphAsymmErrors.h"
+#include "ReferenceScaleFactors.h"
 
 class ZtoEMu : public Selection {
 
@@ -38,6 +39,7 @@ class ZtoEMu : public Selection {
 
  private:
   // Selection Variables
+  ReferenceScaleFactors *RSF;
 
   std::vector<TH1D> RelIsoE;
   std::vector<TH1D> RelIsoMu;
@@ -154,10 +156,6 @@ class ZtoEMu : public Selection {
   double calculatePzetaDQM(int muiterator, int eiterator);
   double cosphi2d(double px1, double py1, double px2, double py2);
   double cosphi3d(TVector3 vec1, TVector3 vec2);
-  double dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
-  double dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx);
-  bool jetFromVtx(std::vector<int> vtx_track_idx, int leadingtrack_idx);
-  double vertexSignificance(TVector3 vec, unsigned int vertex);
   bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
   int matchTruth(TLorentzVector tvector);
   bool matchTruth(TLorentzVector tvector, int pid, double dr);
@@ -165,26 +163,13 @@ class ZtoEMu : public Selection {
   int nCutsAboveZero(int id);
   
   bool isHiggsMuon(unsigned int idx, unsigned int vtx);
-  bool isLooseMuon(unsigned int idx);
   bool isFakeMuon(unsigned int idx);
   bool isFakeMuon(unsigned int idx, unsigned int vtx);
-  double Muon_RelIso(unsigned int idx);
-  
-  bool isTrigPreselElectron(unsigned int idx);
-  bool isTrigNoIPPreselElectron(unsigned int idx);
-  bool isMVATrigElectron(unsigned int idx);
-  bool isMVATrigNoIPElectron(unsigned int idx);
-  bool isMVANonTrigElectron(unsigned int idx, unsigned int vtx);
   bool isHiggsElectron(unsigned int idx, unsigned int vtx);
   bool isWWElectron(unsigned int idx, unsigned int vtx);
-  bool isTightElectron(unsigned int idx);
-  bool isTightElectron(unsigned int idx, unsigned int vtx);
   bool isLooseElectron(unsigned int idx);
   bool isFakeElectron(unsigned int idx);
   bool isFakeElectron(unsigned int idx, unsigned int vtx);
-  double Electron_RelIso(unsigned int idx);
-  double Electron_Aeff_R04(double Eta);
-  double Electron_Aeff_R03(double Eta);
   
   double MuonIDeff(unsigned int idx);
   double MuonIDerrUp(unsigned int idx);
