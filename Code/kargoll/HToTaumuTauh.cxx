@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "HistoConfig.h"
 #include <iostream>
+#include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
 HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
   Selection(Name_,id_),
@@ -53,14 +54,14 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	wJetsBGSource = "MC";
 
 	// this one is used to set the event yield for W+Jet
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",   6606.6) );
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",  1144.5) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",    4842.3) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",    668.2) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",   153.9) );
-	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",       62.8) );
-	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",        4.6) );
-	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",   13307.8) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  6612.88608791) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh", 1131.93716247) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",   4792.75939593) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",   667.02291224) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",  150.54508807) );
+	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",      62.42946531) );
+	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",       4.63724615) );
+	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",  13271.59050205) );
 
 	// this one is used for cross-check only
 	// wJetsYieldScaleMap.insert(std::pair<TString,double>("ZeroJetLow",   0.80901627) );
@@ -357,12 +358,14 @@ void  HToTaumuTauh::Configure(){
   TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,200.,"p_{T}(#tau)/GeV");
   TauEta=HConfig.GetTH1D(Name+"_TauEta","TauEta",50,-2.5,2.5,"#eta(#tau)");
   TauPhi=HConfig.GetTH1D(Name+"_TauPhi","TauPhi",50,-3.14159,3.14159,"#phi(#tau)");
+  TauIso=HConfig.GetTH1D(Name+"_TauIso","TauIso",50,0.,25.,"Iso(#tau)/GeV");
 
   TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,200.,"p_{T}(#tau_{sel})/GeV");
   TauSelEta=HConfig.GetTH1D(Name+"_TauSelEta","TauSelEta",50,-2.5,2.5,"#eta(#tau_{sel})");
   TauSelPhi=HConfig.GetTH1D(Name+"_TauSelPhi","TauSelPhi",50,-3.14159,3.14159,"#phi(#tau_{sel})");
   TauSelDrHlt=HConfig.GetTH1D(Name+"_TauSelDrHlt","TauSelDrHLT",50,0.,1.,"#DeltaR(#tau_{sel},#tau_{HLT})");
   TauSelDecayMode=HConfig.GetTH1D(Name+"_TauSelDecayMode","TauSelDecayMode",16,-0.5,15.5,"#tau_{sel} decay mode");
+  TauSelIso=HConfig.GetTH1D(Name+"_TauSelIso","TauSelIso",50,0.,25.,"Iso(#tau_{sel})/GeV");
 
   MuVetoDPtSelMuon=HConfig.GetTH1D(Name+"_MuVetoDPtSelMuon","MuVetoDPtSelMuon",100,-100.,100.,"#Deltap_{T}(#mu_{veto},#mu)/GeV");
   MuVetoInvM=HConfig.GetTH1D(Name+"_MuVetoInvM","MuVetoInvM",100,0.,200,"m_{inv}(#mu_{veto}^{1},#mu_{veto}^{2})/GeV");
@@ -386,6 +389,13 @@ void  HToTaumuTauh::Configure(){
 
   MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
   MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
+
+  MetLepMuDr = HConfig.GetTH1D(Name+"_MetLepMuDr","MetLepMuDr",102,-0.1,5.0,"#DeltaR(#mu,#mu^{MET})");
+  MetLepTauDr = HConfig.GetTH1D(Name+"_MetLepTauDr","MetLepTauDr",102,-0.1,5.0,"#DeltaR(#tau_{h},#tau_{h}^{MET})");
+  MetLepNMu = HConfig.GetTH1D(Name+"_MetLepNMu","MetLepNMu",11,-0.5,10.5,"N(#mu^{MET})");
+  MetLepNTau = HConfig.GetTH1D(Name+"_MetLepNTau","MetLepNTau",11,-0.5,10.5,"N(#tau_{h}^{MET})");
+  MetLepNMuMinusNMu = HConfig.GetTH1D(Name+"_MetLepNMuMinusNMu","MetLepNMuMinusNMu",11,-5.5,5.5,"N(#mu^{MET}) - N(#mu^{sel}");
+  MetLepNTauMinusNTau = HConfig.GetTH1D(Name+"_MetLepNTauMinusNTau","MetLepNTauMinusNTau",11,-5.5,5.5,"N(#tau_{h}^{MET}) - N(#tau_{h}^{sel}");
 
   NJetsKin = HConfig.GetTH1D(Name+"_NJetsKin","NJetsKin",11,-0.5,10.5,"N(j_{kin})");
   JetKin1Pt = HConfig.GetTH1D(Name+"_JetKin1Pt","JetKin1Pt",50,0.,200.,"p_{T}(j_{kin}^{1})/GeV");
@@ -416,6 +426,19 @@ void  HToTaumuTauh::Configure(){
   JetsDEta = HConfig.GetTH1D(Name+"_JetsDEta","JetsDEta",100,-10.,10.,"#Delta#eta(j^{1},j^{2})");
   JetsInEtaGap = HConfig.GetTH1D(Name+"_JetsInEtaGap","JetsInEtaGap",6,-0.5,5.5,"N(j in #eta gap)");
   JetsInvM = HConfig.GetTH1D(Name+"_JetsInvM","JetsInvM",100,0.,2000.,"m_{inv}(j^{1},j^{2})");
+
+  TauIsoFullSel = HConfig.GetTH1D(Name+"_TauIsoFullSel","TauIsoFullSel",50,0.,25.,"Iso(#tau_{sel})/GeV");
+
+  MtAfterMuon = HConfig.GetTH1D(Name+"_MtAfterMuon","MtAfterMuon",50,0.,100.,"m_{T}/GeV");
+  MtAfterDiMuonVeto = HConfig.GetTH1D(Name+"_MtAfterDiMuonVeto","MtAfterDiMuonVeto",50,0.,100.,"m_{T}/GeV");
+  MtAfterTau = HConfig.GetTH1D(Name+"_MtAfterTau","MtAfterTau",50,0.,100.,"m_{T}/GeV");
+  MtAfterTriLepVeto = HConfig.GetTH1D(Name+"_MtAfterTriLepVeto","MtAfterTriLepVeto",50,0.,100.,"m_{T}/GeV");
+  MtAfterOppCharge = HConfig.GetTH1D(Name+"_MtAfterOppCharge","MtAfterOppCharge",50,0.,100.,"m_{T}/GeV");
+  MtAfterBJetVeto = HConfig.GetTH1D(Name+"_MtAfterBJetVeto","MtAfterBJetVeto",50,0.,100.,"m_{T}/GeV");
+  MtOnlyTau = HConfig.GetTH1D(Name+"_MtOnlyTau","MtOnlyTau",50,0.,100.,"m_{T}/GeV");
+  MtOnlyTriLepVeto = HConfig.GetTH1D(Name+"_MtOnlyTriLepVeto","MtOnlyTriLepVeto",50,0.,100.,"m_{T}/GeV");
+  MtOnlyOppCharge = HConfig.GetTH1D(Name+"_MtOnlyOppCharge","MtOnlyOppCharge",50,0.,100.,"m_{T}/GeV");
+  MtOnlyBJet = HConfig.GetTH1D(Name+"_MtOnlyBJet","MtOnlyBJet",50,0.,100.,"m_{T}/GeV");
 
   Cat0JetLowMt = HConfig.GetTH1D(Name+"_Cat0JetLowMt","Cat0JetLowMt",125,0.,250.,"0JL: m_{T}/GeV");
   Cat0JetLowMtSideband = HConfig.GetTH1D(Name+"_Cat0JetLowMtSideband","Cat0JetLowMtSideband",90,70.,250.,"0JL: m_{T}/GeV");
@@ -452,6 +475,39 @@ void  HToTaumuTauh::Configure(){
   CatVBFLooseQcdAbcd = HConfig.GetTH2D(Name+"_CatVBFLooseQcdAbcd","CatVBFLooseQcdAbcd",2,-1.,1.,2,-1.,1.,"VBFL:relIso(#mu)","OS/SS");
   CatVBFTightQcdAbcd = HConfig.GetTH2D(Name+"_CatVBFTightQcdAbcd","CatVBFTightQcdAbcd",2,-1.,1.,2,-1.,1.,"VBFT:relIso(#mu)","OS/SS");
   CatInclusiveQcdAbcd = HConfig.GetTH2D(Name+"_CatInclusiveQcdAbcd","CatInclusiveQcdAbcd",2,-1.,1.,2,-1.,1.,"Incl:relIso(#mu)","OS/SS");
+
+  Cat0JetLowQcdOSMuIso = HConfig.GetTH1D(Name+"_Cat0JetLowQcdOSMuIso","Cat0JetLowQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat0JetLowQcdOSTauIso = HConfig.GetTH1D(Name+"_Cat0JetLowQcdOSTauIso","Cat0JetLowQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat0JetLowQcdSSMuIso = HConfig.GetTH1D(Name+"_Cat0JetLowQcdSSMuIso","Cat0JetLowQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat0JetLowQcdSSTauIso = HConfig.GetTH1D(Name+"_Cat0JetLowQcdSSTauIso","Cat0JetLowQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat0JetHighQcdOSMuIso = HConfig.GetTH1D(Name+"_Cat0JetHighQcdOSMuIso","Cat0JetHighQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat0JetHighQcdOSTauIso = HConfig.GetTH1D(Name+"_Cat0JetHighQcdOSTauIso","Cat0JetHighQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat0JetHighQcdSSMuIso = HConfig.GetTH1D(Name+"_Cat0JetHighQcdSSMuIso","Cat0JetHighQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat0JetHighQcdSSTauIso = HConfig.GetTH1D(Name+"_Cat0JetHighQcdSSTauIso","Cat0JetHighQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetLowQcdOSMuIso = HConfig.GetTH1D(Name+"_Cat1JetLowQcdOSMuIso","Cat1JetLowQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetLowQcdOSTauIso = HConfig.GetTH1D(Name+"_Cat1JetLowQcdOSTauIso","Cat1JetLowQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetLowQcdSSMuIso = HConfig.GetTH1D(Name+"_Cat1JetLowQcdSSMuIso","Cat1JetLowQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetLowQcdSSTauIso = HConfig.GetTH1D(Name+"_Cat1JetLowQcdSSTauIso","Cat1JetLowQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetHighQcdOSMuIso = HConfig.GetTH1D(Name+"_Cat1JetHighQcdOSMuIso","Cat1JetHighQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetHighQcdOSTauIso = HConfig.GetTH1D(Name+"_Cat1JetHighQcdOSTauIso","Cat1JetHighQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetHighQcdSSMuIso = HConfig.GetTH1D(Name+"_Cat1JetHighQcdSSMuIso","Cat1JetHighQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetHighQcdSSTauIso = HConfig.GetTH1D(Name+"_Cat1JetHighQcdSSTauIso","Cat1JetHighQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetBoostQcdOSMuIso = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdOSMuIso","Cat1JetBoostQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetBoostQcdOSTauIso = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdOSTauIso","Cat1JetBoostQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  Cat1JetBoostQcdSSMuIso = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdSSMuIso","Cat1JetBoostQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  Cat1JetBoostQcdSSTauIso = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdSSTauIso","Cat1JetBoostQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatVBFLooseQcdOSMuIso = HConfig.GetTH1D(Name+"_CatVBFLooseQcdOSMuIso","CatVBFLooseQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  CatVBFLooseQcdOSTauIso = HConfig.GetTH1D(Name+"_CatVBFLooseQcdOSTauIso","CatVBFLooseQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatVBFLooseQcdSSMuIso = HConfig.GetTH1D(Name+"_CatVBFLooseQcdSSMuIso","CatVBFLooseQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  CatVBFLooseQcdSSTauIso = HConfig.GetTH1D(Name+"_CatVBFLooseQcdSSTauIso","CatVBFLooseQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatVBFTightQcdOSMuIso = HConfig.GetTH1D(Name+"_CatVBFTightQcdOSMuIso","CatVBFTightQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  CatVBFTightQcdOSTauIso = HConfig.GetTH1D(Name+"_CatVBFTightQcdOSTauIso","CatVBFTightQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatVBFTightQcdSSMuIso = HConfig.GetTH1D(Name+"_CatVBFTightQcdSSMuIso","CatVBFTightQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  CatVBFTightQcdSSTauIso = HConfig.GetTH1D(Name+"_CatVBFTightQcdSSTauIso","CatVBFTightQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatInclusiveQcdOSMuIso = HConfig.GetTH1D(Name+"_CatInclusiveQcdOSMuIso","CatInclusiveQcdOSMuIso",50,0.,1.,"relIso(#mu)");
+  CatInclusiveQcdOSTauIso = HConfig.GetTH1D(Name+"_CatInclusiveQcdOSTauIso","CatInclusiveQcdOSTauIso",50,0.,20.,"iso(#tau_{h})");
+  CatInclusiveQcdSSMuIso = HConfig.GetTH1D(Name+"_CatInclusiveQcdSSMuIso","CatInclusiveQcdSSMuIso",50,0.,1.,"relIso(#mu)");
+  CatInclusiveQcdSSTauIso = HConfig.GetTH1D(Name+"_CatInclusiveQcdSSTauIso","CatInclusiveQcdSSTauIso",50,0.,20.,"iso(#tau_{h})");
 
   // configure category
   if (categoryFlag == "VBFTight")	configure_VBFTight();
@@ -501,11 +557,13 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&TauPt  );
  Extradist1d.push_back(&TauEta  );
  Extradist1d.push_back(&TauPhi  );
+ Extradist1d.push_back(&TauIso );
 
  Extradist1d.push_back(&TauSelPt  );
  Extradist1d.push_back(&TauSelEta  );
  Extradist1d.push_back(&TauSelPhi  );
  Extradist1d.push_back(&TauSelDecayMode  );
+ Extradist1d.push_back(&TauSelIso );
 
  Extradist1d.push_back(&MuVetoDPtSelMuon);
  Extradist1d.push_back(&MuVetoInvM);
@@ -529,6 +587,13 @@ void  HToTaumuTauh::Store_ExtraDist(){
 
  Extradist1d.push_back(&MetPt);
  Extradist1d.push_back(&MetPhi);
+
+ Extradist1d.push_back(&MetLepMuDr);
+ Extradist1d.push_back(&MetLepTauDr);
+ Extradist1d.push_back(&MetLepNMu);
+ Extradist1d.push_back(&MetLepNTau);
+ Extradist1d.push_back(&MetLepNMuMinusNMu);
+ Extradist1d.push_back(&MetLepNTauMinusNTau);
 
  Extradist1d.push_back(&NJetsKin);
  Extradist1d.push_back(&JetKin1Pt);
@@ -559,6 +624,19 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&JetsDEta);
  Extradist1d.push_back(&JetsInEtaGap);
  Extradist1d.push_back(&JetsInvM);
+
+ Extradist1d.push_back(&TauIsoFullSel);
+
+ Extradist1d.push_back(&MtAfterMuon);
+ Extradist1d.push_back(&MtAfterDiMuonVeto);
+ Extradist1d.push_back(&MtAfterTau);
+ Extradist1d.push_back(&MtAfterTriLepVeto);
+ Extradist1d.push_back(&MtAfterOppCharge);
+ Extradist1d.push_back(&MtAfterBJetVeto);
+ Extradist1d.push_back(&MtOnlyTau);
+ Extradist1d.push_back(&MtOnlyTriLepVeto);
+ Extradist1d.push_back(&MtOnlyOppCharge);
+ Extradist1d.push_back(&MtOnlyBJet);
 
  Extradist1d.push_back(&Cat0JetLowMt);
  Extradist1d.push_back(&Cat0JetLowMtSideband);
@@ -595,6 +673,39 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist2d.push_back(&CatVBFLooseQcdAbcd);
  Extradist2d.push_back(&CatVBFTightQcdAbcd);
  Extradist2d.push_back(&CatInclusiveQcdAbcd);
+
+ Extradist1d.push_back(&Cat0JetLowQcdOSMuIso);
+ Extradist1d.push_back(&Cat0JetLowQcdOSTauIso);
+ Extradist1d.push_back(&Cat0JetLowQcdSSMuIso);
+ Extradist1d.push_back(&Cat0JetLowQcdSSTauIso);
+ Extradist1d.push_back(&Cat0JetHighQcdOSMuIso);
+ Extradist1d.push_back(&Cat0JetHighQcdOSTauIso);
+ Extradist1d.push_back(&Cat0JetHighQcdSSMuIso);
+ Extradist1d.push_back(&Cat0JetHighQcdSSTauIso);
+ Extradist1d.push_back(&Cat1JetLowQcdOSMuIso);
+ Extradist1d.push_back(&Cat1JetLowQcdOSTauIso);
+ Extradist1d.push_back(&Cat1JetLowQcdSSMuIso);
+ Extradist1d.push_back(&Cat1JetLowQcdSSTauIso);
+ Extradist1d.push_back(&Cat1JetHighQcdOSMuIso);
+ Extradist1d.push_back(&Cat1JetHighQcdOSTauIso);
+ Extradist1d.push_back(&Cat1JetHighQcdSSMuIso);
+ Extradist1d.push_back(&Cat1JetHighQcdSSTauIso);
+ Extradist1d.push_back(&Cat1JetBoostQcdOSMuIso);
+ Extradist1d.push_back(&Cat1JetBoostQcdOSTauIso);
+ Extradist1d.push_back(&Cat1JetBoostQcdSSMuIso);
+ Extradist1d.push_back(&Cat1JetBoostQcdSSTauIso);
+ Extradist1d.push_back(&CatVBFLooseQcdOSMuIso);
+ Extradist1d.push_back(&CatVBFLooseQcdOSTauIso);
+ Extradist1d.push_back(&CatVBFLooseQcdSSMuIso);
+ Extradist1d.push_back(&CatVBFLooseQcdSSTauIso);
+ Extradist1d.push_back(&CatVBFTightQcdOSMuIso);
+ Extradist1d.push_back(&CatVBFTightQcdOSTauIso);
+ Extradist1d.push_back(&CatVBFTightQcdSSMuIso);
+ Extradist1d.push_back(&CatVBFTightQcdSSTauIso);
+ Extradist1d.push_back(&CatInclusiveQcdOSMuIso);
+ Extradist1d.push_back(&CatInclusiveQcdOSTauIso);
+ Extradist1d.push_back(&CatInclusiveQcdSSMuIso);
+ Extradist1d.push_back(&CatInclusiveQcdSSTauIso);
 
 }
 
@@ -686,10 +797,11 @@ void  HToTaumuTauh::doEvent(){
   diMuonVetoMuonsPositive.clear();
   std::vector<int> diMuonVetoMuonsNegative;	// muons selected for the dimuon veto
   diMuonVetoMuonsNegative.clear();
+  int diMuonNeg(-1), diMuonPos(-1);
   for(unsigned i=0;i<Ntp->NMuons();i++){
 	  if( selectMuon_diMuonVeto(i, selVertex) ) {
 		  if (Ntp->Muon_Charge(i) == 1) {
-			  diMuonVetoMuonsPositive.push_back(i);
+			  diMuonVetoMuonsPositive.push_back(i); // todo: be aware that there are -999 cases for charge track matching
 		  }
 		  else if (Ntp->Muon_Charge(i) == -1) {
 			  diMuonVetoMuonsNegative.push_back(i);
@@ -700,7 +812,18 @@ void  HToTaumuTauh::doEvent(){
 	  value.at(DiMuonVeto) = 0.0;
   }
   else{
-	  value.at(DiMuonVeto) = Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)) );
+	  double dRmax(0.0);
+	  for (std::vector<int>::iterator it_mup = diMuonVetoMuonsPositive.begin(); it_mup != diMuonVetoMuonsPositive.end(); ++it_mup){
+		  for (std::vector<int>::iterator it_mun = diMuonVetoMuonsNegative.begin(); it_mun != diMuonVetoMuonsNegative.end(); ++it_mun){
+			  double dr = Ntp->Muon_p4(*it_mup).DeltaR( Ntp->Muon_p4(*it_mun) );
+			  if (dr > dRmax){
+				  dRmax = dr;
+				  diMuonPos = *it_mup;
+				  diMuonNeg = *it_mun;
+			  }
+		  }
+	  }
+	  value.at(DiMuonVeto) = dRmax;
   }
   pass.at(DiMuonVeto) = (value.at(DiMuonVeto) < cut.at(DiMuonVeto));
 
@@ -790,7 +913,7 @@ void  HToTaumuTauh::doEvent(){
 	  double phi	= Ntp->Muon_p4(selMuon).Phi();
 	  double eTmiss = Ntp->MET_CorrMVAMuTau_et();
 	  double eTmPhi = Ntp->MET_CorrMVAMuTau_phi();
-	  value.at(MT)	= transverseMass(pT,phi,eTmiss,eTmPhi);
+	  value.at(MT)	= Ntp->transverseMass(pT,phi,eTmiss,eTmPhi);
   }
   if (cut.at(MT) == 999) // set to 999 to disable mt cut
 	  pass.at(MT) = true;
@@ -798,7 +921,7 @@ void  HToTaumuTauh::doEvent(){
 	  pass.at(MT) = (value.at(MT) < cut.at(MT));
 
   // sort jets by corrected pt
-  std::vector<int> sortedPFJets = sortPFjets();
+  std::vector<int> sortedPFJets = Ntp->sortDefaultObjectsByPt("Jets");
   // select jets for categories
   // PFJet and bjet collections can have mutual elements!
   std::vector<int> selectedJetsClean;
@@ -908,10 +1031,22 @@ void  HToTaumuTauh::doEvent(){
   bool passed_NoCategory	= category_NoCategory();
 
   // run relaxed categories for background methods
-  bool isWJetMC = (Ntp->GetMCID() >= 20) && (Ntp->GetMCID() <= 23);
-  bool useRelaxedForPlots =  (wJetsBGSource == "Data") && isWJetMC; // overwrite pass-vector with relaxed VBF categories (for WJets shape) only if wanted
-  bool passed_VBFTightRelaxed = helperCategory_VBFTightRelaxed(useRelaxedForPlots, nJets, selJetdeta, selNjetingap, selMjj, higgsPt);
-  bool passed_VBFLooseRelaxed = helperCategory_VBFLooseRelaxed(useRelaxedForPlots, nJets, selJetdeta, selNjetingap, selMjj);
+  bool isWJetMC = (Ntp->GetMCID() >= DataMCType::W_lnu) && (Ntp->GetMCID() <= DataMCType::W_taunu);
+  bool useRelaxedForPlots =  (wJetsBGSource == "Data") && isWJetMC; // overwrite pass-vector with relaxed categories (for WJets shape) only if wanted
+  if (useRelaxedForPlots) {
+	  // disable OS requirement for WJets shape in VBFLoose, VBFTight and 1JetBoost categories
+	  if (categoryFlag == "VBFLoose" || categoryFlag == "VBFTight" || categoryFlag == "OneJetBoost")
+		  pass.at(OppCharge) = true;
+	  // relax PFTau isolation for WJets shape
+	  if (categoryFlag == "VBFTight" || categoryFlag == "OneJetBoost") {
+		  pass.at(NTauIso) = hasRelaxedIsoTau;
+		  pass.at(NTauKin) = hasRelaxedIsoTau;
+	  }
+  }
+  // VBFTight: full category selection for shape
+  bool passed_VBFTightRelaxed = helperCategory_VBFTightRelaxed_WYield(false, nJets, selJetdeta, selNjetingap, selMjj, higgsPt);
+  // VBFLoose: relaxed category selection for shape
+  bool passed_VBFLooseRelaxed = helperCategory_VBFLooseRelaxed_WYieldShape(useRelaxedForPlots, nJets, selJetdeta, selNjetingap, selMjj);
 
   // fill plot checking if multiple categories have passed
   // this should never happen (except for WJets MC events when running with the "Data" flag
@@ -925,7 +1060,7 @@ void  HToTaumuTauh::doEvent(){
   if (passedFullInclusiveSel && passed_ZeroJetHigh) {nCat++; CatFired.at(t).Fill(6, w);}
   if (passedFullInclusiveSel && passed_ZeroJetLow	) {nCat++; CatFired.at(t).Fill(7, w);}
 
-  NCatFired.at(t).Fill(nCat, w);
+  if (passedFullInclusiveSel) {NCatFired.at(t).Fill(nCat, w);}
 
   if (passedFullInclusiveSel && nCat == 0){
 	  std::cout << "                       Here comes a bad event" << std::endl;
@@ -935,8 +1070,8 @@ void  HToTaumuTauh::doEvent(){
 	  printf(format,Ntp->EventNumber(), nJets, selJetdeta, selNjetingap, selMjj, higgsPt, passed_VBFTight, passed_VBF, tauPt);
   }
 
-  //if (!(passed_VBFTight || passed_VBFLoose || passed_OneJetHigh|| passed_OneJetLow || passed_OneJetBoost || passed_ZeroJetHigh || passed_ZeroJetLow))
-	//	  std::cout << "************* NO CATEGORY PASSED! ****************" << std::endl;
+  if (passedFullInclusiveSel && !(passed_VBFTight || passed_VBFLoose || passed_OneJetHigh|| passed_OneJetLow || passed_OneJetBoost || passed_ZeroJetHigh || passed_ZeroJetLow))
+		  std::cout << "************* NO CATEGORY PASSED! ****************" << std::endl;
 
   bool status=AnalysisCuts(t,w,wobs); // true only if full selection passed
 
@@ -960,8 +1095,8 @@ void  HToTaumuTauh::doEvent(){
   if(passedVertex){
 	  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
 		  if(	Ntp->isTightMuon(i_mu,selVertex) ){
-			  MuDxy.at(t).Fill(dxy(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
-			  MuDz.at(t).Fill(dz(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuDxy.at(t).Fill(Ntp->dxySigned(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
+			  MuDz.at(t).Fill(Ntp->dzSigned(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
 			  MuRelIso.at(t).Fill(Ntp->Muon_RelIso(i_mu), w);
 		  }
 	  }
@@ -1001,6 +1136,7 @@ void  HToTaumuTauh::doEvent(){
 		  TauPt.at(t).Fill(Ntp->PFTau_p4(*it_tau).Pt(), w);
 		  TauEta.at(t).Fill(Ntp->PFTau_p4(*it_tau).Eta(), w);
 		  TauPhi.at(t).Fill(Ntp->PFTau_p4(*it_tau).Phi(), w);
+		  TauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(*it_tau), w);
 	  }
 
 	  //////// plots filled only with selected tau
@@ -1008,7 +1144,8 @@ void  HToTaumuTauh::doEvent(){
 		  TauSelPt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(), w);
 		  TauSelEta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(), w);
 		  TauSelPhi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(), w);
-		  TauSelDecayMode.at(t).Fill(Ntp->PFTau_hpsDecayMode(selTau), w);
+		  TauSelDecayMode.at(t).Fill(Ntp->PFTau_hpsDecayMode(selTau), w); // todo: tauiso, tauseliso
+		  TauSelIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
 	  }
   }
 
@@ -1016,17 +1153,17 @@ void  HToTaumuTauh::doEvent(){
   if(passedObjectsFailDiMuonVeto){
 	  // Investigate events discarded by the DiMuon Veto
 	  if (Ntp->Muon_Charge(selMuon) == 1){
-		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonNeg).DeltaR(Ntp->PFTau_p4(selTau)), w);
 	  }
 	  else if (Ntp->Muon_Charge(selMuon) == -1){
-		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->PFTau_p4(selTau)), w);
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->PFTau_p4(selTau)), w);
 	  }
-	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)) + Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))).M() , w);
-	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).Pt(), w);
-	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0)).Pt(), w);
-	  MuVetoDeltaR.at(t).Fill( Ntp->Muon_p4(diMuonVetoMuonsPositive.at(0)).DeltaR(Ntp->Muon_p4(diMuonVetoMuonsNegative.at(0))), w );
+	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonPos) + Ntp->Muon_p4(diMuonNeg)).M() , w);
+	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt(), w);
+	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt(), w);
+	  MuVetoDeltaR.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->Muon_p4(diMuonNeg)), w );
   }
 
   if(passedDiMuonVeto){
@@ -1046,6 +1183,8 @@ void  HToTaumuTauh::doEvent(){
 
   //////// plots filled after full selection (without categories)
   if (passedFullInclusiveSel){
+	  TauIsoFullSel.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+
 	  // Mu-Tau correlations
 	  MuTauDR    .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
 	  MuTauDPhi  .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaPhi(Ntp->PFTau_p4(selTau)), w );
@@ -1061,6 +1200,18 @@ void  HToTaumuTauh::doEvent(){
 	  // MET
 	  MetPt.at(t).Fill( Ntp->MET_CorrMVAMuTau_et(), w);
 	  MetPhi.at(t).Fill( Ntp->MET_CorrMVAMuTau_phi(), w);
+
+	  // MET leptons
+	  int metMuon_idx(-1), metTau_idx(-1);
+	  float metMuon_dR(-1), metTau_dR(-1);
+	  bool isMetMuon = Ntp->findCorrMVAMuTauSrcMuon(selMuon, metMuon_idx, metMuon_dR);
+	  bool isMetTau = Ntp->findCorrMVAMuTauSrcTau(selTau,metTau_idx, metTau_dR);
+	  MetLepMuDr.at(t).Fill( metMuon_dR, w);
+	  MetLepTauDr.at(t).Fill( metTau_dR, w);
+	  MetLepNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons() );
+	  MetLepNTau.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcTaus() );
+	  MetLepNMuMinusNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons() - selectedMuons.size(), w);
+	  MetLepNTauMinusNTau.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcTaus() - selectedTaus.size(), w);
 
 	  // Jets
 	  NJetsKin.at(t).Fill( selectedJetsKin.size(), w);
@@ -1104,6 +1255,18 @@ void  HToTaumuTauh::doEvent(){
     //std::cout << "ID after = " << id << std::endl;
   }
 
+  // mT plots after various selection stages
+  if(passedMu) MtAfterMuon.at(t).Fill(value.at(MT), w);
+  if(passedMu && pass.at(DiMuonVeto)) MtAfterDiMuonVeto.at(t).Fill(value.at(MT), w);
+  if(passedDiMuonVeto) MtAfterTau.at(t).Fill(value.at(MT), w);
+  if(passedDiMuonVeto && pass.at(TriLeptonVeto)) MtAfterTriLepVeto.at(t).Fill(value.at(MT), w);
+  if(passedDiMuonVeto && pass.at(TriLeptonVeto) && pass.at(OppCharge)) MtAfterOppCharge.at(t).Fill(value.at(MT), w);
+  if(passedDiMuonVeto && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(BJetVeto)) MtAfterBJetVeto.at(t).Fill(value.at(MT), w);
+  if(passedObjects) MtOnlyTau.at(t).Fill(value.at(MT), w);
+  if(passedMu && pass.at(TriLeptonVeto)) MtOnlyTriLepVeto.at(t).Fill(value.at(MT), w);
+  if(passedMu && pass.at(OppCharge)) MtOnlyOppCharge.at(t).Fill(value.at(MT), w);
+  if(passedMu && pass.at(BJetVeto)) MtOnlyBJet.at(t).Fill(value.at(MT), w);
+
   //////// category specific plots, especially for background methods /////////
 
   ////// W+Jets Background estimation
@@ -1114,7 +1277,7 @@ void  HToTaumuTauh::doEvent(){
 		  if(pass.at(MT))
 			  Cat0JetLowMtExtrapolation.at(t).Fill(1, w); // fill with weight
 		  if(value.at(MT) > 70.)
-			  Cat0JetLowMtExtrapolation.at(t).Fill(2, w);
+			  Cat0JetLowMtExtrapolation.at(t).Fill(2, w); // fill with weight
 	  }
   }
   if(passedFullInclusiveSelNoMt && passed_ZeroJetHigh){
@@ -1202,12 +1365,11 @@ void  HToTaumuTauh::doEvent(){
   //    A  |  B
   if (passedFullInclusiveNoIsoNoCharge){
 	  bool isSS = ( abs(value.at(OppCharge)) == 2 );
-	  // (!passedObjects && hasRelaxedIsoTau) means that there is no signal muon (as relaxedIsoTaus fully contains signal taus)
-	  // --> veto events with signal muon AND antiIsoMuon, as in these cases mT etc. are calculated using the signal muon
+	  // veto events with signal muon AND antiIsoMuon, as in these cases mT etc. are calculated using the signal muon
 	  bool isA = pass.at(OppCharge) && passedObjects;
-	  bool isB = pass.at(OppCharge) && !passedObjects && hasRelaxedIsoTau && hasAntiIsoMuon;
+	  bool isB = pass.at(OppCharge) && !passedMu && hasRelaxedIsoTau && hasAntiIsoMuon;
 	  bool isC = isSS && passedObjects;
-	  bool isD = isSS && !passedObjects && hasRelaxedIsoTau && hasAntiIsoMuon;
+	  bool isD = isSS && !passedMu && hasRelaxedIsoTau && hasAntiIsoMuon;
 	  if (isA+isB+isC+isD > 1) printf("WARNING: Event %i enters more than 1 ABCD region! (A%i, B%i, C%i D%i)\n", Ntp->EventNumber(), isA, isB, isC, isD);
 //	  if (isA+isB+isC+isD == 0) {
 //		  printf("ATTENTION: Event %9d enters no ABCD region! Sum(q) = %d, passedMu = %d, passedTau = %d\n", Ntp->EventNumber(), value.at(OppCharge), passedMu, passedTau);
@@ -1220,17 +1382,92 @@ void  HToTaumuTauh::doEvent(){
 	  if (isB || isD) iso = +0.5;
 
 	  CatInclusiveQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_ZeroJetLow) Cat0JetLowQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_ZeroJetHigh) Cat0JetHighQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_OneJetLow) Cat1JetLowQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_OneJetHigh) Cat1JetHighQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_OneJetBoost) Cat1JetBoostQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_VBFLoose) CatVBFLooseQcdAbcd.at(t).Fill(iso,q,w);
-	  if (passed_VBFTight) CatVBFTightQcdAbcd.at(t).Fill(iso,q,w);
+	  if (pass.at(OppCharge)) {
+		  CatInclusiveQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+		  CatInclusiveQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+	  }
+	  if (isSS){
+		  CatInclusiveQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+		  CatInclusiveQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+	  }
+	  if (passed_ZeroJetLow) {
+		  Cat0JetLowQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  Cat0JetLowQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat0JetLowQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  Cat0JetLowQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat0JetLowQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_ZeroJetHigh) {
+		  Cat0JetHighQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  Cat0JetHighQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat0JetHighQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  Cat0JetHighQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat0JetHighQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_OneJetLow) {
+		  Cat1JetLowQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  Cat1JetLowQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetLowQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  Cat1JetLowQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetLowQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_OneJetHigh) {
+		  Cat1JetHighQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  Cat1JetHighQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetHighQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  Cat1JetHighQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetHighQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_OneJetBoost) {
+		  Cat1JetBoostQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  Cat1JetBoostQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetBoostQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  Cat1JetBoostQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  Cat1JetBoostQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_VBFLoose) {
+		  CatVBFLooseQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  CatVBFLooseQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  CatVBFLooseQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  CatVBFLooseQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  CatVBFLooseQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
+	  if (passed_VBFTight) {
+		  CatVBFTightQcdAbcd.at(t).Fill(iso,q,w);
+		  if (pass.at(OppCharge)) {
+			  CatVBFTightQcdOSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  CatVBFTightQcdOSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+		  if (isSS){
+			  CatVBFTightQcdSSMuIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+			  CatVBFTightQcdSSTauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+		  }
+	  }
   }
-  // todo: fill the ABCD plot
-  // todo: create plots showing isolation for OS and SS events
-
 }
 
 
@@ -1252,7 +1489,7 @@ void HToTaumuTauh::Finish() {
 				if (oldXSec != -1) {
 					// Histo.txt has WJet xsec unequal -1, so set it to -1 to avoid scaling by framework
 					if (!HConfig.SetCrossSection(id, -1))
-						std::cout << "WARNING: Could not change cross-section for id " << id << std::endl;
+						std::cout << "WARNING: Could not change cross section for id " << id << std::endl;
 					printf("WJet process %i had xsec = %6.1f. Setting to %6.1f for data-driven WJet yield.\n", id, oldXSec, HConfig.GetCrossSection(id));
 				}
 				sumSelEvts += Npassed.at(type).GetBinContent(NCuts);
@@ -1290,56 +1527,12 @@ void HToTaumuTauh::Finish() {
 // Definition of selection and helper functions
 /////////////////////////////////////////
 
-///////// Helper functions
-double HToTaumuTauh::dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
-	return (-(poca.X()-vtx.X())*fourvector.Py()+(poca.Y()-vtx.Y())*fourvector.Px())/fourvector.Pt();
-}
-
-double HToTaumuTauh::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
-	return poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2);
-}
-
-double HToTaumuTauh::matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType){
-	unsigned int id = 0;
-	TLorentzVector particle(0.,0.,0.,0.);
-	TLorentzVector triggerObj(0.,0.,0.,0.);
-	if(objectType=="tau"){
-		id = 84;
-		particle = Ntp->PFTau_p4(i_obj);
-	}
-	if(objectType=="muon"){
-		id = 83;
-		particle = Ntp->Muon_p4(i_obj);
-	}
-
-	double minDR = 100.;
-	for(unsigned i_trig = 0; i_trig < trigger.size(); i_trig++){
-		for(unsigned i=0;i<Ntp->NHLTTrigger_objs();i++){
-			if(Ntp->HLTTrigger_objs_trigger(i).find(trigger.at(i_trig)) != string::npos){
-				for(unsigned j=0;j<Ntp->NHLTTrigger_objs(i);j++){
-					if(Ntp->HLTTrigger_objs_Id(i,j)==id){
-						triggerObj.SetPtEtaPhiE(Ntp->HLTTrigger_objs_Pt(i,j),
-								Ntp->HLTTrigger_objs_Eta(i,j),
-								Ntp->HLTTrigger_objs_Phi(i,j),
-								Ntp->HLTTrigger_objs_E(i,j));
-					}
-					if( triggerObj.Pt()>0. && particle.Pt()>0. ) {
-						double dr = particle.DeltaR(triggerObj);
-						if (dr < minDR) minDR = dr;
-					}
-				}
-			}
-		}
-	}
-	return minDR;
-}
-
 ///////// Muons
 
 bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
 		Ntp->Muon_RelIso(i) < cMu_relIso &&
-		matchTrigger(i,cTriggerNames,"muon") < cMu_dRHltMatch
+		Ntp->matchTrigger(i,cTriggerNames,"muon") < cMu_dRHltMatch
 			){
 		return true;
 	}
@@ -1359,7 +1552,7 @@ bool HToTaumuTauh::selectMuon_antiIso(unsigned i, unsigned vertex) {
 	if (Ntp->isSelectedMuon(i, vertex, cMu_dxy, cMu_dz) &&
 		Ntp->Muon_RelIso(i) <= 0.5 &&
 		Ntp->Muon_RelIso(i) >= 0.2 &&
-		matchTrigger(i, cTriggerNames, "muon") < cMu_dRHltMatch &&
+		Ntp->matchTrigger(i, cTriggerNames, "muon") < cMu_dRHltMatch &&
 		selectMuon_Kinematics(i)) {
 		return true;
 	}
@@ -1373,7 +1566,7 @@ bool HToTaumuTauh::selectMuon_diMuonVeto(unsigned i, unsigned i_vtx){
 		Ntp->Muon_isGlobalMuon(i) &&
 		Ntp->Muon_isTrackerMuon(i) &&
 		Ntp->Muon_RelIso(i) < 0.3 &&
-		fabs(dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < 0.2
+		Ntp->dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)) < 0.2
 		) {
 	  return true;
 	}
@@ -1383,8 +1576,8 @@ bool HToTaumuTauh::selectMuon_diMuonVeto(unsigned i, unsigned i_vtx){
 bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsigned i_vtx){
 	if(	i != selectedMuon &&
 		Ntp->isTightMuon(i,i_vtx) &&
-		fabs(dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dxy &&
-		fabs(dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx))) < cMu_dz &&
+		Ntp->dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)) < cMu_dxy &&
+		Ntp->dz(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)) < cMu_dz &&
 		Ntp->Muon_RelIso(i) < 0.3 &&
 		Ntp->Muon_p4(i).Pt() > cMuTriLep_pt &&
 		fabs(Ntp->Muon_p4(i).Eta()) < cMuTriLep_eta
@@ -1437,7 +1630,7 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	  }
 	}
 	// trigger matching
-	if (matchTrigger(i,cTriggerNames,"tau") > cMu_dRHltMatch) {
+	if (Ntp->matchTrigger(i,cTriggerNames,"tau") > cMu_dRHltMatch) {
 		return false;
 	}
 
@@ -1471,22 +1664,6 @@ bool HToTaumuTauh::selectPFTau_relaxedIso(unsigned i, std::vector<int> muonColle
 		return true;
 	}
 	return false;
-}
-
-std::vector<int> HToTaumuTauh::sortPFjets(){
-	// create vector of pairs to allow for sorting by jet pt
-	std::vector< std::pair<int, double> > jetIdxPt;
-	for (unsigned i = 0; i<Ntp->NPFJets(); i++ ){
-		jetIdxPt.push_back( std::make_pair(i,Ntp->PFJet_p4(i).Pt()) );
-	}
-	// sort vector of pairs
-	std::sort(jetIdxPt.begin(), jetIdxPt.end(), sortIdxByValue());
-	// create vector of indices in correct order
-	std::vector<int> sortedJets;
-	for (unsigned i = 0; i<jetIdxPt.size(); i++){
-		sortedJets.push_back(jetIdxPt.at(i).first);
-	}
-	return sortedJets;
 }
 
 bool HToTaumuTauh::selectPFJet_Cleaning(unsigned i, int selectedMuon, int selectedTau){
@@ -1590,8 +1767,8 @@ void HToTaumuTauh::configure_VBFTight(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="m_{inv}(jj) of VBF-jets";
 	c="_Cut_";c+=VbfTight_JetInvM;
-	Nminus1.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
-	Nminus0.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
+	Nminus1.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfTight_JetInvM_",htitle,20,0.,2000.,hlabel,"Events");
+	Nminus0.at(VbfTight_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfTight_JetInvM_",htitle,20,0.,2000.,hlabel,"Events");
 
 	title.at(VbfTight_HiggsPt)="$p_{T}(H) >$";
 	title.at(VbfTight_HiggsPt)+=cut.at(VbfTight_HiggsPt);
@@ -1693,8 +1870,8 @@ void HToTaumuTauh::configure_VBFLoose(){
 	htitle.ReplaceAll("\\","#");
 	hlabel="m_{inv}(jj) of VBF-jets";
 	c="_Cut_";c+=VbfLoose_JetInvM;
-	Nminus1.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
-	Nminus0.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_JetInvM_",htitle,25,0.,2000.,hlabel,"Events");
+	Nminus1.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus1_VbfLoose_JetInvM_",htitle,20,0.,2000.,hlabel,"Events");
+	Nminus0.at(VbfLoose_JetInvM) = HConfig.GetTH1D(Name+c+"_Nminus0_VbfLoose_JetInvM_",htitle,20,0.,2000.,hlabel,"Events");
 
 	title.at(VbfLoose_NotVbfTight)="Not VBFTight $==$";
 	title.at(VbfLoose_NotVbfTight)+=cut.at(VbfLoose_NotVbfTight);
@@ -2185,7 +2362,7 @@ bool HToTaumuTauh::migrateCategoryIntoMain(TString thisCategory, std::vector<flo
 }
 
 // helper category definitions for background methods
-bool HToTaumuTauh::helperCategory_VBFLooseRelaxed(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj){
+bool HToTaumuTauh::helperCategory_VBFLooseRelaxed_WYieldShape(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj){
 	std::vector<float> value_VBFLooseRelaxed;
 	std::vector<float> pass_VBFLooseRelaxed;
 
@@ -2218,10 +2395,10 @@ bool HToTaumuTauh::helperCategory_VBFLooseRelaxed(bool useRelaxedForPlots, unsig
 	pass_VBFLooseRelaxed.at(VbfLoose_NotVbfTight) = true; // disabled cut
 
 	// migrate into main analysis if this is chosen category
-	TString cat = useRelaxedForPlots ? "Loose" : "DoNotUseThisCategoryForPlotting";
+	TString cat = useRelaxedForPlots ? "VBFLoose" : "DoNotUseThisCategoryForPlotting";
 	return migrateCategoryIntoMain(cat,value_VBFLooseRelaxed, pass_VBFLooseRelaxed,VbfLoose_NCuts);
 }
-bool HToTaumuTauh::helperCategory_VBFTightRelaxed(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj, double higgsPt){
+bool HToTaumuTauh::helperCategory_VBFTightRelaxed_WYield(bool useRelaxedForPlots, unsigned NJets, double DEta, int NJetsInGap, double Mjj, double higgsPt){
 	std::vector<float> value_VBFTightRelaxed;
 	std::vector<float> pass_VBFTightRelaxed;
 
