@@ -16,7 +16,7 @@ class ReferenceScaleFactors {
 
 public:
 
-	ReferenceScaleFactors();
+	ReferenceScaleFactors(TString basedir);
 	virtual ~ReferenceScaleFactors();
 
 //protected:

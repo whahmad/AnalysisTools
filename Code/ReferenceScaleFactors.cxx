@@ -12,12 +12,11 @@
 // Constructor
 //
 
-ReferenceScaleFactors::ReferenceScaleFactors(){
+ReferenceScaleFactors::ReferenceScaleFactors(TString basedir){
 	// Read root files
-	TString base = "CommonFiles/";// todo: make sure that base is always known
-	ETrigIdEffFile = new TFile(base+"ElectronEfficiencies_Run2012ReReco_53X_Trig.root");
-	ENonTrigIdEffFile = new TFile(base+"ElectronEfficiencies_Run2012ReReco_53X_NonTrig.root");
-	ERecoEffFile = new TFile(base+"Electrons_ScaleFactors_Reco_8TeV.root");
+	ETrigIdEffFile = new TFile(basedir+"/CommonFiles/ElectronEfficiencies_Run2012ReReco_53X_Trig.root");
+	ENonTrigIdEffFile = new TFile(basedir+"/CommonFiles/ElectronEfficiencies_Run2012ReReco_53X_NonTrig.root");
+	ERecoEffFile = new TFile(basedir+"/CommonFiles/Electrons_ScaleFactors_Reco_8TeV.root");
 	// Get histograms
 	ElectronTrigEff = (TH2D*)(ETrigIdEffFile->Get("electronsDATAMCratio_FO_ID_ISO"));
 	ElectronNonTrigEff = (TH2D*)(ENonTrigIdEffFile->Get("h_electronScaleFactor_IdIsoSip"));

@@ -156,9 +156,6 @@ class ZtoEMu : public Selection {
   double calculatePzetaDQM(int muiterator, int eiterator);
   double cosphi2d(double px1, double py1, double px2, double py2);
   double cosphi3d(TVector3 vec1, TVector3 vec2);
-  bool matchTrigger(unsigned int i, double dr, std::string trigger, std::string object);
-  int matchTruth(TLorentzVector tvector);
-  bool matchTruth(TLorentzVector tvector, int pid, double dr);
   int findBin(TGraphAsymmErrors* graph, double xval);
   int nCutsAboveZero(int id);
   
@@ -203,7 +200,6 @@ class ZtoEMu : public Selection {
   double ElectronMassScale(unsigned int idx);
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
-  double rundependentJetPtCorrection(double jeteta, int runnumber);
   double CorrectJER(unsigned int idx);
   double JetEnergyResolutionCorr(double jeteta);
   double JetEnergyResolutionCorrErr(double jeteta);

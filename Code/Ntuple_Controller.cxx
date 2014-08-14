@@ -4,6 +4,8 @@
 #include "Ntuple_Controller.h"
 #include "Tools.h"
 #include "PDG_Var.h"
+#include "TF1.h"
+
 
 // External code
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
@@ -303,6 +305,27 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 }
 
 /////////////////////////////////////////////////////////////////////
+
+TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
+	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
+	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if(corr.Contains("scale")){
+			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()*1.02);
+			else vec.SetPerp(vec.Perp()*0.98);
+		}
+		else if(corr.Contains("res")){
+			gRandom->SetSeed(1234);
+			TF1* muresf = new TF1("muresf","TMath::Gaus(x,0.,1.006)/TMath::Sqrt(2*TMath::Pi())/1.006",-5.,5.);
+			TH1D* muresh = new TH1D("mures","mures",100,-5.,5.);
+			muresh->FillRandom("muresf",1000000);
+			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()+muresh->GetRandom());
+			else vec.SetPerp(vec.Perp()-muresh->GetRandom());
+		}
+	}
+	return vec;
+}
+
+/////////////////////////////////////////////////////////////////////
 //
 // Official muon id code
 //
@@ -344,6 +367,36 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 	if(dxy(Muon_p4(i),Muon_Poca(i),Vtx(j))>=impact_xy) return false;
 	if(dz(Muon_p4(i),Muon_Poca(i),Vtx(j))>=impact_z) return false;
 	return true;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
+	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
+	// apply scale variations (1.6% in barrel, 4.1% in endcap. see EGM-13-001)
+	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if(corr.Contains("res")){
+			gRandom->SetSeed(1234);
+			if(fabs(vec.Eta())<1.479){
+				TF1* barrelf = new TF1("barrelf","TMath::Gaus(x,0.,1.016)/TMath::Sqrt(2*TMath::Pi())/1.016",-5.,5.);
+				TH1D* barrelh = new TH1D("barrelh","barrelh",100,-5.,5.);
+				barrelh->FillRandom("barrelf",1000000);
+				if(!corr.Contains("minus")) vec.SetE(vec.E()+barrelh->GetRandom());
+				else vec.SetE(vec.E()-barrelh->GetRandom());
+			}
+			else if(fabs(vec.Eta())<2.5){
+				TF1* endcapf = new TF1("endcapf","TMath::Gaus(x,0.,1.041)/TMath::Sqrt(2*TMath::Pi())/1.041",-5.,5.);
+				TH1D* endcaph = new TH1D("endcaph","endcaph",100,-5.,5.);
+				endcaph->FillRandom("endcapf",1000000);
+				if(!corr.Contains("minus")) vec.SetE(vec.E()+endcaph->GetRandom());
+				else vec.SetE(vec.E()-endcaph->GetRandom());
+			}
+			else{
+				std::cout << "Eta out of range: " << vec.Eta() << ". Returning fourvector w/o corrections." << std::endl;
+			}
+		}
+	}
+	return vec;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -705,7 +758,20 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
 }
 
 
-
+TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
+	TLorentzVector vec = TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));
+	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if(corr.Contains("scalecorr")){
+			if(PFTau_hpsDecayMode(i)>0 && PFTau_hpsDecayMode(i)<5){
+				vec *= 1.025+0.001*min(max(vec.Pt()-45.,0.),10.);
+			}
+			else if(PFTau_hpsDecayMode(i)>=10){
+				vec *= 1.012+0.001*min(max(vec.Pt()-32.,0.),18.);
+			}
+		}
+	}
+	return vec;
+}
 
 
 bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &tau_idx){
