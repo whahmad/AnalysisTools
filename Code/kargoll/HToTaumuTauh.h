@@ -233,6 +233,33 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> CatInclusiveMtSideband;
   std::vector<TH1D> CatInclusiveMtExtrapolation;
 
+  std::vector<TH1D> Cat0JetLowMtSS;
+  std::vector<TH1D> Cat0JetLowMtSidebandSS;
+  std::vector<TH1D> Cat0JetLowMtExtrapolationSS;
+  std::vector<TH1D> Cat0JetHighMtSS;
+  std::vector<TH1D> Cat0JetHighMtSidebandSS;
+  std::vector<TH1D> Cat0JetHighMtExtrapolationSS;
+  std::vector<TH1D> Cat1JetLowMtSS;
+  std::vector<TH1D> Cat1JetLowMtSidebandSS;
+  std::vector<TH1D> Cat1JetLowMtExtrapolationSS;
+  std::vector<TH1D> Cat1JetHighMtSS;
+  std::vector<TH1D> Cat1JetHighMtSidebandSS;
+  std::vector<TH1D> Cat1JetHighMtExtrapolationSS;
+  std::vector<TH1D> Cat1JetBoostMtSS;
+  std::vector<TH1D> Cat1JetBoostMtSidebandSS;
+  std::vector<TH1D> Cat1JetBoostMtExtrapolationSS;
+  std::vector<TH1D> CatVBFLooseMtSS;
+  std::vector<TH1D> CatVBFLooseMtSidebandSS;
+  std::vector<TH1D> CatVBFLooseRelaxMtSS;
+  std::vector<TH1D> CatVBFLooseRelaxMtExtrapolationSS;
+  std::vector<TH1D> CatVBFTightMtSS;
+  std::vector<TH1D> CatVBFTightMtSidebandSS;
+  std::vector<TH1D> CatVBFTightRelaxMtSS;
+  std::vector<TH1D> CatVBFTightRelaxMtExtrapolationSS;
+  std::vector<TH1D> CatInclusiveMtSS;
+  std::vector<TH1D> CatInclusiveMtSidebandSS;
+  std::vector<TH1D> CatInclusiveMtExtrapolationSS;
+
   std::vector<TH2D> Cat0JetLowQcdAbcd;
   std::vector<TH2D> Cat0JetHighQcdAbcd;
   std::vector<TH2D> Cat1JetLowQcdAbcd;
