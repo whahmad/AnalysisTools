@@ -143,6 +143,9 @@ class ZtoEMu : public Selection {
   std::vector<TH2D> pt_vs_eta_mu;
   std::vector<TH2D> pt_vs_eta_e;
   std::vector<TH1D> nfakes;
+  std::vector<TH2D> pt_vs_eta_mu_gen;
+  std::vector<TH2D> pt_vs_eta_e_gen;
+  std::vector<TH1D> higgs_mass;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
   int n_mu,n_e;
@@ -159,45 +162,12 @@ class ZtoEMu : public Selection {
   int findBin(TGraphAsymmErrors* graph, double xval);
   int nCutsAboveZero(int id);
   
-  bool isHiggsMuon(unsigned int idx, unsigned int vtx);
   bool isFakeMuon(unsigned int idx);
   bool isFakeMuon(unsigned int idx, unsigned int vtx);
-  bool isHiggsElectron(unsigned int idx, unsigned int vtx);
   bool isWWElectron(unsigned int idx, unsigned int vtx);
-  bool isLooseElectron(unsigned int idx);
   bool isFakeElectron(unsigned int idx);
   bool isFakeElectron(unsigned int idx, unsigned int vtx);
-  
-  double MuonIDeff(unsigned int idx);
-  double MuonIDerrUp(unsigned int idx);
-  double MuonIDerrDown(unsigned int idx);
-  double MuonHiggsIDeff(unsigned int idx);
-  double MuonTriggerEff(unsigned int idx);
-  double MuonTriggerErr(unsigned int idx);
-  double ElectronIDeff(unsigned int idx, std::string id);
-  double ElectronIDerr(unsigned int idx, std::string id);
-  double ElectronTrigIDeff(unsigned int idx);
-  double ElectronTrigIDerr(unsigned int idx);
-  double ElectronNonTrigIDeff(unsigned int idx);
-  double ElectronNonTrigIDerr(unsigned int idx);
-  double ElectronHiggsIDeff(unsigned int idx);
-  double ElectronTriggerEff(unsigned int idx);
-  double ElectronTriggerErr(unsigned int idx);
-  double ElectronEmbeddedEff(unsigned int idx);
-  double ElectronReconstructionEff(unsigned int idx);
-  double ElectronReconstructionErr(unsigned int idx);
-  
-  double TriggerEff(unsigned int muid, unsigned int eid, TString path);
-  double SingleEle(unsigned int idx);
-  double DoubleEleLeading(unsigned int idx);
-  double DoubleEleTrailing(unsigned int idx);
-  double SingleMu(unsigned int idx);
-  double DoubleMuLeading(unsigned int idx);
-  double DoubleMuTrailing(unsigned int idx);
 
-  double TrackingEff(double eta);
-
-  double ElectronMassScale(unsigned int idx);
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
   double CorrectJER(unsigned int idx);
@@ -210,52 +180,15 @@ class ZtoEMu : public Selection {
   double FakerateWWerror(unsigned int idx, std::string type);
   
   TFile* FRFile;
-  TFile* EmbEffFile;
   TFile* ZptCorrFile;
   TH1D* ZptCorrection;
   TH2D* ElectronFakeRate;
   TH2D* MuonFakeRate;
-  TH2D* EmbEff;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;
   
-  TFile* MuIdEffFile;
-  TFile* MuIsoEffFile;
-  TFile* ETrigIdEffFile;
-  TFile* ENonTrigIdEffFile;
-  TFile* TriggerEfficiencies;
   TFile* FakeRates;
-  TFile* ERecoEffFile;
-
-  TH2D* ElectronTrigEff;
-  TH2D* ElectronNonTrigEff;
-  TH2D* ElectronRecoEff;
-  TGraphAsymmErrors* MuIdEff09;
-  TGraphAsymmErrors* MuIdEff12;
-  TGraphAsymmErrors* MuIdEff21;
-  TGraphAsymmErrors* MuIdEff24;
-  TGraphAsymmErrors* MuIsoEff09;
-  TGraphAsymmErrors* MuIsoEff12;
-  TGraphAsymmErrors* MuIsoEff21;
-  TGraphAsymmErrors* MuIsoEff24;
-
-  TH1D* SingleEle15;
-  TH1D* SingleEle25;
-  TH1D* DoubleEleLead15;
-  TH1D* DoubleEleLead25;
-  TH1D* DoubleEleTrail15;
-  TH1D* DoubleEleTrail25;
-  TH1D* SingleMu08;
-  TH1D* SingleMu12;
-  TH1D* SingleMu21;
-  TH1D* SingleMu25;
-  TH1D* DoubleMuLead12;
-  TH1D* DoubleMuLead21;
-  TH1D* DoubleMuLead25;
-  TH1D* DoubleMuTrail12;
-  TH1D* DoubleMuTrail21;
-  TH1D* DoubleMuTrail25;
 
   TGraphAsymmErrors* EleFake1;
   TGraphAsymmErrors* EleFake15;
@@ -265,20 +198,6 @@ class ZtoEMu : public Selection {
   TGraphAsymmErrors* MuFake15;
   TGraphAsymmErrors* MuFake2;
   TGraphAsymmErrors* MuFake25;
-
-  // for scale and resolution studies
-  std::vector<TLorentzVector> muons;
-  std::vector<TLorentzVector> electrons;
-  std::vector<TLorentzVector> jets;
-  TF1* gauseb;
-  TF1* gausee;
-  TF1* gausmu;
-  TH1D* eresb;
-  TH1D* erese;
-  TH1D* mures;
-  double eleresb;
-  double elerese;
-  double muonres;
 
 };
 #endif
