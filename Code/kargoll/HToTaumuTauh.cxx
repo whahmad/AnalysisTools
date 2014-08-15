@@ -484,12 +484,8 @@ void  HToTaumuTauh::Configure(){
   Cat1JetBoostMtExtrapolationSS = HConfig.GetTH1D(Name+"_Cat1JetBoostMtExtrapolationSS","Cat1JetBoostMtExtrapolationSS",2,0.5,2.5,"1JB SS: m_{T} signal and sideband");
   CatVBFLooseMtSS = HConfig.GetTH1D(Name+"_CatVBFLooseMtSS","CatVBFLooseMtSS",125,0.,250.,"VBFL SS: m_{T}/GeV");
   CatVBFLooseMtSidebandSS = HConfig.GetTH1D(Name+"_CatVBFLooseMtSidebandSS","CatVBFLooseMtSidebandSS",30,60.,120.,"VBFL SS: m_{T}/GeV");
-  CatVBFLooseRelaxMtSS = HConfig.GetTH1D(Name+"_CatVBFLooseRelaxMtSS","CatVBFLooseRelaxMtSS",125,0.,250.,"VBFLRelax SS: m_{T}/GeV");
-  CatVBFLooseRelaxMtExtrapolationSS = HConfig.GetTH1D(Name+"_CatVBFLooseRelaxMtExtrapolationSS","CatVBFLooseRelaxMtExtrapolationSS",2,0.5,2.5,"VBFLRelax SS: m_{T} signal and sideband");
   CatVBFTightMtSS = HConfig.GetTH1D(Name+"_CatVBFTightMtSS","CatVBFTightMtSS",125,0.,250.,"VBFT SS: m_{T}/GeV");
   CatVBFTightMtSidebandSS = HConfig.GetTH1D(Name+"_CatVBFTightMtSidebandSS","CatVBFTightMtSidebandSS",30,60.,120.,"VBFT SS: m_{T}/GeV");
-  CatVBFTightRelaxMtSS = HConfig.GetTH1D(Name+"_CatVBFTightRelaxMtSS","CatVBFTightRelaxMtSS",125,0.,250.,"VBFTRelax SS: m_{T}/GeV");
-  CatVBFTightRelaxMtExtrapolationSS = HConfig.GetTH1D(Name+"_CatVBFTightRelaxMtExtrapolationSS","CatVBFTightRelaxMtExtrapolationSS",2,0.5,2.5,"VBFTRelax SS: m_{T} signal and sideband");
   CatInclusiveMtSS = HConfig.GetTH1D(Name+"_CatInclusiveMtSS","CatInclusiveMtSS",125,0.,250.,"Incl SS: m_{T}/GeV");
   CatInclusiveMtSidebandSS = HConfig.GetTH1D(Name+"_CatInclusiveMtSidebandSS","CatInclusiveMtSidebandSS",90,70.,250.,"Incl SS: m_{T}/GeV");
   CatInclusiveMtExtrapolationSS = HConfig.GetTH1D(Name+"_CatInclusiveMtExtrapolationSS","CatInclusiveMtExtrapolationSS",2,0.5,2.5,"Incl SS: m_{T} signal and sideband");
@@ -709,12 +705,8 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&Cat1JetBoostMtExtrapolationSS);
  Extradist1d.push_back(&CatVBFLooseMtSS);
  Extradist1d.push_back(&CatVBFLooseMtSidebandSS);
- Extradist1d.push_back(&CatVBFLooseRelaxMtSS);
- Extradist1d.push_back(&CatVBFLooseRelaxMtExtrapolationSS);
  Extradist1d.push_back(&CatVBFTightMtSS);
  Extradist1d.push_back(&CatVBFTightMtSidebandSS);
- Extradist1d.push_back(&CatVBFTightRelaxMtSS);
- Extradist1d.push_back(&CatVBFTightRelaxMtExtrapolationSS);
  Extradist1d.push_back(&CatInclusiveMtSS);
  Extradist1d.push_back(&CatInclusiveMtSidebandSS);
  Extradist1d.push_back(&CatInclusiveMtExtrapolationSS);
@@ -1370,13 +1362,25 @@ void  HToTaumuTauh::doEvent(){
 	  }
   }
   if(passedFullInclusiveSelNoMtNoOS && passed_OneJetLow){
-	  Cat1JetLowMt.at(t).Fill(value.at(MT), w);
-	  Cat1JetLowMtSideband.at(t).Fill(value.at(MT), w);
-	  if(isWJetMC){
-		  if(pass.at(MT))
-			  Cat1JetLowMtExtrapolation.at(t).Fill(1, w);
-		  if(value.at(MT) > 70.)
-			  Cat1JetLowMtExtrapolation.at(t).Fill(2, w);
+	  if (pass.at(OppCharge)){
+		  Cat1JetLowMt.at(t).Fill(value.at(MT), w);
+		  Cat1JetLowMtSideband.at(t).Fill(value.at(MT), w);
+		  if(isWJetMC){
+			  if(pass.at(MT))
+				  Cat1JetLowMtExtrapolation.at(t).Fill(1, w);
+			  if(value.at(MT) > 70.)
+				  Cat1JetLowMtExtrapolation.at(t).Fill(2, w);
+		  }
+	  }
+	  else{
+		  Cat1JetLowMtSS.at(t).Fill(value.at(MT), w);
+		  Cat1JetLowMtSidebandSS.at(t).Fill(value.at(MT), w);
+		  if(isWJetMC){
+			  if(pass.at(MT))
+				  Cat1JetLowMtExtrapolationSS.at(t).Fill(1, w);
+			  if(value.at(MT) > 70.)
+				  Cat1JetLowMtExtrapolationSS.at(t).Fill(2, w);
+		  }
 	  }
   }
   if(passedFullInclusiveSelNoMtNoOS && passed_OneJetHigh){
@@ -1423,40 +1427,46 @@ void  HToTaumuTauh::doEvent(){
 		  }
 	  }
   }
-  if(passedFullInclusiveSelNoMtNoOS && passed_VBFLooseRelaxed){
-	  if (pass.at(OppCharge)){
-		  CatVBFLooseMt.at(t).Fill(value.at(MT), w);
-		  CatVBFLooseMtSideband.at(t).Fill(value.at(MT), w);
+  if(passedFullInclusiveSelNoMtNoOS){
+	  if(passed_VBFLoose){
+		  if (pass.at(OppCharge)){
+			  CatVBFLooseMt.at(t).Fill(value.at(MT), w);
+			  CatVBFLooseMtSideband.at(t).Fill(value.at(MT), w);
+		  }
+		  else {
+			  CatVBFLooseMtSS.at(t).Fill(value.at(MT), w);
+			  CatVBFLooseMtSidebandSS.at(t).Fill(value.at(MT), w);
+		  }
 	  }
-	  else {
-		  CatVBFLooseMtSS.at(t).Fill(value.at(MT), w);
-		  CatVBFLooseMtSidebandSS.at(t).Fill(value.at(MT), w);
+	  if(passed_VBFLooseRelaxed){
+		  // VBFLoose: Do not apply OS cut for mT extrapolation factor
+		  CatVBFLooseRelaxMt.at(t).Fill(value.at(MT), w);
+		  if(isWJetMC){
+			  if(pass.at(MT))
+				  CatVBFLooseRelaxMtExtrapolation.at(t).Fill(1, w);
+			  if(value.at(MT) > 60. && value.at(MT) < 120.)
+				  CatVBFLooseRelaxMtExtrapolation.at(t).Fill(2, w);
+		  }
 	  }
-	  // VBFLoose: Do not apply OS cut for mT extrapolation factor
-	  CatVBFLooseRelaxMt.at(t).Fill(value.at(MT), w);
-	  if(isWJetMC){
-		  if(pass.at(MT))
-			  CatVBFLooseRelaxMtExtrapolation.at(t).Fill(1, w);
-		  if(value.at(MT) > 60. && value.at(MT) < 120.)
-			  CatVBFLooseRelaxMtExtrapolation.at(t).Fill(2, w);
+	  if(passed_VBFTight){
+		  if (pass.at(OppCharge)){
+			  CatVBFTightMt.at(t).Fill(value.at(MT), w);
+			  CatVBFTightMtSideband.at(t).Fill(value.at(MT), w);
+		  }
+		  else {
+			  CatVBFTightMtSS.at(t).Fill(value.at(MT), w);
+			  CatVBFTightMtSidebandSS.at(t).Fill(value.at(MT), w);
+		  }
 	  }
-  }
-  if(passedFullInclusiveSelNoMtNoOS && passed_VBFTightRelaxed){
-	  if (pass.at(OppCharge)){
-		  CatVBFTightMt.at(t).Fill(value.at(MT), w);
-		  CatVBFTightMtSideband.at(t).Fill(value.at(MT), w);
-	  }
-	  else {
-		  CatVBFTightMtSS.at(t).Fill(value.at(MT), w);
-		  CatVBFTightMtSidebandSS.at(t).Fill(value.at(MT), w);
-	  }
-	  // VBFTight: Do not apply OS cut for mT extrapolation factor
-	  CatVBFTightRelaxMt.at(t).Fill(value.at(MT), w);
-	  if(isWJetMC){
-		  if(pass.at(MT))
-			  CatVBFTightRelaxMtExtrapolation.at(t).Fill(1, w);
-		  if(value.at(MT) > 60. && value.at(MT) < 120.)
-			  CatVBFTightRelaxMtExtrapolation.at(t).Fill(2, w);
+	  if(passed_VBFTightRelaxed){
+		  // VBFTight: Do not apply OS cut for mT extrapolation factor
+		  CatVBFTightRelaxMt.at(t).Fill(value.at(MT), w);
+		  if(isWJetMC){
+			  if(pass.at(MT))
+				  CatVBFTightRelaxMtExtrapolation.at(t).Fill(1, w);
+			  if(value.at(MT) > 60. && value.at(MT) < 120.)
+				  CatVBFTightRelaxMtExtrapolation.at(t).Fill(2, w);
+		  }
 	  }
   }
   if(passedFullInclusiveSelNoMtNoOS){

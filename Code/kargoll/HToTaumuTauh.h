@@ -250,12 +250,8 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> Cat1JetBoostMtExtrapolationSS;
   std::vector<TH1D> CatVBFLooseMtSS;
   std::vector<TH1D> CatVBFLooseMtSidebandSS;
-  std::vector<TH1D> CatVBFLooseRelaxMtSS;
-  std::vector<TH1D> CatVBFLooseRelaxMtExtrapolationSS;
   std::vector<TH1D> CatVBFTightMtSS;
   std::vector<TH1D> CatVBFTightMtSidebandSS;
-  std::vector<TH1D> CatVBFTightRelaxMtSS;
-  std::vector<TH1D> CatVBFTightRelaxMtExtrapolationSS;
   std::vector<TH1D> CatInclusiveMtSS;
   std::vector<TH1D> CatInclusiveMtSidebandSS;
   std::vector<TH1D> CatInclusiveMtExtrapolationSS;

@@ -106,10 +106,10 @@ void HToTaumuTauhBackgrounds::Finish() {
 			catEPSidebandSS.at(3) += Cat1JetHighMtExtrapolationSS.at(histo).GetBinContent(2);
 			catEPSignalSS.at(4) += Cat1JetBoostMtExtrapolationSS.at(histo).GetBinContent(1);
 			catEPSidebandSS.at(4) += Cat1JetBoostMtExtrapolationSS.at(histo).GetBinContent(2);
-			catEPSignalSS.at(5) += CatVBFLooseRelaxMtExtrapolationSS.at(histo).GetBinContent(1);
-			catEPSidebandSS.at(5) += CatVBFLooseRelaxMtExtrapolationSS.at(histo).GetBinContent(2);
-			catEPSignalSS.at(6) += CatVBFTightRelaxMtExtrapolationSS.at(histo).GetBinContent(1);
-			catEPSidebandSS.at(6) += CatVBFTightRelaxMtExtrapolationSS.at(histo).GetBinContent(2);
+			catEPSignalSS.at(5) += CatVBFLooseRelaxMtExtrapolation.at(histo).GetBinContent(1); // no OS for VBT mT extrapolation
+			catEPSidebandSS.at(5) += CatVBFLooseRelaxMtExtrapolation.at(histo).GetBinContent(2); // no OS for VBT mT extrapolation
+			catEPSignalSS.at(6) += CatVBFTightRelaxMtExtrapolation.at(histo).GetBinContent(1); // no OS for VBT mT extrapolation
+			catEPSidebandSS.at(6) += CatVBFTightRelaxMtExtrapolation.at(histo).GetBinContent(2); // no OS for VBT mT extrapolation
 			catEPSignalSS.at(7)+= CatInclusiveMtExtrapolationSS.at(histo).GetBinContent(1);
 			catEPSidebandSS.at(7) += CatInclusiveMtExtrapolationSS.at(histo).GetBinContent(2);
 		}
@@ -119,10 +119,25 @@ void HToTaumuTauhBackgrounds::Finish() {
 		catEPFactorSS.at(icat) = catEPSignalSS.at(icat)/catEPSidebandSS.at(icat);
 	}
 
+	// print MC scales before scaling
+	for (unsigned id = 2; id < 100; id++){
+			if (HConfig.GetHisto(false,id,histo)){
+				double scale = Lumi * HConfig.GetCrossSection(id) / Npassed.at(histo).GetBinContent(0);
+				printf("ID = %2i will be scaled by %4f \n", id, scale);
+			}
+	}
 
 	// do plotting and scale histograms
 	Selection::Finish();
 	// all histograms below this are scaled to luminosity!
+
+	// print MC scales after scaling
+	for (unsigned id = 2; id < 100; id++){
+			if (HConfig.GetHisto(false,id,histo)){
+				double scale = Lumi * HConfig.GetCrossSection(id) / Npassed.at(histo).GetBinContent(0);
+				printf("ID = %2i has scale of %4f after scaling\n", id, scale);
+			}
+	}
 
 	// MC prediction of WJet in signal region (for cross-checking)
 	for (unsigned id = 20; id < 24; id++){ //only for WJets processes
@@ -298,7 +313,7 @@ void HToTaumuTauhBackgrounds::Finish() {
 
 	std::cout << "  ############# QCD: OS Yield #######################" << std::endl;
 	printf("%12s  %12s * %12s = %12s\n", "Category", "SS Yield", "OS/SS ratio", "QCD OS Yield");
-	format = "%12s  %12.1f * %12.1f = %12f\n";
+	format = "%12s  %12.1f * %12.5f = %12f\n";
 	for (unsigned int icat = 0; icat < nCat; icat++){
 		printf(format, catNames.at(icat).Data(), catQcdSSYieldBGCleaned.at(icat), catOsSsRatio.at(icat), catQcdOSYield.at(icat));
 	}
