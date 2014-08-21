@@ -38,6 +38,14 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
   // Fit setup 
 
+  // Resolution uncertainty setup
+
+  gRandom->SetSeed(1234);
+
+  // Rochester muon momentum corrections
+
+  rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed);
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +116,7 @@ void Ntuple_Controller::Branch_Setup(TString B_Name, int type){
 Ntuple_Controller::~Ntuple_Controller() {
   std::cout << "Ntuple_Controller::~Ntuple_Controller()" << std::endl;
   delete Ntp;
+  delete rmcor;
     std::cout << "Ntuple_Controller::~Ntuple_Controller() complete" << std::endl;
 }
 
@@ -308,18 +317,22 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
+	if(corr.Contains("roch")){
+		int runopt = 0; // 0: no run-dependece
+		float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
+		if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+			rmcor->momcor_mc(vec,Muon_Charge(i),runopt,qter);
+		}else{
+			rmcor->momcor_data(vec,Muon_Charge(i),runopt,qter);
+		}
+	}
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		if(corr.Contains("scale")){
-			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()*1.02);
-			else vec.SetPerp(vec.Perp()*0.98);
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp()*1.002);
+			else vec.SetPerp(vec.Perp()*0.998);
 		}
 		else if(corr.Contains("res")){
-			gRandom->SetSeed(1234);
-			TF1* muresf = new TF1("muresf","TMath::Gaus(x,0.,1.006)/TMath::Sqrt(2*TMath::Pi())/1.006",-5.,5.);
-			TH1D* muresh = new TH1D("mures","mures",100,-5.,5.);
-			muresh->FillRandom("muresf",1000000);
-			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()+muresh->GetRandom());
-			else vec.SetPerp(vec.Perp()-muresh->GetRandom());
+			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
 		}
 	}
 	return vec;
@@ -373,26 +386,16 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
-	// apply scale variations (1.6% in barrel, 4.1% in endcap. see EGM-13-001)
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		if(corr.Contains("res")){
-			gRandom->SetSeed(1234);
-			if(fabs(vec.Eta())<1.479){
-				TF1* barrelf = new TF1("barrelf","TMath::Gaus(x,0.,1.016)/TMath::Sqrt(2*TMath::Pi())/1.016",-5.,5.);
-				TH1D* barrelh = new TH1D("barrelh","barrelh",100,-5.,5.);
-				barrelh->FillRandom("barrelf",1000000);
-				if(!corr.Contains("minus")) vec.SetE(vec.E()+barrelh->GetRandom());
-				else vec.SetE(vec.E()-barrelh->GetRandom());
+			if(fabs(Electron_supercluster_eta(i))<1.479){
+				vec.SetE(gRandom->Gaus(vec.E(),1.016));
 			}
-			else if(fabs(vec.Eta())<2.5){
-				TF1* endcapf = new TF1("endcapf","TMath::Gaus(x,0.,1.041)/TMath::Sqrt(2*TMath::Pi())/1.041",-5.,5.);
-				TH1D* endcaph = new TH1D("endcaph","endcaph",100,-5.,5.);
-				endcaph->FillRandom("endcapf",1000000);
-				if(!corr.Contains("minus")) vec.SetE(vec.E()+endcaph->GetRandom());
-				else vec.SetE(vec.E()-endcaph->GetRandom());
+			else if(fabs(Electron_supercluster_eta(i))<2.5){
+				vec.SetE(gRandom->Gaus(vec.E(),1.041));
 			}
 			else{
-				std::cout << "Eta out of range: " << vec.Eta() << ". Returning fourvector w/o corrections." << std::endl;
+				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
 			}
 		}
 	}
@@ -865,21 +868,17 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
   return false;
 }
 
-double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType){
+double Ntuple_Controller::matchTrigger(TLorentzVector obj, std::vector<TString> trigger, std::string objectType){
 	unsigned int id = 0;
-	TLorentzVector particle(0.,0.,0.,0.);
 	TLorentzVector triggerObj(0.,0.,0.,0.);
 	if(objectType=="tau"){
 		id = 84;
-		particle = PFTau_p4(i_obj);
 	}
 	if(objectType=="muon"){
 		id = 83;
-		particle = Muon_p4(i_obj);
 	}
 	if(objectType=="electron"){
 		id = 82;
-		particle = Electron_p4(i_obj);
 	}
 
 	double minDR = 100.;
@@ -893,8 +892,8 @@ double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> 
 								HLTTrigger_objs_Phi(i,j),
 								HLTTrigger_objs_E(i,j));
 					}
-					if( triggerObj.Pt()>0. && particle.Pt()>0. ) {
-						double dr = particle.DeltaR(triggerObj);
+					if( triggerObj.Pt()>0. && obj.Pt()>0. ) {
+						double dr = obj.DeltaR(triggerObj);
 						if (dr < minDR) minDR = dr;
 					}
 				}
@@ -903,14 +902,14 @@ double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> 
 	}
 	return minDR;
 }
-bool Ntuple_Controller::matchTrigger(unsigned int i_obj, double dr_cut, std::vector<TString> trigger, std::string objectType){
-	double dr = matchTrigger(i_obj, trigger, objectType);
+bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, std::vector<TString> trigger, std::string objectType){
+	double dr = matchTrigger(obj, trigger, objectType);
 	return dr < dr_cut;
 }
-bool Ntuple_Controller::matchTrigger(unsigned int i_obj, double dr_cut, TString trigger, std::string objectType){
+bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, TString trigger, std::string objectType){
 	std::vector<TString> triggerVec;
 	triggerVec.push_back(trigger);
-	return matchTrigger(i_obj, dr_cut, triggerVec, objectType);
+	return matchTrigger(obj, dr_cut, triggerVec, objectType);
 }
 
 

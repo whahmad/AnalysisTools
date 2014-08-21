@@ -44,6 +44,9 @@
 #include "SimpleFits/FitSoftware/interface/ErrorMatrixPropagator.h"
 #include "SimpleFits/FitSoftware/interface/TauA1NuConstrainedFitter.h"
 
+// Rochester muon momentum correction
+#include "CommonFiles/rochcor2012jan22.h"
+
 // small struct needed to allow sorting indices by some value
 struct sortIdxByValue {
     bool operator()(const std::pair<int,double> &left, const std::pair<int,double> &right) {
@@ -300,6 +303,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   bool           isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z);
   bool			 isLooseMuon(unsigned int i);
   float          Muon_RelIso(unsigned int i);
+  rochcor2012*   rmcor;
 
 
   //Base Tau Information (PF)
@@ -752,9 +756,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    unsigned int HLTPrescale(TString n);
    unsigned int L1SEEDPrescale(TString n);
    bool         GetTriggerIndex(TString n, unsigned int &i);
-   double 		matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType);
-   bool 		matchTrigger(unsigned int i_obj, double dr_cut, std::vector<TString> trigger, std::string objectType);
-   bool			matchTrigger(unsigned int i_obj, double dr_cut, TString trigger, std::string objectType);
+   double 		matchTrigger(TLorentzVector obj, std::vector<TString> trigger, std::string objectType);
+   bool 		matchTrigger(TLorentzVector obj, double dr_cut, std::vector<TString> trigger, std::string objectType);
+   bool			matchTrigger(TLorentzVector obj, double dr_cut, TString trigger, std::string objectType);
    unsigned int NHLTTriggers(){return Ntp->HTLTriggerName->size();}
    std::string  HTLTriggerName(unsigned int i){return Ntp->HTLTriggerName->at(i);}
    bool         TriggerAccept(unsigned int i){return Ntp->TriggerAccept->at(i);}
