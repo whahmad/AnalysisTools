@@ -145,6 +145,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nfakes;
   std::vector<TH2D> pt_vs_eta_mu_gen;
   std::vector<TH2D> pt_vs_eta_e_gen;
+  std::vector<TH1D> mll_gen;
   std::vector<TH1D> higgs_mass;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
@@ -175,29 +176,27 @@ class ZtoEMu : public Selection {
   double JetEnergyResolutionCorrErr(double jeteta);
   TLorentzVector GenJet(unsigned int recjet);
 
-  double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
+  double Fakerate(double pt, double eta, TH2D *fakeRateHist);
+  double FakerateError(double pt, double eta, TH2D *fakeRateHist);
   double FakerateWW(unsigned int idx, std::string type);
   double FakerateWWerror(unsigned int idx, std::string type);
+  double FakerateWWmuon5(unsigned int idx);
+  double FakerateWWmuon30(unsigned int idx);
+  double FakerateWWele20(unsigned int idx);
+  double FakerateWWele50(unsigned int idx);
   
   TFile* FRFile;
   TFile* ZptCorrFile;
   TH1D* ZptCorrection;
-  TH2D* ElectronFakeRate;
-  TH2D* MuonFakeRate;
+  TH2D* ElectronFakeRate35;
+  TH2D* ElectronFakeRate20;
+  TH2D* ElectronFakeRate50;
+  TH2D* MuonFakeRate15;
+  TH2D* MuonFakeRate5;
+  TH2D* MuonFakeRate30;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;
-  
-  TFile* FakeRates;
-
-  TGraphAsymmErrors* EleFake1;
-  TGraphAsymmErrors* EleFake15;
-  TGraphAsymmErrors* EleFake2;
-  TGraphAsymmErrors* EleFake25;
-  TGraphAsymmErrors* MuFake1;
-  TGraphAsymmErrors* MuFake15;
-  TGraphAsymmErrors* MuFake2;
-  TGraphAsymmErrors* MuFake25;
 
 };
 #endif
