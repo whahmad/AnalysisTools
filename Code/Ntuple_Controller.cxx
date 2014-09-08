@@ -680,11 +680,67 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 	return (1.+corr*(runnumber-run0));
 }
 
+double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString unc){
+	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded)
+		return 1.;
+	if(jet.Pt()<=10)
+		std::cout << "Ntuple_Controller::JERCorrection - jet pt < 10 GeV. Returning 1." << std::endl;
+		return 1.;
+	double sf = 1.;
+	double c = JetEnergyResolutionCorr(jet.Eta());
+	if(unc=="up") c += JetEnergyResolutionCorrErr(jet.Eta());
+	if(unc=="down") c -= JetEnergyResolutionCorrErr(jet.Eta());
+	if(PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)) std::cout << "Ntuple_Controller::JERCorrection - jet could not be matched to generator particles. Returning 1." << std::endl;
+	else sf = std::max(0.,c*jet.Pt()+(1.-c)*PFJet_matchGenJet(jet,dr).Pt());
+	return sf;
+}
+
+TLorentzVector Ntuple_Controller::PFJet_matchGenJet(TLorentzVector jet, double dr){
+	TLorentzVector genjet(0.,0.,0.,0.);
+	for(unsigned i=0;i<PFJet_NGenJetsNoNu();i++){
+		if(PFJet_GenJetNoNu_p4(i).Vect()!=TVector3(0.,0.,0.)
+				&& jet.DeltaR(PFJet_GenJetNoNu_p4(i))<dr
+				){
+			genjet = PFJet_GenJetNoNu_p4(i);
+		}
+	}
+	return genjet;
+}
+
+double Ntuple_Controller::JetEnergyResolutionCorr(double jeteta){
+	double eta = fabs(jeteta);
+	double corr = 1.;
+	if(eta<0.5) corr = 1.079;
+	else if(eta<1.1) corr = 1.099;
+	else if(eta<1.7) corr = 1.121;
+	else if(eta<2.3) corr = 1.208;
+	else if(eta<2.8) corr = 1.254;
+	else if(eta<3.2) corr = 1.395;
+	else if(eta<5.0) corr = 1.056;
+	return corr;
+}
+
+double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
+	double eta = fabs(jeteta);
+	double err = 0.;
+	if(eta<0.5) err = 0.026;
+	else if(eta<1.1) err = 0.027;
+	else if(eta<1.7) err = 0.029;
+	else if(eta<2.3) err = 0.046;
+	else if(eta<2.8) err = 0.062;
+	else if(eta<3.2) err = 0.063;
+	else if(eta<5.0) err = 0.191;
+	return err;
+}
+
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));
 	// apply run-dependent pT corrections
 	if (corr.Contains("run")){
 		vec.SetPerp(vec.Pt() * rundependentJetPtCorrection(vec.Eta(), RunNumber()));
+	}
+	if(corr.Contains("JER")){
+		vec.SetPerp(vec.Pt() * JERCorrection(vec));
 	}
 	return vec;
 }

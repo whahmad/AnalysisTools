@@ -491,6 +491,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    TLorentzVector     PFJet_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->PFJet_TracksP4->at(i).at(j).at(1),Ntp->PFJet_TracksP4->at(i).at(j).at(2),Ntp->PFJet_TracksP4->at(i).at(j).at(3),Ntp->PFJet_TracksP4->at(i).at(j).at(0));}
    int                PFJet_nTracks(unsigned int i){return Ntp->PFJet_TracksP4->at(i).size();}
    float			  PFJet_JECuncertainty(unsigned int i){return Ntp->PFJet_JECuncertainty->at(i);}
+   unsigned int       PFJet_NGenJets(){return Ntp->PFJet_GenJet_p4->size();}
+   unsigned int       PFJet_NGenJetsNoNu(){return Ntp->PFJet_GenJetNoNu_p4->size();}
    TLorentzVector     PFJet_GenJet_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_GenJet_p4->at(i).at(1),Ntp->PFJet_GenJet_p4->at(i).at(2),Ntp->PFJet_GenJet_p4->at(i).at(3),Ntp->PFJet_GenJet_p4->at(i).at(0));}
    TLorentzVector     PFJet_GenJet_Constituents_p4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->PFJet_GenJet_Constituents_p4->at(i).at(j).at(1),Ntp->PFJet_GenJet_Constituents_p4->at(i).at(j).at(2),Ntp->PFJet_GenJet_Constituents_p4->at(i).at(j).at(3),Ntp->PFJet_GenJet_Constituents_p4->at(i).at(j).at(0));}
    TLorentzVector     PFJet_GenJetNoNu_p4(unsigned int i){return TLorentzVector(Ntp->PFJet_GenJetNoNu_p4->at(i).at(1),Ntp->PFJet_GenJetNoNu_p4->at(i).at(2),Ntp->PFJet_GenJetNoNu_p4->at(i).at(3),Ntp->PFJet_GenJetNoNu_p4->at(i).at(0));}
@@ -506,6 +508,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    //float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);} // not implemented at the moment
 
    double 			  rundependentJetPtCorrection(double jeteta, int runnumber);
+   double             JERCorrection(TLorentzVector jet, double dr=0.25, TString unc=""); // dr=0.25 from AN2013_416_v4
+   TLorentzVector     PFJet_matchGenJet(TLorentzVector jet, double dr);
+   double             JetEnergyResolutionCorr(double jeteta);
+   double             JetEnergyResolutionCorrErr(double jeteta);
 
    //MET information
    float              MET_Uncorr_et(){return Ntp->MET_Uncorr_et;}

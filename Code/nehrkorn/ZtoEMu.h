@@ -147,6 +147,9 @@ class ZtoEMu : public Selection {
   std::vector<TH2D> pt_vs_eta_e_gen;
   std::vector<TH1D> mll_gen;
   std::vector<TH1D> higgs_mass;
+  std::vector<TH1D> dr_reco_gen_jet;
+  std::vector<TH1D> dpt_reco_gen_jet;
+  std::vector<TH1D> dpt_reco_gen_jet_pass_dr;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
   int n_mu,n_e;
@@ -171,19 +174,9 @@ class ZtoEMu : public Selection {
 
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
-  double CorrectJER(unsigned int idx);
-  double JetEnergyResolutionCorr(double jeteta);
-  double JetEnergyResolutionCorrErr(double jeteta);
-  TLorentzVector GenJet(unsigned int recjet);
 
   double Fakerate(double pt, double eta, TH2D *fakeRateHist);
   double FakerateError(double pt, double eta, TH2D *fakeRateHist);
-  double FakerateWW(unsigned int idx, std::string type);
-  double FakerateWWerror(unsigned int idx, std::string type);
-  double FakerateWWmuon5(unsigned int idx);
-  double FakerateWWmuon30(unsigned int idx);
-  double FakerateWWele20(unsigned int idx);
-  double FakerateWWele50(unsigned int idx);
   
   TFile* FRFile;
   TFile* ZptCorrFile;
