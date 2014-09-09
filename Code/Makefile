@@ -44,7 +44,8 @@ TARGETS       =	Ntuple_Controller \
 		TauSolver \
 		TauSpinExample \
 		TauSpinerInterface \
-		ReferenceScaleFactors
+		ReferenceScaleFactors \
+		rochcor2012jan22
 
 # now include conditional options set by flags in make.inc
 ifdef USE_TauSpinner
@@ -77,7 +78,7 @@ ifdef USE_kargoll
 endif 
 
 ifdef USE_nehrkorn
-	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate ZtoEMu_Wjets ZtoEMu_QCD
+	TARGETS += ZtoEMu ZtoEMu_Skim
 	DEFS += -DUSE_nehrkorn=1
 endif
 
@@ -108,6 +109,8 @@ vpath %.cxx kargoll
 vpath %.h kargoll
 vpath %.cxx nehrkorn
 vpath %.h nehrkorn
+vpath %.cxx CommonFiles
+vpath %.h CommonFiles
 
 #	@$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o ../$(PROGRAM)
 

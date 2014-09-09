@@ -145,13 +145,19 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> nfakes;
   std::vector<TH2D> pt_vs_eta_mu_gen;
   std::vector<TH2D> pt_vs_eta_e_gen;
+  std::vector<TH1D> mll_gen;
   std::vector<TH1D> higgs_mass;
+  std::vector<TH1D> mupt_q;
+  std::vector<TH1D> mueta_q;
+  std::vector<TH1D> ept_q;
+  std::vector<TH1D> eeta_q;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
   int n_mu,n_e;
   bool doHiggsObjects;
   bool doWWObjects;
   bool useMadgraphZ;
+  TString mucorr, ecorr, jetcorr;
   
   double csvl,csvm,csvt;
 
@@ -162,42 +168,30 @@ class ZtoEMu : public Selection {
   int findBin(TGraphAsymmErrors* graph, double xval);
   int nCutsAboveZero(int id);
   
-  bool isFakeMuon(unsigned int idx);
-  bool isFakeMuon(unsigned int idx, unsigned int vtx);
-  bool isWWElectron(unsigned int idx, unsigned int vtx);
-  bool isFakeElectron(unsigned int idx);
-  bool isFakeElectron(unsigned int idx, unsigned int vtx);
+  bool isFakeMuon(unsigned int idx, TString corr="");
+  bool isFakeMuon(unsigned int idx, unsigned int vtx, TString corr="");
+  bool isWWElectron(unsigned int idx, unsigned int vtx, TString corr="");
+  bool isFakeElectron(unsigned int idx, TString corr="");
+  bool isFakeElectron(unsigned int idx, unsigned int vtx, TString corr="");
 
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
-  double CorrectJER(unsigned int idx);
-  double JetEnergyResolutionCorr(double jeteta);
-  double JetEnergyResolutionCorrErr(double jeteta);
-  TLorentzVector GenJet(unsigned int recjet);
 
-  double Fakerate(TLorentzVector vec, TH2D *fakeRateHist, std::string type);
-  double FakerateWW(unsigned int idx, std::string type);
-  double FakerateWWerror(unsigned int idx, std::string type);
+  double Fakerate(double pt, double eta, TH2D *fakeRateHist);
+  double FakerateError(double pt, double eta, TH2D *fakeRateHist);
   
   TFile* FRFile;
   TFile* ZptCorrFile;
   TH1D* ZptCorrection;
-  TH2D* ElectronFakeRate;
-  TH2D* MuonFakeRate;
+  TH2D* ElectronFakeRate35;
+  TH2D* ElectronFakeRate20;
+  TH2D* ElectronFakeRate50;
+  TH2D* MuonFakeRate15;
+  TH2D* MuonFakeRate5;
+  TH2D* MuonFakeRate30;
   double fakeRate;
   double fakeRateMu;
   double fakeRateE;
-  
-  TFile* FakeRates;
-
-  TGraphAsymmErrors* EleFake1;
-  TGraphAsymmErrors* EleFake15;
-  TGraphAsymmErrors* EleFake2;
-  TGraphAsymmErrors* EleFake25;
-  TGraphAsymmErrors* MuFake1;
-  TGraphAsymmErrors* MuFake15;
-  TGraphAsymmErrors* MuFake2;
-  TGraphAsymmErrors* MuFake25;
 
 };
 #endif

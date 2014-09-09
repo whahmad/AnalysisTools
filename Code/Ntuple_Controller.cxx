@@ -38,6 +38,14 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
   // Fit setup 
 
+  // Resolution uncertainty setup
+
+  gRandom->SetSeed(1234);
+
+  // Rochester muon momentum corrections
+
+  rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed);
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +116,7 @@ void Ntuple_Controller::Branch_Setup(TString B_Name, int type){
 Ntuple_Controller::~Ntuple_Controller() {
   std::cout << "Ntuple_Controller::~Ntuple_Controller()" << std::endl;
   delete Ntp;
+  delete rmcor;
     std::cout << "Ntuple_Controller::~Ntuple_Controller() complete" << std::endl;
 }
 
@@ -308,18 +317,22 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
+	if(corr.Contains("roch")){
+		int runopt = 0; // 0: no run-dependece
+		float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
+		if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+			rmcor->momcor_mc(vec,Muon_Charge(i),runopt,qter);
+		}else{
+			rmcor->momcor_data(vec,Muon_Charge(i),runopt,qter);
+		}
+	}
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		if(corr.Contains("scale")){
-			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()*1.02);
-			else vec.SetPerp(vec.Perp()*0.98);
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp()*1.002);
+			else vec.SetPerp(vec.Perp()*0.998);
 		}
 		else if(corr.Contains("res")){
-			gRandom->SetSeed(1234);
-			TF1* muresf = new TF1("muresf","TMath::Gaus(x,0.,1.006)/TMath::Sqrt(2*TMath::Pi())/1.006",-5.,5.);
-			TH1D* muresh = new TH1D("mures","mures",100,-5.,5.);
-			muresh->FillRandom("muresf",1000000);
-			if(!corr.Contains("minus")) vec.SetPerp(vec.Perp()+muresh->GetRandom());
-			else vec.SetPerp(vec.Perp()-muresh->GetRandom());
+			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
 		}
 	}
 	return vec;
@@ -341,11 +354,11 @@ bool Ntuple_Controller::isTightMuon(unsigned int i){
 	return true;
 }
 
-bool Ntuple_Controller::isTightMuon(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isTightMuon(unsigned int i, unsigned int j, TString corr){
 	if(j<0 || j>=NVtx()) return false;
 	if(!isTightMuon(i)) return false;
-	if(dxy(Muon_p4(i),Muon_Poca(i),Vtx(j))>=0.2) return false;
-	if(dz(Muon_p4(i),Muon_Poca(i),Vtx(j))>=0.5) return false;
+	if(dxy(Muon_p4(i,corr),Muon_Poca(i),Vtx(j))>=0.2) return false;
+	if(dz(Muon_p4(i,corr),Muon_Poca(i),Vtx(j))>=0.5) return false;
 	return true;
 }
 
@@ -355,17 +368,17 @@ bool Ntuple_Controller::isLooseMuon(unsigned int i){
 	return true;
 }
 
-float Ntuple_Controller::Muon_RelIso(unsigned int i){
-	return (Muon_sumChargedHadronPt04(i)+std::max(0.,Muon_sumNeutralHadronEt04(i)+Muon_sumPhotonEt04(i)-0.5*Muon_sumPUPt04(i)))/Muon_p4(i).Pt();
+float Ntuple_Controller::Muon_RelIso(unsigned int i, TString corr){
+	return (Muon_sumChargedHadronPt04(i)+std::max(0.,Muon_sumNeutralHadronEt04(i)+Muon_sumPhotonEt04(i)-0.5*Muon_sumPUPt04(i)))/Muon_p4(i,corr).Pt();
 }
 
 /////////////////////////////////////////////////////////////////////
 
-bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z){
+bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr){
 	if(j<0 || j>=NVtx()) return false;
 	if(!isTightMuon(i)) return false;
-	if(dxy(Muon_p4(i),Muon_Poca(i),Vtx(j))>=impact_xy) return false;
-	if(dz(Muon_p4(i),Muon_Poca(i),Vtx(j))>=impact_z) return false;
+	if(dxy(Muon_p4(i,corr),Muon_Poca(i),Vtx(j))>=impact_xy) return false;
+	if(dz(Muon_p4(i,corr),Muon_Poca(i),Vtx(j))>=impact_z) return false;
 	return true;
 }
 
@@ -373,26 +386,16 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
-	// apply scale variations (1.6% in barrel, 4.1% in endcap. see EGM-13-001)
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		if(corr.Contains("res")){
-			gRandom->SetSeed(1234);
-			if(fabs(vec.Eta())<1.479){
-				TF1* barrelf = new TF1("barrelf","TMath::Gaus(x,0.,1.016)/TMath::Sqrt(2*TMath::Pi())/1.016",-5.,5.);
-				TH1D* barrelh = new TH1D("barrelh","barrelh",100,-5.,5.);
-				barrelh->FillRandom("barrelf",1000000);
-				if(!corr.Contains("minus")) vec.SetE(vec.E()+barrelh->GetRandom());
-				else vec.SetE(vec.E()-barrelh->GetRandom());
+			if(fabs(Electron_supercluster_eta(i))<1.479){
+				vec.SetE(gRandom->Gaus(vec.E(),1.016));
 			}
-			else if(fabs(vec.Eta())<2.5){
-				TF1* endcapf = new TF1("endcapf","TMath::Gaus(x,0.,1.041)/TMath::Sqrt(2*TMath::Pi())/1.041",-5.,5.);
-				TH1D* endcaph = new TH1D("endcaph","endcaph",100,-5.,5.);
-				endcaph->FillRandom("endcapf",1000000);
-				if(!corr.Contains("minus")) vec.SetE(vec.E()+endcaph->GetRandom());
-				else vec.SetE(vec.E()-endcaph->GetRandom());
+			else if(fabs(Electron_supercluster_eta(i))<2.5){
+				vec.SetE(gRandom->Gaus(vec.E(),1.041));
 			}
 			else{
-				std::cout << "Eta out of range: " << vec.Eta() << ". Returning fourvector w/o corrections." << std::endl;
+				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
 			}
 		}
 	}
@@ -419,9 +422,9 @@ bool Ntuple_Controller::isTrigPreselElectron(unsigned int i){
 	return true;
 }
 
-bool Ntuple_Controller::isMVATrigElectron(unsigned int i){
+bool Ntuple_Controller::isMVATrigElectron(unsigned int i, TString corr){
 	// !!! make sure to also apply Electron_RelIso<0.15 in your analysis !!!
-	double mvapt = Electron_p4(i).Pt();
+	double mvapt = Electron_p4(i,corr).Pt();
 	double mvaeta = fabs(Electron_supercluster_eta(i));
 	if(mvapt<10.) return false;
 	if(mvaeta>2.5) return false;
@@ -460,9 +463,9 @@ bool Ntuple_Controller::isTrigNoIPPreselElectron(unsigned int i){
 	return true;
 }
 
-bool Ntuple_Controller::isMVATrigNoIPElectron(unsigned int i){
+bool Ntuple_Controller::isMVATrigNoIPElectron(unsigned int i, TString corr){
 	// at present there are no recommendations on the isolation
-	double mvapt = Electron_p4(i).Pt();
+	double mvapt = Electron_p4(i, corr).Pt();
 	double mvaeta = fabs(Electron_supercluster_eta(i));
 	if(mvaeta>2.5) return false;
 	if(Electron_HasMatchedConversions(i)) return false;
@@ -481,9 +484,9 @@ bool Ntuple_Controller::isMVATrigNoIPElectron(unsigned int i){
 	return true;
 }
 
-bool Ntuple_Controller::isMVANonTrigElectron(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isMVANonTrigElectron(unsigned int i, unsigned int j, TString corr){
 	// !!! make sure to also apply Electron_RelIso<0.4 in your analysis !!!
-	double mvapt = Electron_p4(i).Pt();
+	double mvapt = Electron_p4(i,corr).Pt();
 	double mvaeta = fabs(Electron_supercluster_eta(i));
 	if(mvapt<7.) return false;
 	if(mvaeta>2.5) return false;
@@ -502,10 +505,10 @@ bool Ntuple_Controller::isMVANonTrigElectron(unsigned int i, unsigned int j){
 	return true;
 }
 
-bool Ntuple_Controller::isTightElectron(unsigned int i){
+bool Ntuple_Controller::isTightElectron(unsigned int i, TString corr){
 	if(Electron_HasMatchedConversions(i)) return false;
 	if(Electron_numberOfMissedHits(i)>0) return false;
-	if(Electron_RelIso04(i)>=0.1) return false;
+	if(Electron_RelIso04(i,corr)>=0.1) return false;
 	if(fabs(1/Electron_ecalEnergy(i)-1/Electron_trackMomentumAtVtx(i))>=0.05) return false;
 	if(fabs(Electron_supercluster_eta(i))<=1.479){
 		if(Electron_Gsf_deltaEtaSuperClusterTrackAtVtx(i)>=0.004) return false;
@@ -523,20 +526,20 @@ bool Ntuple_Controller::isTightElectron(unsigned int i){
 	return true;
 }
 
-bool Ntuple_Controller::isTightElectron(unsigned int i, unsigned int j){
+bool Ntuple_Controller::isTightElectron(unsigned int i, unsigned int j, TString corr){
 	if(j<0 || j>=NVtx()) return false;
-	if(!isTightElectron(i)) return false;
-	if(dxy(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.02) return false;
-	if(dz(Electron_p4(i),Electron_Poca(i),Vtx(j))>=0.1) return false;
+	if(!isTightElectron(i,corr)) return false;
+	if(dxy(Electron_p4(i,corr),Electron_Poca(i),Vtx(j))>=0.02) return false;
+	if(dz(Electron_p4(i,corr),Electron_Poca(i),Vtx(j))>=0.1) return false;
 	return true;
 }
 
-float Ntuple_Controller::Electron_RelIso03(unsigned int i){
-	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i).Pt();
+float Ntuple_Controller::Electron_RelIso03(unsigned int i, TString corr){
+	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
-float Ntuple_Controller::Electron_RelIso04(unsigned int i){
-	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i).Pt();
+float Ntuple_Controller::Electron_RelIso04(unsigned int i, TString corr){
+	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
 float Ntuple_Controller::Electron_Aeff_R04(double Eta){
@@ -565,13 +568,13 @@ float Ntuple_Controller::Electron_Aeff_R03(double Eta){
 
 /////////////////////////////////////////////////////////////////////
 
-bool Ntuple_Controller::isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z){
-	double mvapt = Electron_p4(i).Pt();
+bool Ntuple_Controller::isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr){
+	double mvapt = Electron_p4(i,corr).Pt();
 	double mvaeta = fabs(Electron_supercluster_eta(i));
 	if(Electron_numberOfMissedHits(i)>0) return false;
 	if(Electron_HasMatchedConversions(i)) return false;
-	if(dxy(Electron_p4(i),Electron_Poca(i),Vtx(j))>=impact_xy) return false;
-	if(dz(Electron_p4(i),Electron_Poca(i),Vtx(j))>=impact_z) return false;
+	if(dxy(Electron_p4(i,corr),Electron_Poca(i),Vtx(j))>=impact_xy) return false;
+	if(dz(Electron_p4(i,corr),Electron_Poca(i),Vtx(j))>=impact_z) return false;
 	if(mvapt<20.){
 		if(mvaeta<0.8 && Electron_MVA_NonTrig_discriminator(i)<=0.925) return false;
 		else if(mvaeta>=0.8 && mvaeta<1.479 && Electron_MVA_NonTrig_discriminator(i)<=0.915) return false;
@@ -677,11 +680,72 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 	return (1.+corr*(runnumber-run0));
 }
 
+double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString unc){
+	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded)
+		return 1.;
+	if(jet.Pt()<=10){
+		std::cout << "Ntuple_Controller::JERCorrection - jet pt < 10 GeV. Returning 1." << std::endl;
+		return 1.;
+	}
+	double sf = 1.;
+	double c = JetEnergyResolutionCorr(jet.Eta());
+	if(unc.Contains("up")) c += JetEnergyResolutionCorrErr(jet.Eta());
+	if(unc.Contains("down")) c -= JetEnergyResolutionCorrErr(jet.Eta());
+	if(PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)) std::cout << "Ntuple_Controller::JERCorrection - jet could not be matched to generator particles. Returning 1." << std::endl;
+	else sf = std::max(0.,c*jet.Pt()+(1.-c)*PFJet_matchGenJet(jet,dr).Pt());
+	return sf;
+}
+
+TLorentzVector Ntuple_Controller::PFJet_matchGenJet(TLorentzVector jet, double dr){
+	TLorentzVector genjet(0.,0.,0.,0.);
+	for(unsigned i=0;i<PFJet_NGenJetsNoNu();i++){
+		if(PFJet_GenJetNoNu_p4(i).Vect()!=TVector3(0.,0.,0.)
+				&& jet.DeltaR(PFJet_GenJetNoNu_p4(i))<dr
+				){
+			genjet = PFJet_GenJetNoNu_p4(i);
+		}
+	}
+	return genjet;
+}
+
+double Ntuple_Controller::JetEnergyResolutionCorr(double jeteta){
+	double eta = fabs(jeteta);
+	double corr = 1.;
+	if(eta<0.5) corr = 1.079;
+	else if(eta<1.1) corr = 1.099;
+	else if(eta<1.7) corr = 1.121;
+	else if(eta<2.3) corr = 1.208;
+	else if(eta<2.8) corr = 1.254;
+	else if(eta<3.2) corr = 1.395;
+	else if(eta<5.0) corr = 1.056;
+	return corr;
+}
+
+double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
+	double eta = fabs(jeteta);
+	double err = 0.;
+	if(eta<0.5) err = 0.026;
+	else if(eta<1.1) err = 0.027;
+	else if(eta<1.7) err = 0.029;
+	else if(eta<2.3) err = 0.046;
+	else if(eta<2.8) err = 0.062;
+	else if(eta<3.2) err = 0.063;
+	else if(eta<5.0) err = 0.191;
+	return err;
+}
+
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));
 	// apply run-dependent pT corrections
 	if (corr.Contains("run")){
 		vec.SetPerp(vec.Pt() * rundependentJetPtCorrection(vec.Eta(), RunNumber()));
+	}
+	if(corr.Contains("JER")){
+		vec.SetPerp(vec.Pt() * JERCorrection(vec,0.25,corr));
+	}
+	if(corr.Contains("JEC")){
+		if(corr.Contains("up")) vec.SetPerp(vec.Pt() * (1 + PFJet_JECuncertainty(i)));
+		else vec.SetPerp(vec.Pt() * (1 - PFJet_JECuncertainty(i)));
 	}
 	return vec;
 }
@@ -865,21 +929,17 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
   return false;
 }
 
-double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> trigger, std::string objectType){
+double Ntuple_Controller::matchTrigger(TLorentzVector obj, std::vector<TString> trigger, std::string objectType){
 	unsigned int id = 0;
-	TLorentzVector particle(0.,0.,0.,0.);
 	TLorentzVector triggerObj(0.,0.,0.,0.);
 	if(objectType=="tau"){
 		id = 84;
-		particle = PFTau_p4(i_obj);
 	}
 	if(objectType=="muon"){
 		id = 83;
-		particle = Muon_p4(i_obj);
 	}
 	if(objectType=="electron"){
 		id = 82;
-		particle = Electron_p4(i_obj);
 	}
 
 	double minDR = 100.;
@@ -893,8 +953,8 @@ double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> 
 								HLTTrigger_objs_Phi(i,j),
 								HLTTrigger_objs_E(i,j));
 					}
-					if( triggerObj.Pt()>0. && particle.Pt()>0. ) {
-						double dr = particle.DeltaR(triggerObj);
+					if( triggerObj.Pt()>0. && obj.Pt()>0. ) {
+						double dr = obj.DeltaR(triggerObj);
 						if (dr < minDR) minDR = dr;
 					}
 				}
@@ -903,14 +963,14 @@ double Ntuple_Controller::matchTrigger(unsigned int i_obj, std::vector<TString> 
 	}
 	return minDR;
 }
-bool Ntuple_Controller::matchTrigger(unsigned int i_obj, double dr_cut, std::vector<TString> trigger, std::string objectType){
-	double dr = matchTrigger(i_obj, trigger, objectType);
+bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, std::vector<TString> trigger, std::string objectType){
+	double dr = matchTrigger(obj, trigger, objectType);
 	return dr < dr_cut;
 }
-bool Ntuple_Controller::matchTrigger(unsigned int i_obj, double dr_cut, TString trigger, std::string objectType){
+bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, TString trigger, std::string objectType){
 	std::vector<TString> triggerVec;
 	triggerVec.push_back(trigger);
-	return matchTrigger(i_obj, dr_cut, triggerVec, objectType);
+	return matchTrigger(obj, dr_cut, triggerVec, objectType);
 }
 
 
