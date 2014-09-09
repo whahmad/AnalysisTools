@@ -300,10 +300,10 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   bool           isGoodMuon_nooverlapremoval(unsigned int i);
 
   bool			 isTightMuon(unsigned int i);
-  bool			 isTightMuon(unsigned int i, unsigned int j);
-  bool           isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z);
+  bool			 isTightMuon(unsigned int i, unsigned int j, TString corr="");
+  bool           isSelectedMuon(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr="");
   bool			 isLooseMuon(unsigned int i);
-  float          Muon_RelIso(unsigned int i);
+  float          Muon_RelIso(unsigned int i, TString corr="");
   rochcor2012*   rmcor;
 
 
@@ -751,16 +751,16 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
 
    bool isTrigPreselElectron(unsigned int i);
    bool isTrigNoIPPreselElectron(unsigned int i);
-   bool isMVATrigElectron(unsigned int i);
-   bool isMVATrigNoIPElectron(unsigned int i);
-   bool isMVANonTrigElectron(unsigned int i, unsigned int j);
-   bool isTightElectron(unsigned int i);
-   bool isTightElectron(unsigned int i, unsigned int j);
-   float Electron_RelIso03(unsigned int i);
-   float Electron_RelIso04(unsigned int i);
+   bool isMVATrigElectron(unsigned int i, TString corr="");
+   bool isMVATrigNoIPElectron(unsigned int i, TString corr="");
+   bool isMVANonTrigElectron(unsigned int i, unsigned int j, TString corr="");
+   bool isTightElectron(unsigned int i, TString corr="");
+   bool isTightElectron(unsigned int i, unsigned int j, TString corr="");
+   float Electron_RelIso03(unsigned int i, TString corr="");
+   float Electron_RelIso04(unsigned int i, TString corr="");
    float Electron_Aeff_R04(double Eta);
    float Electron_Aeff_R03(double Eta);
-   bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z);
+   bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr="");
 
    // Trigger
    bool         TriggerAccept(TString n);

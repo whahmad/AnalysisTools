@@ -78,7 +78,7 @@ ifdef USE_kargoll
 endif 
 
 ifdef USE_nehrkorn
-	TARGETS += ZtoEMu ZtoEMu_Skim ZtoEMu_Fakerate ZtoEMu_Wjets ZtoEMu_QCD
+	TARGETS += ZtoEMu ZtoEMu_Skim
 	DEFS += -DUSE_nehrkorn=1
 endif
 
