@@ -41,14 +41,37 @@ ZtoEMu::ZtoEMu(TString Name_, TString id_):
 	doHiggsObjects = false;
 	doWWObjects = true;
 	useMadgraphZ = false;
+	doPDFuncertainty = true;
 	if(useMadgraphZ) mmin = 50;
 	if(doHiggsObjects){
 		mu_eta = 2.1;
 		e_eta = 2.3;
 	}
+
+	// corrections to be applied to particle candidates
 	mucorr = "roch";
 	ecorr = "";
 	jetcorr = "runJER";
+
+	// initialize pdf reweighting for systematics
+	if(doPDFuncertainty){
+		pdfname1 = "cteq6ll.LHgrid";
+		pdfname2 = "CT10nnlo.LHgrid";
+		if(Ntp->GetMCID()==DataMCType::ttbar){ // todo: correct pdfs?
+			pdfname1 = "CT10.LHgrid";
+			pdfname2 = "NNPDF23_nnlo_as_0119.LHgrid";
+		}
+		pdf = new PDFweights(pdfname1,pdfname2);
+		nPDFmembers = pdf->numberOfMembers();
+		w0.clear();
+		w1.clear();
+		w0.resize(HConfig.GetNHisto());
+		w1.resize(HConfig.GetNHisto());
+		for(unsigned i=0;i<w0.size();i++){
+			w0.at(i).resize(nPDFmembers);
+			w1.at(i).resize(nPDFmembers);
+		}
+	}
 }
 
 ZtoEMu::~ZtoEMu(){
@@ -994,6 +1017,20 @@ void  ZtoEMu::doEvent(){
   if(verbose)std::cout << "w=" << w << " " << wobs << " " << w*wobs << std::endl;
   bool status=AnalysisCuts(t,w,wobs);
   if(verbose)std::cout << "status: " << status << std::endl;
+
+  ///////////////////////////////////////////////
+  //
+  // Get PDF weights
+  //
+  if(doPDFuncertainty){
+	  if(verbose) std::cout << "Calculating PDF weights" << std::endl;
+	  for(unsigned int member=0;member<nPDFmembers;++member){
+		  double pdfWeight = w*pdf->weight(Ntp->GenEventInfoProduct_id1(),Ntp->GenEventInfoProduct_id2(),Ntp->GenEventInfoProduct_x1(),Ntp->GenEventInfoProduct_x2(),Ntp->GenEventInfoProduct_scalePDF(),member);
+		  w0.at(t).at(member) = w0.at(t).at(member) + pdfWeight;
+		  if(status) w1.at(t).at(member) = w1.at(t).at(member) + pdfWeight; // todo: really after whole selection?
+	  }
+  }
+
   ///////////////////////////////////////////////
   //
   // Add plots
@@ -1469,13 +1506,46 @@ void ZtoEMu::Finish(){
 	}*/
 	Selection::Finish();
 	Selection::ScaleAllHistOfType(DataMCType::DY_emu_embedded,10152445./9760728.);
-	double standmc[12] = {43.763,42.7241,1.1313,0.793887,0.085084,0.0299141,1.40479,2.94295,0.591715,1.26668,67.6531,17.2729};
+	if(doPDFuncertainty){
+		TString pdfname1_lower = pdfname1;
+		TString pdfname2_lower = pdfname2;
+		pdfname1_lower.ToLower();
+		pdfname2_lower.ToLower();
+		for(unsigned i=0;i<HConfig.GetNHisto();i++){
+			double acc = w1.at(i).at(0)/w0.at(i).at(0);
+			double yield = w1.at(i).at(0);
+			double acc2 = 0;
+			double yield2 = 0;
+			if(pdfname2_lower.Contains("nnpdf")){
+				for(unsigned j=1;j<nPDFmembers;++j){
+					acc2 += pow(w1.at(i).at(j)/w0.at(i).at(j)-acc,2);
+					yield2 += pow(w1.at(i).at(j)-yield,2);
+				}
+			}else{
+				for(unsigned j=1;j<nPDFmembers;j+=2){
+					acc2 += pow(w1.at(i).at(j)/w0.at(i).at(j)-w1.at(i).at(j+1)/w0.at(i).at(j+1),2);
+					yield2 += pow(w1.at(i).at(j)-w1.at(i).at(j+1),2);
+				}
+			}
+			double eacc = sqrt(acc2/(nPDFmembers-1));
+			double eyield = sqrt(yield2/(nPDFmembers-1));
+			if(pdfname1_lower.Contains("cteq") || pdfname2_lower.Contains("cteq")){ // CTEQ must be corrected from 90%CL to 68%CL
+				eacc /= 1.645;
+				eyield /= 1.645;
+			}
+			printf("====================\n");
+			std::cout << "PDF uncertainties for sample " << HConfig.GetName(i) << std::endl;
+			printf("Yield = %.3e +- %.3e (PDFs), i.e. %.2f%% relative uncertainty\n",yield,eyield,eyield/yield*100);
+			printf("Acceptance = %.3e +- %.3e (PDFs), i.e. %.2f%% relative uncertainty\n",acc,eacc,eacc/acc*100);
+		}
+	}
+	/*double standmc[12] = {43.763,42.7241,1.1313,0.793887,0.085084,0.0299141,1.40479,2.94295,0.591715,1.26668,67.6531,17.2729};
 	int mcids[12] = {DataMCType::QCD,DataMCType::WW_2l2nu,DataMCType::WZ_2l2q,DataMCType::WZ_3l1nu,DataMCType::ZZ_4l,DataMCType::ZZ_2l2nu,DataMCType::ZZ_2l2q,DataMCType::ttbar,DataMCType::tw,DataMCType::tbarw,DataMCType::DY_ll,DataMCType::DY_tautau};
 	double sigmc = 103.436;
 
 	for(unsigned i=0; i<12; i++){
 		printf("MC with Id %i differs from %f by %f percent.\n",mcids[i],standmc[i],fabs(standmc[i]/Npassed.at(HConfig.GetType(mcids[i])).GetBinContent(nCutsAboveZero(mcids[i]))-1.)*100);
 	}
-	printf("Signal MC differs from %f by %f percent.\n",sigmc,fabs(sigmc/Npassed.at(HConfig.GetType(DataMCType::DY_emu)).GetBinContent(nCutsAboveZero(DataMCType::DY_emu))-1.)*100);
+	printf("Signal MC differs from %f by %f percent.\n",sigmc,fabs(sigmc/Npassed.at(HConfig.GetType(DataMCType::DY_emu)).GetBinContent(nCutsAboveZero(DataMCType::DY_emu))-1.)*100);*/
 	printf("Cases with one fake lepton: %f. Cases with two fake leptons: %f.\n",nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(1),nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(2));
 }

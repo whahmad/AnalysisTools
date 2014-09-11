@@ -666,8 +666,9 @@ bool Ntuple_Controller::isJetID(unsigned int i){
 
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECL2ResidualTimeStability#2012Rereco
 double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumber){
-	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded)
+	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		return 1.;
+	}
 	const double corrs[5] = {0.0, -0.454e-6, -0.952e-6, 1.378e-6, 0.0};
 	const int run0 = 201000;
 	double eta = fabs(jeteta);
@@ -681,18 +682,18 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 }
 
 double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString unc){
-	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded)
-		return 1.;
-	if(jet.Pt()<=10){
-		std::cout << "Ntuple_Controller::JERCorrection - jet pt < 10 GeV. Returning 1." << std::endl;
-		return 1.;
+	double sf = jet.Pt();
+	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded
+			|| jet.Pt()<=10
+			|| PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)
+			){
+		return sf;
+	}else{
+		double c = JetEnergyResolutionCorr(jet.Eta());
+		if(unc.Contains("up")) c += JetEnergyResolutionCorrErr(jet.Eta());
+		if(unc.Contains("down")) c -= JetEnergyResolutionCorrErr(jet.Eta());
+		sf = std::max(0.,c*jet.Pt()+(1.-c)*PFJet_matchGenJet(jet,dr).Pt());
 	}
-	double sf = 1.;
-	double c = JetEnergyResolutionCorr(jet.Eta());
-	if(unc.Contains("up")) c += JetEnergyResolutionCorrErr(jet.Eta());
-	if(unc.Contains("down")) c -= JetEnergyResolutionCorrErr(jet.Eta());
-	if(PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)) std::cout << "Ntuple_Controller::JERCorrection - jet could not be matched to generator particles. Returning 1." << std::endl;
-	else sf = std::max(0.,c*jet.Pt()+(1.-c)*PFJet_matchGenJet(jet,dr).Pt());
 	return sf;
 }
 
@@ -741,7 +742,7 @@ TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 		vec.SetPerp(vec.Pt() * rundependentJetPtCorrection(vec.Eta(), RunNumber()));
 	}
 	if(corr.Contains("JER")){
-		vec.SetPerp(vec.Pt() * JERCorrection(vec,0.25,corr));
+		vec.SetPerp(JERCorrection(vec,0.25,corr));
 	}
 	if(corr.Contains("JEC")){
 		if(corr.Contains("up")) vec.SetPerp(vec.Pt() * (1 + PFJet_JECuncertainty(i)));

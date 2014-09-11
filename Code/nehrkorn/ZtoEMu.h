@@ -7,6 +7,7 @@
 #include "TF1.h"
 #include "TGraphAsymmErrors.h"
 #include "ReferenceScaleFactors.h"
+#include "PDFweights.h"
 
 class ZtoEMu : public Selection {
 
@@ -157,9 +158,17 @@ class ZtoEMu : public Selection {
   bool doHiggsObjects;
   bool doWWObjects;
   bool useMadgraphZ;
+  bool doPDFuncertainty;
   TString mucorr, ecorr, jetcorr;
   
   double csvl,csvm,csvt;
+
+  TString pdfname1;
+  TString pdfname2;
+  PDFweights* pdf;
+  int nPDFmembers;
+  std::vector<std::vector<double> > w0;
+  std::vector<std::vector<double> > w1;
 
   double calculatePzeta(int muiterator, int eiterator);
   double calculatePzetaDQM(int muiterator, int eiterator);
