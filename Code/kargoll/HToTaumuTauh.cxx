@@ -63,16 +63,20 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",       4.63724615) );
 	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",  13271.59050205) );
 
-	// this one is used for cross-check only
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("ZeroJetLow",   0.80901627) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("ZeroJetHigh",  0.68228370) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("OneJetLow",    0.98325814) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("OneJetHigh",   0.79677233) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("OneJetBoost",  0.67725753) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("VBFLoose",     0.14590955) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("VBFTight",     0.04354578) );
-	// wJetsYieldScaleMap.insert(std::pair<TString,double>("Inclusive",    0.83902189) );
+	// flat to switch data-driven QCD on/off
+	// set to "true" if running analyses (i.e. in categories)
+	// set to "false" to estimate QCD yield
+	qcdShapeFromData = false;
 
+	// these are used to set the event yield for QCD
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  16115.00127108) );
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",   470.03169889) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetLow",    4804.22133590) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetHigh",    271.81725935) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetBoost",    55.01883380) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFLoose",       38.37224181) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFTight",        5.73986779) );
+	qcdYieldMap.insert(std::pair<TString,double>("Inclusive",   21965.93565558) );
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -440,6 +444,15 @@ void  HToTaumuTauh::Configure(){
   MtOnlyOppCharge = HConfig.GetTH1D(Name+"_MtOnlyOppCharge","MtOnlyOppCharge",50,0.,100.,"m_{T}/GeV");
   MtOnlyBJet = HConfig.GetTH1D(Name+"_MtOnlyBJet","MtOnlyBJet",50,0.,100.,"m_{T}/GeV");
 
+  Cat0JetLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0JetLowQcdShapeRegion","Cat0JetLowQcdShapeRegion",100,0.,200.,"0JL: m_{inv}^{QCD}/GeV");
+  Cat0HighLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0HighLowQcdShapeRegion","Cat0HighLowQcdShapeRegion",100,0.,200.,"0JH: m_{inv}^{QCD}/GeV");
+  Cat1JetLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetLowQcdShapeRegion","Cat1JetLowQcdShapeRegion",100,0.,200.,"1JL: m_{inv}^{QCD}/GeV");
+  Cat1JetHighQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetHighQcdShapeRegion","Cat1JetHighQcdShapeRegion",100,0.,200.,"1JH: m_{inv}^{QCD}/GeV");
+  Cat1JetBoostQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdShapeRegion","Cat1JetBoostQcdShapeRegion",100,0.,200.,"1JB: m_{inv}^{QCD}/GeV");
+  CatVBFLooseQcdShapeRegion = HConfig.GetTH1D(Name+"_CatVBFLooseQcdShapeRegion","CatVBFLooseQcdShapeRegion",100,0.,200.,"VBFL: m_{inv}^{QCD}/GeV");
+  CatVBFTightQcdShapeRegion = HConfig.GetTH1D(Name+"_CatVBFTightQcdShapeRegion","CatVBFTightQcdShapeRegion",100,0.,200.,"VBFT: m_{inv}^{QCD}/GeV");
+  CatInclusiveQcdShapeRegion = HConfig.GetTH1D(Name+"_CatInclusiveQcdShapeRegion","CatInclusiveQcdShapeRegion",100,0.,200.,"Incl: m_{inv}^{QCD}/GeV");
+
   Cat0JetLowMt = HConfig.GetTH1D(Name+"_Cat0JetLowMt","Cat0JetLowMt",125,0.,250.,"0JL: m_{T}/GeV");
   Cat0JetLowMtSideband = HConfig.GetTH1D(Name+"_Cat0JetLowMtSideband","Cat0JetLowMtSideband",90,70.,250.,"0JL: m_{T}/GeV");
   Cat0JetLowMtExtrapolation = HConfig.GetTH1D(Name+"_Cat0JetLowMtExtrapolation","Cat0JetLowMtExtrapolation",2,0.5,2.5,"0JL: m_{T} signal and sideband");
@@ -661,6 +674,15 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MtOnlyOppCharge);
  Extradist1d.push_back(&MtOnlyBJet);
 
+ Extradist1d.push_back(&Cat0JetLowQcdShapeRegion);
+ Extradist1d.push_back(&Cat0HighLowQcdShapeRegion);
+ Extradist1d.push_back(&Cat1JetLowQcdShapeRegion);
+ Extradist1d.push_back(&Cat1JetHighQcdShapeRegion);
+ Extradist1d.push_back(&Cat1JetBoostQcdShapeRegion);
+ Extradist1d.push_back(&CatVBFLooseQcdShapeRegion);
+ Extradist1d.push_back(&CatVBFTightQcdShapeRegion);
+ Extradist1d.push_back(&CatInclusiveQcdShapeRegion);
+
  Extradist1d.push_back(&Cat0JetLowMt);
  Extradist1d.push_back(&Cat0JetLowMtSideband);
  Extradist1d.push_back(&Cat0JetLowMtExtrapolation);
@@ -766,6 +788,8 @@ void  HToTaumuTauh::doEvent(){
   selMjj = -1;
   selJetdeta = -100;
   selNjetingap = -1;
+  // set all analysis status booleans to false
+  setStatusBooleans(true);
 
   unsigned int t;
   int id(Ntp->GetMCID());
@@ -1045,6 +1069,9 @@ void  HToTaumuTauh::doEvent(){
 	  selMjj = -1;
   }
 
+  // define booleans for different stages of selection
+  setStatusBooleans();
+
   // remove some cuts for smoother WJet shape
   bool isWJetMC = (Ntp->GetMCID() >= DataMCType::W_lnu) && (Ntp->GetMCID() <= DataMCType::W_taunu);
   bool useRelaxedForPlots =  (wJetsBGSource == "Data") && isWJetMC; // overwrite pass-vector with relaxed categories (for WJets shape) only if wanted
@@ -1059,24 +1086,22 @@ void  HToTaumuTauh::doEvent(){
 	  }
   }
 
-  // define booleans for different stages of selection
-  bool passedVertex = pass.at(TriggerOk) && pass.at(PrimeVtx);
-  bool passedMuId = passedVertex && pass.at(NMuId);
-  bool passedMu = passedMuId && pass.at(NMuKin);
-  bool passedTauIdIso = passedVertex && pass.at(NTauId) && pass.at(NTauIso);
-  bool passedTau = passedTauIdIso && pass.at(NTauKin);
-  bool passedObjects = passedMu && passedTau;
-  bool passedDiMuonVeto = passedObjects && pass.at(DiMuonVeto);
-  bool passedFullInclusiveSelNoBVeto = passedDiMuonVeto && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(MT);
-  bool passedFullInclusiveSel = passedFullInclusiveSelNoBVeto && pass.at(BJetVeto);
+  // QCD background method
+  bool isSS = ( abs(value.at(OppCharge)) == 2 );
+  // use anti-iso muons and SS for QCD shape
+  bool isQCDShapeEvent = passedFullInclusiveNoTauNoMuNoCharge && passedTau && !passedMu && hasAntiIsoMuon && isSS;
+  if(isQCDShapeEvent){
+	  if(Ntp->isData()){
+		  if(!HConfig.GetHisto(false,DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(OppCharge) = true;
+		  pass.at(NMuId) = true;
+		  pass.at(NMuKin) = true;
+	  }
+	  // todo: subtract background or not??
+  }
 
-  // define booleans for analysis stages needed for background methods
-  bool passedFullInclusiveSelNoMt = passedObjects && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(BJetVeto);
-  bool passedFullInclusiveSelNoMtNoOS = passedObjects && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(BJetVeto);
-  bool passedFullInclusiveNoIsoNoCharge = passedVertex && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(MT) && pass.at(BJetVeto);
-
-  // define booleans for analysis stages for additional plots
-  bool passedObjectsFailDiMuonVeto = passedObjects && !pass.at(DiMuonVeto);
+  // re-define booleans as they might have changed for background methods
+  setStatusBooleans();
 
   // run categories
   bool passed_VBFTight		= category_VBFTight(nJets, selJetdeta, selNjetingap, selMjj, higgsPt);
@@ -1498,8 +1523,7 @@ void  HToTaumuTauh::doEvent(){
   //    C  |  D
   //   ---------> relIso(mu)
   //    A  |  B
-  if (passedFullInclusiveNoIsoNoCharge){
-	  bool isSS = ( abs(value.at(OppCharge)) == 2 );
+  if (passedFullInclusiveNoTauNoMuNoCharge){
 	  // veto events with signal muon AND antiIsoMuon, as in these cases mT etc. are calculated using the signal muon
 	  bool isA = pass.at(OppCharge) && passedObjects;
 	  bool isB = pass.at(OppCharge) && !passedMu && hasRelaxedIsoTau && hasAntiIsoMuon;
@@ -1603,6 +1627,18 @@ void  HToTaumuTauh::doEvent(){
 		  }
 	  }
   }
+  // QCD shape region
+  if(isQCDShapeEvent){
+	  double mvis = (Ntp->Muon_p4(selMuon) + Ntp->PFTau_p4(selTau)).M();
+	  CatInclusiveQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_ZeroJetLow) Cat0JetLowQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_ZeroJetHigh) Cat0HighLowQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_OneJetLow) Cat1JetLowQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_OneJetHigh) Cat1JetHighQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_OneJetBoost) Cat1JetBoostQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_VBFLoose) CatVBFLooseQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_VBFTight) CatVBFTightQcdShapeRegion.at(t).Fill(mvis, w);
+  }
 }
 
 
@@ -1649,6 +1685,27 @@ void HToTaumuTauh::Finish() {
 		std::cout << "WJet BG: Using MC." << std::endl;
 	else
 		std::cout << "WJet BG: Please specify \"MC\" or \"Data\". Using MC for this run..." << std::endl;
+
+	if(qcdShapeFromData){
+		if (mode == RECONSTRUCT) { // only apply data-driven numbers on "combine" level
+			std::cout << "QCD BG: Using data driven estimation." << std::endl;
+			if(!HConfig.hasID(DataMCType::QCD)){
+				std::cout << "QCD BG: Please add QCD to your Histo.txt. Abort." << std::endl;
+			}
+			else{
+				double rawQcdShapeEvents = Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts);
+				// scale QCD histograms to data-driven yields
+				ScaleAllHistOfType(HConfig.GetType(DataMCType::QCD), qcdYieldMap[categoryFlag] / rawQcdShapeEvents);
+				printf("QCD histogram was scaled from yield %f to yield %f \n", rawQcdShapeEvents, Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts));
+			}
+		}
+		else
+			std::cout << "QCD BG: Data driven will be used at Combine stage, but not in this individual set." << std::endl;
+	}
+	else
+		std::cout << "QCD BG: No data driven QCD background available. Histos will be empty." << std::endl;
+
+
 	// call GetHistoInfo here (instead of in Configure function), otherwise the SetCrossSection calls are not reflected
 	HConfig.GetHistoInfo(types, CrossSectionandAcceptance, legend, colour);
 	Selection::Finish();
@@ -2568,4 +2625,45 @@ bool HToTaumuTauh::helperCategory_VBFTightRelaxed_WYield(bool useRelaxedForPlots
 	// migrate into main analysis if this is chosen category
 	TString cat = useRelaxedForPlots ? "VBFTight" : "DoNotUseThisCategoryForPlotting";
 	return migrateCategoryIntoMain(cat,value_VBFTightRelaxed, pass_VBFTightRelaxed,VbfTight_NCuts);
+}
+
+void HToTaumuTauh::setStatusBooleans(bool resetAll){
+	if(resetAll){
+		// make sure that all booleans defined above are false
+		for (unsigned i = 0; i<NCuts; i++){
+			if (pass.at(i) != false){
+				std::cout << "WARNING: pass vector not cleared properly" << std::endl;
+				pass.at(i) = false;
+			}
+		}
+		// set all category flags to false
+		passed_VBFTight		= false;
+		passed_VBFLoose		= false;
+		passed_VBF			= false;
+		passed_OneJetHigh	= false;
+		passed_OneJetLow	= false;
+		passed_OneJetBoost	= false;
+		passed_ZeroJetHigh	= false;
+		passed_ZeroJetLow	= false;
+		passed_NoCategory	= false;
+		passed_VBFTightRelaxed	= false;
+		passed_VBFLooseRelaxed	= false;
+	}
+	passedVertex = pass.at(TriggerOk) && pass.at(PrimeVtx);
+	passedMuId = passedVertex && pass.at(NMuId);
+	passedMu = passedMuId && pass.at(NMuKin);
+	passedTauIdIso = passedVertex && pass.at(NTauId) && pass.at(NTauIso);
+	passedTau = passedTauIdIso && pass.at(NTauKin);
+	passedObjects = passedMu && passedTau;
+	passedDiMuonVeto = passedObjects && pass.at(DiMuonVeto);
+	passedFullInclusiveSelNoBVeto = passedDiMuonVeto && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(MT);
+	passedFullInclusiveSel = passedFullInclusiveSelNoBVeto && pass.at(BJetVeto);
+	// define booleans for analysis stages needed for background methods
+	passedFullInclusiveSelNoMt = passedObjects && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(OppCharge) && pass.at(BJetVeto);
+	passedFullInclusiveSelNoMtNoOS = passedObjects && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(BJetVeto);
+	passedFullInclusiveNoTauNoMuNoCharge = passedVertex && pass.at(DiMuonVeto) && pass.at(TriLeptonVeto) && pass.at(MT) && pass.at(BJetVeto);
+	// define booleans for analysis stages for additional plots
+	passedObjectsFailDiMuonVeto = passedObjects && !pass.at(DiMuonVeto);
+
+	return;
 }
