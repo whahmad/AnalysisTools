@@ -24,10 +24,9 @@ class ZtoEMu : public Selection {
 		 NE,
 		 ptthreshold,
 		 mll,
-		 diMuonVeto,
 		 triLeptonVeto,
 		 charge,
-		 jetVeto,
+		 oneJet,
 		 MtMu,
 	     ptBalance,
 	     ZMassmax,
@@ -79,7 +78,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> invmass_vetos_m;
   std::vector<TH1D> invmass_only_object_id_m;
 
-  std::vector<TH1D> invmass_dimuon_only;
   std::vector<TH1D> invmass_trilepton_only;
   std::vector<TH1D> invmass_charge_only;
   std::vector<TH1D> invmass_jetveto_only;
@@ -134,12 +132,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> ptbal_chargepass;
   std::vector<TH1D> ptbal_chargefail;
 
-  std::vector<TH1D> Dxy_trig;
-  std::vector<TH1D> Dz_trig;
-  std::vector<TH1D> Dxy_nontrig;
-  std::vector<TH1D> Dz_nontrig;
-  std::vector<TH1D> Dxy_trignoip;
-  std::vector<TH1D> Dz_trignoip;
   std::vector<TH2D> eta_mu_e;
   std::vector<TH2D> pt_vs_eta_mu;
   std::vector<TH2D> pt_vs_eta_e;
@@ -148,10 +140,19 @@ class ZtoEMu : public Selection {
   std::vector<TH2D> pt_vs_eta_e_gen;
   std::vector<TH1D> mll_gen;
   std::vector<TH1D> higgs_mass;
-  std::vector<TH1D> mupt_q;
-  std::vector<TH1D> mueta_q;
-  std::vector<TH1D> ept_q;
-  std::vector<TH1D> eeta_q;
+  std::vector<TH1D> ht_pseudo;
+  std::vector<TH1D> zmass_zoom;
+  std::vector<TH2D> mtmu_vs_ptbal;
+  std::vector<TH2D> met_vs_ptbal;
+  std::vector<TH2D> met_vs_mtmu;
+  std::vector<TH1D> invmass_high;
+  std::vector<TH1D> ptsum;
+  std::vector<TH1D> ptsum_nm0;
+  std::vector<TH1D> mvamet;
+  std::vector<TH1D> mva_mtmu;
+
+  std::vector<TH1D> pdf_w0;
+  std::vector<TH1D> pdf_w1;
 
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,jet_sum,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
   int n_mu,n_e;
@@ -167,15 +168,12 @@ class ZtoEMu : public Selection {
   TString pdfname2;
   PDFweights* pdf;
   int nPDFmembers;
-  std::vector<std::vector<double> > w0;
-  std::vector<std::vector<double> > w1;
 
   double calculatePzeta(int muiterator, int eiterator);
   double calculatePzetaDQM(int muiterator, int eiterator);
   double cosphi2d(double px1, double py1, double px2, double py2);
   double cosphi3d(TVector3 vec1, TVector3 vec2);
   int findBin(TGraphAsymmErrors* graph, double xval);
-  int nCutsAboveZero(int id);
   
   bool isFakeMuon(unsigned int idx, TString corr="");
   bool isFakeMuon(unsigned int idx, unsigned int vtx, TString corr="");

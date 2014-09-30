@@ -486,7 +486,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    float              PFJet_neutralEmEnergyFraction(unsigned int i){return Ntp->PFJet_neutralEmEnergyFraction->at(i);}
    bool               isGoodJet(unsigned int i);
    bool               isGoodJet_nooverlapremoval(unsigned int i);
-   bool               isJetID(unsigned int i);
+   bool               isJetID(unsigned int i, TString corr="");
    float              PFJet_nTrk(unsigned int i){return Ntp->PFJet_nTrk->at(i);}
    TLorentzVector     PFJet_TracksP4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->PFJet_TracksP4->at(i).at(j).at(1),Ntp->PFJet_TracksP4->at(i).at(j).at(2),Ntp->PFJet_TracksP4->at(i).at(j).at(3),Ntp->PFJet_TracksP4->at(i).at(j).at(0));}
    int                PFJet_nTracks(unsigned int i){return Ntp->PFJet_TracksP4->at(i).size();}
