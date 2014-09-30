@@ -44,7 +44,7 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
   // Rochester muon momentum corrections
 
-  rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed);
+  rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed!=1234);
 
 }
 
@@ -315,6 +315,17 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 
 /////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+//
+// Get muon four-vector
+//
+// Options:
+//  - "roch": will correct the momentum in data and MC using Rochester corrections. For systematics look in constructor of this class.
+//  - "scale": if you don't use momentum corrections, use this to estimate the systematics on the scale (only MC).
+//             Add "down" in order to estimate it for downward variations.
+//  - "res": if you don't use momentum corrections, use this to estimate systematics caused by momentum resolution (only MC)
+//
+
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
 	if(corr.Contains("roch")){
@@ -330,8 +341,7 @@ TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 		if(corr.Contains("scale")){
 			if(!corr.Contains("down")) vec.SetPerp(vec.Perp()*1.002);
 			else vec.SetPerp(vec.Perp()*0.998);
-		}
-		else if(corr.Contains("res")){
+		}else if(corr.Contains("res")){
 			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
 		}
 	}
@@ -384,15 +394,22 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 
 /////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+//
+// Get electron four-vector
+//
+// Options:
+//  - "res": use this to estimate the impact of the electron energy resolution on your result (only MC).
+
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
 		if(corr.Contains("res")){
 			if(fabs(Electron_supercluster_eta(i))<1.479){
-				vec.SetE(gRandom->Gaus(vec.E(),1.016));
+				vec.SetPerp(gRandom->Gaus(vec.Perp(),1.016));
 			}
 			else if(fabs(Electron_supercluster_eta(i))<2.5){
-				vec.SetE(gRandom->Gaus(vec.E(),1.041));
+				vec.SetPerp(gRandom->Gaus(vec.Perp(),1.041));
 			}
 			else{
 				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
@@ -630,38 +647,30 @@ bool Ntuple_Controller::isGoodJet_nooverlapremoval(unsigned int i){
   return false;
 }
 
-bool Ntuple_Controller::isJetID(unsigned int i){
+bool Ntuple_Controller::isJetID(unsigned int i, TString corr){
   //  Top Dilepton Jet selection with pt and iso matching the muon and tau.
   //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel  
   //  Jet ID :
+  //  corrected jet pt > 10 GeV, jet eta < 5.2
   //  number of constituents>1 (patJet->numberOfDaughters())
-  //  CEF<0.99 (patJet->chargedEmEnergyFraction())
-  //  NHF<0.99 (patJet->neutralHadronEnergyFraction())
+  //  NHF<0.99 (( patJet->neutralHadronEnergy() + patJet->HFHadronEnergy() ) / patJet->energy())
   //  NEF<0.99 (patJet->neutralEmEnergyFraction())
+  //  if |η|<2.4, CEF<0.99 (patJet->chargedEmEnergyFraction())
   //  if |η|<2.4, CHF>0 (patJet->chargedHadronEnergyFraction())
   //  if |η|<2.4, NCH>0 (patJet->chargedMultiplicity()) 
   /////////////////////////////////////////////////////////////////////////
   // apply jet ID
-  bool JetID_ok=false;
-  if(PFJet_numberOfDaughters(i)>1){
-    if(PFJet_chargedEmEnergyFraction(i)<0.99){
-      if(PFJet_neutralHadronEnergyFraction(i)<0.99){
-	if(PFJet_neutralEmEnergyFraction(i)<0.99){
-	  if(fabs(PFJet_p4(i).Eta())<2.4){
-	    if(PFJet_chargedHadronEnergyFraction(i)>0){
-	      if(PFJet_chargedMultiplicity(i)>0){
-		return true;
-	      }
-	    }
-	  }
-	  else{
-	    return true;
-	  }
-	}
-      }
-    }
+  if(PFJet_p4(i,corr).Pt()<=10.) return false;
+  if(fabs(PFJet_p4(i,corr).Eta())>=5.2) return false;
+  if(PFJet_numberOfDaughters(i)<=1) return false;
+  if((PFJet_neutralHadronEnergy(i)+PFJet_HFHadronEnergy(i))/PFJet_p4(i,corr).E()>=0.99) return false;
+  if(PFJet_neutralEmEnergyFraction(i)>=0.99) return false;
+  if(fabs(PFJet_p4(i,corr).Eta())<2.4){
+	  if(PFJet_chargedEmEnergyFraction(i)>=0.99) return false;
+	  if(PFJet_chargedHadronEnergyFraction(i)<=0.) return false;
+	  if(PFJet_chargedMultiplicity(i)<=0) return false;
   }
-  return false;
+  return true;
 }
 
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECL2ResidualTimeStability#2012Rereco
@@ -734,6 +743,18 @@ double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
 	else if(eta<5.0) err = 0.191;
 	return err;
 }
+
+/////////////////////////////////////////////////////////////////////
+//
+// Get jet four-vector
+//
+// Options:
+//  - "run": corrects the jet pt to account for calorimeter degredation during data taking (only data).
+//  - "JER": smears the jet pt in MC to match the resolution in data. Additional use of "up" or "down"
+//           varies the correction by its uncertainty -> systematics
+//  - "JEC": use this to estimate the impact of scale correction uncertainties on your result.
+//           use "up" for an upward variation. if you use nothing, the variation will be downward.
+//
 
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));
@@ -822,6 +843,13 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
   return 1.0;
 }
 
+/////////////////////////////////////////////////////////////////////
+//
+// Get tau four-vector
+//
+// Options:
+//  - "scalecorr": corrects the tau energy scale depending on the decay mode (only MC).
+//
 
 TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));
