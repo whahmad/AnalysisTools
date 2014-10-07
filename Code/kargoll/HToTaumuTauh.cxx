@@ -1757,7 +1757,7 @@ void HToTaumuTauh::Finish() {
 bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
 		Ntp->Muon_RelIso(i) < cMu_relIso &&
-		Ntp->matchTrigger(i,cTriggerNames,"muon") < cMu_dRHltMatch
+		Ntp->matchTrigger(Ntp->Muon_p4(i),cTriggerNames,"muon") < cMu_dRHltMatch
 			){
 		return true;
 	}
@@ -1777,7 +1777,7 @@ bool HToTaumuTauh::selectMuon_antiIso(unsigned i, unsigned vertex) {
 	if (Ntp->isSelectedMuon(i, vertex, cMu_dxy, cMu_dz) &&
 		Ntp->Muon_RelIso(i) <= 0.5 &&
 		Ntp->Muon_RelIso(i) >= 0.2 &&
-		Ntp->matchTrigger(i, cTriggerNames, "muon") < cMu_dRHltMatch &&
+		Ntp->matchTrigger(Ntp->Muon_p4(i), cTriggerNames, "muon") < cMu_dRHltMatch &&
 		selectMuon_Kinematics(i)) {
 		return true;
 	}
@@ -1855,7 +1855,7 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	  }
 	}
 	// trigger matching
-	if (Ntp->matchTrigger(i,cTriggerNames,"tau") > cMu_dRHltMatch) {
+	if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cMu_dRHltMatch) {
 		return false;
 	}
 
