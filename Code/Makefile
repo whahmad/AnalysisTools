@@ -155,7 +155,7 @@ sharedlib:
 			cd $$subdir && $(MAKE) -f Makefile.standalone $(TAUSPINERFLAG) && cd ../ && pwd; \
 		else \
 			echo without flag ; \
-			cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../ && pwd; \
+			cd $$subdir && $(MAKE) -f Makefile.standalone CXXFLAGS+=$(CXXFLAGS)&& cd ../ && pwd; \
 		fi \
 	done
 	$(install)
