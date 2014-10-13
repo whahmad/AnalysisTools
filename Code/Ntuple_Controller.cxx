@@ -19,6 +19,7 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
   ,ObjEvent(-1)
   ,verbose(false)
+  ,isInit(false)
 {
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
@@ -50,6 +51,23 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
 ///////////////////////////////////////////////////////////////////////
 //
+// Function: void InitEvent()
+//
+// Purpose: Initialize variables etc on event base
+//
+///////////////////////////////////////////////////////////////////////
+
+void Ntuple_Controller::InitEvent(){
+	Muon_corrected_p4.clear();
+	Muon_corrected_p4.resize(NMuons());
+	Muon_isCorrected = false;
+
+	// after everything is initialized
+	isInit = true;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // Function: Int_t Get_Entries()
 //
 // Purpose: To get the number of events in the Ntuple
@@ -71,6 +89,8 @@ void Ntuple_Controller::Get_Event(int _jentry){
   jentry=_jentry;
   Int_t ientry = Ntp->LoadTree(jentry);
   nb = Ntp->fChain->GetEntry(jentry);   nbytes += nb;
+  isInit = false;
+  InitEvent();
 }
 
 
@@ -247,7 +267,7 @@ bool Ntuple_Controller::isGoodVtx(unsigned int i){
 	if(fabs(Vtx(i).z())>=24) return false;
 	if(Vtx(i).Perp()>=2) return false;
 	if(Vtx_ndof(i)<=4) return false;
-	if(Vtx_isFake(i)!=0) return false;
+	if(Vtx_isFake(i)) return false;
 	return true;
 }
 
@@ -313,6 +333,26 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
   return false;
 }
 
+void Ntuple_Controller::CorrectMuonP4(){
+	if(isInit){
+		for(unsigned i=0;i<NMuons();i++){
+			TLorentzVector mup4 = Muon_p4(i);
+			int runopt = 0; // 0: no run-dependece
+			float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
+			if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+				rmcor->momcor_mc(mup4,Muon_Charge(i),runopt,qter);
+			}else{
+				rmcor->momcor_data(mup4,Muon_Charge(i),runopt,qter);
+			}
+			Muon_corrected_p4.at(i) = mup4;
+		}
+		Muon_isCorrected = true;
+	}else{
+		Muon_isCorrected = false;
+		std::cout << "No muon corrections applied" << std::endl;
+	}
+}
+
 /////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
@@ -329,12 +369,13 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
 	if(corr.Contains("roch")){
-		int runopt = 0; // 0: no run-dependece
-		float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
-		if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
-			rmcor->momcor_mc(vec,Muon_Charge(i),runopt,qter);
+		if(!Muon_isCorrected){
+			CorrectMuonP4();
+		}
+		if(Muon_isCorrected){
+			vec = Muon_corrected_p4.at(i);
 		}else{
-			rmcor->momcor_data(vec,Muon_Charge(i),runopt,qter);
+			std::cout << "No muon corrections applied" << std::endl;
 		}
 	}
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){

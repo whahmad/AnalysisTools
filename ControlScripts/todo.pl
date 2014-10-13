@@ -695,6 +695,7 @@ if( $ARGV[0] eq "--GRID" ){
     system(sprintf("cd $OutputDir/workdir$set/; $dir/subs USERNAME $UserIDCern CheckandGet.sh; cd $dir"));
     system(sprintf("cd $OutputDir/workdir$set/; $dir/subs WORKDIR workdir$set CheckandGet.sh; cd $dir"));
     system(sprintf("cp $dir/Purge_Jobs.sh $OutputDir/workdir$set/"));
+    system(sprintf("cp $dir/Cancel_Jobs.sh $OutputDir/workdir$set/"));
     system(sprintf("cp $dir/Run.sh $OutputDir/workdir$set/"));
 
     # generate compile script 
