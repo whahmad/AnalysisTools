@@ -18,6 +18,9 @@ HToTaumuTauhBackgrounds::HToTaumuTauhBackgrounds(TString Name_, TString id_):
 
 	// run Skim always using MC for WJets BG
 	wJetsBGSource = "MC";
+
+	// don't use QCD shape for background estimation
+	qcdShapeFromData = false;
 }
 
 HToTaumuTauhBackgrounds::~HToTaumuTauhBackgrounds() {

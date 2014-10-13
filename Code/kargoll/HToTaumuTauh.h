@@ -101,7 +101,6 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> CatFired;
 
   std::vector<TH1D> NVtx;
-  std::vector<TH1D> NVtxFullSelection;
   std::vector<TH1D> NGoodVtx;
   std::vector<TH1D> VtxZ;
   std::vector<TH1D> VtxRho;
@@ -119,12 +118,16 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuSelPt;
   std::vector<TH1D> MuSelEta;
   std::vector<TH1D> MuSelPhi;
+  std::vector<TH1D> MuSelDxy;
+  std::vector<TH1D> MuSelDz;
+  std::vector<TH1D> MuSelRelIso;
   std::vector<TH1D> MuSelFakesTauID;
   std::vector<TH1D> MuSelDrHlt;
 
   std::vector<TH1D> TauPt;
   std::vector<TH1D> TauEta;
   std::vector<TH1D> TauPhi;
+  std::vector<TH1D> TauDecayMode;
   std::vector<TH1D> TauIso;
 
   std::vector<TH1D> TauSelPt;
@@ -194,8 +197,6 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> JetsInEtaGap;
   std::vector<TH1D> JetsInvM;
 
-  std::vector<TH1D> TauIsoFullSel;
-
   std::vector<TH1D> MtAfterMuon;
   std::vector<TH1D> MtAfterDiMuonVeto;
   std::vector<TH1D> MtAfterTau;
@@ -210,7 +211,7 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MtMuMinusOnly;
 
   std::vector<TH1D> Cat0JetLowQcdShapeRegion;
-  std::vector<TH1D> Cat0HighLowQcdShapeRegion;
+  std::vector<TH1D> Cat0JetHighLowQcdShapeRegion;
   std::vector<TH1D> Cat1JetLowQcdShapeRegion;
   std::vector<TH1D> Cat1JetHighQcdShapeRegion;
   std::vector<TH1D> Cat1JetBoostQcdShapeRegion;

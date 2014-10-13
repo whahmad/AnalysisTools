@@ -54,11 +54,11 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	wJetsBGSource = "MC";
 
 	// this one is used to set the event yield for W+Jet
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  6612.88608791) );
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh", 1131.93716247) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",   4792.75939593) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",   667.02291224) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",  150.54508807) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  6563.19881424) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh", 1123.73302862) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",   4750.07152276) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",   660.05349714) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",  149.35272929) );
 	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",      62.42946531) );
 	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",       4.63724615) );
 	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",  13271.59050205) );
@@ -69,14 +69,14 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	qcdShapeFromData = false;
 
 	// these are used to set the event yield for QCD
-	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  16115.00127108) );
-	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",   470.03169889) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetLow",    4804.22133590) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetHigh",    271.81725935) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetBoost",    55.01883380) );
-	qcdYieldMap.insert(std::pair<TString,double>("VBFLoose",       38.37224181) );
-	qcdYieldMap.insert(std::pair<TString,double>("VBFTight",        5.73986779) );
-	qcdYieldMap.insert(std::pair<TString,double>("Inclusive",   21965.93565558) );
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetLow",   16001.31926599) );
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",    468.70761685) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetLow",     4769.93237729) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetHigh",     270.72412791) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetBoost",     55.06752318) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFLoose",        38.36569582) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFTight",         5.73986779) );
+	qcdYieldMap.insert(std::pair<TString,double>("Inclusive",    21779.44470046) );
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
@@ -338,7 +338,6 @@ void  HToTaumuTauh::Setup(){
   CatFired=HConfig.GetTH1D(Name+"_CatFired","CatFired",8,-0.5,7.5,"Fired Categories");
 
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",26,-0.5,25.5,"N(Vtx) before selection");
-  NVtxFullSelection=HConfig.GetTH1D(Name+"_NVtxFullSelection","NVtxFullSelection",26,-0.5,25.5,"N(Vertex) after selection");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"N(good Vertex)");
   VtxZ=HConfig.GetTH1D(Name+"_VtxZ","VtxZ",50,-50.0,50.0,"z(Vtx)/cm");
   VtxRho=HConfig.GetTH1D(Name+"_VtxRho","VtxRho",50,0.0,2.0,"#rho(Vtx)/cm");
@@ -356,12 +355,16 @@ void  HToTaumuTauh::Setup(){
   MuSelPt=HConfig.GetTH1D(Name+"_MuSelPt","MuSelPt",50,0.,200.,"p_{T}(#mu_{sel})/GeV");
   MuSelEta=HConfig.GetTH1D(Name+"_MuSelEta","MuSelEta",50,-2.5,2.5,"#eta(#mu_{sel})");
   MuSelPhi=HConfig.GetTH1D(Name+"_MuSelPhi","MuSelPhi",50,-3.14159,3.14159,"#phi(#mu_{sel})");
+  MuSelDxy=HConfig.GetTH1D(Name+"_MuSelDxy","MuSelDxy",60,-0.3,0.3,"d_{xy}(#mu_{sel},Vtx)/cm");
+  MuSelDz=HConfig.GetTH1D(Name+"_MuSelDz","MuSelDz",60,-.6,.6,"d_{z}(#mu_{sel},Vtx)/cm");
+  MuSelRelIso=HConfig.GetTH1D(Name+"_MuSelRelIso","MuSelRelIso",50,0.,1.,"relIso(#mu_{sel})");
   MuSelFakesTauID=HConfig.GetTH1D(Name+"_MuSelFakesTauID","MuSelFakesTauID",2,-0.5,1.5,"#mu_{sel} fakes #tau_{h}");
   MuSelDrHlt=HConfig.GetTH1D(Name+"_MuSelDrHlt","MuSelDrHLT",50,0.,1.,"#DeltaR(#mu_{sel},#mu_{HLT})");
 
   TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,200.,"p_{T}(#tau)/GeV");
   TauEta=HConfig.GetTH1D(Name+"_TauEta","TauEta",50,-2.5,2.5,"#eta(#tau)");
   TauPhi=HConfig.GetTH1D(Name+"_TauPhi","TauPhi",50,-3.14159,3.14159,"#phi(#tau)");
+  TauDecayMode=HConfig.GetTH1D(Name+"_TauDecayMode","TauDecayMode",16,-0.5,15.5,"#tau decay mode");
   TauIso=HConfig.GetTH1D(Name+"_TauIso","TauIso",50,0.,25.,"Iso(#tau)/GeV");
 
   TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,200.,"p_{T}(#tau_{sel})/GeV");
@@ -431,8 +434,6 @@ void  HToTaumuTauh::Setup(){
   JetsInEtaGap = HConfig.GetTH1D(Name+"_JetsInEtaGap","JetsInEtaGap",6,-0.5,5.5,"N(j in #eta gap)");
   JetsInvM = HConfig.GetTH1D(Name+"_JetsInvM","JetsInvM",100,0.,2000.,"m_{inv}(j^{1},j^{2})");
 
-  TauIsoFullSel = HConfig.GetTH1D(Name+"_TauIsoFullSel","TauIsoFullSel",50,0.,25.,"Iso(#tau_{sel})/GeV");
-
   MtAfterMuon = HConfig.GetTH1D(Name+"_MtAfterMuon","MtAfterMuon",50,0.,100.,"m_{T}/GeV");
   MtAfterDiMuonVeto = HConfig.GetTH1D(Name+"_MtAfterDiMuonVeto","MtAfterDiMuonVeto",50,0.,100.,"m_{T}/GeV");
   MtAfterTau = HConfig.GetTH1D(Name+"_MtAfterTau","MtAfterTau",50,0.,100.,"m_{T}/GeV");
@@ -447,7 +448,7 @@ void  HToTaumuTauh::Setup(){
   MtMuMinusOnly = HConfig.GetTH1D(Name+"_MtMuMinusOnly","MtMuMinusOnly",50,0.,100.,"m_{T}/GeV");
 
   Cat0JetLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0JetLowQcdShapeRegion","Cat0JetLowQcdShapeRegion",100,0.,200.,"0JL: m_{inv}^{QCD}/GeV");
-  Cat0HighLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0HighLowQcdShapeRegion","Cat0HighLowQcdShapeRegion",100,0.,200.,"0JH: m_{inv}^{QCD}/GeV");
+  Cat0JetHighLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0JetHighLowQcdShapeRegion","Cat0JetHighLowQcdShapeRegion",100,0.,200.,"0JH: m_{inv}^{QCD}/GeV");
   Cat1JetLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetLowQcdShapeRegion","Cat1JetLowQcdShapeRegion",100,0.,200.,"1JL: m_{inv}^{QCD}/GeV");
   Cat1JetHighQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetHighQcdShapeRegion","Cat1JetHighQcdShapeRegion",100,0.,200.,"1JH: m_{inv}^{QCD}/GeV");
   Cat1JetBoostQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat1JetBoostQcdShapeRegion","Cat1JetBoostQcdShapeRegion",100,0.,200.,"1JB: m_{inv}^{QCD}/GeV");
@@ -485,7 +486,6 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&CatFired);
 
  Extradist1d.push_back(&NVtx);
- Extradist1d.push_back(&NVtxFullSelection);
  Extradist1d.push_back(&NGoodVtx);
  Extradist1d.push_back(&VtxZ);
  Extradist1d.push_back(&VtxRho);
@@ -502,11 +502,15 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MuSelPt  );
  Extradist1d.push_back(&MuSelEta  );
  Extradist1d.push_back(&MuSelPhi  );
+ Extradist1d.push_back(&MuSelDxy  );
+ Extradist1d.push_back(&MuSelDz   );
+ Extradist1d.push_back(&MuSelRelIso);
  Extradist1d.push_back(&MuSelFakesTauID  );
 
  Extradist1d.push_back(&TauPt  );
  Extradist1d.push_back(&TauEta  );
  Extradist1d.push_back(&TauPhi  );
+ Extradist1d.push_back(&TauDecayMode  );
  Extradist1d.push_back(&TauIso );
 
  Extradist1d.push_back(&TauSelPt  );
@@ -575,7 +579,6 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&JetsInEtaGap);
  Extradist1d.push_back(&JetsInvM);
 
- Extradist1d.push_back(&TauIsoFullSel);
 
  Extradist1d.push_back(&MtAfterMuon);
  Extradist1d.push_back(&MtAfterDiMuonVeto);
@@ -591,7 +594,7 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MtMuMinusOnly);
 
  Extradist1d.push_back(&Cat0JetLowQcdShapeRegion);
- Extradist1d.push_back(&Cat0HighLowQcdShapeRegion);
+ Extradist1d.push_back(&Cat0JetHighLowQcdShapeRegion);
  Extradist1d.push_back(&Cat1JetLowQcdShapeRegion);
  Extradist1d.push_back(&Cat1JetHighQcdShapeRegion);
  Extradist1d.push_back(&Cat1JetBoostQcdShapeRegion);
@@ -995,111 +998,63 @@ void  HToTaumuTauh::doEvent(){
   ///////////////////////////////////////////////////////////
 
   if (verbose) std::cout << "	Fill Plots" << std::endl;
-  //////// plots filled before any cuts
-  // Vertex plots
-  NVtx.at(t).Fill(Ntp->NVtx(),w);
-  for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
-	VtxZ.at(t).Fill(Ntp->Vtx(i_vtx).z(),w);
-	VtxRho.at(t).Fill(sqrt(Ntp->Vtx(i_vtx).x()*Ntp->Vtx(i_vtx).x() + Ntp->Vtx(i_vtx).y()*Ntp->Vtx(i_vtx).y()), w);
-	VtxNdof.at(t).Fill(Ntp->Vtx_ndof(i_vtx), w);
-	VtxIsfake.at(t).Fill(Ntp->Vtx_isFake(i_vtx), w);
-  }
-  NGoodVtx.at(t).Fill(nGoodVtx,w);
-
-  //////// plots filled after Vertex selection: Object selection
-
-  if(passedVertex){
-	  for(unsigned i_mu=0;i_mu<Ntp->NMuons();i_mu++){
-		  if(	Ntp->isTightMuon(i_mu,selVertex) ){
-			  MuDxy.at(t).Fill(Ntp->dxySigned(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
-			  MuDz.at(t).Fill(Ntp->dzSigned(Ntp->Muon_p4(i_mu),Ntp->Muon_Poca(i_mu),Ntp->Vtx(selVertex)), w);
-			  MuRelIso.at(t).Fill(Ntp->Muon_RelIso(i_mu), w);
-		  }
+  //////// fill most plots after full selection
+  if (status){
+	  // Vertex plots
+	  NVtx.at(t).Fill(Ntp->NVtx(),w);
+	  for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
+		VtxZ.at(t).Fill(Ntp->Vtx(i_vtx).z(),w);
+		VtxRho.at(t).Fill(sqrt(Ntp->Vtx(i_vtx).x()*Ntp->Vtx(i_vtx).x() + Ntp->Vtx(i_vtx).y()*Ntp->Vtx(i_vtx).y()), w);
+		VtxNdof.at(t).Fill(Ntp->Vtx_ndof(i_vtx), w);
+		VtxIsfake.at(t).Fill(Ntp->Vtx_isFake(i_vtx), w);
 	  }
-  }
+	  NGoodVtx.at(t).Fill(nGoodVtx,w);
 
-  //////// plots filled after muon ID selection: Muon Kinematics
-  if(passedMuId){
+	  //// Object selection
+	  // Muons
+	  // plots filled with all selected muons
 	  for(std::vector<int>::iterator it_mu = selectedMuonsId.begin();it_mu != selectedMuonsId.end(); ++it_mu){
 		  MuPt.at(t).Fill(Ntp->Muon_p4(*it_mu).Pt(), w);
 		  MuEta.at(t).Fill(Ntp->Muon_p4(*it_mu).Eta(), w);
 		  MuPhi.at(t).Fill(Ntp->Muon_p4(*it_mu).Phi(), w);
+		  MuDxy.at(t).Fill(Ntp->dxySigned(Ntp->Muon_p4(*it_mu),Ntp->Muon_Poca(*it_mu),Ntp->Vtx(selVertex)), w);
+		  MuDz.at(t).Fill(Ntp->dzSigned(Ntp->Muon_p4(*it_mu),Ntp->Muon_Poca(*it_mu),Ntp->Vtx(selVertex)), w);
+		  MuRelIso.at(t).Fill(Ntp->Muon_RelIso(*it_mu), w);
 	  }
-
-	  //////// plots filled only with selected muon
-	  if(passedMu){
-		  MuSelPt.at(t).Fill(Ntp->Muon_p4(selMuon).Pt(), w);
-		  MuSelEta.at(t).Fill(Ntp->Muon_p4(selMuon).Eta(), w);
-		  MuSelPhi.at(t).Fill(Ntp->Muon_p4(selMuon).Phi(), w);
-
-		  // Does the muon fake the tau_ID+Iso?
-		  bool fakes = false;
-		  for( unsigned  i_tau = 0; i_tau < Ntp->NPFTaus(); i_tau++){
-			  if (	  selectPFTau_Id(i_tau) &&
-					  selectPFTau_Iso(i_tau) &&
-					  Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(i_tau)) < cMuTau_dR){
-				  fakes = true;
-				  break;
-			  }
+	  // plots filled only with selected muon
+	  MuSelPt.at(t).Fill(Ntp->Muon_p4(selMuon).Pt(), w);
+	  MuSelEta.at(t).Fill(Ntp->Muon_p4(selMuon).Eta(), w);
+	  MuSelPhi.at(t).Fill(Ntp->Muon_p4(selMuon).Phi(), w);
+	  MuSelDxy.at(t).Fill(Ntp->dxySigned(Ntp->Muon_p4(selMuon),Ntp->Muon_Poca(selMuon),Ntp->Vtx(selVertex)), w);
+	  MuSelDz.at(t).Fill(Ntp->dzSigned(Ntp->Muon_p4(selMuon),Ntp->Muon_Poca(selMuon),Ntp->Vtx(selVertex)), w);
+	  MuSelRelIso.at(t).Fill(Ntp->Muon_RelIso(selMuon), w);
+	  // Does the muon fake the tau_ID+Iso?
+	  bool fakes = false;
+	  for( unsigned  i_tau = 0; i_tau < Ntp->NPFTaus(); i_tau++){
+		  if (	  selectPFTau_Id(i_tau) &&
+				  selectPFTau_Iso(i_tau) &&
+				  Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(i_tau)) < cMuTau_dR){
+			  fakes = true;
+			  break;
 		  }
-		  MuSelFakesTauID.at(t).Fill(fakes, w);
 	  }
-  }
+	  MuSelFakesTauID.at(t).Fill(fakes, w);
 
-  //////// plots filled after tau ID + Iso selection: Tau Kinematics
-  if(passedTauIdIso){
-	  for(std::vector<int>::iterator it_tau = selectedTausIso.begin(); it_tau != selectedTausIso.end(); ++it_tau){
+	  // Taus
+	  // plots filled with all selected Taus
+	  for(std::vector<int>::iterator it_tau = selectedTaus.begin(); it_tau != selectedTaus.end(); ++it_tau){
 		  TauPt.at(t).Fill(Ntp->PFTau_p4(*it_tau).Pt(), w);
 		  TauEta.at(t).Fill(Ntp->PFTau_p4(*it_tau).Eta(), w);
 		  TauPhi.at(t).Fill(Ntp->PFTau_p4(*it_tau).Phi(), w);
+		  TauDecayMode.at(t).Fill(Ntp->PFTau_hpsDecayMode(*it_tau), w);
 		  TauIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(*it_tau), w);
 	  }
-
-	  //////// plots filled only with selected tau
-	  if(passedTau){
-		  TauSelPt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(), w);
-		  TauSelEta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(), w);
-		  TauSelPhi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(), w);
-		  TauSelDecayMode.at(t).Fill(Ntp->PFTau_hpsDecayMode(selTau), w); // todo: tauiso, tauseliso
-		  TauSelIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
-	  }
-  }
-
-  //////// plots filled after full muon and tau selection
-  if(passedObjectsFailDiMuonVeto){
-	  // Investigate events discarded by the DiMuon Veto
-	  if (Ntp->Muon_Charge(selMuon) == 1){
-		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonNeg).DeltaR(Ntp->PFTau_p4(selTau)), w);
-	  }
-	  else if (Ntp->Muon_Charge(selMuon) == -1){
-		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
-		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->PFTau_p4(selTau)), w);
-	  }
-	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonPos) + Ntp->Muon_p4(diMuonNeg)).M() , w);
-	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt(), w);
-	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt(), w);
-	  MuVetoDeltaR.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->Muon_p4(diMuonNeg)), w );
-  }
-
-  if(passedDiMuonVeto){
-	  // Tri-lepton vetoes
-	  NMuonTriLepVeto.at(t).Fill(triLepVetoMuons.size(), w);
-	  NElecTriLepVeto.at(t).Fill(triLepVetoElecs.size(), w);
-  }
-  //////// plots filled after full selection without BJetVeto
-  if (passedFullInclusiveSelNoBVeto){
-	  NBJets.at(t).Fill( selectedBJets.size(), w);
-	  if (selectedBJets.size() > 0){
-		  BJet1Pt.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Pt(), w);
-		  BJet1Eta.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Eta(), w);
-		  BJet1Phi.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Phi(), w);
-	  }
-  }
-
-  //////// plots filled after full selection (without categories)
-  if (passedFullInclusiveSel){
-	  TauIsoFullSel.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
+	  // plots filled only with selected tau
+	  TauSelPt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(), w);
+	  TauSelEta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(), w);
+	  TauSelPhi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(), w);
+	  TauSelDecayMode.at(t).Fill(Ntp->PFTau_hpsDecayMode(selTau), w);
+	  TauSelIso.at(t).Fill(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(selTau), w);
 
 	  // Mu-Tau correlations
 	  MuTauDR    .at(t).Fill( Ntp->Muon_p4(selMuon).DeltaR(Ntp->PFTau_p4(selTau)), w );
@@ -1163,12 +1118,7 @@ void  HToTaumuTauh::doEvent(){
 	  JetsDEta.at(t).Fill(selJetdeta , w);
 	  JetsInEtaGap.at(t).Fill(selNjetingap , w);
 	  JetsInvM.at(t).Fill(selMjj , w);
-  }
 
-  //////// plots filled after full selection
-  if(status){
-    NVtxFullSelection.at(t).Fill(Ntp->NVtx(),w);
-    //std::cout << "ID after = " << id << std::endl;
   }
 
   // mT plots after various selection stages
@@ -1187,14 +1137,45 @@ void  HToTaumuTauh::doEvent(){
 	  if(Ntp->Muon_Charge(selMuon) < 0) MtMuMinusOnly.at(t).Fill(value.at(MT), w);
   }
 
-  //////// category specific plots, especially for background methods /////////
+  //////// plots filled after full muon and tau selection
+  if(passedObjectsFailDiMuonVeto){
+	  // Investigate events discarded by the DiMuon Veto
+	  if (Ntp->Muon_Charge(selMuon) == 1){
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonNeg).DeltaR(Ntp->PFTau_p4(selTau)), w);
+	  }
+	  else if (Ntp->Muon_Charge(selMuon) == -1){
+		  MuVetoDPtSelMuon.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt() - Ntp->Muon_p4(selMuon).Pt(), w );
+		  MuVetoDRTau.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->PFTau_p4(selTau)), w);
+	  }
+	  MuVetoInvM.at(t).Fill( (Ntp->Muon_p4(diMuonPos) + Ntp->Muon_p4(diMuonNeg)).M() , w);
+	  MuVetoPtPositive.at(t).Fill( Ntp->Muon_p4(diMuonPos).Pt(), w);
+	  MuVetoPtNegative.at(t).Fill( Ntp->Muon_p4(diMuonNeg).Pt(), w);
+	  MuVetoDeltaR.at(t).Fill( Ntp->Muon_p4(diMuonPos).DeltaR(Ntp->Muon_p4(diMuonNeg)), w );
+  }
 
+  if(passedDiMuonVeto){
+	  // Tri-lepton vetoes
+	  NMuonTriLepVeto.at(t).Fill(triLepVetoMuons.size(), w);
+	  NElecTriLepVeto.at(t).Fill(triLepVetoElecs.size(), w);
+  }
+  //////// plots filled after full selection without BJetVeto
+  if (passedFullInclusiveSelNoBVeto){
+	  NBJets.at(t).Fill( selectedBJets.size(), w);
+	  if (selectedBJets.size() > 0){
+		  BJet1Pt.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Pt(), w);
+		  BJet1Eta.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Eta(), w);
+		  BJet1Phi.at(t).Fill( Ntp->PFJet_p4(selectedBJets.at(0)).Phi(), w);
+	  }
+  }
+
+  //////// plots about background methods /////////
   // QCD shape region
   if(isQCDShapeEvent){
 	  double mvis = (Ntp->Muon_p4(selMuon) + Ntp->PFTau_p4(selTau)).M();
 	  CatInclusiveQcdShapeRegion.at(t).Fill(mvis, w);
 	  if(passed_ZeroJetLow) Cat0JetLowQcdShapeRegion.at(t).Fill(mvis, w);
-	  if(passed_ZeroJetHigh) Cat0HighLowQcdShapeRegion.at(t).Fill(mvis, w);
+	  if(passed_ZeroJetHigh) Cat0JetHighLowQcdShapeRegion.at(t).Fill(mvis, w);
 	  if(passed_OneJetLow) Cat1JetLowQcdShapeRegion.at(t).Fill(mvis, w);
 	  if(passed_OneJetHigh) Cat1JetHighQcdShapeRegion.at(t).Fill(mvis, w);
 	  if(passed_OneJetBoost) Cat1JetBoostQcdShapeRegion.at(t).Fill(mvis, w);
