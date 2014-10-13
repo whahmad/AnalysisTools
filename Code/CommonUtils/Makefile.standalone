@@ -14,7 +14,7 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-CXXFLAGS      = -I$(ROOTSYS)/include -I./ -c
+override CXXFLAGS += -I$(ROOTSYS)/include -I./ -c
 LDFLAGS       =  
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lMinuit2 -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 

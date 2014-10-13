@@ -19,7 +19,7 @@ SHAREDCXXFLAGS =-I./CommonUtils
 SUBDIRS = CommonUtils/ 
 TAUSPINERFLAG = 
 
-CXXFLAGS      = -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c -I./ -c
+override CXXFLAGS += -I$(ROOTSYS)/include -c -I/include $(SHAREDCXXFLAGS) -c -I./ -c
 LDFLAGS       =  
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lGui -LObj -lMinuit2 -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
@@ -155,7 +155,7 @@ sharedlib:
 			cd $$subdir && $(MAKE) -f Makefile.standalone $(TAUSPINERFLAG) && cd ../ && pwd; \
 		else \
 			echo without flag ; \
-			cd $$subdir && $(MAKE) -f Makefile.standalone && cd ../ && pwd; \
+			cd $$subdir && $(MAKE) -f Makefile.standalone CXXFLAGS+=$(CXXFLAGS)&& cd ../ && pwd; \
 		fi \
 	done
 	$(install)
