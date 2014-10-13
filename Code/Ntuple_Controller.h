@@ -127,6 +127,7 @@ class Ntuple_Controller{
   double                              LC_chi2;
   double                              ndof;
   bool                                fitStatus;
+  bool                                isInit;
 
  public:
   // Constructor
@@ -134,6 +135,9 @@ class Ntuple_Controller{
 
   // Destructor
   ~Ntuple_Controller() ;
+
+  // Event initializer
+  void InitEvent();
 
   //TauSpiner function
   double TauSpinerGet(int SpinType);
@@ -305,6 +309,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   bool			 isLooseMuon(unsigned int i);
   float          Muon_RelIso(unsigned int i, TString corr="");
   rochcor2012*   rmcor;
+  std::vector<TLorentzVector> Muon_corrected_p4;
+  void           CorrectMuonP4();
+  bool           Muon_isCorrected;
 
 
   //Base Tau Information (PF)
