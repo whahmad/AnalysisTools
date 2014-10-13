@@ -3,9 +3,9 @@ include make.inc
 ### Defining Compiling variables              ###
 #################################################
 
-CXX           = g++ -Wno-deprecated
+CXX           = g++ -Wno-deprecated -Wall
 #-m32  -Wno-deprecated
-LD            = g++ -Wno-deprecated
+LD            = g++ -Wno-deprecated -Wall
 #-m32  -Wno-deprecated 
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
