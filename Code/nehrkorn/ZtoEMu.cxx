@@ -1249,6 +1249,53 @@ double ZtoEMu::PowhegReweight(double zpt){
 	return weight;
 }
 
+// relative uncertainties obtained from table 16 in AN-2012-225
+double ZtoEMu::ZPtRelUnc(double zpt){
+	double unc = 0.;
+	if(zpt<2.5) unc = 0.027;
+	else if(zpt>=2.5 && zpt<5.0) unc = 0.014;
+	else if(zpt>=5.0 && zpt<7.5) unc = 0.0050;
+	else if(zpt>=7.5 && zpt<10.) unc = 0.013;
+	else if(zpt>=10. && zpt<12.5) unc = 0.013;
+	else if(zpt>=12.5 && zpt<15.0) unc = 0.023;
+	else if(zpt>=15.0 && zpt<17.5) unc = 0.013;
+	else if(zpt>=17.5 && zpt<20.0) unc = 0.016;
+	else if(zpt>=20.0 && zpt<30.0) unc = 0.0042;
+	else if(zpt>=30.0 && zpt<40.0) unc = 0.0068;
+	else if(zpt>=40.0 && zpt<50.0) unc = 0.013;
+	else if(zpt>=50.0 && zpt<70.0) unc = 0.016;
+	else if(zpt>=70.0 && zpt<90.0) unc = 0.0027;
+	else if(zpt>=90.0 && zpt<110.) unc = 0.0037;
+	else if(zpt>=110. && zpt<150.) unc = 0.037;
+	else if(zpt>=150. && zpt<190.) unc = 0.0020;
+	else if(zpt>=190. && zpt<250.) unc = 0.12;
+	else if(zpt>=250. && zpt<600.) unc = 0.020;
+	return unc;
+}
+
+double ZtoEMu::ZPtMadgraphRelUnc(double zpt){
+	double unc = 0.;
+	if(zpt<2.5) unc = 0.027;
+	else if(zpt>=2.5 && zpt<5.0) unc = 0.013;
+	else if(zpt>=5.0 && zpt<7.5) unc = 0.0028;
+	else if(zpt>=7.5 && zpt<10.) unc = 0.013;
+	else if(zpt>=10. && zpt<12.5) unc = 0.014;
+	else if(zpt>=12.5 && zpt<15.0) unc = 0.023;
+	else if(zpt>=15.0 && zpt<17.5) unc = 0.013;
+	else if(zpt>=17.5 && zpt<20.0) unc = 0.016;
+	else if(zpt>=20.0 && zpt<30.0) unc = 0.0041;
+	else if(zpt>=30.0 && zpt<40.0) unc = 0.0056;
+	else if(zpt>=40.0 && zpt<50.0) unc = 0.010;
+	else if(zpt>=50.0 && zpt<70.0) unc = 0.0026;
+	else if(zpt>=70.0 && zpt<90.0) unc = 0.0037;
+	else if(zpt>=90.0 && zpt<110.) unc = 0.0067;
+	else if(zpt>=110. && zpt<150.) unc = 0.011;
+	else if(zpt>=150. && zpt<190.) unc = 0.0014;
+	else if(zpt>=190. && zpt<250.) unc = 0.099;
+	else if(zpt>=250. && zpt<600.) unc = 0.0045;
+	return unc;
+}
+
 double ZtoEMu::calculatePzeta(int muiterator, int eiterator){
   double pex=Ntp->Electron_p4(eiterator).Px();
   double pey=Ntp->Electron_p4(eiterator).Py();
@@ -1422,8 +1469,10 @@ void ZtoEMu::Finish(){
 	Selection::Finish();
 	Selection::ScaleAllHistOfType(DataMCType::DY_emu_embedded,10152445./9760728.);
 	double sumdata(0), sumbkg(0), sumsignal(0);
-	double stdbkg(85.361),stdsignal(74.059);
-	double bkgunc(0);
+	double stddata(87),stdbkg(80.629),stdsignal(74.680);
+	double stdqcd(14.371),stdww(16.689),stdwz2l2q(0.000),stdwz3l1nu(0.299),stdzz4l(0.026),stdzz2l2q(0.000),stdzz2l2nu(0.009),stdtt(1.539),stdtw(0.592),stdtbarw(0.000),stddyll(7.141),stddytt(39.963);
+	double std(0),stdunc(0);
+	double bkgunc(0),individualunc(0);
 	for(unsigned i=0;i<HConfig.GetNHisto();i++){
 		if(HConfig.GetID(i)==DataMCType::Data) sumdata = Npassed.at(i).GetBinContent(NCuts+1);
 		else if(HConfig.GetID(i)==DataMCType::DY_emu) sumsignal = Npassed.at(i).GetBinContent(NCuts+1);
@@ -1443,14 +1492,34 @@ void ZtoEMu::Finish(){
 		}
 		if(HConfig.GetID(i)==DataMCType::QCD) bkgunc += pow(Npassed.at(i).GetBinContent(NCuts+1) * normunc_qcd,2);
 
+		if(HConfig.GetID(i)==DataMCType::Data) std = stddata;
+		if(HConfig.GetID(i)==DataMCType::QCD) std = stdqcd;
+		if(HConfig.GetID(i)==DataMCType::WW_2l2nu) std = stdww;
+		if(HConfig.GetID(i)==DataMCType::WZ_2l2q) std = stdwz2l2q;
+		if(HConfig.GetID(i)==DataMCType::WZ_3l1nu) std = stdwz3l1nu;
+		if(HConfig.GetID(i)==DataMCType::ZZ_4l) std = stdzz4l;
+		if(HConfig.GetID(i)==DataMCType::ZZ_2l2q) std = stdzz2l2q;
+		if(HConfig.GetID(i)==DataMCType::ZZ_2l2nu) std = stdzz2l2nu;
+		if(HConfig.GetID(i)==DataMCType::ttbar) std = stdtt;
+		if(HConfig.GetID(i)==DataMCType::tw) std = stdtw;
+		if(HConfig.GetID(i)==DataMCType::tbarw) std = stdtbarw;
+		if(HConfig.GetID(i)==DataMCType::DY_ll) std = stddyll;
+		if(HConfig.GetID(i)==DataMCType::DY_tautau) std = stddytt;
+		if(HConfig.GetID(i)==DataMCType::DY_emu) std = stdsignal;
+		if(HConfig.GetID(i)!=DataMCType::Data && HConfig.GetID(i)!=DataMCType::DY_emu) individualunc += pow(abs(std-Npassed.at(i).GetBinContent(NCuts+1)),2);
+		std::cout << "Number of events for sample " << HConfig.GetName(i) << " ";
+		printf("Standard: %.3f, Now: %.3f Resulting uncertainty: %.3f\n",std,Npassed.at(i).GetBinContent(NCuts+1),abs(std-Npassed.at(i).GetBinContent(NCuts+1)));
+
 		if(zpt.at(i).Integral()>0)zpt.at(i).Scale(1./zpt.at(i).Integral());
 		if(zeta.at(i).Integral()>0)zeta.at(i).Scale(1./zeta.at(i).Integral());
 		if(zmass.at(i).Integral()>0)zmass.at(i).Scale(1./zmass.at(i).Integral());
+
 	}
 
-	std::cout << "################## Outcome ##################" << std::endl;
+	std::cout << "################## Result ##################" << std::endl;
 	printf("Total events in data: %.0f, background: %.3f and signal %.3f\n",sumdata,sumbkg,sumsignal);
 	printf("Total background normalization uncertainty: %.3f%%\n",sqrt(bkgunc)/sumbkg*100);
+	printf("Total background uncertainty not from cross section: %.3f%%\n",sqrt(individualunc)/sumbkg*100);
 	printf("Cases with one fake lepton: %f. Cases with two fake leptons: %f.\n",nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(1),nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(2));
 
 	printf("Difference in background events: %.3f%% and in signal events: %.3f%%\n",fabs(sumbkg/stdbkg-1)*100,fabs(sumsignal/stdsignal-1)*100);
