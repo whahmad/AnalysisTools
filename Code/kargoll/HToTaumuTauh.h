@@ -197,6 +197,15 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> JetsInEtaGap;
   std::vector<TH1D> JetsInvM;
 
+  std::vector<TH1D> MetPhiMet10GeV;
+  std::vector<TH1D> MtMet10GeV;
+  std::vector<TH1D> HiggsPtMet10GeV;
+  std::vector<TH1D> HiggsPhiMet10GeV;
+  std::vector<TH1D> MetPhiMet20GeV;
+  std::vector<TH1D> MtMet20GeV;
+  std::vector<TH1D> HiggsPtMet20GeV;
+  std::vector<TH1D> HiggsPhiMet20GeV;
+
   std::vector<TH1D> MtAfterMuon;
   std::vector<TH1D> MtAfterDiMuonVeto;
   std::vector<TH1D> MtAfterTau;
@@ -209,6 +218,11 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MtOnlyBJet;
   std::vector<TH1D> MtMuPlusOnly;
   std::vector<TH1D> MtMuMinusOnly;
+  std::vector<TH1D> MtMuPlusOnlyBGSubt;
+  std::vector<TH1D> MtMuMinusOnlyBGSubt;
+  std::vector<TH1D> Mt1ProngOnly;
+  std::vector<TH1D> Mt3ProngOnly;
+  std::vector<TH1D> Mt3ProngSV;
 
   std::vector<TH1D> Cat0JetLowQcdShapeRegion;
   std::vector<TH1D> Cat0JetHighLowQcdShapeRegion;

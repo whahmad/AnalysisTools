@@ -434,6 +434,15 @@ void  HToTaumuTauh::Setup(){
   JetsInEtaGap = HConfig.GetTH1D(Name+"_JetsInEtaGap","JetsInEtaGap",6,-0.5,5.5,"N(j in #eta gap)");
   JetsInvM = HConfig.GetTH1D(Name+"_JetsInvM","JetsInvM",100,0.,2000.,"m_{inv}(j^{1},j^{2})");
 
+  MetPhiMet10GeV = HConfig.GetTH1D(Name+"_MetPhiMet10GeV","MetPhiMet10GeV",50,-3.14159,3.14159,"#phi(E_{T}^{miss}) (E_{T}^{miss} > 10GeV)");
+  MtMet10GeV = HConfig.GetTH1D(Name+"_MtMet10GeV","MtMet10GeV",50,0.,100.,"m_{T}/GeV (E_{T}^{miss} > 10GeV)");
+  HiggsPtMet10GeV = HConfig.GetTH1D(Name+"_HiggsPtMet10GeV","HiggsPtMet10GeV",50,0.,200.,"p_{T}(H)/GeV (E_{T}^{miss} > 10GeV)");
+  HiggsPhiMet10GeV = HConfig.GetTH1D(Name+"_HiggsPhiMet10GeV","HiggsPhiMet10GeV",50,-3.14159,3.14159,"#phi(H) (E_{T}^{miss} > 10GeV)");
+  MetPhiMet20GeV = HConfig.GetTH1D(Name+"_MetPhiMet20GeV","MetPhiMet20GeV",50,-3.14159,3.14159,"#phi(E_{T}^{miss}) (E_{T}^{miss} > 20GeV)");
+  MtMet20GeV = HConfig.GetTH1D(Name+"_MtMet20GeV","MtMet20GeV",50,0.,100.,"m_{T}/GeV (E_{T}^{miss} > 20GeV)");
+  HiggsPtMet20GeV = HConfig.GetTH1D(Name+"_HiggsPtMet20GeV","HiggsPtMet20GeV",50,0.,200.,"p_{T}(H)/GeV (E_{T}^{miss} > 20GeV)");
+  HiggsPhiMet20GeV = HConfig.GetTH1D(Name+"_HiggsPhiMet20GeV","HiggsPhiMet20GeV",50,-3.14159,3.14159,"#phi(E_{T}^{miss}) (E_{T}^{miss} > 20GeV)");
+
   MtAfterMuon = HConfig.GetTH1D(Name+"_MtAfterMuon","MtAfterMuon",50,0.,100.,"m_{T}/GeV");
   MtAfterDiMuonVeto = HConfig.GetTH1D(Name+"_MtAfterDiMuonVeto","MtAfterDiMuonVeto",50,0.,100.,"m_{T}/GeV");
   MtAfterTau = HConfig.GetTH1D(Name+"_MtAfterTau","MtAfterTau",50,0.,100.,"m_{T}/GeV");
@@ -446,6 +455,11 @@ void  HToTaumuTauh::Setup(){
   MtOnlyBJet = HConfig.GetTH1D(Name+"_MtOnlyBJet","MtOnlyBJet",50,0.,100.,"m_{T}/GeV");
   MtMuPlusOnly = HConfig.GetTH1D(Name+"_MtMuPlusOnly","MtMuPlusOnly",50,0.,100.,"m_{T}/GeV");
   MtMuMinusOnly = HConfig.GetTH1D(Name+"_MtMuMinusOnly","MtMuMinusOnly",50,0.,100.,"m_{T}/GeV");
+  MtMuPlusOnlyBGSubt = HConfig.GetTH1D(Name+"_MtMuPlusOnlyBGSubt","MtMuPlusOnlyBGSubt",50,0.,100.,"m_{T}/GeV");
+  MtMuMinusOnlyBGSubt = HConfig.GetTH1D(Name+"_MtMuMinusOnlyBGSubt","MtMuMinusOnlyBGSubt",50,0.,100.,"m_{T}/GeV");
+  Mt1ProngOnly = HConfig.GetTH1D(Name+"_Mt1ProngOnly","Mt1ProngOnly",50,0.,100.,"m_{T}/GeV");
+  Mt3ProngOnly = HConfig.GetTH1D(Name+"_Mt3ProngOnly","Mt3ProngOnly",50,0.,100.,"m_{T}/GeV");
+  Mt3ProngSV = HConfig.GetTH1D(Name+"_Mt3ProngSV","Mt3ProngSV",50,0.,100.,"m_{T}/GeV");
 
   Cat0JetLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0JetLowQcdShapeRegion","Cat0JetLowQcdShapeRegion",100,0.,200.,"0JL: m_{inv}^{QCD}/GeV");
   Cat0JetHighLowQcdShapeRegion = HConfig.GetTH1D(Name+"_Cat0JetHighLowQcdShapeRegion","Cat0JetHighLowQcdShapeRegion",100,0.,200.,"0JH: m_{inv}^{QCD}/GeV");
@@ -579,6 +593,14 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&JetsInEtaGap);
  Extradist1d.push_back(&JetsInvM);
 
+ Extradist1d.push_back(&MetPhiMet10GeV);
+ Extradist1d.push_back(&MtMet10GeV);
+ Extradist1d.push_back(&HiggsPtMet10GeV);
+ Extradist1d.push_back(&HiggsPhiMet10GeV);
+ Extradist1d.push_back(&MetPhiMet20GeV);
+ Extradist1d.push_back(&MtMet20GeV);
+ Extradist1d.push_back(&HiggsPtMet20GeV);
+ Extradist1d.push_back(&HiggsPhiMet20GeV);
 
  Extradist1d.push_back(&MtAfterMuon);
  Extradist1d.push_back(&MtAfterDiMuonVeto);
@@ -592,6 +614,11 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&MtOnlyBJet);
  Extradist1d.push_back(&MtMuPlusOnly);
  Extradist1d.push_back(&MtMuMinusOnly);
+ Extradist1d.push_back(&MtMuPlusOnlyBGSubt);
+ Extradist1d.push_back(&MtMuMinusOnlyBGSubt);
+ Extradist1d.push_back(&Mt1ProngOnly);
+ Extradist1d.push_back(&Mt3ProngOnly);
+ Extradist1d.push_back(&Mt3ProngSV);
 
  Extradist1d.push_back(&Cat0JetLowQcdShapeRegion);
  Extradist1d.push_back(&Cat0JetHighLowQcdShapeRegion);
@@ -1119,6 +1146,20 @@ void  HToTaumuTauh::doEvent(){
 	  JetsInEtaGap.at(t).Fill(selNjetingap , w);
 	  JetsInvM.at(t).Fill(selMjj , w);
 
+
+	  // additional MET cut for studies of MET phi variation
+	  if(Ntp->MET_CorrMVAMuTau_et() > 10.){
+		  MetPhiMet10GeV.at(t).Fill(Ntp->MET_CorrMVAMuTau_phi(), w);
+		  MtMet10GeV.at(t).Fill(value.at(MT), w);
+		  HiggsPtMet10GeV.at(t).Fill(higgsPt, w);
+		  HiggsPhiMet10GeV.at(t).Fill(higgsPhi, w);
+	  }
+	  if(Ntp->MET_CorrMVAMuTau_et() > 20.){
+		  MetPhiMet20GeV.at(t).Fill(Ntp->MET_CorrMVAMuTau_phi(), w);
+		  MtMet20GeV.at(t).Fill(value.at(MT), w);
+		  HiggsPtMet20GeV.at(t).Fill(higgsPt, w);
+		  HiggsPhiMet20GeV.at(t).Fill(higgsPhi, w);
+	  }
   }
 
   // mT plots after various selection stages
@@ -1135,6 +1176,27 @@ void  HToTaumuTauh::doEvent(){
   if(status){
 	  if(Ntp->Muon_Charge(selMuon) > 0) MtMuPlusOnly.at(t).Fill(value.at(MT), w);
 	  if(Ntp->Muon_Charge(selMuon) < 0) MtMuMinusOnly.at(t).Fill(value.at(MT), w);
+
+	  if( (id >= DataMCType::W_lnu && id <= DataMCType::W_taunu) || Ntp->isData()){
+		  // fill WJets and data normally
+		  if(Ntp->Muon_Charge(selMuon) > 0) MtMuPlusOnlyBGSubt.at(t).Fill(value.at(MT), w);
+		  if(Ntp->Muon_Charge(selMuon) < 0) MtMuMinusOnlyBGSubt.at(t).Fill(value.at(MT), w);
+	  }
+	  else {
+		  // subtract other backgrounds from data
+		  unsigned dataHist;
+		  if(!HConfig.GetHisto(true,id,dataHist)){ std::cout << "failed to find data histogram" <<std::endl; return;}
+		  if(Ntp->Muon_Charge(selMuon) > 0) MtMuPlusOnlyBGSubt.at(dataHist).Fill(value.at(MT), -1*w);
+		  if(Ntp->Muon_Charge(selMuon) < 0) MtMuMinusOnlyBGSubt.at(dataHist).Fill(value.at(MT), -1*w);
+	  }
+
+	  if(Ntp->PFTau_hpsDecayMode(selTau) < 5) Mt1ProngOnly.at(t).Fill(value.at(MT), w);
+	  else {
+		  Mt3ProngOnly.at(t).Fill(value.at(MT), w);
+		  if(Ntp->PFTau_TIP_hassecondaryVertex(selTau)){
+			  Mt3ProngSV.at(t).Fill(value.at(MT), w);
+		  }
+	  }
   }
 
   //////// plots filled after full muon and tau selection
