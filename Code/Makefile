@@ -90,7 +90,7 @@ endif
 endif
 
 ifdef USE_pistone
-    DEFS += -DUSE_pistone=1
+	DEFS += -DUSE_pistone=1
 endif
 ifdef USE_zotz
 	DEFS += -DUSE_zotz=1
