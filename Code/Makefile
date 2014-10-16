@@ -90,7 +90,10 @@ endif
 endif
 
 ifdef USE_pistone
-        DEFS += -DUSE_pistone=1
+	DEFS += -DUSE_pistone=1
+endif
+ifdef USE_zotz
+	DEFS += -DUSE_zotz=1
 endif
 
 
@@ -116,6 +119,8 @@ vpath %.cxx kargoll
 vpath %.h kargoll
 vpath %.cxx nehrkorn
 vpath %.h nehrkorn
+vpath %.cxx zotz
+vpath %.h zotz
 vpath %.cxx CommonFiles
 vpath %.h CommonFiles
 

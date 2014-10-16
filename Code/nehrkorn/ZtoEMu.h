@@ -175,6 +175,8 @@ class ZtoEMu : public Selection {
 
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);
+  double ZPtRelUnc(double zpt);
+  double ZPtMadgraphRelUnc(double zpt);
 
   double Fakerate(double pt, double eta, TH2D *fakeRateHist);
   double FakerateError(double pt, double eta, TH2D *fakeRateHist);

@@ -441,10 +441,15 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 //
 // Options:
 //  - "res": use this to estimate the impact of the electron energy resolution on your result (only MC).
+//
 
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if(corr.Contains("scale") && Electron_RegEnergy(i)!=0){
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * (1+Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
+			else vec.SetPerp(vec.Perp() * (1-Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
+		}
 		if(corr.Contains("res")){
 			if(fabs(Electron_supercluster_eta(i))<1.479){
 				vec.SetPerp(gRandom->Gaus(vec.Perp(),1.016));
@@ -731,7 +736,7 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 	return (1.+corr*(runnumber-run0));
 }
 
-double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString unc){
+double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString corr){
 	double sf = jet.Pt();
 	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded
 			|| jet.Pt()<=10
@@ -740,8 +745,8 @@ double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString u
 		return sf;
 	}else{
 		double c = JetEnergyResolutionCorr(jet.Eta());
-		if(unc.Contains("up")) c += JetEnergyResolutionCorrErr(jet.Eta());
-		if(unc.Contains("down")) c -= JetEnergyResolutionCorrErr(jet.Eta());
+		if(corr.Contains("up")) c += JetEnergyResolutionCorrErr(jet.Eta());
+		if(corr.Contains("down")) c -= JetEnergyResolutionCorrErr(jet.Eta());
 		sf = std::max(0.,c*jet.Pt()+(1.-c)*PFJet_matchGenJet(jet,dr).Pt());
 	}
 	return sf;
@@ -794,7 +799,7 @@ double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
 //  - "JER": smears the jet pt in MC to match the resolution in data. Additional use of "up" or "down"
 //           varies the correction by its uncertainty -> systematics
 //  - "JEC": use this to estimate the impact of scale correction uncertainties on your result.
-//           use "up" for an upward variation. if you use nothing, the variation will be downward.
+//           use "plus" for an upward variation. if you use nothing, the variation will be downward.
 //
 
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
@@ -807,7 +812,7 @@ TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 		vec.SetPerp(JERCorrection(vec,0.25,corr));
 	}
 	if(corr.Contains("JEC")){
-		if(corr.Contains("up")) vec.SetPerp(vec.Pt() * (1 + PFJet_JECuncertainty(i)));
+		if(corr.Contains("plus")) vec.SetPerp(vec.Pt() * (1 + PFJet_JECuncertainty(i)));
 		else vec.SetPerp(vec.Pt() * (1 - PFJet_JECuncertainty(i)));
 	}
 	return vec;

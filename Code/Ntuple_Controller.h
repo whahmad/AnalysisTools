@@ -515,7 +515,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    //float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);} // not implemented at the moment
 
    double 			  rundependentJetPtCorrection(double jeteta, int runnumber);
-   double             JERCorrection(TLorentzVector jet, double dr=0.25, TString unc=""); // dr=0.25 from AN2013_416_v4
+   double             JERCorrection(TLorentzVector jet, double dr=0.25, TString corr=""); // dr=0.25 from AN2013_416_v4
    TLorentzVector     PFJet_matchGenJet(TLorentzVector jet, double dr);
    double             JetEnergyResolutionCorr(double jeteta);
    double             JetEnergyResolutionCorrErr(double jeteta);
