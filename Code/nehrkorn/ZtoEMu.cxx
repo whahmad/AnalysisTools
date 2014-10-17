@@ -995,7 +995,7 @@ void  ZtoEMu::doEvent(){
     			}
     		}
     		w*=(RSF->ElectronIdTrig2012(Ntp->Electron_p4(eidx,ecorr).Et(),Ntp->Electron_supercluster_eta(eidx))+eidunc);
-			w*=RSF->ElectronReconstruction2012(Ntp->Electron_p4(eidx,ecorr).Et(),Ntp->Electron_supercluster_eta(eidx)+erecunc);
+			w*=(RSF->ElectronReconstruction2012(Ntp->Electron_p4(eidx,ecorr).Et(),Ntp->Electron_supercluster_eta(eidx))+erecunc);
     	}
     }
     if(pass.at(NMu)){
