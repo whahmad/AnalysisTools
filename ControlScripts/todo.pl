@@ -29,7 +29,10 @@ if($UserID eq "kargoll"){
 if($UserID eq "pistone"){
     $UserDir="--pistone";
 }
-
+if($UserID eq "zotz"){
+    $UserIDCern="azotz";
+    $UserDir="--zotz";
+}
 
 
 #Default vaules
