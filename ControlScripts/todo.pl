@@ -199,7 +199,7 @@ if( $ARGV[0] eq "--TauNtuple"){
     
     printf("\nWorkingDir for CMSSW: $basedir");
     printf("\nCurrentDir is: $currentdir");
-    printf("\nUsing CMSSW Release: $CMSSWRel ARCH: $ARCH");
+    printf("\nUsing CMSSW Release: $CMSSWRel ARCH: $ARCH \n");
     
     # setup CMSSW
     system(sprintf("rm Install_TauNtuple_$CMSSWRel-$time; rm Setup_$CMSSWRel-$time "));
@@ -276,6 +276,15 @@ if( $ARGV[0] eq "--TauNtuple"){
     # make sure lhapdf is properly linked
     system(sprintf("echo \"scram setup lhapdffull \" >> Install_TauNtuple_$CMSSWRel-$time"));
     system(sprintf("echo \"touch $CMSSW_BASE/src/ElectroWeakAnalysis/Utilities/BuildFile.xml \" >> Install_TauNtuple_$CMSSWRel-$time"));
+
+# Get files from desy for sl6 
+    if($ARCH eq "slc6_amd64_gcc472"){
+	printf("\nUsing files from kappa for sl6 patch - Thanks to joram.berger@cern.ch for the files.\n");
+	system(sprintf("echo \"cp $currentdir/sl6/CMSDAS12ThreejetTestAnalyzer.cc  RecoJets/JetAnalyzers/src/CMSDAS12ThreejetTestAnalyzer.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"cp $currentdir/sl6/JetSubstructurePlotsExample.cc  RecoJets/JetAnalyzers/src/JetSubstructurePlotsExample.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"cp $currentdir/sl6/myFastSimVal.cc RecoJets/JetAnalyzers/src/myFastSimVal.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
+	system(sprintf("echo \"cp $currentdir/sl6/myJetAna.cc RecoJets/JetAnalyzers/src/myJetAna.cc\" >> Install_TauNtuple_$CMSSWRel-$time"));
+    }
     
     # build
     system(sprintf("echo \"scram b -j 4 \" >> Install_TauNtuple_$CMSSWRel-$time"));
