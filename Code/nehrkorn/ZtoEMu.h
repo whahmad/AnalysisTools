@@ -121,6 +121,7 @@ class ZtoEMu : public Selection {
   // comparison of generators
 
   std::vector<TH1D> zpt;
+  std::vector<TH1D> zpt_weirdbins;
   std::vector<TH1D> zeta;
   std::vector<TH1D> zmass;
 
@@ -141,6 +142,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> ptsum_nm0;
   std::vector<TH1D> mvamet;
   std::vector<TH1D> mva_mtmu;
+  std::vector<TH1D> onejet_jecunc;
 
   std::vector<TH1D> pdf_w0;
   std::vector<TH1D> pdf_w1;
