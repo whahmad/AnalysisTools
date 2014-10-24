@@ -11,18 +11,21 @@
  */
 bool testPlotting = true;
 bool dym50 = true;
-bool signaltop = false;
+bool signaltop = true;
 TString prepend = "ztoemu_default_";
-TString signalName = "DY_emu";
+TString signalName = "emu_DY";
 
 void plotting(){
 	SetStyle();
+	//SetExtraText("Simulation"); // for simulation comparison plots
 	
 	bool verbose = true;
 
 	// enter filename here
 	TString filename = "/user/nehrkorn/analysis_dym50_jeteta52.root";
 	TFile* infile = new TFile(filename);
+	TFile* upfile = new TFile("/user/nehrkorn/jerjecup.root");
+	TFile* downfile = new TFile("/user/nehrkorn/jerjecdown.root");
 
 	// define crosssections and lumi
 	double lumi = 19712.;
@@ -181,19 +184,19 @@ void plotting(){
 	std::vector<double> syst;
 	// lumi + xsec + eid + muid + pileup + trigger
 	const int nsyst = 6;
-	double qcd[nsyst] = {0.026,0.387,0.083,0.083,0.,0.083};
-	double zz4l[nsyst] = {0.026,0.15,0.002,0.006,0.008,0.007};
-	double zz2l2q[nsyst] = {0.026,0.15,0.0044,0.0042,0.004,0.007};
-	double zz2l2nu[nsyst] = {0.026,0.15,0.0044,0.007,0.011,0.009};
-	double wz3lnu[nsyst] = {0.026,0.15,0.0018,0.006,0.042,0.035};
-	double wz2l2q[nsyst] = {0.026,0.15,0.007,0.006,0.015,0.014};
-	double ww2l2nu[nsyst] = {0.026,0.15,0.0016,0.0055,0.013,0.015};
-	double ttbar[nsyst] = {0.026,0.047,0.0014,0.0053,0.021,0.010};
-	double tw[nsyst] = {0.026,0.09,0.0011,0.0055,0.294,0.325};
-	double tbarw[nsyst] = {0.026,0.09,0.0011,0.0055,0.029,0.054};
-	double dyll[nsyst] = {0.026,0.033,0.0015,0.0063,0.060,0.075};
-	double dytt[nsyst] = {0.026,0.033,0.0016,0.0055,0.067,0.066};
-	double dyemu[nsyst+1] = {0.026,0.055,0.0016,0.0055,0.011,0.011};
+	double qcd[nsyst] = 	{0.026,0.387,0.000,0.000,0.000,0.000};
+	double zz4l[nsyst] = 	{0.026,0.150,0.000,0.000,0.038,0.000};
+	double zz2l2q[nsyst] = 	{0.026,0.150,0.000,0.000,0.000,0.000};
+	double zz2l2nu[nsyst] = {0.026,0.150,0.000,0.000,0.333,0.000};
+	double wz3lnu[nsyst] = 	{0.026,0.150,0.007,0.007,0.047,0.003};
+	double wz2l2q[nsyst] = 	{0.026,0.150,0.000,0.000,0.000,0.000};
+	double ww2l2nu[nsyst] = {0.026,0.150,0.008,0.007,0.006,0.005};
+	double ttbar[nsyst] = 	{0.026,0.047,0.009,0.008,0.054,0.006};
+	double tw[nsyst] = 		{0.026,0.090,0.008,0.007,0.264,0.005};
+	double tbarw[nsyst] = 	{0.026,0.090,0.000,0.000,0.000,0.000};
+	double dyll[nsyst] = 	{0.026,0.033,0.010,0.008,0.220,0.005};
+	double dytt[nsyst] = 	{0.026,0.033,0.009,0.008,0.049,0.005};
+	double dyemu[nsyst+1] = {0.026,0.033,0.008,0.008,0.008,0.005};
 	syst.push_back(QuadraticSum(nsyst,qcd));
 	syst.push_back(QuadraticSum(nsyst,zz4l));
 	syst.push_back(QuadraticSum(nsyst,zz2l2q));
@@ -218,9 +221,9 @@ void plotting(){
 		TH1D* datahist = getHisto(plot+"Data",1,1,infile);
 		drawPlot(datahist,getHistos(plot,names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors,leg,"",unit);
 	}else{
-		const int nplots = 19;
-		TString plots[nplots] = {"PtMu","etaMu","PtE","etaE","onejet","met","mtMu","ptbal","invmass_ptbalance_m","NPV","invmass_vetos_m","invmass_jetveto_m","zmass_zoom","nm0_met","nm0_onejet","nm0_mtmu","nm0_ptbalance","Cut_10_Nminus0_ptBalance_","mtmu_phicorr"};
-		TString units[nplots] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","GeV","","GeV","GeV","GeV","GeV","GeV","GeV","GeV","GeV","GeV"};
+		const int nplots = 18;
+		TString plots[nplots] = {"PtMu","etaMu","PtE","etaE","onejet","met","mtMu","ptbal","invmass_ptbalance_m","NPV","invmass_vetos_m","invmass_jetveto_m","zmass_zoom","nm0_met","nm0_onejet","nm0_mtmu","nm0_ptbalance","Cut_10_Nminus0_ptBalance_"};
+		TString units[nplots] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","GeV","","GeV","GeV","GeV","GeV","GeV","GeV","GeV","GeV"};
 		std::vector<TH1D*> datahists;
 		for(unsigned i=0;i<nplots;i++){
 			datahists.push_back(getHisto(plots[i]+"Data",1,1,infile));
@@ -229,12 +232,55 @@ void plotting(){
 			drawPlot(datahists.at(i),getHistos(plots[i],names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors,leg,"",units[i]);
 		}
 	}
+	std::vector<TH1D*> blub = getHistos("invmass_zmass",names,mcscale,colors,infile);
+	TH1D* tot = produceTotal(blub);
+	double toterr(0), totsum(0);
+	for(unsigned i=1;i<=tot->GetNbinsX();i++){
+		if(tot->GetBinContent(i)>0){
+			toterr += pow(tot->GetBinError(i),2);
+			totsum += tot->GetBinContent(i);
+		}
+	}
 
-	//TH1D* onejet_signal = getHisto("onejetMC_emu_DY",mcscale.at(mcscale.size()-1),0,infile,syst.at(syst.size()-1));
-	//TH1D* onejet_dy = getHisto("onejetMC_tautau_DY",mcscale.at(mcscale.size()-2),2345,infile,syst.at(syst.size()-2));
-	//onejet_signal->Scale(1./onejet_signal->Integral());
-	//onejet_dy->Scale(1./onejet_dy->Integral());
-	//TH1D* onejet_ratio = getDataMC(onejet_signal,onejet_dy);
+	TH1D* onejetdata = getHisto("onejetData",1,1,infile);
+	std::vector<TH1D*> onejethists = getHistos("onejet",names,mcscale,colors,infile);
+	std::vector<TH1D*> onejethistsup = getHistos("onejet",names,mcscale,colors,upfile);
+	std::vector<TH1D*> onejethistsdown = getHistos("onejet",names,mcscale,colors,downfile);
+	TH1D* totalhist = new TH1D("totalhist","totalhist",onejethists.at(0)->GetNbinsX(),onejethists.at(0)->GetXaxis()->GetXmin(),onejethists.at(0)->GetXaxis()->GetXmax());
+	totalhist->Sumw2();
+	TH1D* totalhistup = new TH1D("totalhistup","totalhistup",onejethistsup.at(0)->GetNbinsX(),onejethistsup.at(0)->GetXaxis()->GetXmin(),onejethistsup.at(0)->GetXaxis()->GetXmax());
+	totalhistup->Sumw2();
+	TH1D* totalhistdown = new TH1D("totalhistdown","totalhistdown",onejethistsdown.at(0)->GetNbinsX(),onejethistsdown.at(0)->GetXaxis()->GetXmin(),onejethistsdown.at(0)->GetXaxis()->GetXmax());
+	totalhistdown->Sumw2();
+	for(unsigned i=0;i<onejethists.size()-1;i++){
+		totalhist->Add(onejethists.at(i));
+		totalhistup->Add(onejethistsup.at(i));
+		totalhistdown->Add(onejethistsdown.at(i));
+	}
+	for(unsigned i=1;i<=onejethists.at(0)->GetNbinsX();i++){
+		totalhist->SetBinError(i,fabs(totalhistup->GetBinContent(i)-totalhistdown->GetBinContent(i))/2);
+	}
+	TH1D* totalerr = (TH1D*)totalhist->Clone();
+	totalerr->SetFillStyle(3001);
+	totalerr->SetFillColor(kBlack);
+	totalerr->SetLineColor(18);
+	totalerr->SetMarkerColor(1);
+	totalerr->SetMarkerSize(0.001);
+	std::vector<TH1D*> onejethistos = produceReducedHistos(onejethists,histpositions,histnames,reducedColors);
+	THStack* stack = produceHistStack(onejethistos);
+	TCanvas* testcan = new TCanvas();
+	testcan->SetWindowSize(800,800);
+	testcan->cd();
+	//onejetdata->Draw("");
+	//stack->Draw("hist");
+	//totalerr->Draw("e2same");
+
+
+	TH1D* onejet_signal = getHisto("onejetMC_emu_DY",mcscale.at(mcscale.size()-1),0,infile,syst.at(syst.size()-1));
+	TH1D* onejet_dy = getHisto("onejetMC_tautau_DY",mcscale.at(mcscale.size()-2),2345,infile,syst.at(syst.size()-2));
+	onejet_signal->Scale(1./onejet_signal->Integral());
+	onejet_dy->Scale(1./onejet_dy->Integral());
+	TH1D* onejet_ratio = getDataMC(onejet_signal,onejet_dy);
 	//drawPlot(onejet_signal, onejet_dy, onejet_ratio, "Custom MC", "Official MC", "Single Jet Pt", "GeV");
 
 	TH1D* zmass_signal = getHisto("zmassMC_emu_DY",1,0,infile,0);
@@ -254,19 +300,19 @@ void plotting(){
 	//}
 	//drawPlot(zpt_signal,zpt_dy,zpt_ratio,"Custom MC","Official MC","Z pt","GeV");
 
+	TH1D* zptw_signal = getHisto("zpt_weirdbinsMC_emu_DY",1,0,infile,0);
+	TH1D* zptw_dy = getHisto("zpt_weirdbinsMC_tautau_DY",1,2345,infile,0);
+	zptw_signal->Scale(1./zptw_signal->Integral(),"width");
+	zptw_dy->Scale(1./zptw_dy->Integral(),"width");
+	TH1D* zptw_ratio = getDataMC(zptw_signal,zptw_dy);
+	//drawPlot(zptw_signal,zptw_dy,zptw_ratio,"Custom MC","Official MC","Z pt","GeV");
+
 	TH1D* zeta_signal = getHisto("zetaMC_emu_DY",1,0,infile,0);
 	TH1D* zeta_dy = getHisto("zetaMC_tautau_DY",1,2345,infile,0);
 	zeta_signal->Scale(1./zeta_signal->Integral());
 	zeta_dy->Scale(1./zeta_dy->Integral());
 	TH1D* zeta_ratio = getDataMC(zeta_signal,zeta_dy);
 	//drawPlot(zeta_signal,zeta_dy,zeta_ratio,"Custom MC","Official MC","Z eta","GeV");
-
-	TH1D* njets_signal = getHisto("NJetsMC_emu_DY",mcscale.at(mcscale.size()-1),0,infile,syst.at(syst.size()-1));
-	TH1D* njets_dy = getHisto("NJetsMC_tautau_DY",mcscale.at(mcscale.size()-2),2345,infile,syst.at(syst.size()-2));
-	njets_signal->Scale(1./njets_signal->Integral());
-	njets_dy->Scale(1./njets_dy->Integral());
-	TH1D* njets_ratio = getDataMC(njets_signal,njets_dy);
-	//drawPlot(njets_signal,njets_dy,njets_ratio,"Custom MC","Official MC","Number of jets","");
 
 }
 
@@ -282,6 +328,10 @@ void SetStyle(){
 	gROOT->LoadMacro("CMS_lumi.C");
 	writeExtraText = true;
 	gStyle->SetOptStat(0);
+}
+
+void SetExtraText(TString extraText_){
+	extraText = extraText_;
 }
 
 // Returns scaled and colored histogram from file
@@ -405,7 +455,7 @@ TH1D* getDataMC(TH1D* datahist, std::vector<TH1D*> MChists){
 	return hist;
 }
 
-// Returns a stack of all histograms
+// Returns a stack of all histograms except the last one in the vector (signal)
 THStack* produceHistStack(std::vector<TH1D*> histos){
 	THStack* stack = new THStack("stack","stack");
 	for(unsigned i=0;i<histos.size()-1;i++){ //
@@ -414,7 +464,7 @@ THStack* produceHistStack(std::vector<TH1D*> histos){
 	return stack;
 }
 
-// Returns sum of all histograms given (nice for uncertainty band of background)
+// Returns sum of all histograms given (nice for uncertainty band of background) except the last one in vector (signal)
 TH1D* produceTotal(std::vector<TH1D*> histos){
 	TH1D* total = new TH1D("total","total",histos.at(0)->GetNbinsX(),histos.at(0)->GetXaxis()->GetXmin(),histos.at(0)->GetXaxis()->GetXmax());
 	total->Sumw2();

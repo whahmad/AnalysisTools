@@ -390,9 +390,11 @@ void  ZtoEMu::Configure(){
   NbJetsVtxM=HConfig.GetTH1D(Name+"_NbJetsVtxM","NbJetsVtxM",20,0,20,"number of b jets from vtx medium");
   NbJetsVtxT=HConfig.GetTH1D(Name+"_NbJetsVtxT","NbJetsVtxT",20,0,20,"number of b jets from vtx tight");
   
-  zpt=HConfig.GetTH1D(Name+"_zpt","zpt",12,0.,30.,"p_{t}^{Z}");
+  zpt=HConfig.GetTH1D(Name+"_zpt","zpt",12,0.,30.,"p_{T}^{Z} / GeV");
+  double xbins[19] = {0.,2.5,5.,7.5,10.,12.5,15.,17.5,20.,30.,40.,50.,70.,90.,110.,150.,190.,250.,600.};
+  zpt_weirdbins=HConfig.GetTH1D(Name+"_zpt_weirdbins","zpt_weirdbins",18,xbins,"p_{T}^{Z} / GeV");
   zeta=HConfig.GetTH1D(Name+"_zeta","zeta",40,-5.,5.,"#eta_{Z}");
-  zmass=HConfig.GetTH1D(Name+"_zmass","zmass",20,60.,120.,"m_{Z}");
+  zmass=HConfig.GetTH1D(Name+"_zmass","zmass",20,60.,120.,"m_{Z} / GeV");
 
   eta_mu_e=HConfig.GetTH2D(Name+"_eta_mu_e","eta_mu_e",20,-2.5,2.5,20,-2.5,2.5,"#eta_{#mu}","#eta_{e}");
   pt_vs_eta_mu=HConfig.GetTH2D(Name+"_pt_vs_eta_mu","pt_vs_eta_mu",40,0.,100.,20,-2.5,2.5,"p_{T}^{#mu} / GeV","#eta_{#mu}");
@@ -418,6 +420,7 @@ void  ZtoEMu::Configure(){
   mtmu_onefake=HConfig.GetTH1D(Name+"_mtmu_onefake","mtmu_onefake",40,0.,200.,"m_{T}^{#mu} / GeV");
   mtmu_twofakes=HConfig.GetTH1D(Name+"_mtmu_twofakes","mtmu_twofakes",40,0.,200.,"m_{T}^{#mu} / GeV");
   mtmu_nmu=HConfig.GetTH1D(Name+"_mtmu_nmu","mtmu_nmu",40,0.,200.,"m_{T}^{#mu} / GeV");
+  onejet_jecunc=HConfig.GetTH1D(Name+"_onejet_jecunc","onejet_jecunc",50,0.,1.,"JEC uncertainty");
 
   if(doPDFuncertainty){
 	  pdf_w0=HConfig.GetTH1D(Name+"_pdf_w0","pdf_w0",nPDFmembers,0,nPDFmembers,"pdf member");
@@ -504,6 +507,7 @@ void  ZtoEMu::Store_ExtraDist(){
  Extradist1d.push_back(&NbJetsVtxT);
 
  Extradist1d.push_back(&zpt);
+ Extradist1d.push_back(&zpt_weirdbins);
  Extradist1d.push_back(&zeta);
  Extradist1d.push_back(&zmass);
 
@@ -531,6 +535,7 @@ void  ZtoEMu::Store_ExtraDist(){
  Extradist1d.push_back(&mtmu_onefake);
  Extradist1d.push_back(&mtmu_twofakes);
  Extradist1d.push_back(&mtmu_nmu);
+ Extradist1d.push_back(&onejet_jecunc);
 
  if(doPDFuncertainty){
 	 Extradist1d.push_back(&pdf_w0);
@@ -1153,6 +1158,7 @@ void  ZtoEMu::doEvent(){
 	  if(jetsfromvtx.size()==1 && firstjet_idx!=-1){
 		  onejet.at(t).Fill(Ntp->PFJet_p4(firstjet_idx,jetcorr).Pt(),w);
 		  onejet_eta.at(t).Fill(Ntp->PFJet_p4(firstjet_idx,jetcorr).Eta(),w);
+		  onejet_jecunc.at(t).Fill(Ntp->PFJet_JECuncertainty(firstjet_idx),w);
 	  }
 	  if(jetsfromvtx.size()>1 && firstjet_idx!=-1 && secondjet_idx!=-1){
 		  jetsum.at(t).Fill(Ntp->PFJet_p4(firstjet_idx,jetcorr).Pt()+Ntp->PFJet_p4(secondjet_idx,jetcorr).Pt(),w);
@@ -1234,8 +1240,10 @@ void  ZtoEMu::doEvent(){
 			  if(Ntp->MCParticle_pdgid(i)==23){
 				  if(!useMadgraphZ && (Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau)){
 					  zpt.at(t).Fill(Ntp->MCParticle_p4(i).Pt())*PowhegReweight(Ntp->MCParticle_p4(i).Pt());
+					  zpt_weirdbins.at(t).Fill(Ntp->MCParticle_p4(i).Pt())*PowhegReweight(Ntp->MCParticle_p4(i).Pt());
 				  }else{
 					  zpt.at(t).Fill(Ntp->MCParticle_p4(i).Pt());
+					  zpt_weirdbins.at(t).Fill(Ntp->MCParticle_p4(i).Pt());
 				  }
 				  zeta.at(t).Fill(Ntp->MCParticle_p4(i).Eta());
 				  zmass.at(t).Fill(Ntp->MCParticle_p4(i).M());
@@ -1563,7 +1571,7 @@ void ZtoEMu::Finish(){
 	double stddata(87),stdbkg(80.629),stdsignal(74.680);
 	double stdqcd(14.371),stdww(16.689),stdwz2l2q(0.000),stdwz3l1nu(0.299),stdzz4l(0.026),stdzz2l2q(0.000),stdzz2l2nu(0.009),stdtt(1.539),stdtw(0.592),stdtbarw(0.000),stddyll(7.141),stddytt(39.963);
 	double std(0),stdunc(0);
-	double bkgunc(0),individualunc(0);
+	double bkgunc(0),individualunc(0),statunc(0);
 	for(unsigned i=0;i<HConfig.GetNHisto();i++){
 		if(HConfig.GetID(i)==DataMCType::Data) sumdata = Npassed.at(i).GetBinContent(NCuts+1);
 		else if(HConfig.GetID(i)==DataMCType::DY_emu) sumsignal = Npassed.at(i).GetBinContent(NCuts+1);
@@ -1597,11 +1605,15 @@ void ZtoEMu::Finish(){
 		if(HConfig.GetID(i)==DataMCType::DY_ll) std = stddyll;
 		if(HConfig.GetID(i)==DataMCType::DY_tautau) std = stddytt;
 		if(HConfig.GetID(i)==DataMCType::DY_emu) std = stdsignal;
-		if(HConfig.GetID(i)!=DataMCType::Data && HConfig.GetID(i)!=DataMCType::DY_emu) individualunc += pow(abs(std-Npassed.at(i).GetBinContent(NCuts+1)),2);
+		if(HConfig.GetID(i)!=DataMCType::Data && HConfig.GetID(i)!=DataMCType::DY_emu){
+			individualunc += pow(abs(std-Npassed.at(i).GetBinContent(NCuts+1)),2);
+			statunc += pow(Npassed.at(i).GetBinError(NCuts+1),2);
+		}
 		std::cout << "Number of events for sample " << HConfig.GetName(i) << " ";
 		printf("Standard: %.3f, Now: %.3f Resulting uncertainty: %.3f\n",std,Npassed.at(i).GetBinContent(NCuts+1),abs(std-Npassed.at(i).GetBinContent(NCuts+1)));
 
 		if(zpt.at(i).Integral()>0)zpt.at(i).Scale(1./zpt.at(i).Integral());
+		if(zpt_weirdbins.at(i).Integral()>0)zpt_weirdbins.at(i).Scale(1./zpt_weirdbins.at(i).Integral(),"width");
 		if(zeta.at(i).Integral()>0)zeta.at(i).Scale(1./zeta.at(i).Integral());
 		if(zmass.at(i).Integral()>0)zmass.at(i).Scale(1./zmass.at(i).Integral());
 
@@ -1610,6 +1622,7 @@ void ZtoEMu::Finish(){
 	std::cout << "################## Result ##################" << std::endl;
 	printf("Total events in data: %.0f, background: %.3f and signal %.3f\n",sumdata,sumbkg,sumsignal);
 	printf("Total background normalization uncertainty: %.3f%%\n",sqrt(bkgunc)/sumbkg*100);
+	printf("Total statistical background uncertainty: %.3f (abs), %.3f%%\n",sqrt(statunc),sqrt(statunc)/sumbkg*100);
 	printf("Total background uncertainty not from cross section: %.3f%%\n",sqrt(individualunc)/sumbkg*100);
 	printf("Cases with one fake lepton: %f. Cases with two fake leptons: %f.\n",nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(1),nfakes.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(2));
 
