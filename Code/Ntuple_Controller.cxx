@@ -906,6 +906,45 @@ bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,u
   return false;
 }
 
+// calculate flight length significance from primary and secondary vertex info
+double Ntuple_Controller::PFTau_FlightLenght_significance(TVector3 pv,TMatrixTSym<double> PVcov, TVector3 sv, TMatrixTSym<double> SVcov ){
+  TVector3 SVPV = sv - pv;
+  TVectorF FD;
+  FD.ResizeTo(3);
+  FD(0) = SVPV.X();
+  FD(1) = SVPV.Y();
+  FD(2) = SVPV.Z();
+
+  TMatrixT<double> PVcv;
+  PVcv.ResizeTo(3,3);
+  for(unsigned int nr =0; nr<PVcov.GetNrows(); nr++){
+    for(unsigned int nc =0; nc<PVcov.GetNcols(); nc++){
+      PVcv(nr,nc) = PVcov(nr,nc);
+    }
+  }
+  TMatrixT<double> SVcv;
+  SVcv.ResizeTo(3,3);
+  for(unsigned int nr =0; nr<SVcov.GetNrows(); nr++){
+    for(unsigned int nc =0; nc<SVcov.GetNcols(); nc++){
+      SVcv(nr,nc) = SVcov(nr,nc);
+    }
+  }
+
+  TMatrixT<double> SVPVMatrix(3,1);
+  for(int i=0; i<SVPVMatrix.GetNrows();i++){
+    SVPVMatrix(i,0)=FD(i);
+  }
+
+  TMatrixT<double> SVPVMatrixT=SVPVMatrix;
+  SVPVMatrixT.T();
+
+  TMatrixT<double> lambda2 = SVPVMatrixT*(SVcv + PVcv)*SVPVMatrix;
+  double sigmaabs = sqrt(lambda2(0,0))/SVPV.Mag();
+  double sign = SVPV.Mag()/sigmaabs;
+
+  return sign;
+}
+
 //// Generator Information
 int Ntuple_Controller::matchTruth(TLorentzVector tvector){
 	double testdr=0.3;
