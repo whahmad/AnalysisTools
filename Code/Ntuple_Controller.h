@@ -127,6 +127,7 @@ class Ntuple_Controller{
   double                              LC_chi2;
   double                              ndof;
   bool                                fitStatus;
+  bool                                isInit;
 
  public:
   // Constructor
@@ -134,6 +135,9 @@ class Ntuple_Controller{
 
   // Destructor
   ~Ntuple_Controller() ;
+
+  // Event initializer
+  void InitEvent();
 
   //TauSpiner function
   double TauSpinerGet(int SpinType);
@@ -305,6 +309,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   bool			 isLooseMuon(unsigned int i);
   float          Muon_RelIso(unsigned int i, TString corr="");
   rochcor2012*   rmcor;
+  std::vector<TLorentzVector> Muon_corrected_p4;
+  void           CorrectMuonP4();
+  bool           Muon_isCorrected;
 
 
   //Base Tau Information (PF)
@@ -509,7 +516,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    //float              PFJet_BTagWeight(unsigned int i){return Ntp->PFJet_BTagWeight->at(i);} // not implemented at the moment
 
    double 			  rundependentJetPtCorrection(double jeteta, int runnumber);
-   double             JERCorrection(TLorentzVector jet, double dr=0.25, TString unc=""); // dr=0.25 from AN2013_416_v4
+   double             JERCorrection(TLorentzVector jet, double dr=0.25, TString corr=""); // dr=0.25 from AN2013_416_v4
    TLorentzVector     PFJet_matchGenJet(TLorentzVector jet, double dr);
    double             JetEnergyResolutionCorr(double jeteta);
    double             JetEnergyResolutionCorrErr(double jeteta);
