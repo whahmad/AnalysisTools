@@ -46,8 +46,9 @@ class ZToTaumuTauh : public Selection {
   std::vector<TH1D> NMvis;
   std::vector<TH1D> NSignal_SB_WJets;
   std::vector<TH1D> NSB_Data;
-  std::vector<TH1D> NSB;
+  std::vector<TH1D> NSB,NSB2;
   std::vector<TH1D> NQCD_MT_MuMET_A, NQCD_MT_MuMET_B, NQCD_MT_MuMET_C, NQCD_MT_MuMET_D;
+  std::vector<TH1D> NQCD_MT_MuMET_D_ZOOM;
   std::vector<TH1D> NQCD_MET_A, NQCD_MET_B, NQCD_MET_C, NQCD_MET_D;
   //std::vector<std::vector<TH1D>> NABCD;
 
@@ -67,6 +68,8 @@ class ZToTaumuTauh : public Selection {
   bool selectPFTau_Id(unsigned i, std::vector<int> muonCollection);
   bool selectPFTau_Isolation(unsigned i);
   bool selectPFTau_Kinematics(unsigned i);
+  bool passAllBut(std::vector<int> index);
+  bool passAllBut(int i_cut);
 
  private:
 
