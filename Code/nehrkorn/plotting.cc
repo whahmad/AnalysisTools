@@ -92,7 +92,9 @@ void plotting(){
 	names.push_back("MC_ttbar");
 	names.push_back("MC_tw");
 	names.push_back("MC_tbarw");
-	names.push_back("MC_DY");
+	if(dym50)names.push_back("MC_DY");
+	if(!dym50)names.push_back("MC_ee_DY");
+	if(!dym50)names.push_back("MC_mumu_DY");
 	names.push_back("MC_tautau_DY");
 	names.push_back("MC_emu_DY");
 	
@@ -112,9 +114,16 @@ void plotting(){
 	hewk.push_back(4);
 	hewk.push_back(5);
 	hewk.push_back(6);
-	hewk.push_back(10);
-	hdyt.push_back(11);
-	hsig.push_back(12);
+	if(dym50){
+		hewk.push_back(10);
+		hdyt.push_back(11);
+		hsig.push_back(12);
+	}else{
+		hewk.push_back(10);
+		hewk.push_back(11);
+		hdyt.push_back(12);
+		hsig.push_back(13);
+	}
 	std::vector<std::vector<int>> histpositions;
 	histpositions.push_back(hqcd);
 	histpositions.push_back(hewk);
@@ -221,14 +230,15 @@ void plotting(){
 		TH1D* datahist = getHisto(plot+"Data",1,1,infile);
 		drawPlot(datahist,getHistos(plot,names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors,leg,"",unit);
 	}else{
-		const int nplots = 18;
-		TString plots[nplots] = {"PtMu","etaMu","PtE","etaE","onejet","met","mtMu","ptbal","invmass_ptbalance_m","NPV","invmass_vetos_m","invmass_jetveto_m","zmass_zoom","nm0_met","nm0_onejet","nm0_mtmu","nm0_ptbalance","Cut_10_Nminus0_ptBalance_"};
-		TString units[nplots] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","GeV","","GeV","GeV","GeV","GeV","GeV","GeV","GeV","GeV"};
+		const int nplots = 21;
+		TString plots[nplots] = {"PtMu","etaMu","PtE","etaE","onejet","met","mtMu","ptbal","invmass_ptbalance_m","NPV","invmass_vetos_m","invmass_jetveto_m","zmass_zoom","NJetsTight","Cut_08_Nminus1_oneJet_","pt_diff","met_parallel","met_perpendicular","pt_diff_nm1","met_0jet","met_jets"};
+		TString units[nplots] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","GeV","","GeV","GeV","GeV","","GeV","GeV","GeV","GeV","GeV","GeV","GeV"};
 		std::vector<TH1D*> datahists;
 		for(unsigned i=0;i<nplots;i++){
 			datahists.push_back(getHisto(plots[i]+"Data",1,1,infile));
 		}
 		for(unsigned i=0;i<nplots;i++){
+			std::cout << "Plot: " << plots[i] << std::endl;
 			drawPlot(datahists.at(i),getHistos(plots[i],names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors,leg,"",units[i]);
 		}
 	}
@@ -268,9 +278,9 @@ void plotting(){
 	totalerr->SetMarkerSize(0.001);
 	std::vector<TH1D*> onejethistos = produceReducedHistos(onejethists,histpositions,histnames,reducedColors);
 	THStack* stack = produceHistStack(onejethistos);
-	TCanvas* testcan = new TCanvas();
-	testcan->SetWindowSize(800,800);
-	testcan->cd();
+	//TCanvas* testcan = new TCanvas();
+	//testcan->SetWindowSize(800,800);
+	//testcan->cd();
 	//onejetdata->Draw("");
 	//stack->Draw("hist");
 	//totalerr->Draw("e2same");

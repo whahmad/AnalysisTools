@@ -143,6 +143,20 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> mvamet;
   std::vector<TH1D> mva_mtmu;
   std::vector<TH1D> onejet_jecunc;
+  std::vector<TH1D> pt_diff;
+  std::vector<TH1D> pt_diff_nm1;
+  std::vector<TH1D> met_s;
+  std::vector<TH1D> mt_sum;
+  std::vector<TH1D> mt_diff;
+  std::vector<TH1D> met_parallel;
+  std::vector<TH1D> met_perpendicular;
+  std::vector<TH1D> met_poverp;
+  std::vector<TH1D> met_0jet;
+  std::vector<TH1D> met_jets;
+  std::vector<TH1D> met_08vtx;
+  std::vector<TH1D> met_816vtx;
+  std::vector<TH1D> met_1624vtx;
+  std::vector<TH1D> met_24ivtx;
 
   std::vector<TH1D> pdf_w0;
   std::vector<TH1D> pdf_w1;

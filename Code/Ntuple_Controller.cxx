@@ -474,6 +474,7 @@ bool Ntuple_Controller::isTrigPreselElectron(unsigned int i){
 	if(fabs(Electron_supercluster_eta(i))>2.5) return false;
 	if(Electron_numberOfMissedHits(i)>0) return false;
 	if(Electron_Gsf_dr03TkSumPt(i)/Electron_p4(i).Pt()>0.2) return false;
+	if(Electron_Gsf_dr03EcalRecHitSumE(i)/Electron_p4(i).Pt()>0.2) return false;
 	if(Electron_Gsf_dr03HcalTowerSumEt(i)/Electron_p4(i).Pt()>0.2) return false;
 	if(fabs(Electron_supercluster_eta(i))<1.479){
 		if(Electron_sigmaIetaIeta(i)>0.014) return false;
