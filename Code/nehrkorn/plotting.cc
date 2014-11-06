@@ -242,15 +242,19 @@ void plotting(){
 			drawPlot(datahists.at(i),getHistos(plots[i],names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors,leg,"",units[i]);
 		}
 	}
-	std::vector<TH1D*> blub = getHistos("invmass_zmass",names,mcscale,colors,infile);
-	TH1D* tot = produceTotal(blub);
-	double toterr(0), totsum(0);
-	for(unsigned i=1;i<=tot->GetNbinsX();i++){
-		if(tot->GetBinContent(i)>0){
-			toterr += pow(tot->GetBinError(i),2);
-			totsum += tot->GetBinContent(i);
-		}
+
+	TH1D* reddata = getHisto("invmass_ptbalance_mData",1,1,infile);
+	std::vector<TH1D*> gethists = getHistos("invmass_ptbalance_m",names,mcscale,colors,infile,syst);
+	std::vector<TH1D*> redhists = produceReducedHistos(getHistos("invmass_ptbalance_m",names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors);
+	TFile* outfile = new TFile("invariant_mass.root","RECREATE");
+	reddata->Write();
+	for(unsigned i=0; i<redhists.size();i++){
+		redhists.at(i)->Write();
 	}
+	for(unsigned i=0;i<gethists.size();i++){
+		gethists.at(i)->Write();
+	}
+	outfile->Close();
 
 	TH1D* onejetdata = getHisto("onejetData",1,1,infile);
 	std::vector<TH1D*> onejethists = getHistos("onejet",names,mcscale,colors,infile);
