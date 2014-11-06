@@ -743,20 +743,15 @@ void  ZtoEMu::doEvent(){
   value.at(ptthreshold)=0;
   if(muidx!=999 && eidx!=999){
 	  value.at(ptthreshold)=1;
-	  if(Ntp->Muon_p4(muidx,mucorr).Pt()<=mu_ptlow || Ntp->Electron_p4(eidx,ecorr).Et()<=e_ptlow) value.at(ptthreshold)=0;
-	  if(Ntp->Muon_p4(muidx,mucorr).Pt()<mu_pthigh && Ntp->Electron_p4(eidx,ecorr).Et()<e_pthigh) value.at(ptthreshold)=0;
-	  if(value.at(ptthreshold)==1 && Ntp->GetMCID()==DataMCType::DY_emu_embedded) passembed = true;
-	  if(Ntp->Muon_p4(muidx,mucorr).Pt()<mu_pthigh){
-		  if(!Ntp->TriggerAccept("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")) value.at(ptthreshold)=0;
+	  if(Ntp->Muon_p4(muidx,mucorr).Pt()>Ntp->Electron_p4(eidx,ecorr).Et()){
+		  leadingmu = true;
+		  if(Ntp->Muon_p4(muidx,mucorr).Pt()<30 || fabs(Ntp->Muon_p4(muidx,mucorr).Eta())>2.1) value.at(ptthreshold)=0;
+		  if(Ntp->Electron_p4(eidx,ecorr).Et()<20 || fabs(Ntp->Electron_supercluster_eta(eidx))>2.4) value.at(ptthreshold)=0;
+	  }else{
+		  leadingmu = false;
+		  if(Ntp->Muon_p4(muidx,mucorr).Pt()<20 || fabs(Ntp->Muon_p4(muidx,mucorr).Eta())>2.4) value.at(ptthreshold)=0;
+		  if(Ntp->Electron_p4(eidx,ecorr).Et()<30 || fabs(Ntp->Electron_supercluster_eta(eidx))>2.1) value.at(ptthreshold)=0;
 	  }
-	  else if(Ntp->Electron_p4(eidx,ecorr).Et()<e_pthigh){
-		  if(!Ntp->TriggerAccept("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v")) value.at(ptthreshold)=0;
-		  else leadingmu = true;
-	  }
-	  else if(Ntp->Muon_p4(muidx,mucorr).Pt()>mu_pthigh && Ntp->Electron_p4(eidx,ecorr).Et()>e_pthigh){
-		  if(Ntp->Muon_p4(muidx,mucorr).Pt()>Ntp->Electron_p4(eidx,ecorr).Et()) leadingmu = true;
-	  }
-	  if(passembed) value.at(ptthreshold)=1;
   }
   pass.at(ptthreshold)=(value.at(ptthreshold)==cut.at(ptthreshold));
 
