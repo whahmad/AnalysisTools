@@ -16,11 +16,17 @@ ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
   cMu_dRHltMatch(0.5),
   cTau_pt(20.),//Recommended by Tau POG
   cTau_eta(2.3),
-  cMuTau_dR(0.3)
+  cMuTau_dR(0.3),
+  cTau_IsoRaw(1.5)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
 	cTriggerNames = temp;
+
+	//WJets BG Method
+	SB_lowerLimit = 70; //in GeV, Region > SB_lowerLimit dominated by W+Jets
+	SB_upperLimit = 140; //in GeV, Region < SB_upperLimit
+	Scaleby_Counting = true; // == false --> Scale by Integral
 
 	//Set verbose boolean
 	verbose = false;
@@ -181,13 +187,19 @@ void  ZToTaumuTauh::Configure(){
   NMtTauMET=HConfig.GetTH1D(Name+"_NMtTauMET","NMtTauMET",75,-0.5,149.5,"m_{T}(#tau,MET)","Events");
   NMvis=HConfig.GetTH1D(Name+"_NMvis","NMvis",75,-0.5,149.5,"m_{vis}(#mu,#tau)","Events");
   NSB=HConfig.GetTH1D(Name+"_NSB","NSB",2,-0.5,1.5,"SB Region (all Samples)","Events");
-  NSB2=HConfig.GetTH1D(Name+"_NSB2","NSB2",2,-0.5,1.5,"SB Region (all Samples) test new fun","Events");
+
+  Mu_pt=HConfig.GetTH1D(Name+"_Mu_pt","Mu_pt",100,0,200,"Muon p_{t}","Events");
+  Mu_phi=HConfig.GetTH1D(Name+"_Mu_phi","Mu_phi",10,0,3.14159265359,"Muon #phi","Events");
+  Mu_eta=HConfig.GetTH1D(Name+"_Mu_phi","Mu_eta",50,-2.5,2.5,"Muon #eta","Events");
+
+  Tau_pt=HConfig.GetTH1D(Name+"_Tau_pt","Tau_pt",100,0,200,"Tau p_{t}","Events");
+  Tau_phi=HConfig.GetTH1D(Name+"_Tau_phi","Tau_phi",10,0,3.14159265359,"Tau #phi","Events");
+  Tau_eta=HConfig.GetTH1D(Name+"_Tau_phi","Tau_eta",50,-2.5,2.5,"Tau #eta","Events");
 
   NQCD_MT_MuMET_A=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_A","NQCD_MT_MuMET_A",75,0,150.,"m_{T}(#mu,MET) in A","Events");
   NQCD_MT_MuMET_B=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_B","NQCD_MT_MuMET_B",75,0,150.,"m_{T}(#mu,MET) in B","Events");
   NQCD_MT_MuMET_C=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_C","NQCD_MT_MuMET_C",75,0,150.,"m_{T}(#mu,MET) in C","Events");
   NQCD_MT_MuMET_D=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_D","NQCD_MT_MuMET_D",75,0,150.,"m_{T}(#mu,MET) in D","Events");
-  NQCD_MT_MuMET_D_ZOOM=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_D_ZOOM","NQCD_MT_MuMET_D_ZOOM",80,0,40.,"m_{T}(#mu,MET) in D ZOOMED","Events");
 
   NQCD_MET_A=HConfig.GetTH1D(Name+"_NQCD_MET_A","NQCD_MET_A",75,0,150.,"MVA MET in A","Events");
   NQCD_MET_B=HConfig.GetTH1D(Name+"_NQCD_MET_B","NQCD_MET_B",75,0,150.,"MVA MET in B","Events");
@@ -205,12 +217,16 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&NMtTauMET);
  Extradist1d.push_back(&NMvis);
  Extradist1d.push_back(&NSB);
- Extradist1d.push_back(&NSB2);
+ Extradist1d.push_back(&Mu_pt);
+ Extradist1d.push_back(&Mu_phi);
+ Extradist1d.push_back(&Mu_eta);
+ Extradist1d.push_back(&Tau_pt);
+ Extradist1d.push_back(&Tau_phi);
+ Extradist1d.push_back(&Tau_eta);
  Extradist1d.push_back(&NQCD_MT_MuMET_A);
  Extradist1d.push_back(&NQCD_MT_MuMET_B);
  Extradist1d.push_back(&NQCD_MT_MuMET_C);
  Extradist1d.push_back(&NQCD_MT_MuMET_D);
- Extradist1d.push_back(&NQCD_MT_MuMET_D_ZOOM);
  Extradist1d.push_back(&NQCD_MET_A);
  Extradist1d.push_back(&NQCD_MET_B);
  Extradist1d.push_back(&NQCD_MET_C);
@@ -221,11 +237,6 @@ void  ZToTaumuTauh::doEvent(){
   unsigned int t;
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
-  
-  double wobs=1;
-  double w;
-  if(!Ntp->isData()){w = Ntp->PUWeight();}
-  else{w=1;}
 
   int selVertex = -1;
   int selMuon_Iso = -1;
@@ -423,30 +434,26 @@ void  ZToTaumuTauh::doEvent(){
   else{
 	  Mvis = -10;
   }
+
+  // Weights
+
+  double wobs=1;
+  double w;
+  if(!Ntp->isData()){
+	  w = Ntp->PUWeight();
+	  if(selMuon_Iso != -1){
+		  w *= RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon_Iso));
+		  w *= RSF->HiggsTauTau_MuTau_Iso_Mu(Ntp->Muon_p4(selMuon_Iso));
+		  w *= RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon_Iso));
+	  }
+	  if(selTau != -1){
+		  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau));
+	  }
+  }
+  else{w=1;}
+
   // W+Jets BG Method
   if(verbose) std::cout << "W+Jets BG Method" << std::endl;
-  SB_lowerLimit = 70; //in GeV, Region > SB_lowerLimit dominated by W+Jets
-  SB_upperLimit = 140; //in GeV, Region < SB_upperLimit
-
-  if(pass.at(TriggerOk) && //TODO: Write loop over pass.at(bla) that can exclude single(multiple) cuts
-	 pass.at(PrimeVtx) &&
-	 pass.at(NMuId) &&
-	 pass.at(NMuKin) &&
-	 pass.at(NMuIso) &&
-	 pass.at(NTauId) &&
-	 pass.at(NTauKin) &&
-	 pass.at(NTauIso)){
-	  	  if(pass.at(ChargeSum)){ //Opposite Sign WJets yield (bin #1 with value 0)
-	  		  if(value.at(MT_MuMET) > SB_lowerLimit && value.at(MT_MuMET) < SB_upperLimit){
-	  			  NSB2.at(t).Fill(0.,w);
-	  		  }
-	  	  }
-	  	  if(!pass.at(ChargeSum) && Charge != 666){ //Same Sign WJets yield (bin #2 with value 1)
-	  		  if(value.at(MT_MuMET) > SB_lowerLimit && value.at(MT_MuMET) < SB_upperLimit){
-	  			  NSB2.at(t).Fill(1.,w);
-	  		  }
-	  	  }
-  }
   std::vector<int> ChargeSumMT_MuMET;
   ChargeSumMT_MuMET.clear();
   ChargeSumMT_MuMET.push_back(ChargeSum);
@@ -502,7 +509,6 @@ void  ZToTaumuTauh::doEvent(){
 	 	  }
 	 	  if(!pass.at(ChargeSum) && Charge != 666){ //D
 	 	 	  NQCD_MT_MuMET_D.at(t).Fill(MT_MuMET_AntiIso,w);
-	 	 	  NQCD_MT_MuMET_D_ZOOM.at(t).Fill(MT_MuMET_AntiIso,w);
 	 	 	  NQCD_MET_D.at(t).Fill(Ntp->MET_CorrMVAMuTau_et());
 	 	 	  if(id == DataMCType::Data){
 		 	 	NQCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_MuMET_AntiIso,w);
@@ -522,6 +528,12 @@ void  ZToTaumuTauh::doEvent(){
 	 	 			NGoodVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(nGoodVtx,w);
 	 	 			NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_TauMET,w);
 	 	 			NMvis.at(HConfig.GetType(DataMCType::QCD)).Fill(Mvis,w);
+	 	 		    Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
+	 	 		    Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
+	 	 		    Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
+	 	 		    Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Pt(),w);
+	 	 		    Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Phi(),w);
+	 	 		    Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Eta(),w);
 	 	 		}
 	 	 		pass.at(ChargeSum) = false;
 	 	 		pass.at(NMuIso) = false;
@@ -543,13 +555,21 @@ void  ZToTaumuTauh::doEvent(){
     NGoodVtx.at(t).Fill(nGoodVtx,w);
     NMtTauMET.at(t).Fill(MT_TauMET,w);
     NMvis.at(t).Fill(Mvis,w);
+    Mu_pt.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
+    Mu_phi.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
+    Mu_eta.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
+    Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(),w);
+    Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(),w);
+    Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(),w);
   }
 
 }//final bracket of DoEvent
 
 
 void  ZToTaumuTauh::Finish(){
+  std::cout << "Starting Finish" << std::endl;
   if(mode==RECONSTRUCT){
+	  std::cout << "Enter mode==RECONSTRUCT" << std::endl;
 	  SkimConfig SC;
 	  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
 		for(int i=0; i<Npassed.size();i++){
@@ -576,20 +596,15 @@ void  ZToTaumuTauh::Finish(){
 
   	  std::cout << "W+Jets Background Method " << std::endl;
   	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
-  	  	  NSB2.at(i).Add(&NSB.at(i),-1.0);
-  		  SB_Integral.push_back(Nminus1.at(MT_MuMET).at(i).Integral(36,70));
+  	  	  int Bin_SB_lowerLimit = Nminus1.at(MT_MuMET).at(i).FindFixBin(SB_lowerLimit);
+  	  	  int Bin_SB_upperLimit = Nminus1.at(MT_MuMET).at(i).FindFixBin(SB_upperLimit) -1;
+  		  SB_Integral.push_back(Nminus1.at(MT_MuMET).at(i).Integral(Bin_SB_lowerLimit, Bin_SB_upperLimit));
   		  SB_Counting_OS.push_back(NSB.at(i).GetBinContent(1));
   		  SB_Counting_SS.push_back(NSB.at(i).GetBinContent(2));
-  		  QCD_Integral_B.push_back(NQCD_MT_MuMET_B.at(i).Integral());
-  		  QCD_Integral_C.push_back(NQCD_MT_MuMET_C.at(i).Integral());
-  		  QCD_Integral_D.push_back(NQCD_MT_MuMET_D.at(i).Integral());
   		  if(CrossSectionandAcceptance.at(i)>0){
 			  SB_Integral.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
 			  SB_Counting_OS.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
 			  SB_Counting_SS.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
-	  		  QCD_Integral_B.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
-	  		  QCD_Integral_C.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
-	  		  QCD_Integral_D.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
 		  }
 		  std::cout << "SB integral 70-140GeV from Nminus1 plot for Sample " << i << " : " << SB_Integral.at(i) << std::endl;
 		  std::cout << "SB integral 70-140GeV from Counting for OS for Sample " << i << " : " << SB_Counting_OS.at(i) << std::endl;
@@ -612,7 +627,6 @@ void  ZToTaumuTauh::Finish(){
   			  SB_Counting_Data_minus_MC_SS -= SB_Counting_SS.at(i);
   		  }
   	  }
-  	  Scaleby_Counting = true; // == false --> Scale by Integral
   	  if(SB_Integral_Data_minus_MC > 0 && SB_Integral_WJets > 0){
   		  std::cout << "Scale Factor for W+Jets Sample with Histo.Integral Method: " << SB_Integral_Data_minus_MC/SB_Integral_WJets << std::endl;
   		  if(!Scaleby_Counting){
@@ -650,6 +664,18 @@ void  ZToTaumuTauh::Finish(){
 	 		  NMtTauMET.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
 	 		  NMvis.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
 	 		  NMvis.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	    	  Mu_pt.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	    	  Mu_pt.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Mu_phi.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Mu_phi.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Mu_eta.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Mu_eta.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Tau_pt.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Tau_pt.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Tau_phi.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 	  	  Tau_phi.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Tau_eta.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+	 		  Tau_eta.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  }
   	  }
   	  else{
@@ -672,7 +698,16 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "SB_Counting_WJets_SS is: " << SB_Counting_WJets_SS << std::endl;
 		  std::cout << "SB_Counting_Data_minus_MC_SS is: " << SB_Counting_Data_minus_MC_SS << std::endl;
   	  }
-
+  	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
+  		  QCD_Integral_B.push_back(NQCD_MT_MuMET_B.at(i).Integral());
+  		  QCD_Integral_C.push_back(NQCD_MT_MuMET_C.at(i).Integral());
+  		  QCD_Integral_D.push_back(NQCD_MT_MuMET_D.at(i).Integral());
+  		  if(CrossSectionandAcceptance.at(i)>0){
+	  		  QCD_Integral_B.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
+	  		  QCD_Integral_C.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
+	  		  QCD_Integral_D.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
+		  }
+  	  }
   	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
   		  if(HConfig.GetID(i) == DataMCType::Data){
   			  QCD_Integral_B_Data_minus_MC += QCD_Integral_B.at(i);
@@ -689,13 +724,20 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "Factor AntiIso OS/SS QCD Sample: " << QCD_Integral_B_Data_minus_MC/QCD_Integral_D_Data_minus_MC << std::endl;
 		  std::cout << "Scale Factor for QCD Sample: " << QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC << std::endl;
   		  //ScaleAllHistOfType(HConfig.GetType(DataMCType::QCD), QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-	  	  NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+		  NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+		  NQCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
 		  for(int i=0; i<Nminus1.size(); i++){
 			  Nminus0.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
 		  	  Nminus1.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
 		  }
  		  NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
  		  NMvis.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+    	  Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+ 		  Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+ 		  Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+ 		  Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+ 		  Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+ 		  Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   	  }
   	  else{
 		  std::cout << "QCD_Integral_B_Data_minus_MC is: " << QCD_Integral_B_Data_minus_MC << std::endl;
@@ -704,6 +746,7 @@ void  ZToTaumuTauh::Finish(){
   	  }
   }
   // weight all Histograms
+  std::cout << "Starting Selection::Finish" << std::endl;
   Selection::Finish();
 }
 
@@ -773,7 +816,7 @@ bool ZToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	return false;
 }
 bool ZToTaumuTauh::selectPFTau_Isolation(unsigned i){
-	if(Ntp->PFTau_HPSPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits(i)){
+	if(Ntp->PFTau_HPSPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits(i) < cTau_IsoRaw){
 		return true;
 	}
 	return false;

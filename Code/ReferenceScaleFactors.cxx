@@ -364,8 +364,8 @@ double ReferenceScaleFactors::TrackingEfficiency2012(TLorentzVector vect){
 	if(eta>=2.2 && eta<2.4) eff = 0.9806;
 	return eff;
 }
-
-double ReferenceScaleFactors::HiggsEMuId_Mu(TLorentzVector vect){
+//source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Muon_ID_Isolation_EMu_Channel
+double ReferenceScaleFactors::HiggsTauTau_EMu_Id_Mu(TLorentzVector vect){
 	double pt = vect.Pt();
 	double eta = fabs(vect.Eta());
 	double eff = 1.;
@@ -433,7 +433,7 @@ double ReferenceScaleFactors::HiggsEMuId_Mu(TLorentzVector vect){
 	return eff;
 }
 
-double ReferenceScaleFactors::HiggsEMuIdUnc_Mu(TLorentzVector vect){
+double ReferenceScaleFactors::HiggsTauTau_EMu_IdUnc_Mu(TLorentzVector vect){
 	double pt = vect.Pt();
 	double eta = fabs(vect.Eta());
 	double err = 0.;
@@ -497,6 +497,74 @@ double ReferenceScaleFactors::HiggsEMuIdUnc_Mu(TLorentzVector vect){
 		}else if(eta>=1.6 && eta<2.1){
 			err = 0.0004;
 		}
+	}
+	return err;
+}
+//source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Muon_ID_Isolation_MuTau_Channel
+double ReferenceScaleFactors::HiggsTauTau_MuTau_Id_Mu(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double weight = 1.;
+	if(20 <= pt && pt < 30){
+		if(eta>=0 && eta<0.8) weight = 0.9818;
+		else if(eta>=0.8 && eta<1.2) weight = 0.9829;
+		else if(eta>=1.2 && eta<2.1) weight = 0.9869;
+	}
+	else if(pt >= 30){
+		if(eta>=0 && eta<0.8) weight = 0.9852;
+		else if(eta>=0.8 && eta<1.2) weight = 0.9852;
+		else if(eta>=1.2 && eta<2.1) weight = 0.9884;
+	}
+	return weight;
+}
+
+double ReferenceScaleFactors::HiggsTauTau_MuTau_IdUnc_Mu(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double err = 0;
+	if(20 <= pt && pt < 30){
+		if(eta>=0 && eta<0.8) err = 0.0005;
+		else if(eta>=0.8 && eta<1.2) err = 0.0009;
+		else if(eta>=1.2 && eta<2.1) err = 0.0007;
+	}
+	else if(pt >= 30){
+		if(eta>=0 && eta<0.8) err = 0.0001;
+		else if(eta>=0.8 && eta<1.2) err = 0.0002;
+		else if(eta>=1.2 && eta<2.1) err = 0.0001;
+	}
+	return err;
+}
+//source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Muon_ID_Isolation_MuTau_Channel
+double ReferenceScaleFactors::HiggsTauTau_MuTau_Iso_Mu(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double weight = 1.;
+	if(20 <= pt && pt < 30){
+		if(eta>=0 && eta<0.8) weight = 0.9494;
+		else if(eta>=0.8 && eta<1.2) weight = 0.9835;
+		else if(eta>=1.2 && eta<2.1) weight = 0.9923;
+	}
+	else if(pt >= 30){
+		if(eta>=0 && eta<0.8) weight = 0.9883;
+		else if(eta>=0.8 && eta<1.2) weight = 0.9937;
+		else if(eta>=1.2 && eta<2.1) weight = 0.9996;
+	}
+	return weight;
+}
+
+double ReferenceScaleFactors::HiggsTauTau_MuTau_IsoUnc_Mu(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double err = 0;
+	if(20 <= pt && pt < 30){
+		if(eta>=0 && eta<0.8) err = 0.0015;
+		else if(eta>=0.8 && eta<1.2) err = 0.0020;
+		else if(eta>=1.2 && eta<2.1) err = 0.0013;
+	}
+	else if(pt >= 30){
+		if(eta>=0 && eta<0.8) err = 0.0003;
+		else if(eta>=0.8 && eta<1.2) err = 0.0004;
+		else if(eta>=1.2 && eta<2.1) err = 0.0005;
 	}
 	return err;
 }
@@ -737,6 +805,106 @@ double ReferenceScaleFactors::HiggsTauTau_EMu_IdUnc_E(double Et, double Eta){
 // Trigger scale factors
 //
 
+//trigger turn-on parameterization from https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2012#ETau_MuTau_trigger_turn_on_Joshu
+//m is pt
+double ReferenceScaleFactors::Efficiency(double m, double m0, double sigma, double alpha, double n, double norm){
+	const double sqrtPiOver2 = 1.2533141373;
+	const double sqrt2 = 1.4142135624;
+	double sig = fabs((double) sigma);
+	double t = (m - m0)/sig;
+	if(alpha < 0) t = -t;
+	double absAlpha = fabs(alpha/sig);
+	double a = TMath::Power(n/absAlpha,n)*exp(-0.5*absAlpha*absAlpha);
+	double b = absAlpha - n/absAlpha;
+	double ApproxErf;
+	double arg = absAlpha / sqrt2;
+	if (arg > 5.) ApproxErf = 1;
+	else if (arg < -5.) ApproxErf = -1;
+	else ApproxErf = TMath::Erf(arg);
+	double leftArea = (1 + ApproxErf) * sqrtPiOver2;
+	double rightArea = ( a * 1/TMath::Power(absAlpha - b,n-1)) / (n - 1);
+	double area = leftArea + rightArea;
+	if( t <= absAlpha ){
+		arg = t / sqrt2;
+		if(arg > 5.) ApproxErf = 1;
+		else if (arg < -5.) ApproxErf = -1;
+		else ApproxErf = TMath::Erf(arg);
+		return norm * (1 + ApproxErf) * sqrtPiOver2 / area;
+	}
+	else{
+		return norm * (leftArea + a * (1/TMath::Power(t-b,n-1) - 1/TMath::Power(absAlpha - b,n-1)) / (1 - n)) / area;
+	}
+}
+
+///////////////////////////
+//
+// Mu-Tau Trigger scale factors
+//
+
+//source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Electron_Muon_Tau_Trigger
+double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = vect.Eta();
+	double weight = 1.;
+	double Data_eff = 1.;
+	double MC_eff = 1.;
+	if(pt >= 20){
+		if(eta < -1.2){
+			Data_eff = Efficiency(pt, 15.9977, 7.64004e-05, 6.4951e-08, 1.57403, 0.865325);
+			MC_eff = Efficiency(pt, 16.0051, 2.45144e-05, 4.3335e-09, 1.66134, 0.87045);
+			weight = Data_eff/MC_eff;
+		}
+		else if (-1.2 <= eta && eta < -0.8){
+			Data_eff = Efficiency(pt, 17.3974, 0.804001, 1.47145, 1.24295, 0.928198);
+			MC_eff = Efficiency(pt, 17.3135, 0.747636, 1.21803, 1.40611, 0.934983);
+			weight = Data_eff/MC_eff;
+		}
+		else if (-0.8 <= eta && eta < 0.){
+			Data_eff = Efficiency(pt, 16.4307, 0.226312, 0.265553, 1.55756, 0.974462);
+			MC_eff = Efficiency(pt, 15.9556, 0.0236127, 0.00589832, 1.75409, 0.981338);
+			weight = Data_eff/MC_eff;
+		}
+		else if (0. <= eta && eta < 0.8){
+			Data_eff = Efficiency(pt, 17.313, 0.662731, 1.3412, 1.05778, 1.26624);
+			MC_eff = Efficiency(pt, 15.9289, 0.0271317, 0.00448573, 1.92101, 0.978625);
+			weight = Data_eff/MC_eff;
+		}
+		else if (0.8 <= eta && eta < 1.2){
+			Data_eff = Efficiency(pt, 16.9966, 0.550532, 0.807863, 1.55402, 0.885134);
+			MC_eff = Efficiency(pt, 16.5678, 0.328333, 0.354533, 1.67085, 0.916992);
+			weight = Data_eff/MC_eff;
+		}
+		else if (eta >= 1.2){
+			Data_eff = Efficiency(pt, 15.9962, 0.000106195, 4.95058e-08, 1.9991, 0.851294);
+			MC_eff = Efficiency(pt, 15.997, 7.90069e-05, 4.40036e-08, 1.66272, 0.884502);
+			weight = Data_eff/MC_eff;
+		}
+	}
+	return weight;
+}
+
+//NOTE: the set of trigger efficiencies below labelled http://benitezj.web.cern.ch/benitezj/Summer13Studies/TauTrigger/muTauABCD_June30/results.txt was the file we finally used for the legacy result: Without Tau ES corrections
+double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = vect.Eta();
+	double fabs_eta = fabs(eta);
+	double weight = 1.;
+	double Data_eff = 1.;
+	double MC_eff = 1.;
+	if(pt >= 20){
+		if(fabs_eta < 1.5){
+			Data_eff = Efficiency(pt, 18.604910, 0.276042, 0.137039, 2.698437, 0.940721);
+			MC_eff = Efficiency(pt, 18.532997, 1.027880, 2.262950, 1.003322, 5.297292);
+			weight = Data_eff/MC_eff;
+		}
+		if(fabs_eta >= 1.5){
+			Data_eff = Efficiency(pt, 18.701715, 0.216523, 0.148111, 2.245081, 0.895320);
+			MC_eff = Efficiency(pt, 18.212782, 0.338119, 0.122828, 12.577926, 0.893975);
+			weight = Data_eff/MC_eff;
+		}
+	}
+	return weight;
+}
 // Final state e+mu
 
 double ReferenceScaleFactors::HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path){
