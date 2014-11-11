@@ -869,7 +869,7 @@ double ReferenceScaleFactors::Efficiency(double m, double m0, double sigma, doub
 
 ///////////////////////////
 //
-// Mu-Tau Trigger scale factors
+// Final state mu+tau
 //
 
 //source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Electron_Muon_Tau_Trigger
@@ -936,7 +936,11 @@ double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect)
 	}
 	return weight;
 }
+
+///////////////////////////
+//
 // Final state e+mu
+//
 
 double ReferenceScaleFactors::HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path){
 	double eff = 1.;
