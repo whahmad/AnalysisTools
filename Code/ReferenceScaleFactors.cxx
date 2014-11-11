@@ -984,7 +984,7 @@ double ReferenceScaleFactors::IsoMu24_eta2p1_unc(TLorentzVector vect){
 
 //trigger turn-on parameterization from https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2012#ETau_MuTau_trigger_turn_on_Joshu
 //m is pt
-double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Efficiency(double m, double m0, double sigma, double alpha, double n, double norm){
+double ReferenceScaleFactors::Efficiency(double m, double m0, double sigma, double alpha, double n, double norm){
 	const double sqrtPiOver2 = 1.2533141373;
 	const double sqrt2 = 1.4142135624;
 	double sig = fabs((double) sigma);
@@ -1015,7 +1015,7 @@ double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Efficiency(double m, dou
 
 ///////////////////////////
 //
-// Mu-Tau Trigger scale factors
+// Final state mu+tau
 //
 
 //source: https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Electron_Muon_Tau_Trigger
@@ -1027,33 +1027,33 @@ double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect){
 	double MC_eff = 1.;
 	if(pt >= 20){
 		if(eta < -1.2){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 15.9977, 7.64004e-05, 6.4951e-08, 1.57403, 0.865325);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 16.0051, 2.45144e-05, 4.3335e-09, 1.66134, 0.87045);
+			Data_eff = Efficiency(pt, 15.9977, 7.64004e-05, 6.4951e-08, 1.57403, 0.865325);
+			MC_eff = Efficiency(pt, 16.0051, 2.45144e-05, 4.3335e-09, 1.66134, 0.87045);
 			weight = Data_eff/MC_eff;
 		}
 		else if (-1.2 <= eta && eta < -0.8){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 17.3974, 0.804001, 1.47145, 1.24295, 0.928198);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 17.3135, 0.747636, 1.21803, 1.40611, 0.934983);
+			Data_eff = Efficiency(pt, 17.3974, 0.804001, 1.47145, 1.24295, 0.928198);
+			MC_eff = Efficiency(pt, 17.3135, 0.747636, 1.21803, 1.40611, 0.934983);
 			weight = Data_eff/MC_eff;
 		}
 		else if (-0.8 <= eta && eta < 0.){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 16.4307, 0.226312, 0.265553, 1.55756, 0.974462);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 15.9556, 0.0236127, 0.00589832, 1.75409, 0.981338);
+			Data_eff = Efficiency(pt, 16.4307, 0.226312, 0.265553, 1.55756, 0.974462);
+			MC_eff = Efficiency(pt, 15.9556, 0.0236127, 0.00589832, 1.75409, 0.981338);
 			weight = Data_eff/MC_eff;
 		}
 		else if (0. <= eta && eta < 0.8){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 17.313, 0.662731, 1.3412, 1.05778, 1.26624);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 15.9289, 0.0271317, 0.00448573, 1.92101, 0.978625);
+			Data_eff = Efficiency(pt, 17.313, 0.662731, 1.3412, 1.05778, 1.26624);
+			MC_eff = Efficiency(pt, 15.9289, 0.0271317, 0.00448573, 1.92101, 0.978625);
 			weight = Data_eff/MC_eff;
 		}
 		else if (0.8 <= eta && eta < 1.2){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 16.9966, 0.550532, 0.807863, 1.55402, 0.885134);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 16.5678, 0.328333, 0.354533, 1.67085, 0.916992);
+			Data_eff = Efficiency(pt, 16.9966, 0.550532, 0.807863, 1.55402, 0.885134);
+			MC_eff = Efficiency(pt, 16.5678, 0.328333, 0.354533, 1.67085, 0.916992);
 			weight = Data_eff/MC_eff;
 		}
 		else if (eta >= 1.2){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 15.9962, 0.000106195, 4.95058e-08, 1.9991, 0.851294);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 15.997, 7.90069e-05, 4.40036e-08, 1.66272, 0.884502);
+			Data_eff = Efficiency(pt, 15.9962, 0.000106195, 4.95058e-08, 1.9991, 0.851294);
+			MC_eff = Efficiency(pt, 15.997, 7.90069e-05, 4.40036e-08, 1.66272, 0.884502);
 			weight = Data_eff/MC_eff;
 		}
 	}
@@ -1070,19 +1070,23 @@ double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect)
 	double MC_eff = 1.;
 	if(pt >= 20){
 		if(fabs_eta < 1.5){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 18.604910, 0.276042, 0.137039, 2.698437, 0.940721);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 18.532997, 1.027880, 2.262950, 1.003322, 5.297292);
+			Data_eff = Efficiency(pt, 18.604910, 0.276042, 0.137039, 2.698437, 0.940721);
+			MC_eff = Efficiency(pt, 18.532997, 1.027880, 2.262950, 1.003322, 5.297292);
 			weight = Data_eff/MC_eff;
 		}
 		if(fabs_eta >= 1.5){
-			Data_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 18.701715, 0.216523, 0.148111, 2.245081, 0.895320);
-			MC_eff = HiggsTauTau_MuTau_Trigger_Efficiency(pt, 18.212782, 0.338119, 0.122828, 12.577926, 0.893975);
+			Data_eff = Efficiency(pt, 18.701715, 0.216523, 0.148111, 2.245081, 0.895320);
+			MC_eff = Efficiency(pt, 18.212782, 0.338119, 0.122828, 12.577926, 0.893975);
 			weight = Data_eff/MC_eff;
 		}
 	}
 	return weight;
 }
+
+///////////////////////////
+//
 // Final state e+mu
+//
 
 double ReferenceScaleFactors::HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path){
 	double eff = 1.;

@@ -53,10 +53,6 @@ public:
 	// ++++++++++ Single lepton ++++++++++
 	double IsoMu24_eta2p1(TLorentzVector vect);
 	double IsoMu24_eta2p1_unc(TLorentzVector vect);
-	// ++++++++++ Final state: mu+tau ++++++++++
-	double HiggsTauTau_MuTau_Trigger_Efficiency(double m, double m0, double sigma, double alpha, double n, double norm);
-	double HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect);
-	double HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect);
 	// ++++++++++ Final state: e+mu ++++++++++
 	// use this for full trigger efficiency
 	double HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path);
@@ -71,6 +67,11 @@ public:
 	double HiggsTauTau_EMu_TriggerUnc_Mu(TLorentzVector vect);
 	double HiggsTauTau_EMu_Trigger_E(double Et, double Eta);
 	double HiggsTauTau_EMu_TriggerUnc_E(double Et, double Eta);
+
+	// Final state: mu+tau
+	double Efficiency(double m, double m0, double sigma, double alpha, double n, double norm);
+	double HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect);
 
 private:
 	//
