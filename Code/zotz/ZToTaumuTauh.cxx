@@ -243,6 +243,9 @@ void  ZToTaumuTauh::doEvent(){
   int selMuon_AntiIso = -1;
   int selTau = -1;
 
+  TString tau_corr = "";
+  if(Ntp->GetMCID() == DataMCType::DY_tautau || (Ntp->GetMCID()>=10 && Ntp->GetMCID()<= 13)) tau_corr = "scalecorr";
+
   // Apply Selection
   if(verbose) std::cout << "Cut on good vertex" << std::endl;
   unsigned int nGoodVtx=0;
@@ -410,8 +413,8 @@ void  ZToTaumuTauh::doEvent(){
 	  //std::cout << "selTau is " << selTau << std::endl;
 	  eTmiss 		= Ntp->MET_CorrMVAMuTau_et();
 	  eTmPhi 		= Ntp->MET_CorrMVAMuTau_phi();
-	  pT 			= Ntp->PFTau_p4(selTau).Pt();
-	  phi			= Ntp->PFTau_p4(selTau).Phi();
+	  pT 			= Ntp->PFTau_p4(selTau, tau_corr).Pt();
+	  phi			= Ntp->PFTau_p4(selTau, tau_corr).Phi();
 	  MT_TauMET		= Ntp->transverseMass(pT,phi,eTmiss,eTmPhi);
 	  //std::cout << "MT_TauMET is " << MT_TauMET << std::endl;
   }
@@ -422,10 +425,10 @@ void  ZToTaumuTauh::doEvent(){
 
   if(selTau != -1){
 	  if(selMuon_Iso != -1 && selMuon_AntiIso == -1){
-		  Mvis = (Ntp->PFTau_p4(selTau) + Ntp->Muon_p4(selMuon_Iso)).M();
+		  Mvis = (Ntp->PFTau_p4(selTau, tau_corr) + Ntp->Muon_p4(selMuon_Iso)).M();
 	  }
 	  else if(selMuon_Iso == -1 && selMuon_AntiIso != -1){
-		  Mvis = (Ntp->PFTau_p4(selTau) + Ntp->Muon_p4(selMuon_AntiIso)).M();
+		  Mvis = (Ntp->PFTau_p4(selTau, tau_corr) + Ntp->Muon_p4(selMuon_AntiIso)).M();
 	  }
 	  else{
 		  Mvis = -10;
@@ -447,7 +450,7 @@ void  ZToTaumuTauh::doEvent(){
 		  w *= RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon_Iso));
 	  }
 	  if(selTau != -1){
-		  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau));
+		  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau, tau_corr));
 	  }
   }
   else{w=1;}
@@ -531,9 +534,9 @@ void  ZToTaumuTauh::doEvent(){
 	 	 		    Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
 	 	 		    Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
 	 	 		    Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
-	 	 		    Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Pt(),w);
-	 	 		    Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Phi(),w);
-	 	 		    Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau).Eta(),w);
+	 	 		    Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
+	 	 		    Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
+	 	 		    Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
 	 	 		}
 	 	 		pass.at(ChargeSum) = false;
 	 	 		pass.at(NMuIso) = false;
@@ -558,9 +561,9 @@ void  ZToTaumuTauh::doEvent(){
     Mu_pt.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
     Mu_phi.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
     Mu_eta.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
-    Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau).Pt(),w);
-    Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau).Phi(),w);
-    Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau).Eta(),w);
+    Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
+    Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
+    Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
   }
 
 }//final bracket of DoEvent
@@ -660,6 +663,8 @@ void  ZToTaumuTauh::Finish(){
   		  		  Nminus1.at(i).at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  		  Nminus1.at(i).at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  	  }
+  		  	  NVtx.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  		  	  NVtx.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
 	 		  NMtTauMET.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
 	 		  NMtTauMET.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
 	 		  NMvis.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
@@ -730,14 +735,15 @@ void  ZToTaumuTauh::Finish(){
 			  Nminus0.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
 		  	  Nminus1.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
 		  }
+		  NVtx.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
  		  NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
  		  NMvis.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-    	  Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
- 		  Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
- 		  Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
- 		  Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
- 		  Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
- 		  Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+    	  Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+ 		  Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+ 		  Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+ 		  Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+ 		  Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+ 		  Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
   	  }
   	  else{
 		  std::cout << "QCD_Integral_B_Data_minus_MC is: " << QCD_Integral_B_Data_minus_MC << std::endl;
@@ -828,21 +834,4 @@ bool ZToTaumuTauh::selectPFTau_Kinematics(unsigned i){
 		return true;
 	}
 	return false;
-}
-// Returns true, if all cuts except for those in vector 'indices' passed.
-// Elements of vector 'indices' are the positions i_cut of cuts in the vector cuts
-bool ZToTaumuTauh::passAllBut(std::vector<int> indices){
-	  std::vector<int>::iterator it;
-	  for(int i_cut=0; i_cut<pass.size(); i_cut++){
-		  it = std::find (indices.begin(), indices.end(), i_cut);	// tries to find i_cut in vector 'indices'
-		  if(i_cut!=*it){											// checks if cut at i_cut is not a cut you want to exclude
-			  if(!pass.at(i_cut)) return false;						// checks whether cut passed or not
-		  }
-	  }
-	  return true;
-}
-bool ZToTaumuTauh::passAllBut(int i_cut){
-	  std::vector<int> index;
-	  index.push_back(i_cut);
-	  return passAllBut(index);
 }
