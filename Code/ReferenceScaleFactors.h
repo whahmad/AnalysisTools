@@ -50,6 +50,9 @@ public:
 	// Trigger efficiency scale factors
 	//
 
+	// ++++++++++ Single lepton ++++++++++
+	double IsoMu24_eta2p1(TLorentzVector vect);
+	double IsoMu24_eta2p1_unc(TLorentzVector vect);
 	// ++++++++++ Final state: e+mu ++++++++++
 	// use this for full trigger efficiency
 	double HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path);
