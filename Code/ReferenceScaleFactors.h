@@ -49,6 +49,10 @@ public:
 	//
 	// Trigger efficiency scale factors
 	//
+
+	// ++++++++++ Single lepton ++++++++++
+	double IsoMu24_eta2p1(TLorentzVector vect);
+	double IsoMu24_eta2p1_unc(TLorentzVector vect);
 	// ++++++++++ Final state: mu+tau ++++++++++
 	double HiggsTauTau_MuTau_Trigger_Efficiency(double m, double m0, double sigma, double alpha, double n, double norm);
 	double HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect);

@@ -837,6 +837,151 @@ double ReferenceScaleFactors::HiggsTauTau_EMu_IdUnc_E(double Et, double Eta){
 // Trigger scale factors
 //
 
+// single lepton trigger
+double ReferenceScaleFactors::IsoMu24_eta2p1(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double eff = 1.;
+	if(pt>25. && pt<=30){
+		if(eta<0.9){
+			eff = 0.9837;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9684;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 1.0052;
+		}
+	}else if(pt>30. && pt<=35.){
+		if(eta<0.9){
+			eff = 0.9841;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9654;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 1.0014;
+		}
+	}else if(pt>35. && pt<=40.){
+		if(eta<0.9){
+			eff = 0.9839;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9670;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9962;
+		}
+	}else if(pt>40. && pt<=50.){
+		if(eta<0.9){
+			eff = 0.9835;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9667;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9943;
+		}
+	}else if(pt>50. && pt<=60){
+		if(eta<0.9){
+			eff = 0.9843;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9627;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9905;
+		}
+	}else if(pt>60. && pt<=90){
+		if(eta<0.9){
+			eff = 0.9847;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9595;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9883;
+		}
+	}else if(pt>90. && pt<=140.){
+		if(eta<0.9){
+			eff = 0.9809;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9644;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9819;
+		}
+	}else if(pt>140. && pt<=500.){
+		if(eta<0.9){
+			eff = 0.9804;
+		}else if(eta>=0.9 && eta<1.2){
+			eff = 0.9713;
+		}else if(eta>=1.2 && eta<2.1){
+			eff = 0.9942;
+		}
+	}
+	return eff;
+}
+
+double ReferenceScaleFactors::IsoMu24_eta2p1_unc(TLorentzVector vect){
+	double pt = vect.Pt();
+	double eta = fabs(vect.Eta());
+	double err = 0.;
+	if(pt>25. && pt<=30){
+		if(eta<0.9){
+			err = 0.0010;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0026;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0018;
+		}
+	}else if(pt>30. && pt<=35.){
+		if(eta<0.9){
+			err = 0.0006;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0019;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0014;
+		}
+	}else if(pt>35. && pt<=40.){
+		if(eta<0.9){
+			err = 0.0004;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0014;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0011;
+		}
+	}else if(pt>40. && pt<=50.){
+		if(eta<0.9){
+			err = 0.0003;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0005;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0007;
+		}
+	}else if(pt>50. && pt<=60){
+		if(eta<0.9){
+			err = 0.0006;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0019;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0016;
+		}
+	}else if(pt>60. && pt<=90){
+		if(eta<0.9){
+			err = 0.0009;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0030;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0025;
+		}
+	}else if(pt>90. && pt<=140.){
+		if(eta<0.9){
+			err = 0.0031;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0101;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0081;
+		}
+	}else if(pt>140. && pt<=500.){
+		if(eta<0.9){
+			err = 0.0081;
+		}else if(eta>=0.9 && eta<1.2){
+			err = 0.0254;
+		}else if(eta>=1.2 && eta<2.1){
+			err = 0.0276;
+		}
+	}
+	return err;
+}
+
 //trigger turn-on parameterization from https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2012#ETau_MuTau_trigger_turn_on_Joshu
 //m is pt
 double ReferenceScaleFactors::HiggsTauTau_MuTau_Trigger_Efficiency(double m, double m0, double sigma, double alpha, double n, double norm){

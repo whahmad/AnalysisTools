@@ -27,7 +27,7 @@ class ZtoEMu : public Selection {
 		 triLeptonVeto,
 		 charge,
 		 oneJet,
-		 MtMu,
+		 MET,
 	     ptBalance,
 	     ZMassmax,
 	     ZMassmin,
@@ -175,6 +175,7 @@ class ZtoEMu : public Selection {
   bool doFakeRateUncertainty;
   bool upwardUncertainty,systValid;
   TString mucorr, ecorr, jetcorr;
+  TString categoryFlag;
   
   double csvl,csvm,csvt;
 
@@ -213,8 +214,8 @@ class ZtoEMu : public Selection {
   TH2D* MuonFakeRate5;
   TH2D* MuonFakeRate30;
   double fakeRate;
-  double fakeRateMu;
-  double fakeRateE;
+  double fakeRateMu1, fakeRateMu2;
+  double fakeRateE1, fakeRateE2;
 
 };
 #endif
