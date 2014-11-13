@@ -1334,6 +1334,20 @@ void  ZtoEMu::doEvent(){
   //
   if(verbose) std::cout << "add plots" << std::endl;
 
+  if(pass.at(TriggerOk)
+		  && pass.at(PrimeVtx)
+		  && pass.at(NMu)
+		  && pass.at(NE)
+		  && pass.at(ptthreshold)
+		  && pass.at(mll)
+		  && pass.at(triLeptonVeto)
+		  && pass.at(charge)
+		  ){
+	  if(Ntp->GetMCID()==30 || Ntp->GetMCID()==33){
+		  printf("Eventnumber of event that passed cuts up to and including charge: %i\n",Ntp->EventNumber());
+	  }
+  }
+
   TLorentzVector leadlep(0.,0.,0.,0.);
   TLorentzVector traillep(0.,0.,0.,0.);
 
