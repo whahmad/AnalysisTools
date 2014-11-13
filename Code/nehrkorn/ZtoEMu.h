@@ -153,10 +153,7 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> met_poverp;
   std::vector<TH1D> met_0jet;
   std::vector<TH1D> met_jets;
-  std::vector<TH1D> met_08vtx;
-  std::vector<TH1D> met_816vtx;
-  std::vector<TH1D> met_1624vtx;
-  std::vector<TH1D> met_24ivtx;
+  std::vector<TH1D> invmass_ptbalance_widerange;
 
   std::vector<TH1D> pdf_w0;
   std::vector<TH1D> pdf_w1;
