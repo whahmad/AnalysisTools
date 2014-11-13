@@ -431,10 +431,7 @@ void  ZtoEMu::Configure(){
   met_poverp=HConfig.GetTH1D(Name+"_met_poverp","met_poverp",25,-100,25,"MET_{||} / MET_{|_}");
   met_0jet=HConfig.GetTH1D(Name+"_met_0jet","met_0jet",30,0.,150.,"MET / GeV");
   met_jets=HConfig.GetTH1D(Name+"_met_jets","met_jets",30,0.,150.,"MET / GeV");
-  met_08vtx=HConfig.GetTH1D(Name+"_met_08vtx","met_08vtx",30,0.,150.,"MET / GeV");
-  met_816vtx=HConfig.GetTH1D(Name+"_met_816vtx","met_816vtx",30,0.,150.,"MET / GeV");
-  met_1624vtx=HConfig.GetTH1D(Name+"_met_1624vtx","met_1624vtx",30,0.,150.,"MET / GeV");
-  met_24ivtx=HConfig.GetTH1D(Name+"_met_24ivtx","met_24ivtx",30,0.,150.,"MET / GeV");
+  invmass_ptbalance_widerange=HConfig.GetTH1D(Name+"_invmass_ptbal_only","invmass_ptbal_only",41,19,142,"m_{e#mu} / GeV");
 
   if(doPDFuncertainty){
 	  pdf_w0=HConfig.GetTH1D(Name+"_pdf_w0","pdf_w0",nPDFmembers,0,nPDFmembers,"pdf member");
@@ -560,10 +557,7 @@ void  ZtoEMu::Store_ExtraDist(){
  Extradist1d.push_back(&met_poverp);
  Extradist1d.push_back(&met_0jet);
  Extradist1d.push_back(&met_jets);
- Extradist1d.push_back(&met_08vtx);
- Extradist1d.push_back(&met_816vtx);
- Extradist1d.push_back(&met_1624vtx);
- Extradist1d.push_back(&met_24ivtx);
+ Extradist1d.push_back(&invmass_ptbalance_widerange);
 
  if(doPDFuncertainty){
 	 Extradist1d.push_back(&pdf_w0);
@@ -1032,7 +1026,7 @@ void  ZtoEMu::doEvent(){
     }
     if(pass.at(NMu)){
     	if(doHiggsObjects){
-    		w*=RSF->HiggsEMuId_Mu(Ntp->Muon_p4(muidx,mucorr));
+    		w*=RSF->HiggsTauTau_EMu_Id_Mu(Ntp->Muon_p4(muidx,mucorr));
     		w*=RSF->HiggsTauTau_EMu_Trigger_Mu(Ntp->Muon_p4(muidx,mucorr));
     	}else{
     		// for systematics: add systematic uncertainty of 0.5%(1.5%) when pt>20(<20) for Id and 0.2% for isolation when pt>20 to statistical in quadrature.
@@ -1108,6 +1102,21 @@ void  ZtoEMu::doEvent(){
   // Add plots
   //
   if(verbose) std::cout << "add plots" << std::endl;
+
+  if(pass.at(TriggerOk)
+		  && pass.at(PrimeVtx)
+		  && pass.at(NMu)
+		  && pass.at(NE)
+		  && pass.at(ptthreshold)
+		  && pass.at(mll)
+		  && pass.at(triLeptonVeto)
+		  && pass.at(charge)
+		  	  	  ){
+	  if(Ntp->GetMCID()==30 || Ntp->GetMCID()==33){
+		  printf("Eventnumber of event that passed cuts up to and including charge: %i\n",Ntp->EventNumber());
+	  }
+  }
+
   if(pass.at(TriggerOk)
 		  && pass.at(PrimeVtx)
 		  && pass.at(NMu)
@@ -1120,6 +1129,7 @@ void  ZtoEMu::doEvent(){
 		  && pass.at(ptBalance)
                   ){
 		  	if((Ntp->Muon_p4(muidx,mucorr)+Ntp->Electron_p4(eidx,ecorr)).M()>60.) invmass_high.at(t).Fill((Ntp->Muon_p4(muidx,mucorr)+Ntp->Electron_p4(eidx,ecorr)).M(),w);
+		  	invmass_ptbalance_widerange.at(t).Fill((Ntp->Muon_p4(muidx,mucorr)+Ntp->Electron_p4(eidx,ecorr)).M(),w);
 		  }
   if(pass.at(TriggerOk)
 		  && pass.at(PrimeVtx)
@@ -1176,10 +1186,6 @@ void  ZtoEMu::doEvent(){
 	  met_s.at(t).Fill(Ntp->MET_CorrT0pcT1_et()/Ntp->MET_Uncorr_significance(),w);
 	  if(jetsfromvtx.size()==0){
 		  met_0jet.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
-		  if(Ntp->NVtx()>=0 && Ntp->NVtx()<8)met_08vtx.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
-		  if(Ntp->NVtx()>=8 && Ntp->NVtx()<16)met_816vtx.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
-		  if(Ntp->NVtx()>=16 && Ntp->NVtx()<24)met_1624vtx.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
-		  if(Ntp->NVtx()>=24)met_24ivtx.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
 	  }
 	  if(jetsfromvtx.size()>0) met_jets.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
 	  TLorentzVector comb(0.,0.,0.,0.),mET(0.,0.,0.,0.);

@@ -496,7 +496,7 @@ void  ZtoEMu_Skim::doEvent(){
     }
     if(pass.at(NMu)){ // for systematics: add systematic uncertainty of 1.5%(0.5%) when pt<20(>20) for Id and 0.2% for isolation when pt>20 to statistical in quadrature.
     	if(doHiggsObjects){
-    		w*=RSF->HiggsEMuId_Mu(Ntp->Muon_p4(muidx,mucorr));
+    		w*=RSF->HiggsTauTau_EMu_Id_Mu(Ntp->Muon_p4(muidx,mucorr));
     		w*=RSF->HiggsTauTau_EMu_Trigger_Mu(Ntp->Muon_p4(muidx,mucorr));
     	}else{
     		w*=RSF->MuonIdTight2012(Ntp->Muon_p4(muidx,mucorr));
