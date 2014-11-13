@@ -26,8 +26,12 @@ public:
 	double MuonIsoUncTight2012(TLorentzVector vect);
 	double TrackingEfficiency2012(TLorentzVector vect);
 	double TrackingEfficiencyUnc2012(TLorentzVector vect);
-	double HiggsEMuId_Mu(TLorentzVector vect);
-	double HiggsEMuIdUnc_Mu(TLorentzVector vect);
+	double HiggsTauTau_EMu_Id_Mu(TLorentzVector vect);
+	double HiggsTauTau_EMu_IdUnc_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_Id_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_IdUnc_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_Iso_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_IsoUnc_Mu(TLorentzVector vect);
 
 	// Electron Id scale factors
 	double ElectronReconstruction2012(double Et, double Eta);
@@ -46,6 +50,9 @@ public:
 	// Trigger efficiency scale factors
 	//
 
+	// ++++++++++ Single lepton ++++++++++
+	double IsoMu24_eta2p1(TLorentzVector vect);
+	double IsoMu24_eta2p1_unc(TLorentzVector vect);
 	// ++++++++++ Final state: e+mu ++++++++++
 	// use this for full trigger efficiency
 	double HiggsWW_EMu_Trigger(TLorentzVector mu_vect, double e_et, double e_eta, TString path);
@@ -62,6 +69,9 @@ public:
 	double HiggsTauTau_EMu_TriggerUnc_E(double Et, double Eta);
 
 	// Final state: mu+tau
+	double Efficiency(double m, double m0, double sigma, double alpha, double n, double norm);
+	double HiggsTauTau_MuTau_Trigger_Mu(TLorentzVector vect);
+	double HiggsTauTau_MuTau_Trigger_Tau(TLorentzVector vect);
 
 private:
 	//

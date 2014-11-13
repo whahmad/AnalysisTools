@@ -38,6 +38,21 @@
 #ifdef USE_pistone
 
 #endif
+#ifdef USE_zotz
+#include "kargoll/HToTaumuTauh.h"
+#include "kargoll/HToTaumuTauhSkim.h"
+#include "kargoll/HToTaumuTauhBackgrounds.h"
+#include "kargoll/MuTauSync.h"
+#include "kargoll/OneJetBoost.h"
+#include "kargoll/OneJetHigh.h"
+#include "kargoll/OneJetLow.h"
+#include "kargoll/VBFTight.h"
+#include "kargoll/VBFLoose.h"
+#include "kargoll/ZeroJetHigh.h"
+#include "kargoll/ZeroJetLow.h"
+#include "kargoll/Inclusive.h"
+#include "zotz/ZToTaumuTauh.h"
+#endif
 
 Selection_Factory::Selection_Factory(){
 }
@@ -88,6 +103,21 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
 #endif
 #ifdef USE_pistone
 
+#endif
+#ifdef USE_zotz
+  else if(Analysis.Contains("htotaumutauhskim")) s=new HToTaumuTauhSkim(Analysis,UncertType);
+  else if(Analysis.Contains("htotaumutauhbackgrounds")) s=new HToTaumuTauhBackgrounds(Analysis,UncertType);
+  else if(Analysis.Contains("htotaumutauh")) s=new HToTaumuTauh(Analysis,UncertType);
+  else if(Analysis.Contains("mutausync")) s=new MuTauSync(Analysis,UncertType);
+  else if(Analysis.Contains("onejetboost")) s=new OneJetBoost(Analysis,UncertType);
+  else if(Analysis.Contains("onejethigh")) s=new OneJetHigh(Analysis,UncertType);
+  else if(Analysis.Contains("onejetlow")) s=new OneJetLow(Analysis,UncertType);
+  else if(Analysis.Contains("vbftight")) s=new VBFTight(Analysis,UncertType);
+  else if(Analysis.Contains("vbfloose")) s=new VBFLoose(Analysis,UncertType);
+  else if(Analysis.Contains("zerojethigh")) s=new ZeroJetHigh(Analysis,UncertType);
+  else if(Analysis.Contains("zerojetlow")) s=new ZeroJetLow(Analysis,UncertType);
+  else if(Analysis.Contains("inclusive")) s=new Inclusive(Analysis,UncertType);
+  else if(Analysis.Contains("ztotaumutauh")) s=new ZToTaumuTauh(Analysis,UncertType);
 #endif
   else{
     std::cout << "WARNING: Selection_Factory::Factory INVALID ANALYSIS TYPE.... USING DEFAULT <Example.h> " << std::endl;
