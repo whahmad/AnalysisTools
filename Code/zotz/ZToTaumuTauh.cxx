@@ -5,6 +5,8 @@
 #include <iostream>
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 #include "SkimConfig.h"
+#include "PDG_Var.h"
+#include "PDGInfo.h"
 
 ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
   Selection(Name_,id_),
@@ -17,16 +19,34 @@ ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
   cTau_pt(20.),//Recommended by Tau POG
   cTau_eta(2.3),
   cMuTau_dR(0.3),
-  cTau_IsoRaw(1.5)
+  cTau_IsoRaw(1.5),
+  cTau_dRHltMatch(0.5)
 {
 	TString trigNames[] = {"HLT_IsoMu18_eta2p1_LooseIsoPFTau20","HLT_IsoMu17_eta2p1_LooseIsoPFTau20"};
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
 	cTriggerNames = temp;
 
+	//https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#TauES_and_decay_mode_scale_facto
+	OneProngNoPiWeight = 0.88;
+
+	//dummy values
+
+	TriggerOkDummy = -1;
+	selVertexDummy = -1;
+	selMuon_IsoDummy = -1;
+	selMuon_AntiIsoDummy = -1;
+	selTauDummy = -1;
+	ChargeSumDummy = -666;
+	MTDummy = -666;
+	MvisDummy = -666;
+	TauFLSigmaDummy = -666;
+
 	//WJets BG Method
 	SB_lowerLimit = 70; //in GeV, Region > SB_lowerLimit dominated by W+Jets
 	SB_upperLimit = 140; //in GeV, Region < SB_upperLimit
 	Scaleby_Counting = true; // == false --> Scale by Integral
+
+	tau_corr = "";
 
 	//Set verbose boolean
 	verbose = false;
@@ -57,6 +77,8 @@ void  ZToTaumuTauh::Configure(){
     if(i==NTauIso)		cut.at(NTauIso)=1;
     if(i==ChargeSum)	cut.at(ChargeSum)=0;
     if(i==MT_MuMET)		cut.at(MT_MuMET)=44;
+    if(i==TauDecayMode)	cut.at(TauDecayMode)=10;
+    if(i==TauFLSigma)	cut.at(TauFLSigma)=3;
   }
 
   TString hlabel;
@@ -177,6 +199,26 @@ void  ZToTaumuTauh::Configure(){
     	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_MT_MuMET_",htitle,75,0,150.,hlabel,"Events"));
     	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_MT_MuMET_",htitle,75,0,150.,hlabel,"Events"));
     }
+    else if(i_cut==TauDecayMode){
+    	title.at(i_cut)="Tau Decay Mode = ";
+    	title.at(i_cut)+=cut.at(TauDecayMode);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="TauDecayMode";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauDecayMode_",htitle,15,0,15,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauDecayMode_",htitle,15,0,15,hlabel,"Events"));
+    }
+    else if(i_cut==TauFLSigma){
+    	title.at(i_cut)="TauFLSigma = ";
+    	title.at(i_cut)+=cut.at(TauFLSigma);
+    	htitle=title.at(i_cut);
+    	htitle.ReplaceAll("$","");
+    	htitle.ReplaceAll("\\","#");
+    	hlabel="TauFLSigma";
+    	Nminus1.push_back(HConfig.GetTH1D(Name+c+"_Nminus1_TauFLSigma_",htitle,80,-10,30,hlabel,"Events"));
+    	Nminus0.push_back(HConfig.GetTH1D(Name+c+"_Nminus0_TauFLSigma_",htitle,80,-10,30,hlabel,"Events"));
+    }
   }
   // Setup NPassed Histograms
   Npassed=HConfig.GetTH1D(Name+"_NPass","Cut Flow",NCuts+1,-1,NCuts,"Number of Accumulative Cuts Passed","Events");
@@ -184,27 +226,40 @@ void  ZToTaumuTauh::Configure(){
   NVtx=HConfig.GetTH1D(Name+"_NVtx","NVtx",41,-0.5,40.5,"Number of Vertices","Events");
   NGoodVtx=HConfig.GetTH1D(Name+"_NGoodVtx","NGoodVtx",26,-0.05,25.5,"Number of good Vertices","Events");
   NTrackperVtx=HConfig.GetTH1D(Name+"_NTracksperVtx","NTracksperVtx",151,-0.5,150.5,"Number of Track per Vertex","Events");
-  NMtTauMET=HConfig.GetTH1D(Name+"_NMtTauMET","NMtTauMET",75,-0.5,149.5,"m_{T}(#tau,MET)","Events");
+  NMtTauMET=HConfig.GetTH1D(Name+"_NMtTauMET","NMtTauMET",75,0,150,"m_{T}(#tau,MET)","Events");
+
   NMvis=HConfig.GetTH1D(Name+"_NMvis","NMvis",75,-0.5,149.5,"m_{vis}(#mu,#tau)","Events");
-  NSB=HConfig.GetTH1D(Name+"_NSB","NSB",2,-0.5,1.5,"SB Region (all Samples)","Events");
 
-  Mu_pt=HConfig.GetTH1D(Name+"_Mu_pt","Mu_pt",100,0,200,"Muon p_{t}","Events");
-  Mu_phi=HConfig.GetTH1D(Name+"_Mu_phi","Mu_phi",10,0,3.14159265359,"Muon #phi","Events");
-  Mu_eta=HConfig.GetTH1D(Name+"_Mu_phi","Mu_eta",50,-2.5,2.5,"Muon #eta","Events");
+  NSB=HConfig.GetTH1D(Name+"_NSB","NSB",2,0.5,2.5,"SB Region (all Samples)","Events");
 
-  Tau_pt=HConfig.GetTH1D(Name+"_Tau_pt","Tau_pt",100,0,200,"Tau p_{t}","Events");
-  Tau_phi=HConfig.GetTH1D(Name+"_Tau_phi","Tau_phi",10,0,3.14159265359,"Tau #phi","Events");
-  Tau_eta=HConfig.GetTH1D(Name+"_Tau_phi","Tau_eta",50,-2.5,2.5,"Tau #eta","Events");
+  Mu_pt=HConfig.GetTH1D(Name+"_Mu_pt","Mu_pt",50,0,100,"Muon p_{t}","Events");
+  Mu_phi=HConfig.GetTH1D(Name+"_Mu_phi","Mu_phi",30,-3.14159265359,3.14159265359,"Muon #phi","Events");
+  Mu_eta=HConfig.GetTH1D(Name+"_Mu_eta","Mu_eta",50,-2.5,2.5,"Muon #eta","Events");
 
-  NQCD_MT_MuMET_A=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_A","NQCD_MT_MuMET_A",75,0,150.,"m_{T}(#mu,MET) in A","Events");
-  NQCD_MT_MuMET_B=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_B","NQCD_MT_MuMET_B",75,0,150.,"m_{T}(#mu,MET) in B","Events");
-  NQCD_MT_MuMET_C=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_C","NQCD_MT_MuMET_C",75,0,150.,"m_{T}(#mu,MET) in C","Events");
-  NQCD_MT_MuMET_D=HConfig.GetTH1D(Name+"_NQCD_MT_MuMET_D","NQCD_MT_MuMET_D",75,0,150.,"m_{T}(#mu,MET) in D","Events");
+  Tau_pt=HConfig.GetTH1D(Name+"_Tau_pt","Tau_pt",50,0,100,"Tau p_{t}","Events");
+  Tau_phi=HConfig.GetTH1D(Name+"_Tau_phi","Tau_phi",30,-3.14159265359,3.14159265359,"Tau #phi","Events");
+  Tau_eta=HConfig.GetTH1D(Name+"_Tau_eta","Tau_eta",50,-2.5,2.5,"Tau #eta","Events");
 
-  NQCD_MET_A=HConfig.GetTH1D(Name+"_NQCD_MET_A","NQCD_MET_A",75,0,150.,"MVA MET in A","Events");
-  NQCD_MET_B=HConfig.GetTH1D(Name+"_NQCD_MET_B","NQCD_MET_B",75,0,150.,"MVA MET in B","Events");
-  NQCD_MET_C=HConfig.GetTH1D(Name+"_NQCD_MET_C","NQCD_MET_C",75,0,150.,"MVA MET in C","Events");
-  NQCD_MET_D=HConfig.GetTH1D(Name+"_NQCD_MET_D","NQCD_MET_D",75,0,150.,"MVA MET in D","Events");
+  TauFL=HConfig.GetTH1D(Name+"_TauFL","TauFL",100,-6,6,"tau flight length","Events");
+  TauFLSigned=HConfig.GetTH1D(Name+"_TauFLSigned","TauFLSigned",100,-6,6,"tau flight length Signed","Events");
+
+  TauFLSigmaSigned=HConfig.GetTH1D(Name+"_TauFLSigmaSigned","TauFLSigma Signed",80,-10,30,"TauFLSigma Signed","Events");
+  TauFLSigmaUnsigned=HConfig.GetTH1D(Name+"_TauFLSigmaUnsigned","TauFLSigma Unsigned",80,-10,30,"TauFLSigma Unsigned","Events");
+
+  dR_selTau_genTau=HConfig.GetTH1D(Name+"_dR_selTau_genTau","dR_selTau_genTau",1,0,50,"dR_selTau_genTau","Events");
+  dR_selMu_genMu=HConfig.GetTH1D(Name+"_dR_selMu_genMu","dR_selMu_genMu",1,0,50,"dR_selMu_genMu","Events");
+
+  NQCD=HConfig.GetTH1D(Name+"_NQCD","NQCD",4,0.5,4.5,"NQCD in ABCD","Events");
+
+  QCD_MT_MuMET_A=HConfig.GetTH1D(Name+"_QCD_MT_MuMET_A","QCD_MT_MuMET_A",75,0,150.,"m_{T}(#mu,MET) in A","Events");
+  QCD_MT_MuMET_B=HConfig.GetTH1D(Name+"_QCD_MT_MuMET_B","QCD_MT_MuMET_B",75,0,150.,"m_{T}(#mu,MET) in B","Events");
+  QCD_MT_MuMET_C=HConfig.GetTH1D(Name+"_QCD_MT_MuMET_C","QCD_MT_MuMET_C",75,0,150.,"m_{T}(#mu,MET) in C","Events");
+  QCD_MT_MuMET_D=HConfig.GetTH1D(Name+"_QCD_MT_MuMET_D","QCD_MT_MuMET_D",75,0,150.,"m_{T}(#mu,MET) in D","Events");
+
+  QCD_MET_A=HConfig.GetTH1D(Name+"_QCD_MET_A","QCD_MET_A",75,0,150.,"MVA MET in A","Events");
+  QCD_MET_B=HConfig.GetTH1D(Name+"_QCD_MET_B","QCD_MET_B",75,0,150.,"MVA MET in B","Events");
+  QCD_MET_C=HConfig.GetTH1D(Name+"_QCD_MET_C","QCD_MET_C",75,0,150.,"MVA MET in C","Events");
+  QCD_MET_D=HConfig.GetTH1D(Name+"_QCD_MET_D","QCD_MET_D",75,0,150.,"MVA MET in D","Events");
 
   Selection::ConfigureHistograms();
   HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
@@ -223,14 +278,36 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&Tau_pt);
  Extradist1d.push_back(&Tau_phi);
  Extradist1d.push_back(&Tau_eta);
- Extradist1d.push_back(&NQCD_MT_MuMET_A);
- Extradist1d.push_back(&NQCD_MT_MuMET_B);
- Extradist1d.push_back(&NQCD_MT_MuMET_C);
- Extradist1d.push_back(&NQCD_MT_MuMET_D);
- Extradist1d.push_back(&NQCD_MET_A);
- Extradist1d.push_back(&NQCD_MET_B);
- Extradist1d.push_back(&NQCD_MET_C);
- Extradist1d.push_back(&NQCD_MET_D);
+ Extradist1d.push_back(&TauFL);
+ Extradist1d.push_back(&TauFLSigned);
+ Extradist1d.push_back(&TauFLSigmaSigned);
+ Extradist1d.push_back(&TauFLSigmaUnsigned);
+
+ Extradist1d.push_back(&NQCD);
+ Extradist1d.push_back(&QCD_MT_MuMET_A);
+ Extradist1d.push_back(&QCD_MT_MuMET_B);
+ Extradist1d.push_back(&QCD_MT_MuMET_C);
+ Extradist1d.push_back(&QCD_MT_MuMET_D);
+ Extradist1d.push_back(&QCD_MET_A);
+ Extradist1d.push_back(&QCD_MET_B);
+ Extradist1d.push_back(&QCD_MET_C);
+ Extradist1d.push_back(&QCD_MET_D);
+
+ Extradist1d_OS.push_back(&NVtx);
+ Extradist1d_OS.push_back(&NGoodVtx);
+ Extradist1d_OS.push_back(&NTrackperVtx);
+ Extradist1d_OS.push_back(&NMtTauMET);
+ Extradist1d_OS.push_back(&NMvis);
+ Extradist1d_OS.push_back(&Mu_pt);
+ Extradist1d_OS.push_back(&Mu_phi);
+ Extradist1d_OS.push_back(&Mu_eta);
+ Extradist1d_OS.push_back(&Tau_pt);
+ Extradist1d_OS.push_back(&Tau_phi);
+ Extradist1d_OS.push_back(&Tau_eta);
+ Extradist1d_OS.push_back(&TauFL);
+ Extradist1d_OS.push_back(&TauFLSigned);
+ Extradist1d_OS.push_back(&TauFLSigmaSigned);
+ Extradist1d_OS.push_back(&TauFLSigmaUnsigned);
 }
 
 void  ZToTaumuTauh::doEvent(){
@@ -238,20 +315,21 @@ void  ZToTaumuTauh::doEvent(){
   int id(Ntp->GetMCID());
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
 
-  int selVertex = -1;
-  int selMuon_Iso = -1;
-  int selMuon_AntiIso = -1;
-  int selTau = -1;
+  int selVertex = selVertexDummy;
+  int selMuon_Iso = selMuon_IsoDummy;
+  int selMuon_AntiIso = selMuon_AntiIsoDummy;
+  int selTau = selTauDummy;
+  Charge = ChargeSumDummy;
 
-  TString tau_corr = "";
   if(Ntp->GetMCID() == DataMCType::DY_tautau || (Ntp->GetMCID()>=10 && Ntp->GetMCID()<= 13)) tau_corr = "scalecorr";
+  else tau_corr = "";
 
   // Apply Selection
   if(verbose) std::cout << "Cut on good vertex" << std::endl;
   unsigned int nGoodVtx=0;
   for(unsigned int i_vtx=0;i_vtx<Ntp->NVtx();i_vtx++){
     if(Ntp->isVtxGood(i_vtx)){
-    	if(selVertex == -1) selVertex = i_vtx; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
+    	if(selVertex == selVertexDummy) selVertex = i_vtx; // selected vertex = first vertex (highest sum[pT^2]) to fulfill vertex requirements
     	nGoodVtx++;
     }
   }
@@ -260,10 +338,10 @@ void  ZToTaumuTauh::doEvent(){
   
   // Trigger
   if(verbose) std::cout << "Cut on Trigger" << std::endl;
-  value.at(TriggerOk) = -1;
+  value.at(TriggerOk) = TriggerOkDummy;
   for (std::vector<TString>::iterator it_trig = cTriggerNames.begin(); it_trig != cTriggerNames.end(); ++it_trig){
 	  if(Ntp->TriggerAccept(*it_trig)){
-		  if ( value.at(TriggerOk) == -1 )
+		  if ( value.at(TriggerOk) == TriggerOkDummy )
 			  value.at(TriggerOk) = it_trig - cTriggerNames.begin();
 		  else // more than 1 trigger fired, save this separately
 			  value.at(TriggerOk) = cTriggerNames.size();
@@ -299,7 +377,7 @@ void  ZToTaumuTauh::doEvent(){
   selectedMuonsIso.clear();
   for(std::vector<int>::iterator it_mu = selectedMuonsKin.begin(); it_mu != selectedMuonsKin.end(); ++it_mu){
 	  if( selectMuon_Isolation(*it_mu) ) {
-		  if(selMuon_Iso == -1) selMuon_Iso = *it_mu;
+		  if(selMuon_Iso == selMuon_IsoDummy) selMuon_Iso = *it_mu;
 		  selectedMuonsIso.push_back(*it_mu);
 	  }
   }
@@ -311,7 +389,7 @@ void  ZToTaumuTauh::doEvent(){
   selectedMuonsAntiIso.clear();
   for(std::vector<int>::iterator it_mu = selectedMuonsKin.begin(); it_mu != selectedMuonsKin.end(); ++it_mu){
 	  if( selectMuon_AntiIsolation(*it_mu) ) {
-		  if(selMuon_AntiIso == -1 && selMuon_Iso == -1) selMuon_AntiIso = *it_mu;
+		  if(selMuon_AntiIso == selMuon_AntiIsoDummy && selMuon_Iso == selMuon_IsoDummy) selMuon_AntiIso = *it_mu;
 		  selectedMuonsAntiIso.push_back(*it_mu);
 	  }
   }
@@ -344,7 +422,7 @@ void  ZToTaumuTauh::doEvent(){
   selectedTausIso.clear();
   for(std::vector<int>::iterator it_tau = selectedTausKin.begin(); it_tau != selectedTausKin.end(); ++it_tau){
 	  if ( selectPFTau_Isolation(*it_tau) ){
-		  if(selTau == -1) selTau = *it_tau;
+		  if(selTau == selTauDummy) selTau = *it_tau;
 		  selectedTausIso.push_back(*it_tau);
 	  }
   }
@@ -353,40 +431,39 @@ void  ZToTaumuTauh::doEvent(){
 
   // Charge of MuTau
   if(verbose) std::cout << "Cut on Charge of MuTau System" << std::endl;
-  value.at(ChargeSum) = 666;
+  value.at(ChargeSum) = ChargeSumDummy;
   if(selTau != -1){
-	  if(selMuon_Iso != -1 && selMuon_AntiIso == -1){
+	  if(selMuon_Iso != selMuon_IsoDummy && selMuon_AntiIso == selMuon_AntiIsoDummy){
 		  Charge = Ntp->Muon_Charge(selMuon_Iso) + Ntp->PFTau_Charge(selTau);
 		  value.at(ChargeSum) = Charge;
   	  }
-  	  else if(selMuon_Iso == -1 && selMuon_AntiIso != -1){
+  	  else if(selMuon_Iso == selMuon_IsoDummy && selMuon_AntiIso != selMuon_AntiIsoDummy){
   		  Charge = Ntp->Muon_Charge(selMuon_AntiIso) + Ntp->PFTau_Charge(selTau);
   		  value.at(ChargeSum) = Charge;
   	  }
   	  else{
-  		  Charge = 666;
+  		  Charge = ChargeSumDummy;
   	  }
   }
   else{
-	  Charge = 666;
+	  Charge = ChargeSumDummy;
   }
   pass.at(ChargeSum)=(value.at(ChargeSum)==cut.at(ChargeSum));
-
 
   // MT calculation
   if(verbose) std::cout << "Calculation and Cut on MT distribution" << std::endl;
   double pT,phi,eTmiss,eTmPhi;
   double MT_TauMET, MT_MuMET_AntiIso;
 
-  if(selMuon_Iso == -1 && selMuon_AntiIso == -1){
-	  value.at(MT_MuMET) = -10;
+  if(selMuon_Iso == selMuon_IsoDummy && selMuon_AntiIso == selMuon_AntiIsoDummy){
+	  value.at(MT_MuMET) = MTDummy;
 	  if(verbose) std::cout << "No Muon selected: neither isolated or anti isolated" << std::endl;
   }
-  else if(selMuon_Iso != -1 && selMuon_AntiIso != -1){
-	  value.at(MT_MuMET) = -10;
+  else if(selMuon_Iso != selMuon_IsoDummy && selMuon_AntiIso != selMuon_AntiIsoDummy){
+	  value.at(MT_MuMET) = MTDummy;
 	  std::cout << "CRITICAL: SELECTED MUON PASSED ISOLATION AND ANTI-ISOLATION CUT --> FIX" << std::endl;
   }
-  else if(selMuon_Iso != -1 && selMuon_AntiIso == -1){
+  else if(selMuon_Iso != selMuon_IsoDummy && selMuon_AntiIso == selMuon_AntiIsoDummy){
 	  //std::cout << "selMuon_Iso is " << selMuon_Iso << std::endl;
 	  eTmiss				 	= Ntp->MET_CorrMVAMuTau_et();
 	  eTmPhi 					= Ntp->MET_CorrMVAMuTau_phi();
@@ -395,7 +472,7 @@ void  ZToTaumuTauh::doEvent(){
 	  value.at(MT_MuMET)		= Ntp->transverseMass(pT,phi,eTmiss,eTmPhi);
 	  //std::cout << "MT_MuMET is " << MT_MuMET << std::endl;
   }
-  else if(selMuon_AntiIso != -1 && selMuon_Iso == -1){
+  else if(selMuon_AntiIso != selMuon_AntiIsoDummy && selMuon_Iso == selMuon_IsoDummy){
 	  eTmiss				 	= Ntp->MET_CorrMVAMuTau_et();
 	  eTmPhi 					= Ntp->MET_CorrMVAMuTau_phi();
 	  pT 						= Ntp->Muon_p4(selMuon_AntiIso).Pt();
@@ -403,11 +480,49 @@ void  ZToTaumuTauh::doEvent(){
 	  MT_MuMET_AntiIso			= Ntp->transverseMass(pT,phi,eTmiss,eTmPhi);
 	  value.at(MT_MuMET) 		= MT_MuMET_AntiIso;
   }
-  if(value.at(MT_MuMET) != -10) pass.at(MT_MuMET)=(value.at(MT_MuMET)<cut.at(MT_MuMET));
+  if(value.at(MT_MuMET) != MTDummy) pass.at(MT_MuMET)=(value.at(MT_MuMET)<cut.at(MT_MuMET));
 
-  if(selTau == -1){
+  // Tau Decay Mode
+  if(verbose) std::cout << "Cut on Tau Decay Mode" << std::endl;
+  if(selTau != selTauDummy){
+	  value.at(TauDecayMode) = Ntp->PFTau_hpsDecayMode(selTau);
+  }
+  pass.at(TauDecayMode)=(value.at(TauDecayMode)>=cut.at(TauDecayMode));
+
+  // Tau FlightLength Significance
+  if(verbose) std::cout << "Cut on Tau Flight Length Significance" << std::endl;
+  value.at(TauFLSigma) = TauFLSigmaDummy;
+  if(pass.at(TauDecayMode) && selTau != selTauDummy){
+	  //std::cout << "selTau" << selTau << std::endl;
+	  //std::cout << "Ntp->PFTau_TIP_primaryVertex_pos(selTau).Mag() " << Ntp->PFTau_TIP_primaryVertex_pos(selTau).Mag() << std::endl;
+	  //std::cout << "Ntp->PFTau_TIP_hassecondaryVertex(selTau) " << Ntp->PFTau_TIP_hassecondaryVertex(selTau) << std::endl;
+	  //std::cout << "before hassecondaryVertex(selTau)" << std::endl;
+	  if(Ntp->PFTau_TIP_hassecondaryVertex(selTau) && pass.at(PrimeVtx)){
+		  //std::cout << "after hassecondaryVertex(selTau)" << std::endl;
+		  //std::cout << "Ntp->PFTau_TIP_secondaryVertex_pos(selTau).Mag()" << Ntp->PFTau_TIP_secondaryVertex_pos(selTau).Mag() << std::endl;
+		  //std::cout << "Ntp->PFTau_FlightLength(selTau) " << Ntp->PFTau_FlightLength(selTau) << std::endl;
+		  //std::cout << "Ntp->PF_Tau_FlightLegth3d_TauFrame_cov(selTau) " << Ntp->PF_Tau_FlightLegth3d_TauFrame_cov(selTau)(LorentzVectorParticle::vz,LorentzVectorParticle::vz) << std::endl;
+		  //Ntp->PFTau_TIP_secondaryVertex_cov(selTau).Print();
+		  //Ntp->PFTau_TIP_primaryVertex_cov(selTau).Print();
+		  //Ntp->PFTau_FlightLength3d_cov(selTau).Print();
+		  //Ntp->PF_Tau_FlightLegth3d_TauFrame_cov(selTau).Print();
+		  //std::cout << "Ntp->PFTau_FlightLength(selTau) " << Ntp->PFTau_FlightLength(selTau) << std::endl;
+		  //std::cout << "Ntp->PFTau_FlightLength_error(selTau) " << Ntp->PFTau_FlightLength_error(selTau) << std::endl;
+		  //std::cout << "Ntp->PFTau_FlightLength(selTau)/Ntp->PFTau_FlightLength_error(selTau) " << Ntp->PFTau_FlightLength(selTau)/Ntp->PFTau_FlightLength_error(selTau) << std::endl;
+		  //std::cout << "Ntp->PFTau_FlightLength_error(selTau) " << Ntp->PFTau_FlightLength_error(selTau) << std::endl;
+		  if(Ntp->PFTau_p4(selTau, tau_corr).Vect().Dot(Ntp->PFTau_FlightLength3d(selTau)) < 0){
+			  value.at(TauFLSigma) = -Ntp->PFTau_FlightLength_significance(selTau);
+		  }
+		  else{
+			  value.at(TauFLSigma) = Ntp->PFTau_FlightLength_significance(selTau);
+		  }
+	  }
+  }
+  pass.at(TauFLSigma) = (value.at(TauFLSigma)>=cut.at(TauFLSigma));
+
+  if(selTau == selTauDummy){
 	  //std::cout << "selTau is " << selTau << std::endl;
-	  MT_TauMET = -10;
+	  MT_TauMET = MTDummy;
   }
   else{
 	  //std::cout << "selTau is " << selTau << std::endl;
@@ -423,53 +538,55 @@ void  ZToTaumuTauh::doEvent(){
   if(verbose) std::cout << "Calculation of Mvis" << std::endl;
   double Mvis;
 
-  if(selTau != -1){
-	  if(selMuon_Iso != -1 && selMuon_AntiIso == -1){
+  if(selTau != selTauDummy){
+	  if(selMuon_Iso != selMuon_IsoDummy && selMuon_AntiIso == selMuon_AntiIsoDummy){
 		  Mvis = (Ntp->PFTau_p4(selTau, tau_corr) + Ntp->Muon_p4(selMuon_Iso)).M();
 	  }
-	  else if(selMuon_Iso == -1 && selMuon_AntiIso != -1){
+	  else if(selMuon_Iso == selMuon_IsoDummy && selMuon_AntiIso != selMuon_AntiIsoDummy){
 		  Mvis = (Ntp->PFTau_p4(selTau, tau_corr) + Ntp->Muon_p4(selMuon_AntiIso)).M();
 	  }
 	  else{
-		  Mvis = -10;
+		  Mvis = MvisDummy;
 	  }
   }
   else{
-	  Mvis = -10;
+	  Mvis = MvisDummy;
   }
 
   // Weights
-
   double wobs=1;
   double w;
   if(!Ntp->isData()){
 	  w = Ntp->PUWeight();
-	  if(selMuon_Iso != -1){
+	  if(selMuon_Iso != selMuon_IsoDummy){
 		  w *= RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon_Iso));
 		  w *= RSF->HiggsTauTau_MuTau_Iso_Mu(Ntp->Muon_p4(selMuon_Iso));
 		  w *= RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon_Iso));
 	  }
-	  if(selTau != -1){
+	  if(selTau != selTauDummy){
 		  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau, tau_corr));
+		  if(Ntp->PFTau_hpsDecayMode(selTau) == 0){
+			  w *= OneProngNoPiWeight;
+		  }
 	  }
   }
   else{w=1;}
 
   // W+Jets BG Method
   if(verbose) std::cout << "W+Jets BG Method" << std::endl;
-  std::vector<int> ChargeSumMT_MuMET;
-  ChargeSumMT_MuMET.clear();
-  ChargeSumMT_MuMET.push_back(ChargeSum);
-  ChargeSumMT_MuMET.push_back(MT_MuMET);
-  if(passAllBut(ChargeSumMT_MuMET)){
-  	  if(pass.at(ChargeSum)){ //Opposite Sign WJets yield (bin #1 with value 0)
-  		  if(value.at(MT_MuMET) > SB_lowerLimit && value.at(MT_MuMET) < SB_upperLimit){
-  			  NSB.at(t).Fill(0.,w);
-  		  }
-  	  }
-  	  if(!pass.at(ChargeSum) && Charge != 666){ //Same Sign WJets yield (bin #2 with value 1)
+  std::vector<int> exclude_cuts;
+  exclude_cuts.clear();
+  exclude_cuts.push_back(ChargeSum);
+  exclude_cuts.push_back(MT_MuMET);
+  if(passAllBut(exclude_cuts)){
+  	  if(pass.at(ChargeSum)){ //Opposite Sign WJets yield (bin #1 with value 1)
   		  if(value.at(MT_MuMET) > SB_lowerLimit && value.at(MT_MuMET) < SB_upperLimit){
   			  NSB.at(t).Fill(1.,w);
+  		  }
+  	  }
+  	  if(!pass.at(ChargeSum) && Charge != ChargeSumDummy){ //Same Sign WJets yield (bin #2 with value 2)
+  		  if(value.at(MT_MuMET) > SB_lowerLimit && value.at(MT_MuMET) < SB_upperLimit){
+  			  NSB.at(t).Fill(2.,w);
   		  }
   	  }
   }
@@ -489,59 +606,82 @@ void  ZToTaumuTauh::doEvent(){
    *     relIso(mu)
    */
   if(verbose) std::cout << "QCD ABCD BG Method" << std::endl;
-  std::vector<int> MuIsoChargeSumMT_MuMET;
-  MuIsoChargeSumMT_MuMET.clear();
-  MuIsoChargeSumMT_MuMET.push_back(NMuIso);
-  MuIsoChargeSumMT_MuMET.push_back(ChargeSum);
-  MuIsoChargeSumMT_MuMET.push_back(MT_MuMET);
-  if(passAllBut(MuIsoChargeSumMT_MuMET)){
-	  if(pass.at(NMuIso) && selMuon_Iso != -1){
-		  if(pass.at(ChargeSum)){ //A --> Signal-Selection (pass all cuts)
-			  NQCD_MT_MuMET_A.at(t).Fill(value.at(MT_MuMET),w);
-	 	 	  NQCD_MET_A.at(t).Fill(Ntp->MET_CorrMVAMuTau_et());
-	 	  }
-	 	  if(!pass.at(ChargeSum) && value.at(ChargeSum) != 666){ //C
-	 	 	  NQCD_MT_MuMET_C.at(t).Fill(value.at(MT_MuMET),w);
-	 	      NQCD_MET_C.at(t).Fill(Ntp->MET_CorrMVAMuTau_et());
-	 	  }
-	  }
-	  if(!pass.at(NMuIso) && selMuon_AntiIso != -1){
-		  if(pass.at(ChargeSum)){ //B
-	 		  NQCD_MT_MuMET_B.at(t).Fill(MT_MuMET_AntiIso,w);
-	 		  NQCD_MET_B.at(t).Fill(Ntp->MET_CorrMVAMuTau_et());
-	 	  }
-	 	  if(!pass.at(ChargeSum) && Charge != 666){ //D
-	 	 	  NQCD_MT_MuMET_D.at(t).Fill(MT_MuMET_AntiIso,w);
-	 	 	  NQCD_MET_D.at(t).Fill(Ntp->MET_CorrMVAMuTau_et());
-	 	 	  if(id == DataMCType::Data){
-		 	 	NQCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_MuMET_AntiIso,w);
-		 	 	NQCD_MET_D.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->MET_CorrMVAMuTau_et());
-		 	 	NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_MuMET_AntiIso,w);
-		 	 	NQCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->MET_CorrMVAMuTau_et());
-	 	 		pass.at(ChargeSum) = true;
-	 	 		pass.at(NMuIso) = true;
-	 	 		bool QCD_status = AnalysisCuts(HConfig.GetType(DataMCType::QCD),w,wobs);
-	 	 		if(QCD_status){
-	 	 			NVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->NVtx(),w);
-	 	 			unsigned int nGoodVtx=0;
-	 	 			for(unsigned int i=0;i<Ntp->NVtx();i++){
-	 	 				NTrackperVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Vtx_Track_idx(i).size(),w);
-	 	 				if(Ntp->isVtxGood(i))nGoodVtx++;
-	 	 			}
-	 	 			NGoodVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(nGoodVtx,w);
-	 	 			NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_TauMET,w);
-	 	 			NMvis.at(HConfig.GetType(DataMCType::QCD)).Fill(Mvis,w);
-	 	 		    Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
-	 	 		    Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
-	 	 		    Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
-	 	 		    Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
-	 	 		    Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
-	 	 		    Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
-	 	 		}
-	 	 		pass.at(ChargeSum) = false;
-	 	 		pass.at(NMuIso) = false;
+  exclude_cuts.push_back(NMuIso);
+  if(passAllBut(exclude_cuts)){
+	  if(pass.at(NMuIso) && selMuon_Iso != selMuon_IsoDummy){
+		  if(pass.at(ChargeSum)){ //A --> Signal-Selection (pass all cuts except MT_MuMET)
+			  QCD_MT_MuMET_A.at(t).Fill(value.at(MT_MuMET),w);
+	 	 	  QCD_MET_A.at(t).Fill(Ntp->MET_CorrMVAMuTau_et(), w);
+	 	 	  if(pass.at(MT_MuMET)){
+	 	 		  NQCD.at(t).Fill(1.,w);
 	 	 	  }
 	 	  }
+	 	  if(!pass.at(ChargeSum) && value.at(ChargeSum) != ChargeSumDummy){ //C
+	 	 	  QCD_MT_MuMET_C.at(t).Fill(value.at(MT_MuMET),w);
+	 	      QCD_MET_C.at(t).Fill(Ntp->MET_CorrMVAMuTau_et(),w);
+	 	 	  if(pass.at(MT_MuMET)){
+	 	 		  NQCD.at(t).Fill(3.,w);
+	 	 	  }
+	 	  }
+	  }
+	  if(!pass.at(NMuIso) && selMuon_AntiIso != selMuon_AntiIsoDummy){
+		  if(pass.at(ChargeSum)){ //B
+	 		  QCD_MT_MuMET_B.at(t).Fill(MT_MuMET_AntiIso,w);
+	 		  QCD_MET_B.at(t).Fill(Ntp->MET_CorrMVAMuTau_et(),w);
+	 	 	  if(pass.at(MT_MuMET)){
+	 	 		  NQCD.at(t).Fill(2.,w);
+	 	 	  }
+	 	  }
+	 	  if(!pass.at(ChargeSum) && Charge != ChargeSumDummy){ //D
+	 	 	  QCD_MT_MuMET_D.at(t).Fill(MT_MuMET_AntiIso,w);
+	 	 	  QCD_MET_D.at(t).Fill(Ntp->MET_CorrMVAMuTau_et(),w);
+	 	 	  if(pass.at(MT_MuMET)){
+	 	 		  NQCD.at(t).Fill(4.,w);
+	 	 	  }
+			  if(id == DataMCType::Data){
+				 QCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_MuMET_AntiIso,w);
+				 QCD_MET_D.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->MET_CorrMVAMuTau_et(),w);
+				 QCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_MuMET_AntiIso,w);
+				 QCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->MET_CorrMVAMuTau_et(),w);
+			  }
+	 	  }
+	  }
+  }
+
+  if(!pass.at(NMuIso) && selMuon_AntiIso != selMuon_AntiIsoDummy){
+	  if(!pass.at(ChargeSum) && Charge != ChargeSumDummy){
+		  if(id == DataMCType::Data){
+			 pass.at(ChargeSum) = true;
+			 pass.at(NMuIso) = true;
+			 bool QCD_status = AnalysisCuts(HConfig.GetType(DataMCType::QCD),w,wobs);
+			 if(QCD_status){
+				NVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->NVtx(),w);
+				unsigned int nGoodVtx=0;
+				for(unsigned int i=0;i<Ntp->NVtx();i++){
+					NTrackperVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Vtx_Track_idx(i).size(),w);
+					if(Ntp->isVtxGood(i))nGoodVtx++;
+				}
+				NQCD.at(HConfig.GetType(DataMCType::QCD)).Fill(1.,w);
+				NGoodVtx.at(HConfig.GetType(DataMCType::QCD)).Fill(nGoodVtx,w);
+				NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Fill(MT_TauMET,w);
+				NMvis.at(HConfig.GetType(DataMCType::QCD)).Fill(Mvis,w);
+				Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_AntiIso).Pt(),w);
+				Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_AntiIso).Phi(),w);
+				Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->Muon_p4(selMuon_AntiIso).Eta(),w);
+				Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
+				Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
+				Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
+				TauFL.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+				if(value.at(TauFLSigma) < 0){
+					TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(-Ntp->PFTau_FlightLength(selTau),w);
+				}
+				else{
+					TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+				}
+			}
+			pass.at(ChargeSum) = false;
+			pass.at(NMuIso) = false;
+		  }
 	  }
   }
 
@@ -564,8 +704,49 @@ void  ZToTaumuTauh::doEvent(){
     Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
     Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
     Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
+
+	if(id != DataMCType::Data){
+		std::cout << "a1 ids" << Ntp->matchTruth(Ntp->MCTau_p4(selTau)) << std::endl;
+	}
   }
 
+  if(passAllBut(TauFLSigma)){
+	  TauFLSigmaSigned.at(t).Fill(value.at(TauFLSigma),w);
+	  if(value.at(TauFLSigma)<0 && value.at(TauFLSigma) != TauFLSigmaDummy){
+		  TauFLSigmaUnsigned.at(t).Fill(-value.at(TauFLSigma),w);
+		  TauFL.at(t).Fill(Ntp->PFTau_FlightLength(selTau),w);
+		  TauFLSigned.at(t).Fill(-Ntp->PFTau_FlightLength(selTau),w);
+	  }
+	  else if(value.at(TauFLSigma)>0){
+		  TauFLSigmaUnsigned.at(t).Fill(value.at(TauFLSigma),w);
+		  TauFL.at(t).Fill(Ntp->PFTau_FlightLength(selTau),w);
+		  TauFLSigned.at(t).Fill(Ntp->PFTau_FlightLength(selTau),w);
+	  }
+  }
+  std::vector<int> exclude_TauFLQCD;
+  exclude_TauFLQCD.clear();
+  exclude_TauFLQCD.push_back(NMuIso);
+  exclude_TauFLQCD.push_back(ChargeSum);
+  exclude_TauFLQCD.push_back(TauFLSigma);
+  if(passAllBut(exclude_TauFLQCD)){
+	  if(!pass.at(NMuIso) && selMuon_AntiIso != selMuon_AntiIsoDummy){
+		  if(!pass.at(ChargeSum) && Charge != ChargeSumDummy){
+			  if(id == DataMCType::Data){
+				  TauFLSigmaSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(value.at(TauFLSigma),w);
+				  if(value.at(TauFLSigma)<0 && value.at(TauFLSigma) != TauFLSigmaDummy){
+					  TauFLSigmaUnsigned.at(HConfig.GetType(DataMCType::QCD)).Fill(-value.at(TauFLSigma),w);
+					  TauFL.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+					  TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(-Ntp->PFTau_FlightLength(selTau),w);
+				  }
+				  else if(value.at(TauFLSigma)>0){
+					  TauFLSigmaUnsigned.at(HConfig.GetType(DataMCType::QCD)).Fill(value.at(TauFLSigma),w);
+					  TauFL.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+					  TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+				  }
+			  }
+		  }
+	  }
+  }
 }//final bracket of DoEvent
 
 
@@ -647,40 +828,24 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "Scaleby_Counting boolean is set to " << Scaleby_Counting << std::endl;
   		  if(Scaleby_Counting){
   	  		  std::cout << "Scaling by Counting Method" << std::endl;
-  			  //ScaleAllHistOfType(HConfig.GetType(DataMCType::W_lnu), SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  			  //ScaleAllHistOfType(HConfig.GetType(DataMCType::W_taunu), SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MT_MuMET_B.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MT_MuMET_B.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MET_A.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MET_A.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MET_B.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  	  		  NQCD_MET_B.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  		  	  for(int i=0; i<Nminus1.size(); i++){
+  	  		  QCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MT_MuMET_B.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MT_MuMET_B.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MET_A.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MET_A.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MET_B.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  	  		  QCD_MET_B.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  		  	  for(unsigned int i=0; i<Nminus1.size(); i++){
   		  		  Nminus0.at(i).at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  		  Nminus0.at(i).at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  		  Nminus1.at(i).at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  		  Nminus1.at(i).at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
   		  	  }
-  		  	  NVtx.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-  		  	  NVtx.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  NMtTauMET.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  NMtTauMET.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  NMvis.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  NMvis.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	    	  Mu_pt.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	    	  Mu_pt.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Mu_phi.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Mu_phi.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Mu_eta.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Mu_eta.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Tau_pt.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Tau_pt.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Tau_phi.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 	  	  Tau_phi.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Tau_eta.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
-	 		  Tau_eta.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  		  	  for(unsigned int i=0; i<Extradist1d_OS.size(); i++){
+  		  		  Extradist1d_OS.at(i)->at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  		  		  Extradist1d_OS.at(i)->at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS);
+  		  	  }
   		  }
   	  }
   	  else{
@@ -690,23 +855,31 @@ void  ZToTaumuTauh::Finish(){
   	  if(SB_Counting_Data_minus_MC_SS > 0 && SB_Counting_WJets_SS > 0){
 		  std::cout << "Scale Factor for W+Jets Sample with Counting Method for SS: " << SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS << std::endl;
 		  std::cout << "Scaleby_Counting boolean is set to " << Scaleby_Counting << std::endl;
-		  NQCD_MT_MuMET_C.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-		  NQCD_MT_MuMET_C.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MET_C.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MET_C.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MET_D.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
-	  	  NQCD_MET_D.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+		  QCD_MT_MuMET_C.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+		  QCD_MT_MuMET_C.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MT_MuMET_D.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MET_C.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MET_C.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MET_D.at(HConfig.GetType(DataMCType::W_lnu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
+	  	  QCD_MET_D.at(HConfig.GetType(DataMCType::W_taunu)).Scale(SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS);
   	  }
   	  else{
 		  std::cout << "SB_Counting_WJets_SS is: " << SB_Counting_WJets_SS << std::endl;
 		  std::cout << "SB_Counting_Data_minus_MC_SS is: " << SB_Counting_Data_minus_MC_SS << std::endl;
   	  }
   	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
-  		  QCD_Integral_B.push_back(NQCD_MT_MuMET_B.at(i).Integral());
-  		  QCD_Integral_C.push_back(NQCD_MT_MuMET_C.at(i).Integral());
-  		  QCD_Integral_D.push_back(NQCD_MT_MuMET_D.at(i).Integral());
+  		  QCD_Integral_B.push_back(NQCD.at(i).GetBinContent(2));
+  		  QCD_Integral_C.push_back(NQCD.at(i).GetBinContent(3));
+  		  QCD_Integral_D.push_back(NQCD.at(i).GetBinContent(4));
+  		  //QCD_Integral_B.push_back(QCD_MT_MuMET_B.at(i).Integral());
+  		  //QCD_Integral_C.push_back(QCD_MT_MuMET_C.at(i).Integral());
+  		  //QCD_Integral_D.push_back(QCD_MT_MuMET_D.at(i).Integral());
+  		  if(HConfig.GetID(i) == DataMCType::W_lnu || HConfig.GetID(i) == DataMCType::W_taunu){
+	  		  QCD_Integral_B.at(i) *= SB_Counting_Data_minus_MC_OS/SB_Counting_WJets_OS;
+	  		  QCD_Integral_C.at(i) *= SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS;
+	  		  QCD_Integral_D.at(i) *= SB_Counting_Data_minus_MC_SS/SB_Counting_WJets_SS;
+  		  }
   		  if(CrossSectionandAcceptance.at(i)>0){
 	  		  QCD_Integral_B.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
 	  		  QCD_Integral_C.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
@@ -728,22 +901,17 @@ void  ZToTaumuTauh::Finish(){
   	  if(QCD_Integral_B_Data_minus_MC > 0 && QCD_Integral_C_Data_minus_MC > 0 && QCD_Integral_D_Data_minus_MC > 0){
 		  std::cout << "Factor AntiIso OS/SS QCD Sample: " << QCD_Integral_B_Data_minus_MC/QCD_Integral_D_Data_minus_MC << std::endl;
 		  std::cout << "Scale Factor for QCD Sample: " << QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC << std::endl;
-  		  //ScaleAllHistOfType(HConfig.GetType(DataMCType::QCD), QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-		  NQCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-		  NQCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+		  double QCD_ScaleFactor = QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC;
+		  QCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
+		  QCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
+		  NQCD.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  for(int i=0; i<Nminus1.size(); i++){
-			  Nminus0.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-		  	  Nminus1.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+			  Nminus0.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
+		  	  Nminus1.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  }
-		  NVtx.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  NMtTauMET.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  NMvis.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
-    	  Mu_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  Mu_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  Mu_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
- 		  Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_Integral_B_Data_minus_MC*QCD_Integral_C_Data_minus_MC/QCD_Integral_D_Data_minus_MC/QCD_Integral_D_Data_minus_MC);
+		  for(unsigned int i=0; i<Extradist1d_OS.size(); i++){
+			  Extradist1d_OS.at(i)->at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
+		  }
   	  }
   	  else{
 		  std::cout << "QCD_Integral_B_Data_minus_MC is: " << QCD_Integral_B_Data_minus_MC << std::endl;
@@ -812,7 +980,7 @@ bool ZToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	  }
 	}
 	// trigger matching
-	if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cMu_dRHltMatch) {
+	if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cTau_dRHltMatch) {
 		return false;
 	}
 
@@ -835,3 +1003,15 @@ bool ZToTaumuTauh::selectPFTau_Kinematics(unsigned i){
 	}
 	return false;
 }
+double ZToTaumuTauh::Reconstruct_hadronicTauEnergy(unsigned i){
+	double TauEnergy,TauMomentumPlus, TauMomentumMinus, TauMomentum;
+	TLorentzVector a1 = Ntp->PFTau_p4(i,tau_corr);
+	double GJ_angle = a1.Angle(Ntp->PFTau_FlightLength3d(i));
+	double val1 = (pow(PDG_Var::Tau_mass(),2.) + pow(a1.M(),2.))*a1.P()*cos(GJ_angle);
+	double val2 = a1.Energy()*sqrt(pow(pow(PDG_Var::Tau_mass(),2.) - pow(a1.M(),2.),2.) - 4.*pow(a1.P()*PDG_Var::Tau_mass()*sin(GJ_angle),2.));
+	TauMomentumPlus = (val1 + val2)/2./(pow(a1.M(),2) + pow(a1.P()*sin(GJ_angle),2.));
+	TauMomentumMinus = (val1 - val2)/2./(pow(a1.M(),2) + pow(a1.P()*sin(GJ_angle),2.));
+	TauEnergy = sqrt(pow(TauMomentum,2.) + pow(PDG_Var::Tau_mass(),2.));
+	return TauEnergy;
+}
+
