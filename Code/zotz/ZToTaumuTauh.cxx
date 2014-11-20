@@ -1,12 +1,13 @@
 #include "ZToTaumuTauh.h"
 #include "TLorentzVector.h"
+#include "TVector3.h"
 #include <cstdlib>
 #include "HistoConfig.h"
 #include <iostream>
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 #include "SkimConfig.h"
 #include "PDG_Var.h"
-#include "PDGInfo.h"
+#include "SimpleFits/FitSoftware/interface/PDGInfo.h"
 
 ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
   Selection(Name_,id_),
@@ -246,9 +247,38 @@ void  ZToTaumuTauh::Configure(){
   TauFLSigmaSigned=HConfig.GetTH1D(Name+"_TauFLSigmaSigned","TauFLSigma Signed",80,-10,30,"TauFLSigma Signed","Events");
   TauFLSigmaUnsigned=HConfig.GetTH1D(Name+"_TauFLSigmaUnsigned","TauFLSigma Unsigned",80,-10,30,"TauFLSigma Unsigned","Events");
 
-  dR_selTau_genTau=HConfig.GetTH1D(Name+"_dR_selTau_genTau","dR_selTau_genTau",1,0,50,"dR_selTau_genTau","Events");
+  //Gen Studies
+  dR_selTauh_genTauh=HConfig.GetTH1D(Name+"_dR_selTauh_genTauh","dR_selTauh_genTauh",1,0,50,"dR_selTauh_genTauh","Events");
   dR_selMu_genMu=HConfig.GetTH1D(Name+"_dR_selMu_genMu","dR_selMu_genMu",1,0,50,"dR_selMu_genMu","Events");
 
+  POCAPV_Mag=HConfig.GetTH1D(Name+"_POCAPV_Mag","POCAPV_Mag",100,0,10./100,"POCAPV_Mag","Events");
+
+  Phi_SVPV=HConfig.GetTH1D(Name+"_Phi_SVPV","Phi_SVPV",32,-3.14159265359,3.14159265359,"Phi_SVPV","Events");
+  Phi_genTauh=HConfig.GetTH1D(Name+"_Phi_genTauh","Phi_genTauh",32,-3.14159265359,3.14159265359,"Phi_genTauh","Events");
+  Theta_SVPV=HConfig.GetTH1D(Name+"_Theta_SVPV","Theta_SVPV",32,0.,3.14159265359,"Theta_SVPV","Events");
+  Theta_genTauh=HConfig.GetTH1D(Name+"_Theta_genTauh","Theta_genTauh",32,0.,3.14159265359,"Theta_genTauh","Events");
+  dPhi_SVPV_genTauh=HConfig.GetTH1D(Name+"_dPhi_SVPV_genTauh","dPhi_SVPV_genTauh",64,-3.14159265359/32,3.14159265359/32,"dPhi_SVPV_genTauh","Events");
+  dTheta_SVPV_genTauh=HConfig.GetTH1D(Name+"_dTheta_SVPV_genTauh","dTheta_SVPV_genTauh",64,-3.14159265359/32,3.14159265359/32,"dTheta_SVPV_genTauh","Events");
+
+  Phi_POCAPV=HConfig.GetTH1D(Name+"_Phi_POCAPV","Phi_POCAPV",32,-3.14159265359,3.14159265359,"Phi_POCAPV","Events");
+  Phi_genTaumu=HConfig.GetTH1D(Name+"_Phi_genTaumu","Phi_genTaumu",32,-3.14159265359,3.14159265359,"Phi_genTaumu","Events");
+  Theta_POCAPV=HConfig.GetTH1D(Name+"_Theta_POCAPV","Theta_POCAPV",32,0.,3.14159265359,"Theta_POCAPV","Events");
+  Theta_genTaumu=HConfig.GetTH1D(Name+"_Theta_genTaumu","Theta_genTaumu",32,0.,3.14159265359,"Theta_genTaumu","Events");
+  dPhi_POCAPV_genTaumu=HConfig.GetTH1D(Name+"_dPhi_POCAPV_genTaumu","dPhi_POCAPV_genTaumu",64,-3.14159265359,3.14159265359,"dPhi_POCAPV_genTaumu","Events");
+  dTheta_POCAPV_genTaumu=HConfig.GetTH1D(Name+"_dTheta_POCAPV_genTaumu","dTheta_POCAPV_genTaumu",64,-3.14159265359,3.14159265359,"dTheta_POCAPV_genTaumu","Events");
+
+  dPhi_MinusSVPV_genTaumu=HConfig.GetTH1D(Name+"_dPhi_MinusSVPV_genTaumu","dPhi_MinusSVPV_genTaumu",64,-3.14159265359/2,3.14159265359/2,"dPhi_MinusSVPV_genTaumu","Events");
+  dTheta_MinusSVPV_genTaumu=HConfig.GetTH1D(Name+"_dTheta_MinusSVPV_genTaumu","dTheta_MinusSVPV_genTaumu",64,-3.14159265359/2,3.14159265359/2,"dTheta_MinusSVPV_genTaumu","Events");
+
+  GJ_Tauh=HConfig.GetTH1D(Name+"_GJ_Tauh","GJ_Tauh",100,0,.1,"GJ_Tauh","Events");
+  GJ_Taumu=HConfig.GetTH1D(Name+"_GJ_Taumu","GJ_Taumu",100,0,.1,"GJ_Taumu","Events");
+
+  Angle_DiTauGen=HConfig.GetTH1D(Name+"_Angle_DiTauGen","Angle_DiTauGen",64,0,2*3.14159265359,"Angle_DiTauGen","Events");
+  Pt_DiTauGen=HConfig.GetTH1D(Name+"_Pt_DiTauGen","Pt_DiTauGen",30,0,30,"Pt_DiTauGen","Events");
+  Pt_ZGen=HConfig.GetTH1D(Name+"_Pt_ZGen","Pt_ZGen",30,0,30,"Pt_ZGen","Events");
+  Pt_vs_Angle_DiTauGen=HConfig.GetTH2D(Name+"_Pt_DiTauGen","Pt_DiTauGen",20,0,30,12,0,2*3.14159265359,"Pt ditau","Angle(tau,tau)");
+
+  //QCD Histos
   NQCD=HConfig.GetTH1D(Name+"_NQCD","NQCD",4,0.5,4.5,"NQCD in ABCD","Events");
 
   QCD_MT_MuMET_A=HConfig.GetTH1D(Name+"_QCD_MT_MuMET_A","QCD_MT_MuMET_A",75,0,150.,"m_{T}(#mu,MET) in A","Events");
@@ -282,6 +312,32 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&TauFLSigned);
  Extradist1d.push_back(&TauFLSigmaSigned);
  Extradist1d.push_back(&TauFLSigmaUnsigned);
+
+ Extradist1d.push_back(&POCAPV_Mag);
+ Extradist1d.push_back(&dR_selTauh_genTauh);
+ Extradist1d.push_back(&dR_selMu_genMu);
+ Extradist1d.push_back(&Phi_SVPV);
+ Extradist1d.push_back(&Phi_genTauh);
+ Extradist1d.push_back(&Theta_SVPV);
+ Extradist1d.push_back(&Theta_genTauh);
+ Extradist1d.push_back(&dPhi_SVPV_genTauh);
+ Extradist1d.push_back(&dTheta_SVPV_genTauh);
+ Extradist1d.push_back(&Phi_POCAPV);
+ Extradist1d.push_back(&Phi_genTaumu);
+ Extradist1d.push_back(&Theta_POCAPV);
+ Extradist1d.push_back(&Theta_genTaumu);
+ Extradist1d.push_back(&dPhi_POCAPV_genTaumu);
+ Extradist1d.push_back(&dTheta_POCAPV_genTaumu);
+ Extradist1d.push_back(&GJ_Tauh);
+ Extradist1d.push_back(&GJ_Taumu);
+ Extradist1d.push_back(&Angle_DiTauGen);
+ Extradist1d.push_back(&Pt_DiTauGen);
+ Extradist1d.push_back(&Pt_ZGen);
+
+ Extradist1d.push_back(&dPhi_MinusSVPV_genTaumu);
+ Extradist1d.push_back(&dTheta_MinusSVPV_genTaumu);
+
+ Extradist2d.push_back(&Pt_vs_Angle_DiTauGen);
 
  Extradist1d.push_back(&NQCD);
  Extradist1d.push_back(&QCD_MT_MuMET_A);
@@ -689,25 +745,101 @@ void  ZToTaumuTauh::doEvent(){
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
-    NVtx.at(t).Fill(Ntp->NVtx(),w);
-    unsigned int nGoodVtx=0;
-    for(unsigned int i=0;i<Ntp->NVtx();i++){
-      NTrackperVtx.at(t).Fill(Ntp->Vtx_Track_idx(i).size(),w);
-      if(Ntp->isVtxGood(i))nGoodVtx++;
-    }
-    NGoodVtx.at(t).Fill(nGoodVtx,w);
-    NMtTauMET.at(t).Fill(MT_TauMET,w);
-    NMvis.at(t).Fill(Mvis,w);
-    Mu_pt.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
-    Mu_phi.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
-    Mu_eta.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
-    Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
-    Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
-    Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
+	  NVtx.at(t).Fill(Ntp->NVtx(),w);
+	  unsigned int nGoodVtx=0;
+	  for(unsigned int i=0;i<Ntp->NVtx();i++){
+		  NTrackperVtx.at(t).Fill(Ntp->Vtx_Track_idx(i).size(),w);
+		  if(Ntp->isVtxGood(i))nGoodVtx++;
+	  }
+	  NGoodVtx.at(t).Fill(nGoodVtx,w);
+	  NMtTauMET.at(t).Fill(MT_TauMET,w);
+	  NMvis.at(t).Fill(Mvis,w);
+	  Mu_pt.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Pt(),w);
+	  Mu_phi.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Phi(),w);
+	  Mu_eta.at(t).Fill(Ntp->Muon_p4(selMuon_Iso).Eta(),w);
+	  Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
+	  Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
+	  Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
 
-	if(id != DataMCType::Data){
-		std::cout << "a1 ids" << Ntp->matchTruth(Ntp->MCTau_p4(selTau)) << std::endl;
-	}
+	  //Gen Studies
+	  if(id != DataMCType::Data && id == DataMCType::DY_tautau){
+		  /*
+	  	  if(id == DataMCType::DY_tautau) std::cout << "Ditau event" <<std::endl;;
+		  int NTaus = 0;
+		  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
+		  	  if(fabs(Ntp->MCParticle_pdgid(i))==15) NTaus++;
+		  }
+		  std::cout << "Number of Gen Taus" << NTaus <<std::endl;
+		  std::cout << "Number of Gen Taus in MCTaus" << Ntp->NMCTaus() <<std::endl;
+		  */
+		  TVector3 POCAPV_dir = Ntp->Muon_Poca(selMuon_Iso) - Ntp->PFTau_TIP_primaryVertex_pos(selTau);
+		  POCAPV_Mag.at(t).Fill(POCAPV_dir.Mag());
+		  TLorentzVector GenTaumu, GenTauh, GenZ;
+		  if(Ntp->NMCTaus() == 2){
+			  for(unsigned i=0; i<Ntp->NMCTaus(); i++){
+				  if(Ntp->MCTau_JAK(i) == 2){//Tau->Muon
+					  Phi_genTaumu.at(t).Fill(Ntp->MCTau_p4(i).Phi(),w);
+					  Theta_genTaumu.at(t).Fill(Ntp->MCTau_p4(i).Theta(),w);
+					  Phi_POCAPV.at(t).Fill(POCAPV_dir.Phi(),w);
+					  Theta_POCAPV.at(t).Fill(POCAPV_dir.Theta(),w);
+					  double dPhi = POCAPV_dir.Phi() - Ntp->MCTau_p4(i).Phi();
+					  dPhi_POCAPV_genTaumu.at(t).Fill(dPhi, w);
+					  double dTheta = POCAPV_dir.Theta() - Ntp->MCTau_p4(i).Theta();
+					  dTheta_POCAPV_genTaumu.at(t).Fill(dTheta,w);
+					  for(unsigned j=0; j<Ntp->NMCTauDecayProducts(i); j++){
+						  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::mu_minus){
+							  GJ_Taumu.at(t).Fill(Ntp->MCTauandProd_p4(i,j).Vect().Angle(Ntp->MCTau_p4(i).Vect()),w);
+						  }
+					  }
+					  GenTaumu = Ntp->MCTau_p4(i);
+				  }
+				  else if(Ntp->MCTau_JAK(i) != 2){
+					  Phi_genTauh.at(t).Fill(Ntp->MCTau_p4(i).Phi(),w);
+					  Theta_genTauh.at(t).Fill(Ntp->MCTau_p4(i).Theta(),w);
+					  Phi_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Phi(),w);
+					  Theta_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Theta(),w);
+					  double dPhi = Ntp->PFTau_FlightLength3d(selTau).Phi() - Ntp->MCTau_p4(i).Phi();
+					  dPhi_SVPV_genTauh.at(t).Fill(dPhi, w);
+					  double dTheta = Ntp->PFTau_FlightLength3d(selTau).Theta() - Ntp->MCTau_p4(i).Theta();
+					  dTheta_SVPV_genTauh.at(t).Fill(dTheta,w);
+					  //std::cout << "--------" << std::endl;
+					  for(unsigned j=0; j<Ntp->NMCTauDecayProducts(i); j++){
+						  //std::cout << "PDG ID of decay particle " << j << ": " << Ntp->MCTauandProd_pdgid(i,j) <<std::endl;
+						  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::a_1_plus){
+							  GJ_Tauh.at(t).Fill(Ntp->MCTauandProd_p4(i,j).Vect().Angle(Ntp->MCTau_p4(i).Vect()),w);
+						  }
+					  }
+					  GenTauh = Ntp->MCTau_p4(i);
+					  //std::cout << "--------" << std::endl;
+				  }
+			  }
+		  }
+		  TVector3 MinusPFTau_FlightLength3d = - Ntp->PFTau_FlightLength3d(selTau);
+		  double dPhi = MinusPFTau_FlightLength3d.Phi() - GenTaumu.Phi();
+		  dPhi_MinusSVPV_genTaumu.at(t).Fill(dPhi, w);
+		  double dTheta = MinusPFTau_FlightLength3d.Theta() - GenTaumu.Theta();
+		  dTheta_MinusSVPV_genTaumu.at(t).Fill(dPhi, w);
+
+		  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
+			  if(Ntp->MCParticle_pdgid(i) == PDGInfo::Z0){
+				  //int NTaus = 0;
+				  //for (unsigned j=0; j<Ntp->NMCParticle_children(i); j++){
+					  //if(fabs(Ntp->MCParticle_childpdgid(i).at(j)) == PDGInfo::tau_minus){
+						  //NTaus++;
+					  //}
+				  //}
+				  //if(NTaus == 2){
+					  GenZ = Ntp->MCParticle_p4(i);
+				  //}
+			  }
+		  }
+		  double angle = GenTauh.Vect().Angle(GenTaumu.Vect());
+		  TLorentzVector DiTau = GenTauh + GenTaumu;
+		  Pt_ZGen.at(t).Fill(GenZ.Pt(),w);
+		  Angle_DiTauGen.at(t).Fill(angle,w);
+		  Pt_DiTauGen.at(t).Fill(DiTau.Pt(),w);
+		  Pt_vs_Angle_DiTauGen.at(t).Fill(DiTau.Pt(), angle);
+	  }
   }
 
   if(passAllBut(TauFLSigma)){
@@ -778,6 +910,7 @@ void  ZToTaumuTauh::Finish(){
   	  std::vector<double> QCD_Integral_D;
   	  double QCD_Integral_D_Data_minus_MC = 0;
 
+  	  // Get Yields in W+Jets-Sideband for OS/SS
   	  std::cout << "W+Jets Background Method " << std::endl;
   	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
   	  	  int Bin_SB_lowerLimit = Nminus1.at(MT_MuMET).at(i).FindFixBin(SB_lowerLimit);
@@ -868,6 +1001,7 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "SB_Counting_WJets_SS is: " << SB_Counting_WJets_SS << std::endl;
 		  std::cout << "SB_Counting_Data_minus_MC_SS is: " << SB_Counting_Data_minus_MC_SS << std::endl;
   	  }
+  	  // Get Yields in ABCD for QCD Scalefactor
   	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
   		  QCD_Integral_B.push_back(NQCD.at(i).GetBinContent(2));
   		  QCD_Integral_C.push_back(NQCD.at(i).GetBinContent(3));

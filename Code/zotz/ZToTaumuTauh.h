@@ -34,7 +34,6 @@ class ZToTaumuTauh : public Selection {
   virtual void Store_ExtraDist();
 
   ReferenceScaleFactors *RSF;
-  PDGInfo *PDGInfo;
 
   // cut values
   double cMu_dxy, cMu_dz, cMu_relIso, cMu_pt, cMu_eta, cMu_dRHltMatch;
@@ -43,8 +42,8 @@ class ZToTaumuTauh : public Selection {
 
   double OneProngNoPiWeight;
   //dummy values
-  const int TriggerOkDummy, selVertexDummy, selMuon_IsoDummy, selMuon_AntiIsoDummy, selTauDummy, ChargeSumDummy;
-  const double MTDummy, MvisDummy, TauFLSigmaDummy;
+  int TriggerOkDummy, selVertexDummy, selMuon_IsoDummy, selMuon_AntiIsoDummy, selTauDummy, ChargeSumDummy;
+  double MTDummy, MvisDummy, TauFLSigmaDummy;
 
   int Charge;
   double SB_lowerLimit, SB_upperLimit;
@@ -66,8 +65,14 @@ class ZToTaumuTauh : public Selection {
   std::vector<TH1D> NSB;
   std::vector<TH1D> Mu_pt, Mu_eta, Mu_phi, Tau_pt, Tau_eta, Tau_phi;
   std::vector<TH1D> TauFL, TauFLSigned, TauFLSigmaSigned, TauFLSigmaUnsigned;
-  std::vector<TH1D> dR_selTau_genTau, dR_selMu_genMu;
-
+  std::vector<TH1D> dR_selTauh_genTauh, dR_selMu_genMu;
+  std::vector<TH1D> POCAPV_Mag;
+  std::vector<TH1D> Phi_SVPV, Phi_genTauh, Theta_SVPV, Theta_genTauh, dPhi_SVPV_genTauh, dTheta_SVPV_genTauh;
+  std::vector<TH1D> Phi_POCAPV, Phi_genTaumu, Theta_POCAPV, Theta_genTaumu, dPhi_POCAPV_genTaumu, dTheta_POCAPV_genTaumu;
+  std::vector<TH1D> dPhi_MinusSVPV_genTaumu, dTheta_MinusSVPV_genTaumu;
+  std::vector<TH1D> GJ_Tauh, GJ_Taumu;
+  std::vector<TH1D> Angle_DiTauGen, Pt_DiTauGen, Pt_ZGen;
+  std::vector<TH2D> Pt_vs_Angle_DiTauGen;
   std::vector<TH1D> NQCD;
   std::vector<TH1D> QCD_MT_MuMET_A, QCD_MT_MuMET_B, QCD_MT_MuMET_C, QCD_MT_MuMET_D;
   std::vector<TH1D> QCD_MET_A, QCD_MET_B, QCD_MET_C, QCD_MET_D;
