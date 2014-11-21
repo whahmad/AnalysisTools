@@ -6,7 +6,8 @@
 #include <cmath>
 #include <vector>
 
-#include "../Selection.h"
+#include "Selection.h"
+#include "ReferenceScaleFactors.h"
 
 class TLorentzVector;
 class TVector3;
@@ -272,6 +273,12 @@ class HToTaumuTauh : public Selection {
   // map to hold QCD yields for each category
   std::map<TString, double> qcdYieldMap;
 
+  // object corrections to use
+  TString correctTaus;
+  TString correctMuons;
+  TString correctElecs;
+  TString correctJets;
+
   // variables to hold selected objects (to be used e.g. for sync Ntuple)
   int selVertex;
   int selMuon;
@@ -282,6 +289,9 @@ class HToTaumuTauh : public Selection {
   double w; // event weight
   unsigned int t; // index of histogram
   bool isWJetMC; // for Wjets background method
+
+  // instance of reference scale factor class
+  ReferenceScaleFactors* RSF;
 
   // booleans for different analysis stages
   void setStatusBooleans(bool resetAll = false);

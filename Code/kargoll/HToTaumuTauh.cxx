@@ -36,6 +36,12 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	std::vector<TString> temp (trigNames, trigNames + sizeof(trigNames) / sizeof(TString) );
 	cTriggerNames = temp;
 
+	// Set object corrections to use
+	correctTaus = "scalecorr"; // "scalecorr" = energy scale correction by decay mode
+	correctMuons = ""; // "roch" = Rochester muon ID corrections
+	correctElecs = ""; // "run" = run dependent corrections, "JER" = jet energy resolution smearing
+	correctJets = "";
+
 	// implemented categories:
 	// VBFTight, VBFLoose
 	// OneJetHigh, OneJetLow, OneJetBoost
@@ -54,14 +60,14 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	wJetsBGSource = "MC";
 
 	// this one is used to set the event yield for W+Jet
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  6563.19881424) );
-	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh", 1123.73302862) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",   4750.07152276) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",   660.05349714) );
-	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",  149.35272929) );
-	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",      62.42946531) );
-	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",       4.63724615) );
-	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",  13271.59050205) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  6612.70080677) );
+	wJetsYieldMap.insert(std::pair<TString,double>("ZeroJetHigh", 1136.18623479) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetLow",   4821.52573317) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetHigh",   682.53509800) );
+	wJetsYieldMap.insert(std::pair<TString,double>("OneJetBoost",  161.41534129) );
+	wJetsYieldMap.insert(std::pair<TString,double>("VBFLoose",      63.52357318) );
+	wJetsYieldMap.insert(std::pair<TString,double>("VBFTight",       4.97943130) );
+	wJetsYieldMap.insert(std::pair<TString,double>("Inclusive",  13341.30669663) );
 
 	// flat to switch data-driven QCD on/off
 	// set to "true" if running analyses (i.e. in categories)
@@ -69,17 +75,19 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	qcdShapeFromData = false;
 
 	// these are used to set the event yield for QCD
-	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetLow",   16001.31926599) );
-	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",    468.70761685) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetLow",     4769.93237729) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetHigh",     270.72412791) );
-	qcdYieldMap.insert(std::pair<TString,double>("OneJetBoost",     55.06752318) );
-	qcdYieldMap.insert(std::pair<TString,double>("VBFLoose",        38.36569582) );
-	qcdYieldMap.insert(std::pair<TString,double>("VBFTight",         5.73986779) );
-	qcdYieldMap.insert(std::pair<TString,double>("Inclusive",    21779.44470046) );
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetLow",  16249.03840895) );
+	qcdYieldMap.insert(std::pair<TString,double>("ZeroJetHigh",   477.41135533) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetLow",    4919.12972454) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetHigh",    285.24033925) );
+	qcdYieldMap.insert(std::pair<TString,double>("OneJetBoost",    57.64345736) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFLoose",       38.24257210) );
+	qcdYieldMap.insert(std::pair<TString,double>("VBFTight",        5.73366106) );
+	qcdYieldMap.insert(std::pair<TString,double>("Inclusive",   22224.02301872) );
 }
 
 HToTaumuTauh::~HToTaumuTauh(){
+	delete RSF;
+
 	if (verbose) std::cout << "HToTaumuTauh::~HToTaumuTauh()" << std::endl;
 	for(int j=0; j<Npassed.size(); j++){
 	std::cout << "HToTaumuTauh::~HToTaumuTauh Selection Summary before: "
@@ -499,6 +507,8 @@ void  HToTaumuTauh::Setup(){
 	  std::cout << "WARNING: category " << categoryFlag << " does not exist. Using NoCategory instead." << std::endl;
 	  configure_NoCategory();
   }
+
+  RSF = new ReferenceScaleFactors(runtype);
 }
 
 void HToTaumuTauh::Configure(){
@@ -664,6 +674,7 @@ void  HToTaumuTauh::Store_ExtraDist(){
 void  HToTaumuTauh::doEvent(){
   if (verbose) std::cout << "HToTaumuTauh::doEvent() >>>>>>>>>>>>>>>>" << std::endl;
   if (verbose) std::cout << "	Category: " << categoryFlag << std::endl;
+
   // set variables to hold selected objects to default values
   selVertex = -1;
   selMuon = -1;
@@ -683,6 +694,15 @@ void  HToTaumuTauh::doEvent(){
   double wobs=1;
   if(!Ntp->isData()){w = Ntp->PUWeightFineBins();}
   else{w=1;}
+
+  // set object corrections at beginning of each event to avoid segfaults
+  // and to allow for using different corrections in different analyses
+  bool isSignal = ((id >= 10 && id <= 13) || (id >= 30 && id <= 33)) ? true : false;
+  if (isSignal) Ntp->SetTauCorrections(correctTaus);
+  else			Ntp->SetTauCorrections("");
+  Ntp->SetMuonCorrections(correctMuons);
+  Ntp->SetElecCorrections(correctElecs);
+  Ntp->SetJetCorrections(correctJets);
 
   // Apply Selection
 
@@ -929,7 +949,7 @@ void  HToTaumuTauh::doEvent(){
 	  tauPt = Ntp->PFTau_p4(selTau).Pt();
   }
 
-  // calculate pt of higgs candidatef
+  // calculate pt of higgs candidate
   if (verbose) std::cout << "	calculate Higgs pT" << std::endl;
   double higgsPt = -10;
   double higgsPhi = -10;
@@ -969,6 +989,25 @@ void  HToTaumuTauh::doEvent(){
 	  selJetdeta = -100;
 	  selNjetingap = -1;
 	  selMjj = -1;
+  }
+
+  // correction factors
+  if( !Ntp->isData() ){
+	  // apply trigger efficiencies
+	  if (selMuon != -1) w *= RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon));
+	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau, "")); // no Tau energy scale here
+	  // apply muon ID & iso scale factors
+	  if (selMuon != -1){
+		  w *= RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon));
+		  w *= RSF->HiggsTauTau_MuTau_Iso_Mu(Ntp->Muon_p4(selMuon));
+	  }
+	  // tau decay mode scale factors
+	  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#TauES_and_decay_mode_scale_facto
+	  if (selTau != -1){
+		  if(isSignal && Ntp->PFTau_hpsDecayMode(selTau) == 0) w *= 0.88;
+	  }
+	  // todo: b-tag scale factors
+	  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#B_tag_scale_factors
   }
 
   // define booleans for different stages of selection
