@@ -9,9 +9,10 @@
 /*
  * !!! Everything except for the helper functions needs to be customized for each user !!!
  */
-bool testPlotting = true;
+bool testPlotting = false;
 bool dym50 = true;
 bool signaltop = true;
+bool emb = true;
 TString prepend = "ztoemu_default_";
 TString signalName = "emu_DY";
 
@@ -22,7 +23,7 @@ void plotting(){
 	bool verbose = true;
 
 	// enter filename here
-	TString filename = "/user/nehrkorn/analysis_dym50_jeteta52.root";
+	TString filename = "/user/nehrkorn/analysis_emb_scaled.root";//dym50_jeteta52.root";
 	TFile* infile = new TFile(filename);
 	TFile* upfile = new TFile("/user/nehrkorn/jerjecup.root");
 	TFile* downfile = new TFile("/user/nehrkorn/jerjecdown.root");
@@ -95,7 +96,8 @@ void plotting(){
 	if(dym50)names.push_back("MC_DY");
 	if(!dym50)names.push_back("MC_ee_DY");
 	if(!dym50)names.push_back("MC_mumu_DY");
-	names.push_back("MC_tautau_DY");
+	if(emb)names.push_back("MC_tautau_emb");
+	if(!emb)names.push_back("MC_tautau_DY");
 	names.push_back("MC_emu_DY");
 	
 	// vectors necessary for reduced histograms
@@ -146,22 +148,38 @@ void plotting(){
 	
 	std::vector<double> mcscale;
 	std::vector<int> colors;
-	mcscale.push_back(1);
-	mcscale.push_back(lumi*xzz4l/nzz4l);
-	mcscale.push_back(lumi*xzz2l2q/nzz2l2q);
-	mcscale.push_back(lumi*xzz2l2nu/nzz2l2nu);
-	mcscale.push_back(lumi*xwz3lnu/nwz3lnu);
-	mcscale.push_back(lumi*xwz2l2q/nwz2l2q);
-	mcscale.push_back(lumi*xww/nww);
-	mcscale.push_back(lumi*xtt/ntt);
-	mcscale.push_back(lumi*xtw/ntw);
-	mcscale.push_back(lumi*xtbarw/ntbarw);
-	if(!dym50)mcscale.push_back(lumi*xdyeem20/ndyeem20);
-	if(!dym50)mcscale.push_back(lumi*xdymumum20/ndymumum20);
-	if(!dym50)mcscale.push_back(lumi*xdytautaum20/ndytautaum20);
-	if(dym50)mcscale.push_back(lumi*xdyllm50/ndyllm50);
-	if(dym50)mcscale.push_back(lumi*xdytautaum50/ndytautaum50);
-	mcscale.push_back(lumi*xsignal/nsignal);
+	if(emb){
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+		mcscale.push_back(1);
+	}else{
+		mcscale.push_back(1);
+		mcscale.push_back(lumi*xzz4l/nzz4l);
+		mcscale.push_back(lumi*xzz2l2q/nzz2l2q);
+		mcscale.push_back(lumi*xzz2l2nu/nzz2l2nu);
+		mcscale.push_back(lumi*xwz3lnu/nwz3lnu);
+		mcscale.push_back(lumi*xwz2l2q/nwz2l2q);
+		mcscale.push_back(lumi*xww/nww);
+		mcscale.push_back(lumi*xtt/ntt);
+		mcscale.push_back(lumi*xtw/ntw);
+		mcscale.push_back(lumi*xtbarw/ntbarw);
+		if(!dym50)mcscale.push_back(lumi*xdyeem20/ndyeem20);
+		if(!dym50)mcscale.push_back(lumi*xdymumum20/ndymumum20);
+		if(!dym50)mcscale.push_back(lumi*xdytautaum20/ndytautaum20);
+		if(dym50)mcscale.push_back(lumi*xdyllm50/ndyllm50);
+		if(dym50)mcscale.push_back(lumi*xdytautaum50/ndytautaum50);
+		mcscale.push_back(lumi*xsignal/nsignal);
+	}
 
 	colors.push_back(cqcd);
 	colors.push_back(czz4l);
@@ -243,9 +261,9 @@ void plotting(){
 		}
 	}
 
-	TH1D* reddata = getHisto("invmass_ptbalance_mData",1,1,infile);
+	TH1D* reddata = getHisto("invmass_ptbalance_widerangeData",1,1,infile);
 	std::vector<TH1D*> gethists = getHistos("invmass_ptbalance_m",names,mcscale,colors,infile,syst);
-	std::vector<TH1D*> redhists = produceReducedHistos(getHistos("invmass_ptbalance_m",names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors);
+	std::vector<TH1D*> redhists = produceReducedHistos(getHistos("invmass_ptbalance_widerange",names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors);
 	TFile* outfile = new TFile("invariant_mass.root","RECREATE");
 	reddata->Write();
 	for(unsigned i=0; i<redhists.size();i++){
@@ -314,12 +332,32 @@ void plotting(){
 	//}
 	//drawPlot(zpt_signal,zpt_dy,zpt_ratio,"Custom MC","Official MC","Z pt","GeV");
 
-	TH1D* zptw_signal = getHisto("zpt_weirdbinsMC_emu_DY",1,0,infile,0);
-	TH1D* zptw_dy = getHisto("zpt_weirdbinsMC_tautau_DY",1,2345,infile,0);
-	zptw_signal->Scale(1./zptw_signal->Integral(),"width");
-	zptw_dy->Scale(1./zptw_dy->Integral(),"width");
-	TH1D* zptw_ratio = getDataMC(zptw_signal,zptw_dy);
-	//drawPlot(zptw_signal,zptw_dy,zptw_ratio,"Custom MC","Official MC","Z pt","GeV");
+	TH1D* zptw_signal = getHisto("zptMC_emu_DY",1,0,infile,0);
+	TH1D* zptw_dy = getHisto("zptMC_tautau_DY",1,2345,infile,0);
+	const int n = 20;
+	double ynlo[n] = {73.6553,197.43,103.449,63.321,42.3373,30.0333,21.8391,16.6274,12.9576,10.2494,8.28162,6.70545,5.41327,4.47742,3.70678,3.12096,2.58732,2.19813,1.84185,1.59675};
+	double ynloe[n] = {0.504075,0.238295,0.0963858,0.0544992,0.0368917,0.0286056,0.0223235,0.0187628,0.0162989,0.0142999,0.012791,0.0119629,0.011009,0.00990161,0.00927022,0.00867596,0.00798123,0.00749499,0.00710057,0.00806605};
+	TH1D* zptnnlo = new TH1D("zptnnlo","Z p_{T} from FEWZ 3.1 (NNLO);p_{T}^{Z} / GeV; Events / 5 GeV",20,0.,100.);
+	zptnnlo->Sumw2();
+	for(unsigned i=0;i<zptnnlo->GetNbinsX();i++){
+		zptnnlo->SetBinContent(i+1,ynlo[i]);
+		zptnnlo->SetBinError(i+1,ynloe[i]);
+	}
+	if(zptnnlo->Integral()>0) zptnnlo->Scale(1./zptnnlo->Integral());
+	zptw_signal->Scale(1./zptw_signal->Integral());
+	zptw_dy->Scale(1./zptw_dy->Integral());
+	TH1D* zptw_sigratio = getDataMC(zptw_signal,zptnnlo);
+	TH1D* zptw_mcratio = getDataMC(zptw_dy,zptnnlo);
+	drawPlot(zptw_signal,zptnnlo,zptw_sigratio,"Pythia MC","FEWZ 3.1 (NNLO)","Z pt","GeV");
+	drawPlot(zptw_dy,zptnnlo,zptw_mcratio,"Madgraph MC","FEWZ 3.1 (NNLO)","Z pt","GeV");
+	std::cout << "### Madgraph vs. FEWZ 3.1 ###" << std::endl;
+	for(unsigned i=1;i<=zptw_mcratio->GetNbinsX();i++){
+		std::cout << "i = " << i << ", mc/nnlo = " << zptw_mcratio->GetBinContent(i) << std::endl;
+	}
+	std::cout << "### Pythia vs. FEWZ 3.1 ###" << std::endl;
+	for(unsigned i=1;i<=zptw_sigratio->GetNbinsX();i++){
+		std::cout << "i = " << i << ", mc/nnlo = " << zptw_sigratio->GetBinContent(i) << std::endl;
+	}
 
 	TH1D* zeta_signal = getHisto("zetaMC_emu_DY",1,0,infile,0);
 	TH1D* zeta_dy = getHisto("zetaMC_tautau_DY",1,2345,infile,0);
