@@ -67,7 +67,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 	latex.SetTextSize(0.03);
 	latex.SetNDC();
 
-	for (int j = 0; j < histo.size(); j++) {
+	for (unsigned int j = 0; j < histo.size(); j++) {
 		if (verbose)
 			std::cout << "Plots::Plot1D " << histo.size() << " j= " << j << " color.size()= " << colour.size() << " " << histo.at(j).size() << std::endl;
 		if (histo.at(j).size() > 0 && histo.at(j).size() == colour.size()) {
@@ -98,7 +98,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 			histo.at(j).at(0).SetMarkerColor(colour.at(0));
 			if (verbose)
 				std::cout << histo.at(j).at(0).GetTitle() << std::endl;
-			for (int i = histo.at(j).size() - 1; i >= 0; i--) {
+			for (unsigned int i = histo.at(j).size() - 1; i >= 0; i--) {
 				histo.at(j).at(i).SetLineColor(colour.at(i));
 				histo.at(j).at(i).SetFillColor(colour.at(i));
 				if (i + 1 < histo.at(j).size()) {
@@ -113,7 +113,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 				}
 			}
 			double theIntegral(0);
-			for (int i = 0; i < histo.at(j).size(); i++) {
+			for (unsigned int i = 0; i < histo.at(j).size(); i++) {
 				theIntegral += histo.at(j).at(i).Integral();
 				if (i == 0) {
 					Data_Integral += histo.at(j).at(0).Integral();
@@ -143,7 +143,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 				}
 			}
 			if (doscale) {
-				for (int i = 0; i < histo.at(j).size(); i++) {
+				for (unsigned int i = 0; i < histo.at(j).size(); i++) {
 					if (i != 0 && Data_Integral > 0 && MC_Integral > 0)
 						histo.at(j).at(i).Scale(Data_Integral / MC_Integral);
 				}
@@ -152,7 +152,7 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 			}
 			if (verbose)
 				std::cout << "A" << std::endl;
-			for (int l = 0; l < 2; l++) {
+			for (unsigned int l = 0; l < 2; l++) {
 				c.Clear();
 				c.SetLogy(0);
 				if (l == 1) {
@@ -217,15 +217,15 @@ void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colou
 					c.Print(EPSName);
 				}
 				if (l == 0) {
-					for (int a = 0; a < HistogramNames_.size(); a++) {
+					for (unsigned int a = 0; a < HistogramNames_.size(); a++) {
 						if (histo.at(j).at(0).GetName() == HistogramNames_.at(a)) {
 							TFile f(File_ + "_EXTRA.root", "RECREATE");
 							TString n = HistogramNames_.at(a);
 							n.ReplaceAll("Data", "");
-							int s = histo.at(j).size() - 1;
+							unsigned int s = histo.at(j).size() - 1;
 							histo.at(j).at(0).Write((histo.at(j).at(0)).GetName());
 							histo.at(j).at(s).Write(n + "sig");
-							for (int t = 2; t < s; t++) {
+							for (unsigned int t = 2; t < s; t++) {
 								histo.at(j).at(2).Add(&histo.at(j).at(t));
 							}
 							histo.at(j).at(2).Write(n + "background");
@@ -257,7 +257,7 @@ void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt, bool lt, std::v
 			if (gt) {
 				double sig = histo.at(histo.size() - 1).Integral(b, histo.at(0).GetNbinsX() + 1);
 				double bkg(0);
-				for (int i = 1; i < histo.size() - 1; i++) {
+				for (unsigned int i = 1; i < histo.size() - 1; i++) {
 					bkg += histo.at(i).Integral(b, histo.at(0).GetNbinsX() + 1);
 				}
 				if (/*1+sig/bkg >0 && */(sig + bkg) != 0) {
@@ -269,7 +269,7 @@ void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt, bool lt, std::v
 			if (lt) {
 				double sig = histo.at(histo.size() - 1).Integral(0, b);
 				double bkg(0);
-				for (int i = 1; i < histo.size() - 1; i++) {
+				for (unsigned int i = 1; i < histo.size() - 1; i++) {
 					bkg += histo.at(i).Integral(0, b);
 				}
 				if (/*1+sig/bkg >0 && */sig + bkg != 0) {
@@ -298,7 +298,7 @@ void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt, bool lt, std::v
 
 		if (!name.Contains("Accumdist")) {
 			c.Print(EPSName);
-			Int_t bmax = histo.at(0).GetMaximumBin();
+			int bmax = histo.at(0).GetMaximumBin();
 			if (gt)
 				bmax += 1;
 			if (verbose)
@@ -322,29 +322,29 @@ void Plots::Plot1Dsigtobkg(std::vector<TH1D> histo, bool gt, bool lt, std::vecto
 	c.Update();
 
 	histo.at(0).Reset();
-	if (histo.size() > 2) {
-		for (int b = 1; b <= histo.at(0).GetNbinsX(); b++) {
-			if (gt) {
+	if(histo.size() > 2) {
+		for(int b = 1; b <= histo.at(0).GetNbinsX(); b++) {
+			if(gt) {
 				double sig = histo.at(histo.size() - 1).Integral(b, histo.at(0).GetNbinsX() + 1);
 				double bkg(0);
-				for (int i = 1; i < histo.size() - 1; i++) {
+				for(unsigned int i = 1; i < histo.size() - 1; i++) {
 					bkg += histo.at(i).Integral(b, histo.at(0).GetNbinsX() + 1);
 				}
-				if ((bkg + sig) != 0) {
+				if((bkg + sig) != 0) {
 					histo.at(0).SetBinContent(b, sig / (sig + bkg));
-				} else {
+				}else{
 					histo.at(0).SetBinContent(b, 0);
 				}
 			}
-			if (lt) {
+			if(lt){
 				double sig = histo.at(histo.size() - 1).Integral(0, b);
 				double bkg(0);
-				for (int i = 1; i < histo.size() - 1; i++) {
+				for(unsigned int i = 1; i < histo.size() - 1; i++) {
 					bkg += histo.at(i).Integral(0, b);
 				}
-				if (sig + bkg != 0) {
+				if(sig + bkg != 0) {
 					histo.at(0).SetBinContent(b, sig / (sig + bkg));
-				} else {
+				}else{
 					histo.at(0).SetBinContent(b, 0);
 				}
 			}
@@ -406,7 +406,7 @@ void Plots::Plot1D_DataMC_Compare(std::vector<TH1D> histo, std::vector<int> colo
 	c.Clear();
 
 	if (histo.size() > 4) {
-		for (int i = 0; i < histo.size(); i++) {
+		for (unsigned int i = 0; i < histo.size(); i++) {
 			if (i > 1) {
 				histo.at(1).Add(&histo.at(i), 1);
 			}
@@ -500,12 +500,12 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 		std::vector<int> types;
 		TString LegType = "";
 		double integral = 0;
-		for (int i = 0; i < histo.size(); i++) {
+		for (unsigned int i = 0; i < histo.size(); i++) {
 			if (verbose) std::cout << "Legend " << legend.at(i) << " Integal " << histo.at(i).Integral() << std::endl;
 			if (LegType != legend.at(i)) {
 				LegType = legend.at(i);
 				integral = 0;
-				for (int j = i; j < histo.size(); j++) {
+				for (unsigned int j = i; j < histo.size(); j++) {
 					if (LegType == legend.at(j))
 						integral += histo.at(j).Integral();
 				}
@@ -529,19 +529,19 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 		std::vector<int>::iterator itcol = colour.begin();
 		colour.insert(itcol + 1, 55);
 		histo.at(1).Reset();
-		for (int i = 2; i < histo.size(); i++) {
+		for (unsigned int i = 2; i < histo.size(); i++) {
 			histo.at(1).Add(&histo.at(i));
 		}
 		if (verbose)
 			std::cout << "n(types) = " << types.size() << std::endl;
 		LegType = "null";
 
-		for (int i = 0; i < histo.size(); i++) {
+		for (unsigned int i = 0; i < histo.size(); i++) {
 			if (verbose)
 				std::cout << "histo i" << i << std::endl;
 			if (LegType != legend.at(i)) {
 				LegType = legend.at(i);
-				for (int j = i + 1; j < histo.size(); j++) {
+				for (unsigned int j = i + 1; j < histo.size(); j++) {
 					if (verbose)
 						std::cout << "histo j" << j << std::endl;
 					if (legend.at(j) == legend.at(i)){
@@ -559,7 +559,7 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 		}
 
 		// loop to allow splitting of TH2D histograms on multiple canvases
-		int nPlotted(0);
+		unsigned int nPlotted(0);
 		while (nPlotted < types.size()) {
 			if (verbose) std::cout << "nPlotted = " << nPlotted << ", ntypes = " << types.size() << std::endl;
 			// split canvas for TH2D histograms
@@ -579,7 +579,7 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 			}
 
 
-			for (int i = nPlotted; (i < nPlotted+6) && (i < types.size());i++) {
+			for (unsigned int i = nPlotted; (i < nPlotted+6) && (i < types.size());i++) {
 				int type = types.at(i);
 				if (verbose) std::cout << "loop: " << i << ", type = " << types.at(i) << " legend.at(type) = " << legend.at(type) << std::endl;
 				c.cd(i - nPlotted + 1);
@@ -623,9 +623,6 @@ void Plots::Plot3D(std::vector<TH3F> histo, std::vector<int> colour, std::vector
 			std::cout << "Starting Plot3D" << histo.size() << " " << colour.size() << " " << legend.size() << std::endl;
 		c.Clear();
 		c.Divide(2, 2);
-		int type = 0;
-		int index = 0;
-		std::cout << "A" << std::endl;
 		TLegend leg(0.1, 0.4, 0.9, 0.9);
 		leg.SetBorderSize(0);
 		leg.SetFillStyle(4000);
@@ -635,7 +632,7 @@ void Plots::Plot3D(std::vector<TH3F> histo, std::vector<int> colour, std::vector
 		leg.SetNColumns(1);
 		leg.SetColumnSeparation(0.05);
 		for (unsigned int p = 0; p < 4; p++) {
-			for (int i = 0; i < histo.size(); i++) {
+			for (unsigned int i = 0; i < histo.size(); i++) {
 				histo.at(i).SetMarkerSize(0.25);
 				histo.at(i).SetMarkerColor(colour.at(i));
 				histo.at(i).GetXaxis()->SetTitleOffset(2.0);
@@ -684,7 +681,7 @@ void Plots::Plot3D(std::vector<TH3F> histo, std::vector<int> colour, std::vector
 void Plots::CMSStyle1() {
 	std::cout << "Configuring Plots::CMSStyle1()" << std::endl;
 	// use plain black on white colors
-	Int_t icol = 0; // WHITE
+	int icol = 0; // WHITE
 	gStyle->SetFrameBorderMode(icol);
 	gStyle->SetFrameFillColor(icol);
 	gStyle->SetCanvasBorderMode(icol);
@@ -707,8 +704,8 @@ void Plots::CMSStyle1() {
 	gStyle->SetTitleYOffset(1.4);
 
 	// use large fonts
-	//Int_t font=72; // Helvetica italics
-	Int_t font = 42; // Helvetica
+	//int font=72; // Helvetica italics
+	int font = 42; // Helvetica
 	Double_t tsize = 0.05;
 	gStyle->SetTextFont(font);
 
@@ -755,7 +752,7 @@ void Plots::CMSStyle1() {
 void Plots::CMSStyle2() {
 	std::cout << "Configuring Plots::CMSStyle2()" << std::endl;
 	// use plain black on white colors
-	Int_t icol = 0; // WHITE
+	int icol = 0; // WHITE
 	gStyle->SetFrameBorderMode(icol);
 	gStyle->SetFrameFillColor(icol);
 	gStyle->SetCanvasBorderMode(icol);
@@ -779,8 +776,8 @@ void Plots::CMSStyle2() {
 	gStyle->SetTitleYOffset(1.4);
 
 	// use large fonts
-	//Int_t font=72; // Helvetica italics
-	Int_t font = 42; // Helvetica
+	//int font=72; // Helvetica italics
+	int font = 42; // Helvetica
 	Double_t tsize = 0.05;
 	gStyle->SetTextFont(font);
 

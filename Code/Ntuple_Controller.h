@@ -134,7 +134,7 @@ class Ntuple_Controller{
   Ntuple_Controller(std::vector<TString> RootFiles);
 
   // Destructor
-  ~Ntuple_Controller() ;
+  virtual ~Ntuple_Controller() ;
 
   // Event initializer
   void InitEvent();
@@ -662,7 +662,7 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    unsigned int MCTau_JAK(unsigned int i){return Ntp->MCTau_JAK->at(i);}
    unsigned int MCTau_DecayBitMask(unsigned int i){return Ntp->MCTau_DecayBitMask->at(i);}
    //Tau and decay products
-   int NMCTauDecayProducts(unsigned int i){if(0<=i && i<NMCTaus()) return Ntp->MCTauandProd_p4->at(i).size(); return 0;}
+   int NMCTauDecayProducts(unsigned int i){if(0<=i && i<(unsigned int)NMCTaus()) return Ntp->MCTauandProd_p4->at(i).size(); return 0;}
    TLorentzVector MCTauandProd_p4(unsigned int i, unsigned int j){return TLorentzVector(Ntp->MCTauandProd_p4->at(i).at(j).at(1),Ntp->MCTauandProd_p4->at(i).at(j).at(2),Ntp->MCTauandProd_p4->at(i).at(j).at(3),Ntp->MCTauandProd_p4->at(i).at(j).at(0));}
    int MCTauandProd_pdgid(unsigned int i, unsigned int j){return Ntp->MCTauandProd_pdgid->at(i).at(j);}
    unsigned int MCTauandProd_midx(unsigned int i, unsigned int j){return Ntp->MCTauandProd_midx->at(i).at(j);}
