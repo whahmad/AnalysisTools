@@ -16,9 +16,10 @@ TString Plots::File_;
 std::vector<TString> Plots::HistogramNames_;
 
 Plots::Plots() :
-		doscale(false),
-		verbose(false),
-		dooneprofile(false) {
+  doscale(false),
+  verbose(false),
+  dooneprofile(false) 
+{
 
 }
 
@@ -57,186 +58,183 @@ void Plots::SaveHistograms(TString File, std::vector<TString> HistogramNames) {
 }
 
 void Plots::Plot1D(std::vector<std::vector<TH1D> > histo, std::vector<int> colour, std::vector<TString> legend) {
-
-	std::cout << "Plots::Plot1D" << std::endl;
-	TCanvas c("c", "c", 200, 10, 750, 750);
-	c.Update();
-	c.Clear();
-	c.Update();
-	TLatex latex;
-	latex.SetTextSize(0.03);
-	latex.SetNDC();
-
-	for (unsigned int j = 0; j < histo.size(); j++) {
-		if (verbose)
-			std::cout << "Plots::Plot1D " << histo.size() << " j= " << j << " color.size()= " << colour.size() << " " << histo.at(j).size() << std::endl;
-		if (histo.at(j).size() > 0 && histo.at(j).size() == colour.size()) {
-			TLegend leg(0.25, 0.75, 0.9, 0.925);
-			leg.SetBorderSize(0);
-			leg.SetFillStyle(4000);
-			leg.SetFillColor(0);
-			leg.SetTextSize(0.03);
-			leg.SetMargin(0.15);
-			leg.SetNColumns(3);
-			leg.SetColumnSeparation(0.05);
-			TH1D Total("Total", "Total", histo.at(j).at(0).GetNbinsX(), histo.at(j).at(0).GetXaxis()->GetXmin(), histo.at(j).at(0).GetXaxis()->GetXmax());
-			Total.SetFillStyle(3005);
-			Total.SetFillColor(1);
-			Total.SetLineColor(18);
-			Total.SetMarkerColor(1);
-			Total.SetMarkerSize(0.001);
-			Total.Sumw2();
-			TString N = "MCStack";
-			N += j;
-			N += histo.at(j).at(0).GetName();
-			THStack MCHistoStack(N, histo.at(j).at(0).GetName());
-			double MC_Integral(0);
-			double Data_Integral(0);
-			bool cflag = true;
-			TString l = "";
-			histo.at(j).at(0).SetLineColor(colour.at(0));
-			histo.at(j).at(0).SetMarkerColor(colour.at(0));
-			if (verbose)
-				std::cout << histo.at(j).at(0).GetTitle() << std::endl;
-			for (unsigned int i = histo.at(j).size() - 1; i >= 0; i--) {
-				histo.at(j).at(i).SetLineColor(colour.at(i));
-				histo.at(j).at(i).SetFillColor(colour.at(i));
-				if (i + 1 < histo.at(j).size()) {
-					if (legend.at(i) != l) {
-						l = legend.at(i);
-						cflag = true;
-					}
-				}
-				if (cflag && histo.at(j).at(i).Integral() > 0) {
-					histo.at(j).at(i).SetLineColor(1);
-					cflag = false;
-				}
-			}
-			double theIntegral(0);
-			for (unsigned int i = 0; i < histo.at(j).size(); i++) {
-				theIntegral += histo.at(j).at(i).Integral();
-				if (i == 0) {
-					Data_Integral += histo.at(j).at(0).Integral();
-					leg.AddEntry(&histo.at(j).at(i), legend.at(i), "pe");
-					theIntegral = 0;
-				} else {
-					if (colour.size() <= i + 1 && theIntegral >= 0) {
-						histo.at(j).at(i).SetLineColor(1);
-						leg.AddEntry(&histo.at(j).at(i), legend.at(i), "F");
-						theIntegral = 0;
-					} else if (colour.size() > i + 1) {
-						if (colour.at(i) != colour.at(i + 1) && theIntegral >= 0) {
-							histo.at(j).at(i).SetLineColor(1);
-							leg.AddEntry(&histo.at(j).at(i), legend.at(i), "F");
-							theIntegral = 0;
-						}
-					}
-					if (i != 0) {
-						if (histo.at(j).at(i).Integral() > 0) {
-							MCHistoStack.Add(&histo.at(j).at(i));
-							Total.Add(&histo.at(j).at(i));
-						}
-					}
-					MC_Integral += histo.at(j).at(i).Integral();
-					if (verbose)
-						std::cout << histo.at(j).at(i).GetTitle() << " " << histo.at(j).at(i).Integral() << " i= " << i << std::endl;
-				}
-			}
-			if (doscale) {
-				for (unsigned int i = 0; i < histo.at(j).size(); i++) {
-					if (i != 0 && Data_Integral > 0 && MC_Integral > 0)
-						histo.at(j).at(i).Scale(Data_Integral / MC_Integral);
-				}
-				if (Data_Integral > 0 && MC_Integral > 0)
-					Total.Scale(Data_Integral / MC_Integral);
-			}
-			if (verbose)
-				std::cout << "A" << std::endl;
-			for (unsigned int l = 0; l < 2; l++) {
-				c.Clear();
-				c.SetLogy(0);
-				if (l == 1) {
-					c.Clear();
-					c.SetLogy(1);
-				}
-				if (Data_Integral > 0) {
-					double max = histo.at(j).at(0).GetBinContent(histo.at(j).at(0).GetMaximumBin());
-					if (l == 1) {
-						histo.at(j).at(0).SetMinimum(0.01);
-						histo.at(j).at(0).SetMaximum(100 * max);
-					} else {
-						histo.at(j).at(0).SetMinimum(0);
-						histo.at(j).at(0).SetMaximum(1.7 * max);
-					}
-					histo.at(j).at(0).Draw("E");
-					MCHistoStack.Draw("Histsame");
-					Total.Draw("E2same");
-					histo.at(j).at(0).Draw("Esame");
-					histo.at(j).at(0).Draw("axissame");
-					TString hTitle = histo.at(j).at(0).GetName();
-					if (hTitle.Contains("KSTest")) {
-						double KS = histo.at(j).at(0).KolmogorovTest(&Total);
-						hTitle = histo.at(j).at(0).GetTitle();
-						hTitle += " KS=";
-						hTitle += KS;
-						latex.DrawLatex(0.225, 0.95, hTitle);
-					}
-					if (verbose)
-						std::cout << "Data: " << histo.at(j).at(0).Integral() << " MC: " << Total.Integral() << std::endl;
-				} else {
-					MCHistoStack.Draw("Hist");
-					double max = Total.GetBinContent(Total.GetMaximumBin());
-					if (l == 1) {
-						histo.at(j).at(0).SetMinimum(0.01);
-						if (max != 0) {
-							histo.at(j).at(0).SetMaximum(100 * max);
-						} else {
-							histo.at(j).at(0).SetMaximum(100);
-						}
-					} else {
-						histo.at(j).at(0).SetMinimum(0);
-						histo.at(j).at(0).SetMaximum(1.7 * max);
-					}
-					histo.at(j).at(0).Draw("E");
-					MCHistoStack.Draw("Histsame");
-					MCHistoStack.Draw("axissame");
-					Total.Draw("E2same");
-				}
-				leg.Draw();
-				c.Update();
-				TString name = histo.at(j).at(0).GetName();
-				if (l == 1) {
-					name += "_log";
-				}
-				name += "_index_";
-				name += j;
-				TString EPSName = "EPS/";
-				EPSName += name;
-				EPSName += ".eps";
-				if (l == 0 || !name.Contains("Nminus") || name.Contains("Accumdist")) {
-					c.Print(EPSName);
-				}
-				if (l == 0) {
-					for (unsigned int a = 0; a < HistogramNames_.size(); a++) {
-						if (histo.at(j).at(0).GetName() == HistogramNames_.at(a)) {
-							TFile f(File_ + "_EXTRA.root", "RECREATE");
-							TString n = HistogramNames_.at(a);
-							n.ReplaceAll("Data", "");
-							unsigned int s = histo.at(j).size() - 1;
-							histo.at(j).at(0).Write((histo.at(j).at(0)).GetName());
-							histo.at(j).at(s).Write(n + "sig");
-							for (unsigned int t = 2; t < s; t++) {
-								histo.at(j).at(2).Add(&histo.at(j).at(t));
-							}
-							histo.at(j).at(2).Write(n + "background");
-							f.Close();
-						}
-					}
-				}
-			}
-		}
+  
+  std::cout << "Plots::Plot1D" << std::endl;
+  TCanvas c("c", "c", 200, 10, 750, 750);
+  c.Update();
+  c.Clear();
+  c.Update();
+  TLatex latex;
+  latex.SetTextSize(0.03);
+  latex.SetNDC();
+  
+  for (unsigned int j = 0; j < histo.size(); j++) {
+    if (verbose)
+      std::cout << "Plots::Plot1D " << histo.size() << " j= " << j << " color.size()= " << colour.size() << " " << histo.at(j).size() << std::endl;
+    if (histo.at(j).size() > 0 && histo.at(j).size() == colour.size()) {
+      TLegend leg(0.25, 0.75, 0.9, 0.925);
+      leg.SetBorderSize(0);
+      leg.SetFillStyle(4000);
+      leg.SetFillColor(0);
+      leg.SetTextSize(0.03);
+      leg.SetMargin(0.15);
+      leg.SetNColumns(3);
+      leg.SetColumnSeparation(0.05);
+      TH1D Total("Total", "Total", histo.at(j).at(0).GetNbinsX(), histo.at(j).at(0).GetXaxis()->GetXmin(), histo.at(j).at(0).GetXaxis()->GetXmax());
+      Total.SetFillStyle(3005);
+      Total.SetFillColor(1);
+      Total.SetLineColor(18);
+      Total.SetMarkerColor(1);
+      Total.SetMarkerSize(0.001);
+      Total.Sumw2();
+      TString N = "MCStack";
+      N += j;
+      N += histo.at(j).at(0).GetName();
+      THStack MCHistoStack(N, histo.at(j).at(0).GetName());
+      double MC_Integral(0);
+      double Data_Integral(0);
+      bool cflag = true;
+      TString l = "";
+      histo.at(j).at(0).SetLineColor(colour.at(0));
+      histo.at(j).at(0).SetMarkerColor(colour.at(0));
+      if (verbose) std::cout << histo.at(j).at(0).GetTitle() << std::endl;
+      for (int i = histo.at(j).size() - 1; i >= 0; i--) {
+	histo.at(j).at(i).SetLineColor(colour.at(i));
+	histo.at(j).at(i).SetFillColor(colour.at(i));
+	if (i + 1 < histo.at(j).size()) {
+	  if (legend.at(i) != l) {
+	    l = legend.at(i);
+	    cflag = true;
+	  }
 	}
-	std::cout << "Plot1D done " << std::endl;
+	if (cflag && histo.at(j).at(i).Integral() > 0) {
+	  histo.at(j).at(i).SetLineColor(1);
+	  cflag = false;
+	}
+      }
+      double theIntegral(0);
+      for (unsigned int i = 0; i < histo.at(j).size(); i++) {
+	theIntegral += histo.at(j).at(i).Integral();
+	if (i == 0) {
+	  Data_Integral += histo.at(j).at(0).Integral();
+	  leg.AddEntry(&histo.at(j).at(i), legend.at(i), "pe");
+	  theIntegral = 0;
+	} else {
+	  if (colour.size() <= i + 1 && theIntegral >= 0) {
+	    histo.at(j).at(i).SetLineColor(1);
+	    leg.AddEntry(&histo.at(j).at(i), legend.at(i), "F");
+	    theIntegral = 0;
+	  } else if (colour.size() > i + 1) {
+	    if (colour.at(i) != colour.at(i + 1) && theIntegral >= 0) {
+	      histo.at(j).at(i).SetLineColor(1);
+	      leg.AddEntry(&histo.at(j).at(i), legend.at(i), "F");
+	      theIntegral = 0;
+	    }
+	  }
+	  if (i != 0) {
+	    if (histo.at(j).at(i).Integral() > 0) {
+	      MCHistoStack.Add(&histo.at(j).at(i));
+	      Total.Add(&histo.at(j).at(i));
+	    }
+	  }
+	  MC_Integral += histo.at(j).at(i).Integral();
+	  if (verbose) std::cout << histo.at(j).at(i).GetTitle() << " " << histo.at(j).at(i).Integral() << " i= " << i << std::endl;
+	}
+      }
+      if (doscale) {
+	for (unsigned int i = 0; i < histo.at(j).size(); i++) {
+	  if (i != 0 && Data_Integral > 0 && MC_Integral > 0)
+	    histo.at(j).at(i).Scale(Data_Integral / MC_Integral);
+	}
+	if (Data_Integral > 0 && MC_Integral > 0)
+	  Total.Scale(Data_Integral / MC_Integral);
+      }
+      if(verbose) std::cout << "A" << std::endl;
+      for (unsigned int l = 0; l < 2; l++) {
+	c.Clear();
+	c.SetLogy(0);
+	if (l == 1) {
+	  c.Clear();
+	  c.SetLogy(1);
+	}
+	if (Data_Integral > 0) {
+	  double max = histo.at(j).at(0).GetBinContent(histo.at(j).at(0).GetMaximumBin());
+	  if (l == 1) {
+	    histo.at(j).at(0).SetMinimum(0.01);
+	    histo.at(j).at(0).SetMaximum(100 * max);
+	  } else {
+	    histo.at(j).at(0).SetMinimum(0);
+	    histo.at(j).at(0).SetMaximum(1.7 * max);
+	  }
+	  histo.at(j).at(0).Draw("E");
+	  MCHistoStack.Draw("Histsame");
+	  Total.Draw("E2same");
+	  histo.at(j).at(0).Draw("Esame");
+	  histo.at(j).at(0).Draw("axissame");
+	  TString hTitle = histo.at(j).at(0).GetName();
+	  if (hTitle.Contains("KSTest")) {
+	    double KS = histo.at(j).at(0).KolmogorovTest(&Total);
+	    hTitle = histo.at(j).at(0).GetTitle();
+	    hTitle += " KS=";
+	    hTitle += KS;
+	    latex.DrawLatex(0.225, 0.95, hTitle);
+	  }
+	  if (verbose)
+	    std::cout << "Data: " << histo.at(j).at(0).Integral() << " MC: " << Total.Integral() << std::endl;
+	} else {
+	  MCHistoStack.Draw("Hist");
+	  double max = Total.GetBinContent(Total.GetMaximumBin());
+	  if (l == 1) {
+	    histo.at(j).at(0).SetMinimum(0.01);
+	    if (max != 0) {
+	      histo.at(j).at(0).SetMaximum(100 * max);
+	    } else {
+	      histo.at(j).at(0).SetMaximum(100);
+	    }
+	  } else {
+	    histo.at(j).at(0).SetMinimum(0);
+	    histo.at(j).at(0).SetMaximum(1.7 * max);
+	  }
+	  histo.at(j).at(0).Draw("E");
+	  MCHistoStack.Draw("Histsame");
+	  MCHistoStack.Draw("axissame");
+	  Total.Draw("E2same");
+	}
+	leg.Draw();
+	c.Update();
+	TString name = histo.at(j).at(0).GetName();
+	if (l == 1) {
+	  name += "_log";
+	}
+	name += "_index_";
+	name += j;
+	TString EPSName = "EPS/";
+	EPSName += name;
+	EPSName += ".eps";
+	if (l == 0 || !name.Contains("Nminus") || name.Contains("Accumdist")) {
+	  c.Print(EPSName);
+	}
+	if (l == 0) {
+	  for (unsigned int a = 0; a < HistogramNames_.size(); a++) {
+	    if (histo.at(j).at(0).GetName() == HistogramNames_.at(a)) {
+	      TFile f(File_ + "_EXTRA.root", "RECREATE");
+	      TString n = HistogramNames_.at(a);
+	      n.ReplaceAll("Data", "");
+	      unsigned int s = histo.at(j).size() - 1;
+	      histo.at(j).at(0).Write((histo.at(j).at(0)).GetName());
+	      histo.at(j).at(s).Write(n + "sig");
+	      for (unsigned int t = 2; t < s; t++) {
+		histo.at(j).at(2).Add(&histo.at(j).at(t));
+	      }
+	      histo.at(j).at(2).Write(n + "background");
+	      f.Close();
+	    }
+	  }
+	}
+      }
+    }
+  }
+  std::cout << "Plot1D done " << std::endl;
 }
 
 void Plots::Plot1DSignificance(std::vector<TH1D> histo, bool gt, bool lt, std::vector<int> colour, std::vector<TString> legend) {
