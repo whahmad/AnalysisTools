@@ -8,7 +8,6 @@
 #include "TGraphAsymmErrors.h"
 #include "ReferenceScaleFactors.h"
 #include "PDFweights.h"
-#include "RecoilCorrector.h"
 
 class ZtoEMu : public Selection {
 

@@ -725,6 +725,13 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    float    Electron_neutralHadronIso(unsigned int i){return Ntp->Electron_neutralHadronIso->at(i);}
    float    Electron_photonIso(unsigned int i){return Ntp->Electron_photonIso->at(i);}
    
+   float    Electron_isoDeposits_chargedHadronIso04(unsigned int i){return Ntp->Electron_isoDeposits_chargedHadronIso04->at(i);}
+   float    Electron_isoDeposits_neutralHadronIso04(unsigned int i){return Ntp->Electron_isoDeposits_neutralHadronIso04->at(i);}
+   float    Electron_isoDeposits_photonIso04(unsigned int i){return Ntp->Electron_isoDeposits_photonIso04->at(i);}
+   float    Electron_isoDeposits_chargedHadronIso03(unsigned int i){return Ntp->Electron_isoDeposits_chargedHadronIso03->at(i);}
+   float    Electron_isoDeposits_neutralHadronIso03(unsigned int i){return Ntp->Electron_isoDeposits_neutralHadronIso03->at(i);}
+   float    Electron_isoDeposits_photonIso03(unsigned int i){return Ntp->Electron_isoDeposits_photonIso03->at(i);}
+
    float    Electron_sigmaIetaIeta(unsigned int i){return Ntp->Electron_sigmaIetaIeta->at(i);}
    float    Electron_hadronicOverEm(unsigned int i){return Ntp->Electron_hadronicOverEm->at(i);}
    float    Electron_fbrem(unsigned int i){return Ntp->Electron_fbrem->at(i);}
@@ -764,7 +771,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    bool isTightElectron(unsigned int i, TString corr="");
    bool isTightElectron(unsigned int i, unsigned int j, TString corr="");
    float Electron_RelIso03(unsigned int i, TString corr="");
+   float Electron_RelIsoDep03(unsigned int i, TString corr="");//todo: better name
    float Electron_RelIso04(unsigned int i, TString corr="");
+   float Electron_RelIsoDep04(unsigned int i, TString corr="");//todo: better name
    float Electron_Aeff_R04(double Eta);
    float Electron_Aeff_R03(double Eta);
    bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr="");

@@ -667,7 +667,7 @@ void  ZtoEMu::doEvent(){
 		  }
 		  if(matchRecoMuon) continue;
 		  if(isWWElectron(i,vertex,ecorr)
-				  && Ntp->Electron_RelIso04(i,ecorr)<0.15
+				  && Ntp->Electron_RelIsoDep04(i,ecorr)<0.15
 				  ){
 			  GoodElectrons.push_back(i);
 		  }else if(doWWObjects
@@ -757,7 +757,7 @@ void  ZtoEMu::doEvent(){
 		  if(Ntp->Electron_p4(i,ecorr).Et()<10) continue;
 		  if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
 		  if(!isWWElectron(i,vertex)) continue;
-		  if(Ntp->Electron_RelIso04(i,ecorr)>0.3) continue;
+		  if(Ntp->Electron_RelIsoDep04(i,ecorr)>0.3) continue;
 		  trilep++;
 	  }
   }
@@ -1094,7 +1094,7 @@ void  ZtoEMu::doEvent(){
 	  EEt.at(t).Fill(Ntp->Electron_p4(eidx,ecorr).Et(),w);
 	  etaE.at(t).Fill(Ntp->Electron_supercluster_eta(eidx),w);
 	  mtE.at(t).Fill(sqrt(2*Ntp->Electron_p4(eidx,ecorr).Pt()*Ntp->MET_CorrT0pcT1_et()*(1-cosphi2d(Ntp->Electron_p4(eidx,ecorr).Px(),Ntp->Electron_p4(eidx,ecorr).Py(),Ntp->MET_CorrT0pcT1_ex(),Ntp->MET_CorrT0pcT1_ey()))),w);
-	  RelIsoE.at(t).Fill(Ntp->Electron_RelIso04(eidx),w);
+	  RelIsoE.at(t).Fill(Ntp->Electron_RelIsoDep04(eidx),w);
 	  pt_vs_eta_e.at(t).Fill(Ntp->Electron_p4(eidx,ecorr).Pt(),Ntp->Electron_supercluster_eta(eidx),w);
 
 	  // muon related histograms
