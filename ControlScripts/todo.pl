@@ -41,7 +41,7 @@ $OutputDir="/net/scratch_cms/institut_3b/$UserID";
 #$OutputDir="~/";
 $CodeDir="../Code";
 $set="Analysis_";
-$CMSSWRel="5_3_14_patch2";
+$CMSSWRel="5_3_23";
 $PileupVersion="V08-03-17";
 $tag="03-00-12";
 $TauReco="5_2_3_patch3_Dec_08_2012";
@@ -49,7 +49,7 @@ $BTag="NO";
 $Cleaning ="NO";
 $maxdata=100;
 $maxmc=100;
-$ARCH="slc5_amd64_gcc462";
+$ARCH="slc6_amd64_gcc472";
 
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
     printf("\nThis code requires one input option. The systax is:./todo_Grid.pl [OPTION]");
