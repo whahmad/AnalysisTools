@@ -689,7 +689,7 @@ void  ZtoEMu::doEvent(){
 		  }
 		  if(matchRecoMuon) continue;
 		  if(isWWElectron(i,vertex,ecorr)
-				  && Ntp->Electron_RelIso04(i,ecorr)<0.15
+				  && Ntp->Electron_RelIsoDep04(i,ecorr)<0.15
 				  ){
 			  GoodElectrons.push_back(i);
 		  }else if(doWWObjects
@@ -757,7 +757,7 @@ void  ZtoEMu::doEvent(){
 			  if(Ntp->Muon_p4(muidx1,mucorr).Pt()<20 || fabs(Ntp->Muon_p4(muidx1,mucorr).Eta())>2.4) value.at(ptthreshold)=0;
 			  if(Ntp->Electron_p4(eidx1,ecorr).Et()<30 || fabs(Ntp->Electron_supercluster_eta(eidx1))>2.1) value.at(ptthreshold)=0;
 		  }
-		  if(!Ntp->matchTrigger(Ntp->Muon_p4(muidx1,mucorr),0.2,"HLT_IsoMu24_eta2p1_v","muon") && !Ntp->matchTrigger(Ntp->Electron_p4(eidx1,ecorr),0.2,"HLT_Ele27_WP80_v","electron")) value.at(ptthreshold)=0;
+		  if(!Ntp->matchTrigger(Ntp->Muon_p4(muidx1,mucorr),0.2,"HLT_IsoMu24_eta2p1_v","muon") && !Ntp->matchTrigger(Ntp->Electron_p4(eidx1,ecorr),0.2,"HLT_Ele27_WP80_v","electron") && Ntp->GetMCID()!=DataMCType::DY_emu_embedded) value.at(ptthreshold)=0;
 		  if(Ntp->matchTrigger(Ntp->Muon_p4(muidx1,mucorr),0.2,"HLT_IsoMu24_eta2p1_v","muon") && Ntp->matchTrigger(Ntp->Electron_p4(eidx1,ecorr),0.2,"HLT_Ele27_WP80_v","electron")) mutrig = true;
 	  }
   }
@@ -819,7 +819,7 @@ void  ZtoEMu::doEvent(){
 		  if(Ntp->Electron_p4(i,ecorr).Et()<10) continue;
 		  if(fabs(Ntp->Electron_supercluster_eta(i))>2.5) continue;
 		  if(!isWWElectron(i,vertex)) continue;
-		  if(Ntp->Electron_RelIso04(i,ecorr)>0.3) continue;
+		  if(Ntp->Electron_RelIsoDep04(i,ecorr)>0.3) continue;
 		  trilep++;
 	  }
   }
@@ -1337,7 +1337,7 @@ if(categoryFlag=="ZtoEMu"){
 	  EEt.at(t).Fill(Ntp->Electron_p4(eidx1,ecorr).Et(),w);
 	  etaE.at(t).Fill(Ntp->Electron_supercluster_eta(eidx1),w);
 	  mtE.at(t).Fill(sqrt(2*Ntp->Electron_p4(eidx1,ecorr).Pt()*Ntp->MET_CorrT0pcT1_et()*(1-cosphi2d(Ntp->Electron_p4(eidx1,ecorr).Px(),Ntp->Electron_p4(eidx1,ecorr).Py(),Ntp->MET_CorrT0pcT1_ex(),Ntp->MET_CorrT0pcT1_ey()))),w);
-	  RelIsoE.at(t).Fill(Ntp->Electron_RelIso04(eidx1),w);
+	  RelIsoE.at(t).Fill(Ntp->Electron_RelIsoDep04(eidx1),w);
 	  pt_vs_eta_e.at(t).Fill(Ntp->Electron_p4(eidx1,ecorr).Pt(),Ntp->Electron_supercluster_eta(eidx1),w);
 
 	  // muon related histograms
