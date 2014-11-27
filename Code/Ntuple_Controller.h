@@ -817,7 +817,6 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    float        GenEventInfoProduct_x1(){return Ntp->GenEventInfoProduct_x1;}
    float        GenEventInfoProduct_x2(){return Ntp->GenEventInfoProduct_x2;}
    float        GenEventInfoProduct_scalePDF(){return Ntp->GenEventInfoProduct_scalePDF;}
-   double       PdfWeight(unsigned int i, unsigned j){return Ntp->PdfWeights->at(i).at(j);}
 
 };
 

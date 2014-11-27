@@ -161,7 +161,6 @@ class ZtoEMu : public Selection {
   double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
   double normunc_dy,normunc_tt,normunc_tw,normunc_diboson,normunc_qcd;
   int n_mu,n_e;
-  bool doHiggsObjects;
   bool doWWObjects;
   bool useMadgraphZ;
   bool doPDFuncertainty;

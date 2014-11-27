@@ -142,6 +142,12 @@ public :
    vector<float>   *Electron_chargedHadronIso;
    vector<float>   *Electron_neutralHadronIso;
    vector<float>   *Electron_photonIso;
+   vector<float>   *Electron_isoDeposits_chargedHadronIso04;
+   vector<float>   *Electron_isoDeposits_neutralHadronIso04;
+   vector<float>   *Electron_isoDeposits_photonIso04;
+   vector<float>   *Electron_isoDeposits_chargedHadronIso03;
+   vector<float>   *Electron_isoDeposits_neutralHadronIso03;
+   vector<float>   *Electron_isoDeposits_photonIso03;
    vector<float>   *Electron_sigmaIetaIeta;
    vector<float>   *Electron_hadronicOverEm;
    vector<float>   *Electron_fbrem;
@@ -490,6 +496,30 @@ public :
    Float_t         MET_CorrMVAMuTau_Type7EtFraction;
    vector<vector<float> > *MET_CorrMVAMuTau_srcMuon_p4;
    vector<vector<float> > *MET_CorrMVAMuTau_srcTau_p4;
+   Float_t         MET_Type1CorrElectronUp_et;
+   Float_t         MET_Type1CorrElectronDown_et;
+   Float_t         MET_Type1CorrMuonUp_et;
+   Float_t         MET_Type1CorrMuonDown_et;
+   Float_t         MET_Type1CorrTauUp_et;
+   Float_t         MET_Type1CorrTauDown_et;
+   Float_t         MET_Type1CorrJetResUp_et;
+   Float_t         MET_Type1CorrJetResDown_et;
+   Float_t         MET_Type1CorrJetEnUp_et;
+   Float_t         MET_Type1CorrJetEnDown_et;
+   Float_t         MET_Type1CorrUnclusteredUp_et;
+   Float_t         MET_Type1CorrUnclusteredDown_et;
+   Float_t         MET_Type1p2CorrElectronUp_et;
+   Float_t         MET_Type1p2CorrElectronDown_et;
+   Float_t         MET_Type1p2CorrMuonUp_et;
+   Float_t         MET_Type1p2CorrMuonDown_et;
+   Float_t         MET_Type1p2CorrTauUp_et;
+   Float_t         MET_Type1p2CorrTauDown_et;
+   Float_t         MET_Type1p2CorrJetResUp_et;
+   Float_t         MET_Type1p2CorrJetResDown_et;
+   Float_t         MET_Type1p2CorrJetEnUp_et;
+   Float_t         MET_Type1p2CorrJetEnDown_et;
+   Float_t         MET_Type1p2CorrUnclusteredUp_et;
+   Float_t         MET_Type1p2CorrUnclusteredDown_et;
    UInt_t          Event_EventNumber;
    UInt_t          Event_RunNumber;
    Int_t           Event_bunchCrossing;
@@ -537,7 +567,6 @@ public :
    float           GenEventInfoProduct_x1;
    float           GenEventInfoProduct_x2;
    float           GenEventInfoProduct_scalePDF;
-   vector<vector<double> > *PdfWeights;
    vector<vector<float> > *MC_p4;
    vector<int>     *MC_pdgid;
    vector<int>     *MC_charge;
@@ -698,6 +727,12 @@ public :
    TBranch        *b_Electron_chargedHadronIso;   //!
    TBranch        *b_Electron_neutralHadronIso;   //!
    TBranch        *b_Electron_photonIso;   //!
+   TBranch        *b_Electron_isoDeposits_chargedHadronIso04;   //!
+   TBranch        *b_Electron_isoDeposits_neutralHadronIso04;   //!
+   TBranch        *b_Electron_isoDeposits_photonIso04;   //!
+   TBranch        *b_Electron_isoDeposits_chargedHadronIso03;   //!
+   TBranch        *b_Electron_isoDeposits_neutralHadronIso03;   //!
+   TBranch        *b_Electron_isoDeposits_photonIso03;   //!
    TBranch        *b_Electron_sigmaIetaIeta;   //!
    TBranch        *b_Electron_hadronicOverEm;   //!
    TBranch        *b_Electron_fbrem;   //!
@@ -1046,6 +1081,30 @@ public :
    TBranch        *b_MET_CorrMVAMuTau_Type7EtFraction;   //!
    TBranch        *b_MET_CorrMVAMuTau_srcMuon_p4;   //!
    TBranch        *b_MET_CorrMVAMuTau_srcTau_p4;   //!
+   TBranch        *b_MET_Type1CorrElectronUp_et;   //!
+   TBranch        *b_MET_Type1CorrElectronDown_et;   //!
+   TBranch        *b_MET_Type1CorrMuonUp_et;   //!
+   TBranch        *b_MET_Type1CorrMuonDown_et;   //!
+   TBranch        *b_MET_Type1CorrTauUp_et;   //!
+   TBranch        *b_MET_Type1CorrTauDown_et;   //!
+   TBranch        *b_MET_Type1CorrJetResUp_et;   //!
+   TBranch        *b_MET_Type1CorrJetResDown_et;   //!
+   TBranch        *b_MET_Type1CorrJetEnUp_et;   //!
+   TBranch        *b_MET_Type1CorrJetEnDown_et;   //!
+   TBranch        *b_MET_Type1CorrUnclusteredUp_et;   //!
+   TBranch        *b_MET_Type1CorrUnclusteredDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrElectronUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrElectronDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrMuonUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrMuonDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrTauUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrTauDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrJetResUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrJetResDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrJetEnUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrJetEnDown_et;   //!
+   TBranch        *b_MET_Type1p2CorrUnclusteredUp_et;   //!
+   TBranch        *b_MET_Type1p2CorrUnclusteredDown_et;   //!
    TBranch        *b_Event_EventNumber;   //!
    TBranch        *b_Event_RunNumber;   //!
    TBranch        *b_Event_bunchCrossing;   //!
@@ -1093,7 +1152,6 @@ public :
    TBranch        *b_GenEventInfoProduct_x1;   //!
    TBranch        *b_GenEventInfoProduct_x2;   //!
    TBranch        *b_GenEventInfoProduct_scalePDF;   //!
-   TBranch        *b_PdfWeights;   //!
    TBranch        *b_MC_p4;   //!
    TBranch        *b_MC_pdgid;   //!
    TBranch        *b_MC_charge;   //!
@@ -1325,6 +1383,12 @@ void NtupleReader::Init(TTree *tree)
    Electron_chargedHadronIso = 0;
    Electron_neutralHadronIso = 0;
    Electron_photonIso = 0;
+   Electron_isoDeposits_chargedHadronIso04 = 0;
+   Electron_isoDeposits_neutralHadronIso04 = 0;
+   Electron_isoDeposits_photonIso04 = 0;
+   Electron_isoDeposits_chargedHadronIso03 = 0;
+   Electron_isoDeposits_neutralHadronIso03 = 0;
+   Electron_isoDeposits_photonIso03 = 0;
    Electron_sigmaIetaIeta = 0;
    Electron_hadronicOverEm = 0;
    Electron_fbrem = 0;
@@ -1499,7 +1563,6 @@ void NtupleReader::Init(TTree *tree)
    Track_par = 0;
    Track_cov = 0;
    GenEventInfoProduct_weights = 0;
-   PdfWeights = 0;
    MC_p4 = 0;
    MC_pdgid = 0;
    MC_charge = 0;
@@ -1664,6 +1727,12 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("Electron_chargedHadronIso", &Electron_chargedHadronIso, &b_Electron_chargedHadronIso);
    fChain->SetBranchAddress("Electron_neutralHadronIso", &Electron_neutralHadronIso, &b_Electron_neutralHadronIso);
    fChain->SetBranchAddress("Electron_photonIso", &Electron_photonIso, &b_Electron_photonIso);
+   fChain->SetBranchAddress("Electron_isoDeposits_chargedHadronIso04", &Electron_isoDeposits_chargedHadronIso04, &b_Electron_isoDeposits_chargedHadronIso04);
+   fChain->SetBranchAddress("Electron_isoDeposits_neutralHadronIso04", &Electron_isoDeposits_neutralHadronIso04, &b_Electron_isoDeposits_neutralHadronIso04);
+   fChain->SetBranchAddress("Electron_isoDeposits_photonIso04", &Electron_isoDeposits_photonIso04, &b_Electron_isoDeposits_photonIso04);
+   fChain->SetBranchAddress("Electron_isoDeposits_chargedHadronIso03", &Electron_isoDeposits_chargedHadronIso03, &b_Electron_isoDeposits_chargedHadronIso03);
+   fChain->SetBranchAddress("Electron_isoDeposits_neutralHadronIso03", &Electron_isoDeposits_neutralHadronIso03, &b_Electron_isoDeposits_neutralHadronIso03);
+   fChain->SetBranchAddress("Electron_isoDeposits_photonIso03", &Electron_isoDeposits_photonIso03, &b_Electron_isoDeposits_photonIso03);
    fChain->SetBranchAddress("Electron_sigmaIetaIeta", &Electron_sigmaIetaIeta, &b_Electron_sigmaIetaIeta);
    fChain->SetBranchAddress("Electron_hadronicOverEm", &Electron_hadronicOverEm, &b_Electron_hadronicOverEm);
    fChain->SetBranchAddress("Electron_fbrem", &Electron_fbrem, &b_Electron_fbrem);
@@ -2012,6 +2081,30 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MET_CorrMVAMuTau_Type7EtFraction", &MET_CorrMVAMuTau_Type7EtFraction, &b_MET_CorrMVAMuTau_Type7EtFraction);
    fChain->SetBranchAddress("MET_CorrMVAMuTau_srcMuon_p4", &MET_CorrMVAMuTau_srcMuon_p4, &b_MET_CorrMVAMuTau_srcMuon_p4);
    fChain->SetBranchAddress("MET_CorrMVAMuTau_srcTau_p4", &MET_CorrMVAMuTau_srcTau_p4, &b_MET_CorrMVAMuTau_srcTau_p4);
+   fChain->SetBranchAddress("MET_Type1CorrElectronUp_et", &MET_Type1CorrElectronUp_et , &b_MET_Type1CorrElectronUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrElectronDown_et", &MET_Type1CorrElectronDown_et , &b_MET_Type1CorrElectronDown_et);
+   fChain->SetBranchAddress("MET_Type1CorrMuonUp_et", &MET_Type1CorrMuonUp_et , &b_MET_Type1CorrMuonUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrMuonDown_et", &MET_Type1CorrMuonDown_et , &b_MET_Type1CorrMuonDown_et);
+   fChain->SetBranchAddress("MET_Type1CorrTauUp_et", &MET_Type1CorrTauUp_et , &b_MET_Type1CorrTauUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrTauDown_et", &MET_Type1CorrTauDown_et , &b_MET_Type1CorrTauDown_et);
+   fChain->SetBranchAddress("MET_Type1CorrJetResUp_et", &MET_Type1CorrJetResUp_et , &b_MET_Type1CorrJetResUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrJetResDown_et", &MET_Type1CorrJetResDown_et , &b_MET_Type1CorrJetResDown_et);
+   fChain->SetBranchAddress("MET_Type1CorrJetEnUp_et", &MET_Type1CorrJetEnUp_et , &b_MET_Type1CorrJetEnUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrJetEnDown_et", &MET_Type1CorrJetEnDown_et , &b_MET_Type1CorrJetEnDown_et);
+   fChain->SetBranchAddress("MET_Type1CorrUnclusteredUp_et", &MET_Type1CorrUnclusteredUp_et , &b_MET_Type1CorrUnclusteredUp_et);
+   fChain->SetBranchAddress("MET_Type1CorrUnclusteredDown_et", &MET_Type1CorrUnclusteredDown_et , &b_MET_Type1CorrUnclusteredDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrElectronUp_et", &MET_Type1p2CorrElectronUp_et , &b_MET_Type1p2CorrElectronUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrElectronDown_et", &MET_Type1p2CorrElectronDown_et , &b_MET_Type1p2CorrElectronDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrMuonUp_et", &MET_Type1p2CorrMuonUp_et , &b_MET_Type1p2CorrMuonUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrMuonDown_et", &MET_Type1p2CorrMuonDown_et , &b_MET_Type1p2CorrMuonDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrTauUp_et", &MET_Type1p2CorrTauUp_et , &b_MET_Type1p2CorrTauUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrTauDown_et", &MET_Type1p2CorrTauDown_et , &b_MET_Type1p2CorrTauDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrJetResUp_et", &MET_Type1p2CorrJetResUp_et , &b_MET_Type1p2CorrJetResUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrJetResDown_et", &MET_Type1p2CorrJetResDown_et , &b_MET_Type1p2CorrJetResDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrJetEnUp_et", &MET_Type1p2CorrJetEnUp_et , &b_MET_Type1p2CorrJetEnUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrJetEnDown_et", &MET_Type1p2CorrJetEnDown_et , &b_MET_Type1p2CorrJetEnDown_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrUnclusteredUp_et", &MET_Type1p2CorrUnclusteredUp_et , &b_MET_Type1p2CorrUnclusteredUp_et);
+   fChain->SetBranchAddress("MET_Type1p2CorrUnclusteredDown_et", &MET_Type1p2CorrUnclusteredDown_et , &b_MET_Type1p2CorrUnclusteredDown_et);
    fChain->SetBranchAddress("Event_EventNumber", &Event_EventNumber, &b_Event_EventNumber);
    fChain->SetBranchAddress("Event_RunNumber", &Event_RunNumber, &b_Event_RunNumber);
    fChain->SetBranchAddress("Event_bunchCrossing", &Event_bunchCrossing, &b_Event_bunchCrossing);
@@ -2059,7 +2152,6 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("GenEventInfoProduct_x1", &GenEventInfoProduct_x1, &b_GenEventInfoProduct_x1);
    fChain->SetBranchAddress("GenEventInfoProduct_x2", &GenEventInfoProduct_x2, &b_GenEventInfoProduct_x2);
    fChain->SetBranchAddress("GenEventInfoProduct_scalePDF", &GenEventInfoProduct_scalePDF, &b_GenEventInfoProduct_scalePDF);
-   fChain->SetBranchAddress("PdfWeights", &PdfWeights, &b_PdfWeights);
    fChain->SetBranchAddress("MC_p4", &MC_p4, &b_MC_p4);
    fChain->SetBranchAddress("MC_pdgid", &MC_pdgid, &b_MC_pdgid);
    fChain->SetBranchAddress("MC_charge", &MC_charge, &b_MC_charge);
