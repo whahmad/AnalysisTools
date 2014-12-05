@@ -195,6 +195,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   double        PUWeight_m5(){return Ntp->PUWeight_m5;}
   double		PUWeightFineBins(){return Ntp->PUWeightFineBins;}
   double        EmbeddedWeight(){return Ntp->EmbeddedWeight;}
+  double		TauSpinnerWeight(){return Ntp->TauSpinnerWeight;};
+  double		MinVisPtFilter(){return Ntp->MinVisPtFilter;};
 
   TVectorT<double>      beamspot_par(){TVectorT<double> BS(NBS_par);for(unsigned int i=0;i<NBS_par;i++)BS(i)=Ntp->beamspot_par->at(i);return BS;}
 
@@ -368,8 +370,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    TVector3 PFTau_FlightLength3d(unsigned int i){return PFTau_TIP_secondaryVertex_pos(i)-PFTau_TIP_primaryVertex_pos(i);}
    TMatrixTSym<double> PF_Tau_FlightLegth3d_TauFrame_cov(unsigned int i);
    TVector3 PF_Tau_FlightLegth3d_TauFrame(unsigned int i);
-   double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(0); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
-   double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
+   double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(i); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
+   double   PFTau_FlightLength_error(unsigned int i){return sqrt(PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz));}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){

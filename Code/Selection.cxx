@@ -432,3 +432,22 @@ void Selection::ScaleAllHistOfType(unsigned int t,float w){
   }
 }
 
+// Returns true, if all cuts except for those in vector 'indices' passed.
+// Elements of vector 'indices' are the indices i_cut of the vector cut
+bool Selection::passAllBut(std::vector<int> indices){
+	  std::vector<int>::iterator it;
+	  for(int i_cut=0; i_cut<pass.size(); i_cut++){
+		  it = std::find (indices.begin(), indices.end(), i_cut);	// tries to find i_cut in vector 'indices'
+		  if(i_cut!=*it){											// checks if cut at i_cut is not a cut you want to exclude
+			  if(!pass.at(i_cut)) return false;						// checks whether cut passed or not
+		  }
+	  }
+	  return true;
+}
+
+bool Selection::passAllBut(int i_cut){
+	  std::vector<int> index;
+	  index.push_back(i_cut);
+	  return passAllBut(index);
+}
+
