@@ -93,7 +93,7 @@ HToTaumuTauh::~HToTaumuTauh(){
 	delete RSF;
 
 	if (verbose) std::cout << "HToTaumuTauh::~HToTaumuTauh()" << std::endl;
-	for(int j=0; j<Npassed.size(); j++){
+	for(unsigned int j=0; j<Npassed.size(); j++){
 	std::cout << "HToTaumuTauh::~HToTaumuTauh Selection Summary before: "
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
@@ -1186,8 +1186,8 @@ void  HToTaumuTauh::doEvent(){
 	  // MET leptons
 	  int metMuon_idx(-1), metTau_idx(-1);
 	  float metMuon_dR(-1), metTau_dR(-1);
-	  bool isMetMuon = Ntp->findCorrMVAMuTauSrcMuon(selMuon, metMuon_idx, metMuon_dR);
-	  bool isMetTau = Ntp->findCorrMVAMuTauSrcTau(selTau,metTau_idx, metTau_dR);
+	  Ntp->findCorrMVAMuTauSrcMuon(selMuon, metMuon_idx, metMuon_dR);
+	  Ntp->findCorrMVAMuTauSrcTau(selTau,metTau_idx, metTau_dR);
 	  MetLepMuDr.at(t).Fill( metMuon_dR, w);
 	  MetLepTauDr.at(t).Fill( metTau_dR, w);
 	  MetLepNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons() );
@@ -1448,7 +1448,7 @@ void HToTaumuTauh::Finish() {
 				printf("\tNumber of selected events after mT cut: %.1f in DY MC and %.1f in DY embedding", dyMCYield, dyEmbYieldUnscaled);
 				printf("\tEfficiency for embedding events to pass mT+bJetVeto+Category cuts: %.1f / %.1f = %.5f", effNumerator, effDenomin, eff);
 				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
-				printf("\tMC DYtautau yield was set to %.1f");
+				printf("\tMC DYtautau yield was set to %.1f",0.0);
 			}
 		}
 	}
@@ -1513,7 +1513,7 @@ bool HToTaumuTauh::selectMuon_diMuonVeto(unsigned i, unsigned i_vtx){
 	return false;
 }
 
-bool HToTaumuTauh::selectMuon_triLeptonVeto(unsigned i, int selectedMuon, unsigned i_vtx){
+bool HToTaumuTauh::selectMuon_triLeptonVeto(int i, int selectedMuon, unsigned i_vtx){
 	if(	i != selectedMuon &&
 		Ntp->isTightMuon(i,i_vtx) &&
 		Ntp->dxy(Ntp->Muon_p4(i),Ntp->Muon_Poca(i),Ntp->Vtx(i_vtx)) < cMu_dxy &&
@@ -2278,7 +2278,7 @@ bool HToTaumuTauh::category_NoCategory(){
 
 // migrate a category into main analysis if this is chosen category
 // return value: if category passed
-bool HToTaumuTauh::migrateCategoryIntoMain(TString thisCategory, std::vector<float> categoryValueVector, std::vector<float> categoryPassVector, int categoryNCuts) {
+bool HToTaumuTauh::migrateCategoryIntoMain(TString thisCategory, std::vector<float> categoryValueVector, std::vector<float> categoryPassVector, unsigned categoryNCuts) {
 	bool catPassed = true;
 	for (unsigned i_cut = CatCut1; i_cut < NCuts; i_cut++) {
 

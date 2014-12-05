@@ -25,7 +25,7 @@ VBFLoose::VBFLoose(TString Name_, TString id_):
 }
 
 VBFLoose::~VBFLoose() {
-	  for(int j=0; j<Npassed.size(); j++){
+	  for(unsigned int j=0; j<Npassed.size(); j++){
 	    std::cout << "VBFLoose::~VBFLoose Selection Summary before: "
 		 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
 		 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
