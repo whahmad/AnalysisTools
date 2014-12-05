@@ -391,9 +391,9 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    TVector3 PFTau_FlightLength3d(unsigned int i){return PFTau_TIP_secondaryVertex_pos(i)-PFTau_TIP_primaryVertex_pos(i);}
    TMatrixTSym<double> PF_Tau_FlightLegth3d_TauFrame_cov(unsigned int i);
    TVector3 PF_Tau_FlightLegth3d_TauFrame(unsigned int i);
-   double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(0); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
+   double   PFTau_FlightLength_significance(unsigned int i){float e=PFTau_FlightLength_error(i); if(e>0) return PFTau_FlightLength(i)/e; return 0;}
    double	PFTau_FlightLenght_significance(TVector3 pv,TMatrixTSym<double> PVcov, TVector3 sv, TMatrixTSym<double> SVcov );
-   double   PFTau_FlightLength_error(unsigned int i){return PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz);}
+   double   PFTau_FlightLength_error(unsigned int i){return sqrt(PF_Tau_FlightLegth3d_TauFrame_cov(i)(LorentzVectorParticle::vz,LorentzVectorParticle::vz));}
    double   PFTau_FlightLength(unsigned int i){return PFTau_FlightLength3d(i).Mag();}
    
    bool ThreeProngTauFit(unsigned int i, unsigned int j,LorentzVectorParticle &theTau,std::vector<LorentzVectorParticle> &daughter,double &LC_chi2){
