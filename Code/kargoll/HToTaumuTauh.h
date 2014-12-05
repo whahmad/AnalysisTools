@@ -6,7 +6,8 @@
 #include <cmath>
 #include <vector>
 
-#include "../Selection.h"
+#include "Selection.h"
+#include "ReferenceScaleFactors.h"
 
 class TLorentzVector;
 class TVector3;
@@ -101,7 +102,6 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> CatFired;
 
   std::vector<TH1D> NVtx;
-  std::vector<TH1D> NVtxFullSelection;
   std::vector<TH1D> NGoodVtx;
   std::vector<TH1D> VtxZ;
   std::vector<TH1D> VtxRho;
@@ -119,12 +119,16 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MuSelPt;
   std::vector<TH1D> MuSelEta;
   std::vector<TH1D> MuSelPhi;
+  std::vector<TH1D> MuSelDxy;
+  std::vector<TH1D> MuSelDz;
+  std::vector<TH1D> MuSelRelIso;
   std::vector<TH1D> MuSelFakesTauID;
   std::vector<TH1D> MuSelDrHlt;
 
   std::vector<TH1D> TauPt;
   std::vector<TH1D> TauEta;
   std::vector<TH1D> TauPhi;
+  std::vector<TH1D> TauDecayMode;
   std::vector<TH1D> TauIso;
 
   std::vector<TH1D> TauSelPt;
@@ -163,6 +167,9 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MetLepNTau;
   std::vector<TH1D> MetLepNMuMinusNMu;
   std::vector<TH1D> MetLepNTauMinusNTau;
+  std::vector<TH1D> MetLepDiffMET;
+  std::vector<TH1D> MetLepDiffMETPhi;
+  std::vector<TH1D> MetLepDiffMt;
 
   std::vector<TH1D> NJetsKin;
   std::vector<TH1D> JetKin1Pt;
@@ -194,7 +201,14 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> JetsInEtaGap;
   std::vector<TH1D> JetsInvM;
 
-  std::vector<TH1D> TauIsoFullSel;
+  std::vector<TH1D> MetPhiMet10GeV;
+  std::vector<TH1D> MtMet10GeV;
+  std::vector<TH1D> HiggsPtMet10GeV;
+  std::vector<TH1D> HiggsPhiMet10GeV;
+  std::vector<TH1D> MetPhiMet20GeV;
+  std::vector<TH1D> MtMet20GeV;
+  std::vector<TH1D> HiggsPtMet20GeV;
+  std::vector<TH1D> HiggsPhiMet20GeV;
 
   std::vector<TH1D> MtAfterMuon;
   std::vector<TH1D> MtAfterDiMuonVeto;
@@ -208,9 +222,27 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> MtOnlyBJet;
   std::vector<TH1D> MtMuPlusOnly;
   std::vector<TH1D> MtMuMinusOnly;
+  std::vector<TH1D> MtMuPlusOnlyBGSubt;
+  std::vector<TH1D> MtMuMinusOnlyBGSubt;
+  std::vector<TH1D> Mt1ProngOnly;
+  std::vector<TH1D> Mt3ProngOnly;
+  std::vector<TH1D> Mt3ProngSV;
+  std::vector<TH1D> Mt3ProngSVFlight;
+
+  std::vector<TH1D> MetPt1ProngOnly;
+  std::vector<TH1D> MetPhi1ProngOnly;
+  std::vector<TH1D> MetPt3ProngOnly;
+  std::vector<TH1D> MetPhi3ProngOnly;
+
+  std::vector<TH1D> MetPtNoMtCut;
+  std::vector<TH1D> MetPhiNoMtCut;
+  std::vector<TH1D> MetPtNoMtCut1ProngOnly;
+  std::vector<TH1D> MetPhiNoMtCut1ProngOnly;
+  std::vector<TH1D> MetPtNoMtCut3ProngOnly;
+  std::vector<TH1D> MetPhiNoMtCut3ProngOnly;
 
   std::vector<TH1D> Cat0JetLowQcdShapeRegion;
-  std::vector<TH1D> Cat0HighLowQcdShapeRegion;
+  std::vector<TH1D> Cat0JetHighLowQcdShapeRegion;
   std::vector<TH1D> Cat1JetLowQcdShapeRegion;
   std::vector<TH1D> Cat1JetHighQcdShapeRegion;
   std::vector<TH1D> Cat1JetBoostQcdShapeRegion;
@@ -241,6 +273,12 @@ class HToTaumuTauh : public Selection {
   // map to hold QCD yields for each category
   std::map<TString, double> qcdYieldMap;
 
+  // object corrections to use
+  TString correctTaus;
+  TString correctMuons;
+  TString correctElecs;
+  TString correctJets;
+
   // variables to hold selected objects (to be used e.g. for sync Ntuple)
   int selVertex;
   int selMuon;
@@ -251,6 +289,9 @@ class HToTaumuTauh : public Selection {
   double w; // event weight
   unsigned int t; // index of histogram
   bool isWJetMC; // for Wjets background method
+
+  // instance of reference scale factor class
+  ReferenceScaleFactors* RSF;
 
   // booleans for different analysis stages
   void setStatusBooleans(bool resetAll = false);

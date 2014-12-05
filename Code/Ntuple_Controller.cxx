@@ -47,6 +47,11 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
   rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed!=1234);
 
+  // Set object correction flags to default values
+  tauCorrection = "";
+  muonCorrection = "";
+  elecCorrection = "";
+  jetCorrection = "";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -368,6 +373,7 @@ void Ntuple_Controller::CorrectMuonP4(){
 
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
+	if (corr == "default") corr = muonCorrection;
 	if(corr.Contains("roch")){
 		if(!Muon_isCorrected){
 			CorrectMuonP4();
@@ -446,6 +452,7 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if (corr == "default") corr = elecCorrection;
 		if(corr.Contains("scale") && Electron_RegEnergy(i)!=0){
 			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * (1+Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
 			else vec.SetPerp(vec.Perp() * (1-Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
@@ -738,6 +745,7 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 
 double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString corr){
 	double sf = jet.Pt();
+	if (corr == "default") corr = jetCorrection;
 	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded
 			|| jet.Pt()<=10
 			|| PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)
@@ -804,6 +812,7 @@ double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
 
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));
+	if (corr == "default") corr = jetCorrection;
 	// apply run-dependent pT corrections
 	if (corr.Contains("run")){
 		vec.SetPerp(vec.Pt() * rundependentJetPtCorrection(vec.Eta(), RunNumber()));
@@ -899,7 +908,8 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
 
 TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));
-	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+	if (corr == "default") corr = tauCorrection;
+	if(!isData()){
 		if(corr.Contains("scalecorr")){
 			if(PFTau_hpsDecayMode(i)>0 && PFTau_hpsDecayMode(i)<5){
 				vec *= 1.025+0.001*min(max(vec.Pt()-45.,0.),10.);
@@ -950,6 +960,45 @@ bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,u
     }
   }
   return false;
+}
+
+// calculate flight length significance from primary and secondary vertex info
+double Ntuple_Controller::PFTau_FlightLenght_significance(TVector3 pv,TMatrixTSym<double> PVcov, TVector3 sv, TMatrixTSym<double> SVcov ){
+  TVector3 SVPV = sv - pv;
+  TVectorF FD;
+  FD.ResizeTo(3);
+  FD(0) = SVPV.X();
+  FD(1) = SVPV.Y();
+  FD(2) = SVPV.Z();
+
+  TMatrixT<double> PVcv;
+  PVcv.ResizeTo(3,3);
+  for(unsigned int nr =0; nr<PVcov.GetNrows(); nr++){
+    for(unsigned int nc =0; nc<PVcov.GetNcols(); nc++){
+      PVcv(nr,nc) = PVcov(nr,nc);
+    }
+  }
+  TMatrixT<double> SVcv;
+  SVcv.ResizeTo(3,3);
+  for(unsigned int nr =0; nr<SVcov.GetNrows(); nr++){
+    for(unsigned int nc =0; nc<SVcov.GetNcols(); nc++){
+      SVcv(nr,nc) = SVcov(nr,nc);
+    }
+  }
+
+  TMatrixT<double> SVPVMatrix(3,1);
+  for(int i=0; i<SVPVMatrix.GetNrows();i++){
+    SVPVMatrix(i,0)=FD(i);
+  }
+
+  TMatrixT<double> SVPVMatrixT=SVPVMatrix;
+  SVPVMatrixT.T();
+
+  TMatrixT<double> lambda2 = SVPVMatrixT*(SVcv + PVcv)*SVPVMatrix;
+  double sigmaabs = sqrt(lambda2(0,0))/SVPV.Mag();
+  double sign = SVPV.Mag()/sigmaabs;
+
+  return sign;
 }
 
 //// Generator Information

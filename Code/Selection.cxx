@@ -231,12 +231,18 @@ void  Selection::Finish(){
     //Check that the correct number of events are run over and make Table
     SC.CheckNEvents(types,nevents_noweight_default);
     // Make Tables
-    T.MakeNEventsTable(Npassed,title);
+    T.MakeNEventsTable(Npassed_noweight,title);
 
     // weight all Histograms
+    std::cout << "#### Scale factors for MC samples:" << std::endl;
+    printf("%8s %10s : %7s * %9s / %10s = %6s \n", "Position", "DataMCType", "Lumi", "xsec*acc.", "N(events)", "Scale");
     for(unsigned int i=0;i<CrossSectionandAcceptance.size();i++){
-      std::cout << i << " CrossSectionandAcceptance " << CrossSectionandAcceptance.at(i) << " " << Npassed.at(i).GetBinContent(0) << " " << Npassed_noweight.at(i).GetBinContent(0) << std::endl;
-      if(CrossSectionandAcceptance.at(i)>0) ScaleAllHistOfType(i,Lumi*CrossSectionandAcceptance.at(i)/Npassed.at(i).GetBinContent(0));
+      printf("%8d %10d : %7.1f * %9.4f / %10.0f = %6f", i, HConfig.GetID(i), Lumi, CrossSectionandAcceptance.at(i), Npassed.at(i).GetBinContent(0), Lumi*CrossSectionandAcceptance.at(i)/Npassed.at(i).GetBinContent(0));
+      if(CrossSectionandAcceptance.at(i)>0){
+    	  ScaleAllHistOfType(i,Lumi*CrossSectionandAcceptance.at(i)/Npassed.at(i).GetBinContent(0));
+    	  printf("\n");
+      }
+      else printf("  --> will not be scaled \n");
     }
     Save(fName+"_LumiScaled");// Save file with Lumi-scaled events - required for combining code
 
