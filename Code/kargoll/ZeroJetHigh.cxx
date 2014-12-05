@@ -14,6 +14,9 @@ ZeroJetHigh::ZeroJetHigh(TString Name_, TString id_):
 	// run ZeroJetHigh category
 	categoryFlag = "ZeroJetHigh";
 
+	// run Categories using embedding
+	useEmbedding = true;
+
 	// run Categories using data-driven WJets BG
 	wJetsBGSource = "Data";
 

@@ -265,6 +265,8 @@ class HToTaumuTauh : public Selection {
   TString wJetsBGSource;
   // flag for data-driven QCD shape (set to false for yield estimation!)
   bool qcdShapeFromData;
+  // flag to use embedding
+  bool useEmbedding;
 
   // map to hold WJets yields for each category
   std::map<TString, double> wJetsYieldMap;

@@ -457,3 +457,11 @@ bool Selection::passAllBut(int i_cut){
 	  return passAllBut(index);
 }
 
+// Checks if all cuts up to (and including) the given cut have passed
+// Cuts after the given cut index are ignored
+bool Selection::passAllUntil(int lastCutToApply){
+	for(int i_cut = 0; i_cut <= lastCutToApply; i_cut++){
+		if( !pass.at(i_cut) ) return false;
+	}
+	return true;
+}

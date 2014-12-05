@@ -17,6 +17,9 @@ HToTaumuTauhBackgrounds::HToTaumuTauhBackgrounds(TString Name_, TString id_):
 	// the numbers will be produced for all categories individually
 	categoryFlag = "NoCategory";
 
+	// run BG methods using DY-MC (to estimate DY yield)
+	useEmbedding = false;
+
 	// run Skim always using MC for WJets BG
 	wJetsBGSource = "MC";
 

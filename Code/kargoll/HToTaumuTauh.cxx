@@ -53,6 +53,10 @@ HToTaumuTauh::HToTaumuTauh(TString Name_, TString id_):
 	// For each category, there should be a special class inheriting from HToTaumuTauh
 	categoryFlag = "NoCategory";
 
+	// Do you want to use embedding or MC for DY background?
+	// set to "false" for background estimation, to "true" for categories
+	useEmbedding = false;
+
 	// select which WJets Background source to use
 	// chose between:
 	// * "MC": use MC as given in Histo.txt
@@ -731,6 +735,8 @@ void  HToTaumuTauh::doEvent(){
 	  }
   }
   pass.at(TriggerOk) = (value.at(TriggerOk) >= cut.at(TriggerOk));
+  // disable trigger for embedding
+  if (Ntp->GetMCID() == DataMCType::DY_mutau_embedded) pass.at(TriggerOk) = true;
   
   // Muon cuts
   if (verbose) std::cout << "	Cut: Muon ID" << std::endl;
@@ -1407,6 +1413,45 @@ void HToTaumuTauh::Finish() {
 	}
 	else
 		std::cout << "QCD BG: No data driven QCD background available. Histos will be empty." << std::endl;
+
+	if(useEmbedding){
+		if (mode == RECONSTRUCT) { // only apply data-driven numbers on "combine" level
+			std::cout << "Using embedding for DY." << std::endl;
+			if(!HConfig.hasID(DataMCType::DY_mutau_embedded) || !HConfig.hasID(DataMCType::DY_tautau)){
+				std::cout << "Embedding: Please add DY_mutau_embedded and DY_tautau to your Histo.txt. Abort." << std::endl;
+			}
+			else{
+				// MC DY: get yield of inclusive selection w/o mT and bJetVeto cut
+				double dyMCYield = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT);
+				dyMCYield *= CrossSectionandAcceptance.at(HConfig.GetType(DataMCType::DY_tautau))*Lumi/Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(0);
+				// Embedding DY: get same yield as above, but in embedding
+				double dyEmbYieldUnscaled = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT);
+				// Embedding DY: calculate efficiency (pass all cuts)/(pass all cuts until mT)
+				double effNumerator = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts);
+				double effDenomin   = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(MT);
+				double eff = effNumerator / effDenomin;
+
+				double dyEmbScale = dyMCYield * eff / dyEmbYieldUnscaled;
+				// scale embedding sample to estimated yield
+				ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded), dyEmbScale);
+				// make sure that embedded is not scaled again by framework
+				if (HConfig.GetCrossSection(DataMCType::DY_mutau_embedded) != -1){
+					if (HConfig.SetCrossSection(DataMCType::DY_mutau_embedded, -1))
+						std::cout << "Cross section for DY_mutau_embedded was set to -1" << std::endl;
+					else
+						std::cout << "WARNING: Could not change cross section for DY_mutau_embedded" << std::endl;
+				}
+				// scale MC DY sample to 0
+				ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_tautau), 0.0);
+
+				printf("Using Embedding for DY background estimation:\n");
+				printf("\tNumber of selected events after mT cut: %.1f in DY MC and %.1f in DY embedding", dyMCYield, dyEmbYieldUnscaled);
+				printf("\tEfficiency for embedding events to pass mT+bJetVeto+Category cuts: %.1f / %.1f = %.5f", effNumerator, effDenomin, eff);
+				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
+				printf("\tMC DYtautau yield was set to %.1f");
+			}
+		}
+	}
 
 
 	// call GetHistoInfo here (instead of in Configure function), otherwise the SetCrossSection calls are not reflected

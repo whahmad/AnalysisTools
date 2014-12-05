@@ -49,6 +49,7 @@ class Selection : public Selection_Base {
   virtual void ScaleAllHistOfType(unsigned int t,float);
   bool passAllBut(std::vector<int> index);
   bool passAllBut(int i_cut);
+  bool passAllUntil(int i_cut);
 
   HistoConfig HConfig;
 
