@@ -17,7 +17,7 @@ ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
   cMu_pt(20.),
   cMu_eta(2.1),
   cMu_dRHltMatch(0.5),
-  cTau_pt(20.),//Recommended by Tau POG
+  cTau_pt(20.),//20: Recommended by Tau POG
   cTau_eta(2.3),
   cMuTau_dR(0.3),
   cTau_IsoRaw(1.5),
@@ -37,20 +37,21 @@ ZToTaumuTauh::ZToTaumuTauh(TString Name_, TString id_):
 	selMuon_IsoDummy = -1;
 	selMuon_AntiIsoDummy = -1;
 	selTauDummy = -1;
-	ChargeSumDummy = -666;
-	MTDummy = -666;
-	MvisDummy = -666;
-	TauFLSigmaDummy = -666;
+	ChargeSumDummy = -999;
+	MTDummy = -999;
+	MvisDummy = -999;
+	TauFLSigmaDummy = -999;
 
 	//WJets BG Method
 	SB_lowerLimit = 70; //in GeV, Region > SB_lowerLimit dominated by W+Jets
 	SB_upperLimit = 140; //in GeV, Region < SB_upperLimit
-	Scaleby_Counting = true; // == false --> Scale by Integral
+	Scaleby_Counting = true; // = false --> Scale by Integral
 
 	tau_corr = "";
 
 	//Set verbose boolean
 	verbose = false;
+	Use_Embedded = false;
 }
 
 ZToTaumuTauh::~ZToTaumuTauh(){
@@ -78,8 +79,8 @@ void  ZToTaumuTauh::Configure(){
     if(i==NTauIso)		cut.at(NTauIso)=1;
     if(i==ChargeSum)	cut.at(ChargeSum)=0;
     if(i==MT_MuMET)		cut.at(MT_MuMET)=30;
-    if(i==TauDecayMode)	cut.at(TauDecayMode)=10;
-    if(i==TauFLSigma)	cut.at(TauFLSigma)=-3;
+    if(i==TauDecayMode)	cut.at(TauDecayMode)=10;//10
+    if(i==TauFLSigma)	cut.at(TauFLSigma)=3;//3
   }
 
   TString hlabel;
@@ -231,10 +232,6 @@ void  ZToTaumuTauh::Configure(){
 
   NMvis=HConfig.GetTH1D(Name+"_NMvis","NMvis",75,-0.5,149.5,"m_{vis}(#mu,#tau)","Events");
 
-  Mvis_SignalOnly=HConfig.GetTH1D(Name+"_Mvis_SignalOnly","Mvis_SignalOnly",75,-0.5,149.5,"m_{vis}(#mu,#tau)","Events");
-  Mvis_SignalOnly_genMu=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genMu","Mvis_SignalOnly_genMu",75,-0.5,149.5,"m_{vis}(#mu_{gen},#tau)","Events");
-  Mvis_SignalOnly_genTauh=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genTauh","Mvis_SignalOnly_genTauh",75,-0.5,149.5,"m_{vis}(#mu,#tau_{h,gen})","Events");
-
   NSB=HConfig.GetTH1D(Name+"_NSB","NSB",2,0.5,2.5,"SB Region (all Samples)","Events");
 
   Mu_pt=HConfig.GetTH1D(Name+"_Mu_pt","Mu_pt",50,0,100,"Muon p_{t}","Events");
@@ -244,6 +241,8 @@ void  ZToTaumuTauh::Configure(){
   Tau_pt=HConfig.GetTH1D(Name+"_Tau_pt","Tau_pt",50,0,100,"Tau p_{t}","Events");
   Tau_phi=HConfig.GetTH1D(Name+"_Tau_phi","Tau_phi",30,-3.14159265359,3.14159265359,"Tau #phi","Events");
   Tau_eta=HConfig.GetTH1D(Name+"_Tau_eta","Tau_eta",50,-2.5,2.5,"Tau #eta","Events");
+
+  MET_phi=HConfig.GetTH1D(Name+"_MET_phi","MET_phi",30,-3.14159265359,3.14159265359,"MET #phi","Events");
 
   TauFL=HConfig.GetTH1D(Name+"_TauFL","TauFL",100,-2,4,"tau flight length","Events");
   TauFLSigned=HConfig.GetTH1D(Name+"_TauFLSigned","TauFLSigned",100,-2,4,"tau flight length Signed","Events");
@@ -263,6 +262,12 @@ void  ZToTaumuTauh::Configure(){
   MTMuMETIncl=HConfig.GetTH1D(Name+"_MTMuMETIncl","MTMuMETIncl",75,0,150,"m_{T}(#mu,MET) incl","Events");
 
   //Gen Studies
+  Mvis_SignalOnly=HConfig.GetTH1D(Name+"_Mvis_SignalOnly","Mvis_SignalOnly",75,-0.5,149.5,"m_{vis}(#mu,#tau)","Events");
+  Mvis_SignalOnly_genMu=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genMu","Mvis_SignalOnly_genMu",75,-0.5,149.5,"m_{vis}(#mu_{gen},#tau)","Events");
+  Mvis_SignalOnly_genA1=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genA1","Mvis_SignalOnly_genA1",75,-0.5,149.5,"m_{vis}(#mu,a_{1,gen})","Events");
+  Mvis_SignalOnly_genTaumu=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genTaumu","Mvis_SignalOnly_genTaumu",75,-0.5,149.5,"m_{vis}(#tau_{#mu,gen},a_{1})","Events");
+  Mvis_SignalOnly_genTauh=HConfig.GetTH1D(Name+"_Mvis_SignalOnly_genTauh","Mvis_SignalOnly_genTauh",75,-0.5,149.5,"m_{vis}(#mu,#tau_{h,gen})","Events");
+
   dR_selTauh_genTauh=HConfig.GetTH1D(Name+"_dR_selTauh_genTauh","dR_selTauh_genTauh",1,0,50,"dR_selTauh_genTauh","Events");
   dR_selMu_genMu=HConfig.GetTH1D(Name+"_dR_selMu_genMu","dR_selMu_genMu",1,0,50,"dR_selMu_genMu","Events");
 
@@ -274,6 +279,7 @@ void  ZToTaumuTauh::Configure(){
   Theta_genTauh=HConfig.GetTH1D(Name+"_Theta_genTauh","Theta_genTauh",32,0.,3.14159265359,"Theta_genTauh","Events");
   dPhi_SVPV_genTauh=HConfig.GetTH1D(Name+"_dPhi_SVPV_genTauh","dPhi_SVPV_genTauh",128,-3.14159265359/32,3.14159265359/32,"dPhi_SVPV_genTauh","Events");
   dTheta_SVPV_genTauh=HConfig.GetTH1D(Name+"_dTheta_SVPV_genTauh","dTheta_SVPV_genTauh",64,-3.14159265359/32,3.14159265359/32,"dTheta_SVPV_genTauh","Events");
+  Angle_SVPV_genTauh=HConfig.GetTH1D(Name+"_Angle_SVPV_genTauh","Angle_SVPV_genTauh",64,0,3.14159265359/32,"Angle_SVPV_genTauh","Events");
 
   Phi_POCAPV=HConfig.GetTH1D(Name+"_Phi_POCAPV","Phi_POCAPV",32,-3.14159265359,3.14159265359,"Phi_POCAPV","Events");
   Phi_genTaumu=HConfig.GetTH1D(Name+"_Phi_genTaumu","Phi_genTaumu",32,-3.14159265359,3.14159265359,"Phi_genTaumu","Events");
@@ -284,6 +290,7 @@ void  ZToTaumuTauh::Configure(){
 
   dPhi_MinusSVPV_genTaumu=HConfig.GetTH1D(Name+"_dPhi_MinusSVPV_genTaumu","dPhi_MinusSVPV_genTaumu",128,-3.14159265359/2,3.14159265359/2,"dPhi_MinusSVPV_genTaumu","Events");
   dTheta_MinusSVPV_genTaumu=HConfig.GetTH1D(Name+"_dTheta_MinusSVPV_genTaumu","dTheta_MinusSVPV_genTaumu",128,-3.14159265359/2,3.14159265359/2,"dTheta_MinusSVPV_genTaumu","Events");
+  Angle_MinusSVPV_genTaumu=HConfig.GetTH1D(Name+"_Angle_MinusSVPV_genTaumu","Angle_MinusSVPV_genTaumu",128,0,3.14159265359,"Angle_MinusSVPV_genTaumu","Events");
 
   GJ_Tauh=HConfig.GetTH1D(Name+"_GJ_Tauh","GJ_Tauh",100,0,.05,"GJ_Tauh","Events");
   GJ_Taumu=HConfig.GetTH1D(Name+"_GJ_Taumu","GJ_Taumu",100,0,.05,"GJ_Taumu","Events");
@@ -291,7 +298,15 @@ void  ZToTaumuTauh::Configure(){
   dPhi_DiTauGen=HConfig.GetTH1D(Name+"_dPhi_DiTauGen","dPhi_DiTauGen",256,0,2*3.14159265359,"dPhi_DiTauGen","Events");
   Pt_DiTauGen=HConfig.GetTH1D(Name+"_Pt_DiTauGen","Pt_DiTauGen",30,0,30,"Pt_DiTauGen","Events");
   Pt_ZGen=HConfig.GetTH1D(Name+"_Pt_ZGen","Pt_ZGen",30,0,30,"Pt_ZGen","Events");
-  Pt_vs_dPhi_DiTauGen=HConfig.GetTH2D(Name+"_Pt_vs_dPhi_DiTauGen","Pt_vs_dPhi_DiTauGen",10,0,30,64,0,2*3.14159265359,"Pt ditau","dPhi(tau,tau)");
+  M_ZGen=HConfig.GetTH1D(Name+"_M_ZGen","M_ZGen",180,60,150,"M_ZGen","Events");
+  M_DiTauPtBalance=HConfig.GetTH1D(Name+"_M_DiTauPtBalance","M_DiTauPtBalance",280,20,160,"M_DiTauPtBalance","Events");
+  dM_DiTau=HConfig.GetTH1D(Name+"_dM_DiTau","dM_DiTau",100,-50,50,"dM_DiTau","Events");
+  dPt_GenTaumuPtBalance=HConfig.GetTH1D(Name+"_dPt_GenTaumuPtBalance","dPt_GenTaumuPtBalance",100,-50,50,"dPt_GenTaumuPtBalance","Events");
+  dP_GenTaumuPtBalance=HConfig.GetTH1D(Name+"_dP_GenTaumuPtBalance","dP_GenTaumuPtBalance",100,-50,50,"dP_GenTaumuPtBalance","Events");
+  dP_GenTauh=HConfig.GetTH1D(Name+"_dP_GenTauh","dP_GenTauh",50,0,50,"dP_GenTauh","Events");
+
+  dP_GenTauMuPtBalance_vs_dPTauh=HConfig.GetTH2D(Name+"_dP_GenTauMuPtBalance_vs_dPTauh","dP_GenTauMuPtBalance_vs_dPTauh",50,-50,50,50,0,50,"p^{'}_{#tau_{#mu}} - p_{#tau_{#mu}} ","2*D");
+  Pt_vs_dPhi_DiTauGen=HConfig.GetTH2D(Name+"_Pt_vs_dPhi_DiTauGen","Pt_vs_dPhi_DiTauGen",10,0,30,256,0,2*3.14159265359,"Pt ditau","dPhi(tau,tau)");
 
   TauFLSigmaCut_vs_Res=HConfig.GetTH2D(Name+"_TauFLSigmaCut_vs_Res","TauFLSigmaCut_vs_Res",80,-10,30,2000,-0.1,0.1,"TauFLSigmaCut","dPhi(SVPV,genTauh)");
   TauFLSigma_vs_Res=HConfig.GetTH2D(Name+"_TauFLSigma_vs_Res","TauFLSigma_vs_Res",80,-10,30,200,-0.1,0.1,"TauFLSigma","dPhi(SVPV,genTauh)");
@@ -322,6 +337,8 @@ void  ZToTaumuTauh::Store_ExtraDist(){
 
  Extradist1d.push_back(&Mvis_SignalOnly);
  Extradist1d.push_back(&Mvis_SignalOnly_genMu);
+ Extradist1d.push_back(&Mvis_SignalOnly_genA1);
+ Extradist1d.push_back(&Mvis_SignalOnly_genTaumu);
  Extradist1d.push_back(&Mvis_SignalOnly_genTauh);
 
  Extradist1d.push_back(&NSB);
@@ -331,6 +348,7 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&Tau_pt);
  Extradist1d.push_back(&Tau_phi);
  Extradist1d.push_back(&Tau_eta);
+ Extradist1d.push_back(&MET_phi);
  Extradist1d.push_back(&TauFL);
  Extradist1d.push_back(&TauFLSigned);
  Extradist1d.push_back(&TauFLSigmaSigned);
@@ -354,6 +372,7 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&Theta_genTauh);
  Extradist1d.push_back(&dPhi_SVPV_genTauh);
  Extradist1d.push_back(&dTheta_SVPV_genTauh);
+ Extradist1d.push_back(&Angle_SVPV_genTauh);
  Extradist1d.push_back(&Phi_POCAPV);
  Extradist1d.push_back(&Phi_genTaumu);
  Extradist1d.push_back(&Theta_POCAPV);
@@ -365,10 +384,18 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&dPhi_DiTauGen);
  Extradist1d.push_back(&Pt_DiTauGen);
  Extradist1d.push_back(&Pt_ZGen);
+ Extradist1d.push_back(&M_ZGen);
+ Extradist1d.push_back(&M_DiTauPtBalance);
+ Extradist1d.push_back(&dM_DiTau);
+ Extradist1d.push_back(&dPt_GenTaumuPtBalance);
+ Extradist1d.push_back(&dP_GenTaumuPtBalance);
+ Extradist1d.push_back(&dP_GenTauh);
 
  Extradist1d.push_back(&dPhi_MinusSVPV_genTaumu);
  Extradist1d.push_back(&dTheta_MinusSVPV_genTaumu);
+ Extradist1d.push_back(&Angle_MinusSVPV_genTaumu);
 
+ Extradist2d.push_back(&dP_GenTauMuPtBalance_vs_dPTauh);
  Extradist2d.push_back(&Pt_vs_dPhi_DiTauGen);
  Extradist2d.push_back(&TauFLSigmaCut_vs_Res);
  Extradist2d.push_back(&TauFLSigma_vs_Res);
@@ -394,6 +421,7 @@ void  ZToTaumuTauh::Store_ExtraDist(){
  Extradist1d_OS.push_back(&Tau_pt);
  Extradist1d_OS.push_back(&Tau_phi);
  Extradist1d_OS.push_back(&Tau_eta);
+ Extradist1d_OS.push_back(&MET_phi);
  Extradist1d_OS.push_back(&TauFL);
  Extradist1d_OS.push_back(&TauFLSigned);
  Extradist1d_OS.push_back(&TauFLSigmaSigned);
@@ -433,6 +461,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(PrimeVtx)=nGoodVtx;
   pass.at(PrimeVtx)=(value.at(PrimeVtx)>=cut.at(PrimeVtx));
+  if(verbose){
+	  std::cout << "value at Primevtx: " <<value.at(PrimeVtx) << std::endl;
+	  std::cout << "pass at Primevtx: " <<pass.at(PrimeVtx) << std::endl;
+  }
   
   // Trigger
   if(verbose) std::cout << "Cut on Trigger" << std::endl;
@@ -446,6 +478,11 @@ void  ZToTaumuTauh::doEvent(){
 	  }
   }
   pass.at(TriggerOk) = (value.at(TriggerOk) >= cut.at(TriggerOk));
+  if(id == DataMCType::DY_mutau_embedded) pass.at(TriggerOk) = true;
+  if(verbose){
+	  std::cout << "value at TriggerOk: " <<value.at(TriggerOk) << std::endl;
+	  std::cout << "pass at TriggerOk: " <<pass.at(TriggerOk) << std::endl;
+  }
   
   // Muon cuts
   if(verbose) std::cout << "Cut on MuonID" << std::endl;
@@ -458,6 +495,11 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NMuId)=selectedMuonsId.size();
   pass.at(NMuId)=(value.at(NMuId)>=cut.at(NMuId));
+  if(verbose){
+	  std::cout << "Number of Muons: " << Ntp->NMuons() << std::endl;
+	  std::cout << "value at NMuId: " <<value.at(NMuId) << std::endl;
+	  std::cout << "pass at NMuId: " <<pass.at(NMuId) << std::endl;
+  }
 
   if(verbose) std::cout << "Cut on Muon Kinematics" << std::endl;
   std::vector<int> selectedMuonsKin;
@@ -469,6 +511,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NMuKin)=selectedMuonsKin.size();
   pass.at(NMuKin)=(value.at(NMuKin)>=cut.at(NMuKin));
+  if(verbose){
+	  std::cout << "value at NMuKin: " <<value.at(NMuKin) << std::endl;
+	  std::cout << "pass at NMuKin: " <<pass.at(NMuKin) << std::endl;
+  }
 
   if(verbose) std::cout << "Cut on Muon Isolation (Iso)" << std::endl;
   std::vector<int> selectedMuonsIso;
@@ -481,6 +527,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NMuIso)=selectedMuonsIso.size();
   pass.at(NMuIso)=(value.at(NMuIso)>=cut.at(NMuIso));
+  if(verbose){
+	  std::cout << "value at NMuIso: " <<value.at(NMuIso) << std::endl;
+	  std::cout << "pass at NMuIso: " <<pass.at(NMuIso) << std::endl;
+  }
 
   if(verbose) std::cout << "Cut on Muon Isolation (Anti Iso)" << std::endl;
   std::vector<int> selectedMuonsAntiIso;
@@ -503,6 +553,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NTauId)=selectedTausId.size();
   pass.at(NTauId)=(value.at(NTauId)>=cut.at(NTauId));
+  if(verbose){
+	  std::cout << "value at NTauId: " <<value.at(NTauId) << std::endl;
+	  std::cout << "pass at NTauId: " <<pass.at(NTauId) << std::endl;
+  }
 
   if(verbose) std::cout << "Cut on Tau Kinematics" << std::endl;
   std::vector<int> selectedTausKin;
@@ -514,6 +568,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NTauKin)=selectedTausKin.size();
   pass.at(NTauKin)=(value.at(NTauKin)>=cut.at(NTauKin));
+  if(verbose){
+	  std::cout << "value at NTauKin: " <<value.at(NTauKin) << std::endl;
+	  std::cout << "pass at NTauKin: " <<pass.at(NTauKin) << std::endl;
+  }
 
   if(verbose) std::cout << "Cut on Tau Isolation" << std::endl;
   std::vector<int> selectedTausIso;
@@ -526,6 +584,10 @@ void  ZToTaumuTauh::doEvent(){
   }
   value.at(NTauIso)=selectedTausIso.size();
   pass.at(NTauIso)=(value.at(NTauIso)>=cut.at(NTauIso));
+  if(verbose){
+	  std::cout << "value at NTauIso: " <<value.at(NTauIso) << std::endl;
+	  std::cout << "pass at NTauIso: " <<pass.at(NTauIso) << std::endl;
+  }
 
   // Charge of MuTau
   if(verbose) std::cout << "Cut on Charge of MuTau System" << std::endl;
@@ -547,6 +609,10 @@ void  ZToTaumuTauh::doEvent(){
 	  Charge = ChargeSumDummy;
   }
   pass.at(ChargeSum)=(value.at(ChargeSum)==cut.at(ChargeSum));
+  if(verbose){
+	  std::cout << "value at ChargeSum: " <<value.at(ChargeSum) << std::endl;
+	  std::cout << "pass at ChargeSum: " <<pass.at(ChargeSum) << std::endl;
+  }
 
   // MT calculation
   if(verbose) std::cout << "Calculation and Cut on MT distribution" << std::endl;
@@ -579,6 +645,10 @@ void  ZToTaumuTauh::doEvent(){
 	  value.at(MT_MuMET) 		= MT_MuMET_AntiIso;
   }
   if(value.at(MT_MuMET) != MTDummy) pass.at(MT_MuMET)=(value.at(MT_MuMET)<cut.at(MT_MuMET));
+  if(verbose){
+	  std::cout << "value at MT_MuMET: " <<value.at(MT_MuMET) << std::endl;
+	  std::cout << "pass at MT_MuMET: " <<pass.at(MT_MuMET) << std::endl;
+  }
 
   // Tau Decay Mode
   if(verbose) std::cout << "Cut on Tau Decay Mode" << std::endl;
@@ -586,6 +656,10 @@ void  ZToTaumuTauh::doEvent(){
 	  value.at(TauDecayMode) = Ntp->PFTau_hpsDecayMode(selTau);
   }
   pass.at(TauDecayMode)=(value.at(TauDecayMode)>=cut.at(TauDecayMode));
+  if(verbose){
+	  std::cout << "value at TauDecayMode: " <<value.at(TauDecayMode) << std::endl;
+	  std::cout << "pass at TauDecayMode: " <<pass.at(TauDecayMode) << std::endl;
+  }
 
   // Tau FlightLength Significance
   if(verbose) std::cout << "Cut on Tau Flight Length Significance" << std::endl;
@@ -617,6 +691,15 @@ void  ZToTaumuTauh::doEvent(){
 	  }
   }
   pass.at(TauFLSigma) = (value.at(TauFLSigma)>=cut.at(TauFLSigma));
+  if(verbose){
+	  std::cout << "value at TauFLSigma: " <<value.at(TauFLSigma) << std::endl;
+	  std::cout << "pass at TauFLSigma: " <<pass.at(TauFLSigma) << std::endl;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  //*************************END OF SELECTION*************************//
+  //////////////////////////////////////////////////////////////////////
+
 
   if(selTau == selTauDummy){
 	  //std::cout << "selTau is " << selTau << std::endl;
@@ -653,9 +736,15 @@ void  ZToTaumuTauh::doEvent(){
 
   // Weights
   double wobs=1;
-  double w;
+  double w=1;
   if(!Ntp->isData()){
-	  w = Ntp->PUWeightFineBins();
+	  if(id != DataMCType::DY_mutau_embedded){
+		  w *= Ntp->PUWeightFineBins();
+	  }
+	  if(id == DataMCType::DY_mutau_embedded){
+		  w *= Ntp->TauSpinnerWeight();
+		  w *= Ntp->MinVisPtFilter();
+	  }
 	  if(selMuon_Iso != selMuon_IsoDummy){
 		  w *= RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon_Iso));
 		  w *= RSF->HiggsTauTau_MuTau_Iso_Mu(Ntp->Muon_p4(selMuon_Iso));
@@ -769,14 +858,17 @@ void  ZToTaumuTauh::doEvent(){
 				Tau_pt.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
 				Tau_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
 				Tau_eta.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
-				TauFL.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+				MET_phi.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->MET_CorrMVAMuTau_phi(),w);
 				A1mass.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).M(),w);
 				A1mass10GeV.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_p4(selTau, tau_corr).M(),w);
-				if(value.at(TauFLSigma) < 0){
-					TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(-Ntp->PFTau_FlightLength(selTau),w);
-				}
-				else{
-					TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+				if(value.at(TauFLSigma) != TauFLSigmaDummy){
+					TauFL.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+					if(value.at(TauFLSigma) < 0){
+						TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(-Ntp->PFTau_FlightLength(selTau),w);
+					}
+					else if(value.at(TauFLSigma) >= 0){
+						TauFLSigned.at(HConfig.GetType(DataMCType::QCD)).Fill(Ntp->PFTau_FlightLength(selTau),w);
+					}
 				}
 			}
 			pass.at(ChargeSum) = false;
@@ -786,6 +878,16 @@ void  ZToTaumuTauh::doEvent(){
   }
 
   bool status=AnalysisCuts(t,w,wobs);
+  if(verbose){
+	  std::cout << "------------------------" << std::endl;
+	  if(status){
+		  std::cout << "!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+		  std::cout << "Event passed all cuts" << std::endl;
+		  std::cout << "!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+	  }
+	  else std::cout << "Event failed selection" << std::endl;
+	  std::cout << "------------------------" << std::endl;
+  }
   ///////////////////////////////////////////////////////////
   // Add plots
   if(status){
@@ -804,46 +906,48 @@ void  ZToTaumuTauh::doEvent(){
 	  Tau_pt.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Pt(),w);
 	  Tau_phi.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Phi(),w);
 	  Tau_eta.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).Eta(),w);
+	  MET_phi.at(t).Fill(Ntp->MET_CorrMVAMuTau_phi(),w);
 	  A1mass.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).M(),w);
 	  A1mass10GeV.at(t).Fill(Ntp->PFTau_p4(selTau, tau_corr).M(),w);
+  }
 
-	  //Gen Studies
-	  if(id != DataMCType::Data && (id == DataMCType::DY_tautau || (id >= DataMCType::H_tautau && id <= DataMCType::H_tautau_WHZHTTH))){
-		  /*
-	  	  if(id == DataMCType::DY_tautau) std::cout << "Ditau event" <<std::endl;;
-		  int NTaus = 0;
-		  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
-		  	  if(fabs(Ntp->MCParticle_pdgid(i))==15) NTaus++;
-		  }
-		  std::cout << "Number of Gen Taus" << NTaus <<std::endl;
-		  std::cout << "Number of Gen Taus in MCTaus" << Ntp->NMCTaus() <<std::endl;
-		  */
-		  TVector3 POCAPV_dir = Ntp->Muon_Poca(selMuon_Iso) - Ntp->PFTau_TIP_primaryVertex_pos(selTau);
-		  POCAPV_Mag.at(t).Fill(POCAPV_dir.Mag());
-		  TLorentzVector GenTaumu, GenTauh, GenZH, GenMu, GenA1;
-		  bool hasA1 = false;
-		  bool hasMu = false;
-		  if(Ntp->NMCTaus() == 2){
-			  for(unsigned i=0; i<Ntp->NMCTaus(); i++){
-				  if(Ntp->MCTau_JAK(i) == 2){//Tau->Muon
-					  GenTaumu = Ntp->MCTau_p4(i);
-					  for(unsigned j=0; j<Ntp->NMCTauDecayProducts(i); j++){
-						  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::mu_minus){
-							  GenMu = Ntp->MCTauandProd_p4(i,j);
-							  hasMu = true;
-						  }
+  //Gen Studies
+  if(id != DataMCType::Data && (id == DataMCType::DY_tautau || (id >= DataMCType::H_tautau && id <= DataMCType::H_tautau_WHZHTTH))){
+	  /*
+	  if(id == DataMCType::DY_tautau) std::cout << "Ditau event" <<std::endl;;
+	  int NTaus = 0;
+	  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
+		  if(fabs(Ntp->MCParticle_pdgid(i))==15) NTaus++;
+	  }
+	  std::cout << "Number of Gen Taus" << NTaus <<std::endl;
+	  std::cout << "Number of Gen Taus in MCTaus" << Ntp->NMCTaus() <<std::endl;
+	  */
+	  TLorentzVector GenTaumu, GenTauh, GenZH, GenMu, GenA1;
+	  bool hasA1 = false;
+	  bool hasMu = false;
+	  bool hasZH = false;
+	  if(Ntp->NMCTaus() == 2){
+		  for(int i=0; i<Ntp->NMCTaus(); i++){
+			  if(Ntp->MCTau_JAK(i) == 2){//Tau->Muon
+				  GenTaumu = Ntp->MCTau_p4(i);
+				  for(int j=0; j<Ntp->NMCTauDecayProducts(i); j++){
+					  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::mu_minus){
+						  GenMu = Ntp->MCTauandProd_p4(i,j);
+						  hasMu = true;
 					  }
 				  }
-				  else if(Ntp->MCTau_JAK(i) != 2){
-					  GenTauh = Ntp->MCTau_p4(i);
-					  //std::cout << "--------" << std::endl;
-					  for(unsigned j=0; j<Ntp->NMCTauDecayProducts(i); j++){
-						  //std::cout << "PDG ID of decay particle " << j << ": " << Ntp->MCTauandProd_pdgid(i,j) <<std::endl;
-						  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::a_1_plus){
-							  GenA1 = Ntp->MCTauandProd_p4(i,j);
-							  hasA1 = true;
-						  }
+			  }
+			  else if(Ntp->MCTau_JAK(i) != 2){
+				  GenTauh = Ntp->MCTau_p4(i);
+				  //std::cout << "--------" << std::endl;
+				  for(int j=0; j<Ntp->NMCTauDecayProducts(i); j++){
+					  //std::cout << "PDG ID of decay particle " << j << ": " << Ntp->MCTauandProd_pdgid(i,j) <<std::endl;
+					  if(fabs(Ntp->MCTauandProd_pdgid(i,j)) == PDGInfo::a_1_plus){
+						  GenA1 = Ntp->MCTauandProd_p4(i,j);
+						  hasA1 = true;
 					  }
+				  }
+				  if(status && value.at(TauFLSigma) != TauFLSigmaDummy){
 					  double dPhi = Ntp->PFTau_FlightLength3d(selTau).Phi() - GenTauh.Phi();
 					  TauFLSigma_vs_Res.at(t).Fill(value.at(TauFLSigma), dPhi);
 					  //std::cout << "--------" << std::endl;
@@ -855,63 +959,93 @@ void  ZToTaumuTauh::doEvent(){
 					  }
 				  }
 			  }
-			  if(hasMu && hasA1){
-		  	  double Mvis_genMu = (Ntp->PFTau_p4(selTau, tau_corr) + GenMu).M();
-		  	  double Mvis_genTauh = (GenA1 + Ntp->Muon_p4(selMuon_Iso)).M();
-		  	  Mvis_SignalOnly.at(t).Fill(Mvis,w);
-		  	  Mvis_SignalOnly_genMu.at(t).Fill(Mvis_genMu,w);
-		  	  Mvis_SignalOnly_genTauh.at(t).Fill(Mvis_genTauh,w);
-
-		  	  Phi_genTaumu.at(t).Fill(GenTaumu.Phi(),w);
-			  Theta_genTaumu.at(t).Fill(GenTaumu.Theta(),w);
-			  Phi_POCAPV.at(t).Fill(POCAPV_dir.Phi(),w);
-			  Theta_POCAPV.at(t).Fill(POCAPV_dir.Theta(),w);
-			  double dPhi = POCAPV_dir.Phi() - GenTaumu.Phi();
-			  dPhi_POCAPV_genTaumu.at(t).Fill(dPhi, w);
-			  double dTheta = POCAPV_dir.Theta() - GenTaumu.Theta();
-			  dTheta_POCAPV_genTaumu.at(t).Fill(dTheta,w);
+		  }
+		  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
+			  if(Ntp->MCParticle_pdgid(i) == PDGInfo::Z0){
+				  GenZH = Ntp->MCParticle_p4(i);
+				  hasZH = true;
+			  }
+			  else if(Ntp->MCParticle_pdgid(i) == PDGInfo::Higgs0){
+				  GenZH = Ntp->MCParticle_p4(i);
+				  hasZH = true;
+			  }
+		  }
+		  if(hasMu && hasA1 && hasZH){
 			  GJ_Taumu.at(t).Fill(GenMu.Vect().Angle(GenTaumu.Vect()),w);
-
+			  GJ_Tauh.at(t).Fill(GenA1.Vect().Angle(GenTauh.Vect()),w);
+			  Phi_genTaumu.at(t).Fill(GenTaumu.Phi(),w);
+			  Theta_genTaumu.at(t).Fill(GenTaumu.Theta(),w);
 			  Phi_genTauh.at(t).Fill(GenTauh.Phi(),w);
 			  Theta_genTauh.at(t).Fill(GenTauh.Theta(),w);
-			  Phi_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Phi(),w);
-			  Theta_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Theta(),w);
-			  dPhi = Ntp->PFTau_FlightLength3d(selTau).Phi() - GenTauh.Phi();
-			  dPhi_SVPV_genTauh.at(t).Fill(dPhi, w);
-			  dTheta = Ntp->PFTau_FlightLength3d(selTau).Theta() - GenTauh.Theta();
-			  dTheta_SVPV_genTauh.at(t).Fill(dTheta,w);
-			  GJ_Tauh.at(t).Fill(GenA1.Vect().Angle(GenTauh.Vect()),w);
 
-			  TVector3 MinusPFTau_FlightLength3d = - Ntp->PFTau_FlightLength3d(selTau);
-			  dPhi = MinusPFTau_FlightLength3d.Phi() - GenTaumu.Phi();
-			  dPhi_MinusSVPV_genTaumu.at(t).Fill(dPhi, w);
-			  dTheta = MinusPFTau_FlightLength3d.Theta() - GenTaumu.Theta();
-			  dTheta_MinusSVPV_genTaumu.at(t).Fill(dTheta, w);
-
-			  bool hasZH = false;
-			  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
-				  if(Ntp->MCParticle_pdgid(i) == PDGInfo::Z0){
-					  GenZH = Ntp->MCParticle_p4(i);
-					  hasZH = true;
-				  }
-				  else if(Ntp->MCParticle_pdgid(i) == PDGInfo::Higgs0){
-					  GenZH = Ntp->MCParticle_p4(i);
-					  hasZH = true;
-				  }
-
-			  }
 			  double dPhi_genTaus = GenTauh.Phi() - GenTaumu.Phi();
 			  //if(dPhi_genTaus > TMath::Pi()) dPhi_genTaus = 2*TMath::Pi() - dPhi_genTaus;
 			  TLorentzVector DiTau = GenTauh + GenTaumu;
-			  if(hasZH){
 			  Pt_ZGen.at(t).Fill(GenZH.Pt(),w);
 			  dPhi_DiTauGen.at(t).Fill(dPhi_genTaus,w);
 			  Pt_DiTauGen.at(t).Fill(DiTau.Pt(),w);
-			  Pt_vs_dPhi_DiTauGen.at(t).Fill(DiTau.Pt(), dPhi_genTaus);}}
+			  M_ZGen.at(t).Fill(GenZH.M(),w);
+			  Pt_vs_dPhi_DiTauGen.at(t).Fill(DiTau.Pt(), dPhi_genTaus);
+
+			  TLorentzVector GenTaumu_PtBalance = GenTauh;
+			  GenTaumu_PtBalance.SetX(GenTauh.X()*-1);
+			  GenTaumu_PtBalance.SetY(GenTauh.Y()*-1);
+
+			  double M_DiTau = (GenTaumu_PtBalance + GenTauh).M();
+			  double Delta_M_DiTau = M_DiTau - GenZH.M();
+
+			  M_DiTauPtBalance.at(t).Fill(M_DiTau,w);
+			  dM_DiTau.at(t).Fill(Delta_M_DiTau, w);
+
+			  double dPt = GenTaumu_PtBalance.Pt() - GenTaumu.Pt();
+			  double dP_GenTaumu = GenTaumu_PtBalance.P() - GenTaumu.P();
+			  double GJ_Angle_Tauh = GenA1.Vect().Angle(GenTauh.Vect());
+			  double dP_Tauh = GenA1.E()*sqrt(pow(pow(GenTauh.M(),2) - pow(GenA1.M(),2),2) - pow(2*GenA1.P()*GenTauh.M()*sin(GJ_Angle_Tauh),2))/(pow(GenA1.M(),2) + pow(sin(GJ_Angle_Tauh)*GenA1.P(),2));
+
+			  dPt_GenTaumuPtBalance.at(t).Fill(dPt,w);
+			  dP_GenTaumuPtBalance.at(t).Fill(dP_GenTaumu,w);
+			  dP_GenTauh.at(t).Fill(dP_Tauh,w);
+			  dP_GenTauMuPtBalance_vs_dPTauh.at(t).Fill(dP_GenTaumu, dP_Tauh);
+
+			  if(status && value.at(TauFLSigma) != TauFLSigmaDummy){
+				  TVector3 POCAPV_dir = Ntp->Muon_Poca(selMuon_Iso) - Ntp->PFTau_TIP_primaryVertex_pos(selTau);
+				  POCAPV_Mag.at(t).Fill(POCAPV_dir.Mag());
+				  double Mvis_recoA1genMu = (Ntp->PFTau_p4(selTau, tau_corr) + GenMu).M();
+				  double Mvis_genA1recoMu = (GenA1 + Ntp->Muon_p4(selMuon_Iso)).M();
+				  double Mvis_recoA1genTaumu = (Ntp->PFTau_p4(selTau, tau_corr) + GenTaumu).M();
+				  double Mvis_genTauhrecoMu = (GenTauh + Ntp->Muon_p4(selMuon_Iso)).M();
+
+				  Mvis_SignalOnly.at(t).Fill(Mvis,w);
+				  Mvis_SignalOnly_genMu.at(t).Fill(Mvis_recoA1genMu,w);
+				  Mvis_SignalOnly_genA1.at(t).Fill(Mvis_genA1recoMu,w);
+				  Mvis_SignalOnly_genTaumu.at(t).Fill(Mvis_recoA1genTaumu,w);
+				  Mvis_SignalOnly_genTauh.at(t).Fill(Mvis_genTauhrecoMu,w);
+
+				  Phi_POCAPV.at(t).Fill(POCAPV_dir.Phi(),w);
+				  Theta_POCAPV.at(t).Fill(POCAPV_dir.Theta(),w);
+				  double dPhi = POCAPV_dir.Phi() - GenTaumu.Phi();
+				  dPhi_POCAPV_genTaumu.at(t).Fill(dPhi, w);
+				  double dTheta = POCAPV_dir.Theta() - GenTaumu.Theta();
+				  dTheta_POCAPV_genTaumu.at(t).Fill(dTheta,w);
+
+				  Phi_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Phi(),w);
+				  Theta_SVPV.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Theta(),w);
+				  dPhi = Ntp->PFTau_FlightLength3d(selTau).Phi() - GenTauh.Phi();
+				  dPhi_SVPV_genTauh.at(t).Fill(dPhi, w);
+				  dTheta = Ntp->PFTau_FlightLength3d(selTau).Theta() - GenTauh.Theta();
+				  dTheta_SVPV_genTauh.at(t).Fill(dTheta,w);
+				  Angle_SVPV_genTauh.at(t).Fill(Ntp->PFTau_FlightLength3d(selTau).Angle(GenTauh.Vect()));
+
+				  TVector3 MinusPFTau_FlightLength3d = - Ntp->PFTau_FlightLength3d(selTau);
+				  dPhi = MinusPFTau_FlightLength3d.Phi() - GenTaumu.Phi();
+				  dPhi_MinusSVPV_genTaumu.at(t).Fill(dPhi, w);
+				  dTheta = MinusPFTau_FlightLength3d.Theta() - GenTaumu.Theta();
+				  dTheta_MinusSVPV_genTaumu.at(t).Fill(dTheta, w);
+				  Angle_MinusSVPV_genTaumu.at(t).Fill(MinusPFTau_FlightLength3d.Angle(GenTaumu.Vect()));
+			  }
 		  }
 	  }
   }
-
   if(passAllBut(TauFLSigma)){
 	  TauFLSigmaSigned.at(t).Fill(value.at(TauFLSigma),w);
 	  if(value.at(TauFLSigma)<0 && value.at(TauFLSigma) != TauFLSigmaDummy){
@@ -992,9 +1126,34 @@ void  ZToTaumuTauh::Finish(){
 	  std::cout << "Enter mode==RECONSTRUCT" << std::endl;
 	  SkimConfig SC;
 	  SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
-		for(int i=0; i<Npassed.size();i++){
-			nevents_noweight_default.push_back(Npassed_noweight.at(i).GetBinContent(1));
-		}
+		//for(unsigned i=0; i<Npassed.size();i++){
+		//	nevents_noweight_default.push_back(Npassed_noweight.at(i).GetBinContent(1));
+		//}
+
+  	  // Scale DY embedded sample to the yield of DY MC and scale DY MC to 0 afterwards
+	  double NDY_tautau(Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(NCuts)*CrossSectionandAcceptance.at(HConfig.GetType(DataMCType::DY_tautau))*Lumi/Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(0));
+	  double NDY_tautau_Emb(Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
+
+	  std::cout << "NDY_tautau: " << NDY_tautau << std::endl;
+	  std::cout << "NDY_tautau_Emb: " << NDY_tautau_Emb << std::endl;
+	  std::cout << "NDY_tautau/NDY_tautau_Emb: " << NDY_tautau/NDY_tautau_Emb << std::endl;
+
+	  int Exclude_DY_ID;
+	  if(Use_Embedded){
+		  if(NDY_tautau>0 && NDY_tautau_Emb>0){
+			  ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded),NDY_tautau/NDY_tautau_Emb);
+	  	  	  ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_tautau),0);
+	  	  	  Exclude_DY_ID = DataMCType::DY_tautau;
+		  }
+	  }
+	  else{
+		  ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded),0);
+  	  	  Exclude_DY_ID = DataMCType::DY_mutau_embedded;
+	  }
+  	  //CrossSectionandAcceptance.at(HConfig.GetType(DataMCType::DY_tautau)) = 0;
+  	  //HConfig.SetCrossSection(DataMCType::DY_tautau,0);
+  	  //HConfig.GetHistoInfo(types,CrossSectionandAcceptance,legend,colour);
+
   	  std::vector<double> SB_Integral;
   	  double SB_Integral_Data_minus_MC = 0;
   	  double SB_Integral_WJets = 0;
@@ -1016,7 +1175,7 @@ void  ZToTaumuTauh::Finish(){
 
   	  // Get Yields in W+Jets-Sideband for OS/SS
   	  std::cout << "W+Jets Background Method " << std::endl;
-  	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
+  	  for(unsigned i=0;i<CrossSectionandAcceptance.size();i++){
   	  	  int Bin_SB_lowerLimit = Nminus1.at(MT_MuMET).at(i).FindFixBin(SB_lowerLimit);
   	  	  int Bin_SB_upperLimit = Nminus1.at(MT_MuMET).at(i).FindFixBin(SB_upperLimit) -1;
   		  SB_Integral.push_back(Nminus1.at(MT_MuMET).at(i).Integral(Bin_SB_lowerLimit, Bin_SB_upperLimit));
@@ -1031,21 +1190,21 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "SB integral 70-140GeV from Counting for OS for Sample " << i << " : " << SB_Counting_OS.at(i) << std::endl;
 		  std::cout << "SB integral 70-140GeV from Counting for SS for Sample " << i << " : " << SB_Counting_SS.at(i) << std::endl;
   	  }
-  	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
+  	  for(unsigned i=0;i<CrossSectionandAcceptance.size();i++){
   		  if(HConfig.GetID(i) == DataMCType::W_lnu || HConfig.GetID(i) == DataMCType::W_taunu){
-  			  SB_Integral_WJets += SB_Integral.at(i);
-  			  SB_Counting_WJets_OS += SB_Counting_OS.at(i);
-  			  SB_Counting_WJets_SS += SB_Counting_SS.at(i);
+  			  SB_Integral_WJets				+= SB_Integral.at(i);
+  			  SB_Counting_WJets_OS			+= SB_Counting_OS.at(i);
+  			  SB_Counting_WJets_SS			+= SB_Counting_SS.at(i);
   		  }
   		  else if(HConfig.GetID(i) == DataMCType::Data){
-  			  SB_Integral_Data_minus_MC += SB_Integral.at(i);
-  			  SB_Counting_Data_minus_MC_OS += SB_Counting_OS.at(i);
-  			  SB_Counting_Data_minus_MC_SS += SB_Counting_SS.at(i);
+  			  SB_Integral_Data_minus_MC 	+= SB_Integral.at(i);
+  			  SB_Counting_Data_minus_MC_OS	+= SB_Counting_OS.at(i);
+  			  SB_Counting_Data_minus_MC_SS	+= SB_Counting_SS.at(i);
   		  }
-  		  else if(HConfig.GetID(i) != DataMCType::Data){
-  			  SB_Integral_Data_minus_MC -= SB_Integral.at(i);
-  			  SB_Counting_Data_minus_MC_OS -= SB_Counting_OS.at(i);
-  			  SB_Counting_Data_minus_MC_SS -= SB_Counting_SS.at(i);
+  		  else if(HConfig.GetID(i) != Exclude_DY_ID){
+  			  SB_Integral_Data_minus_MC		-= SB_Integral.at(i);
+  			  SB_Counting_Data_minus_MC_OS	-= SB_Counting_OS.at(i);
+  			  SB_Counting_Data_minus_MC_SS	-= SB_Counting_SS.at(i);
   		  }
   	  }
   	  if(SB_Integral_Data_minus_MC > 0 && SB_Integral_WJets > 0){
@@ -1106,7 +1265,7 @@ void  ZToTaumuTauh::Finish(){
 		  std::cout << "SB_Counting_Data_minus_MC_SS is: " << SB_Counting_Data_minus_MC_SS << std::endl;
   	  }
   	  // Get Yields in ABCD for QCD Scalefactor
-  	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
+  	  for(unsigned i=0;i<CrossSectionandAcceptance.size();i++){
   		  QCD_Integral_B.push_back(NQCD.at(i).GetBinContent(2));
   		  QCD_Integral_C.push_back(NQCD.at(i).GetBinContent(3));
   		  QCD_Integral_D.push_back(NQCD.at(i).GetBinContent(4));
@@ -1124,16 +1283,16 @@ void  ZToTaumuTauh::Finish(){
 	  		  QCD_Integral_D.at(i) *= CrossSectionandAcceptance.at(i)*Lumi/Npassed.at(i).GetBinContent(0);
 		  }
   	  }
-  	  for(int i=0;i<CrossSectionandAcceptance.size();i++){
+  	  for(unsigned i=0;i<CrossSectionandAcceptance.size();i++){
   		  if(HConfig.GetID(i) == DataMCType::Data){
-  			  QCD_Integral_B_Data_minus_MC += QCD_Integral_B.at(i);
-  			  QCD_Integral_C_Data_minus_MC += QCD_Integral_C.at(i);
-  			  QCD_Integral_D_Data_minus_MC += QCD_Integral_D.at(i);
+  			  QCD_Integral_B_Data_minus_MC	+= QCD_Integral_B.at(i);
+  			  QCD_Integral_C_Data_minus_MC	+= QCD_Integral_C.at(i);
+  			  QCD_Integral_D_Data_minus_MC	+= QCD_Integral_D.at(i);
   		  }
-  		  else if(HConfig.GetID(i) != DataMCType::QCD){
-  			  QCD_Integral_B_Data_minus_MC -= QCD_Integral_B.at(i);
-  			  QCD_Integral_C_Data_minus_MC -= QCD_Integral_C.at(i);
-  			  QCD_Integral_D_Data_minus_MC -= QCD_Integral_D.at(i);
+  		  else if(HConfig.GetID(i) != DataMCType::QCD && HConfig.GetID(i) != Exclude_DY_ID){
+  			  QCD_Integral_B_Data_minus_MC	-= QCD_Integral_B.at(i);
+  			  QCD_Integral_C_Data_minus_MC	-= QCD_Integral_C.at(i);
+  			  QCD_Integral_D_Data_minus_MC	-= QCD_Integral_D.at(i);
   		  }
   	  }
   	  if(QCD_Integral_B_Data_minus_MC > 0 && QCD_Integral_C_Data_minus_MC > 0 && QCD_Integral_D_Data_minus_MC > 0){
@@ -1143,15 +1302,16 @@ void  ZToTaumuTauh::Finish(){
 		  QCD_MT_MuMET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  QCD_MET_A.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  NQCD.at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
-		  for(int i=0; i<Nminus1.size(); i++){
+		  for(unsigned i=0; i<Nminus1.size(); i++){
 			  Nminus0.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  	  Nminus1.at(i).at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  }
-		  for(unsigned int i=0; i<Extradist1d_OS.size(); i++){
+		  for(unsigned i=0; i<Extradist1d_OS.size(); i++){
 			  Extradist1d_OS.at(i)->at(HConfig.GetType(DataMCType::QCD)).Scale(QCD_ScaleFactor);
 		  }
   	  }
   	  else{
+		  std::cout << "No QCD Scaling. Reason: " << std::endl;
 		  std::cout << "QCD_Integral_B_Data_minus_MC is: " << QCD_Integral_B_Data_minus_MC << std::endl;
 		  std::cout << "QCD_Integral_C_Data_minus_MC is: " << QCD_Integral_C_Data_minus_MC << std::endl;
 		  std::cout << "QCD_Integral_D_Data_minus_MC is: " << QCD_Integral_D_Data_minus_MC << std::endl;
@@ -1171,7 +1331,7 @@ void  ZToTaumuTauh::Finish(){
 
 bool ZToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
-		Ntp->matchTrigger(Ntp->Muon_p4(i),cTriggerNames,"muon") < cMu_dRHltMatch
+		(Ntp->GetMCID() == DataMCType::DY_mutau_embedded || Ntp->matchTrigger(Ntp->Muon_p4(i),cTriggerNames,"muon") < cMu_dRHltMatch)
 			){
 		return true;
 	}
@@ -1218,8 +1378,10 @@ bool ZToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	  }
 	}
 	// trigger matching
-	if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cTau_dRHltMatch) {
-		return false;
+	if(Ntp->GetMCID() != DataMCType::DY_mutau_embedded){
+		if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cTau_dRHltMatch) {
+			return false;
+		}
 	}
 
 	if ( 	selectPFTau_Id(i) ){
