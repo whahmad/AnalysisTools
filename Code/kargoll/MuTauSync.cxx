@@ -60,8 +60,8 @@ void MuTauSync::doEvent(){
 		 // Event Weights
 		mcweight = -10;
 		puweight = Ntp->PUWeightFineBins();
-		trigweight_1 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon)) : -10;
-		trigweight_2 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau, "")) : -10;
+		trigweight_1 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Trigger_Mu_ScaleMCtoData(Ntp->Muon_p4(selMuon)) : -10;
+		trigweight_2 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Trigger_Tau_ScaleMCtoData(Ntp->PFTau_p4(selTau, "")) : -10;
 		idweight_1 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon)) : -10;
 		idweight_2 = -10;
 		isoweight_1 = (!Ntp->isData()) ? RSF->HiggsTauTau_MuTau_Iso_Mu(Ntp->Muon_p4(selMuon)) : -10;

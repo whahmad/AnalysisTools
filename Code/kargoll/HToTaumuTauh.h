@@ -250,6 +250,10 @@ class HToTaumuTauh : public Selection {
   std::vector<TH1D> CatVBFTightQcdShapeRegion;
   std::vector<TH1D> CatInclusiveQcdShapeRegion;
 
+  std::vector<TH1D> embeddingWeight_TauSpinner;
+  std::vector<TH1D> embeddingWeight_MinVisPtFilter;
+  std::vector<TH1D> embeddingWeight_SelEffWeight;
+
   unsigned verbose;
 
   // cut values

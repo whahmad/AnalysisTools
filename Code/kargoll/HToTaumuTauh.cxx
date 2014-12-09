@@ -497,6 +497,10 @@ void  HToTaumuTauh::Setup(){
   CatVBFTightQcdShapeRegion = HConfig.GetTH1D(Name+"_CatVBFTightQcdShapeRegion","CatVBFTightQcdShapeRegion",100,0.,200.,"VBFT: m_{inv}^{QCD}/GeV");
   CatInclusiveQcdShapeRegion = HConfig.GetTH1D(Name+"_CatInclusiveQcdShapeRegion","CatInclusiveQcdShapeRegion",100,0.,200.,"Incl: m_{inv}^{QCD}/GeV");
 
+  embeddingWeight_TauSpinner = HConfig.GetTH1D(Name+"_embeddingWeight_TauSpinner","embeddingWeight_TauSpinner",50,0.,3.,"emb. TauSpinnerWeight");
+  embeddingWeight_MinVisPtFilter = HConfig.GetTH1D(Name+"_embeddingWeight_MinVisPtFilter","embeddingWeight_MinVisPtFilter",50,0.,3.,"emb. MinVisPtFilter weight");
+  embeddingWeight_SelEffWeight = HConfig.GetTH1D(Name+"_embeddingWeight_SelEffWeight","embeddingWeight_SelEffWeight",50,0.,3.,"emb. SelEffWeight");
+
   // configure category
   if (categoryFlag == "VBFTight")	configure_VBFTight();
   else if (categoryFlag == "VBFLoose")	configure_VBFLoose();
@@ -673,6 +677,10 @@ void  HToTaumuTauh::Store_ExtraDist(){
  Extradist1d.push_back(&CatVBFLooseQcdShapeRegion);
  Extradist1d.push_back(&CatVBFTightQcdShapeRegion);
  Extradist1d.push_back(&CatInclusiveQcdShapeRegion);
+
+ Extradist1d.push_back(&embeddingWeight_TauSpinner);
+ Extradist1d.push_back(&embeddingWeight_MinVisPtFilter);
+ Extradist1d.push_back(&embeddingWeight_SelEffWeight);
 }
 
 void  HToTaumuTauh::doEvent(){
@@ -696,7 +704,8 @@ void  HToTaumuTauh::doEvent(){
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ std::cout << "failed to find id" <<std::endl; return;}
   
   double wobs=1;
-  if(!Ntp->isData()){w = Ntp->PUWeightFineBins();}
+  if(!Ntp->isData() && Ntp->GetMCID() != DataMCType::DY_mutau_embedded){
+	  w = Ntp->PUWeightFineBins();}
   else{w=1;}
 
   // set object corrections at beginning of each event to avoid segfaults
@@ -1000,8 +1009,8 @@ void  HToTaumuTauh::doEvent(){
   // correction factors
   if( !Ntp->isData() ){
 	  // apply trigger efficiencies
-	  if (selMuon != -1) w *= RSF->HiggsTauTau_MuTau_Trigger_Mu(Ntp->Muon_p4(selMuon));
-	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau(Ntp->PFTau_p4(selTau, "")); // no Tau energy scale here
+	  if (selMuon != -1) w *= RSF->HiggsTauTau_MuTau_Trigger_Mu_ScaleMCtoData(Ntp->Muon_p4(selMuon));
+	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau_ScaleMCtoData(Ntp->PFTau_p4(selTau, "")); // no Tau energy scale here
 	  // apply muon ID & iso scale factors
 	  if (selMuon != -1){
 		  w *= RSF->HiggsTauTau_MuTau_Id_Mu(Ntp->Muon_p4(selMuon));
@@ -1014,6 +1023,15 @@ void  HToTaumuTauh::doEvent(){
 	  }
 	  // todo: b-tag scale factors
 	  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#B_tag_scale_factors
+  }
+  // embedding weights
+  if(Ntp->GetMCID() == DataMCType::DY_mutau_embedded){
+	  w *= Ntp->Embedding_TauSpinnerWeight();
+	  w *= Ntp->Embedding_MinVisPtFilter();
+	  w *= Ntp->Embedding_SelEffWeight(); // todo: clearify if this should be applied
+	  // apply data trigger efficiency to embedding
+	  if (selMuon != -1) w *= RSF->HiggsTauTau_MuTau_Trigger_Mu_Eff_Data(Ntp->Muon_p4(selMuon));
+	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau_Eff_Data(Ntp->PFTau_p4(selMuon));
   }
 
   // define booleans for different stages of selection
@@ -1300,6 +1318,13 @@ void  HToTaumuTauh::doEvent(){
 				  Mt3ProngSVFlight.at(t).Fill(value.at(MT), w);
 			  }
 		  }
+	  }
+
+	  // plot embedding weights (before mT cut)
+	  if (Ntp->GetMCID() == DataMCType::DY_mutau_embedded){
+		  embeddingWeight_TauSpinner.at(t).Fill(Ntp->Embedding_TauSpinnerWeight());
+		  embeddingWeight_SelEffWeight.at(t).Fill(Ntp->Embedding_SelEffWeight());
+		  embeddingWeight_MinVisPtFilter.at(t).Fill(Ntp->Embedding_MinVisPtFilter());
 	  }
   }
 
