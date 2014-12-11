@@ -2,6 +2,7 @@
 #include "TLorentzVector.h"
 #include <cstdlib>
 #include "HistoConfig.h"
+#include "SkimConfig.h"
 #include <iostream>
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
 
@@ -364,7 +365,7 @@ void  HToTaumuTauh::Setup(){
   MuEta=HConfig.GetTH1D(Name+"_MuEta","MuEta",50,-2.5,2.5,"#eta(#mu)");
   MuPhi=HConfig.GetTH1D(Name+"_MuPhi","MuPhi",50,-3.14159,3.14159,"#phi(#mu)");
 
-  MuSelPt=HConfig.GetTH1D(Name+"_MuSelPt","MuSelPt",50,0.,200.,"p_{T}(#mu_{sel})/GeV");
+  MuSelPt=HConfig.GetTH1D(Name+"_MuSelPt","MuSelPt",50,0.,100.,"p_{T}(#mu_{sel})/GeV");
   MuSelEta=HConfig.GetTH1D(Name+"_MuSelEta","MuSelEta",50,-2.5,2.5,"#eta(#mu_{sel})");
   MuSelPhi=HConfig.GetTH1D(Name+"_MuSelPhi","MuSelPhi",50,-3.14159,3.14159,"#phi(#mu_{sel})");
   MuSelDxy=HConfig.GetTH1D(Name+"_MuSelDxy","MuSelDxy",60,-0.3,0.3,"d_{xy}(#mu_{sel},Vtx)/cm");
@@ -373,13 +374,13 @@ void  HToTaumuTauh::Setup(){
   MuSelFakesTauID=HConfig.GetTH1D(Name+"_MuSelFakesTauID","MuSelFakesTauID",2,-0.5,1.5,"#mu_{sel} fakes #tau_{h}");
   MuSelDrHlt=HConfig.GetTH1D(Name+"_MuSelDrHlt","MuSelDrHLT",50,0.,1.,"#DeltaR(#mu_{sel},#mu_{HLT})");
 
-  TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,200.,"p_{T}(#tau)/GeV");
+  TauPt=HConfig.GetTH1D(Name+"_TauPt","TauPt",50,0.,100.,"p_{T}(#tau)/GeV");
   TauEta=HConfig.GetTH1D(Name+"_TauEta","TauEta",50,-2.5,2.5,"#eta(#tau)");
   TauPhi=HConfig.GetTH1D(Name+"_TauPhi","TauPhi",50,-3.14159,3.14159,"#phi(#tau)");
   TauDecayMode=HConfig.GetTH1D(Name+"_TauDecayMode","TauDecayMode",16,-0.5,15.5,"#tau decay mode");
   TauIso=HConfig.GetTH1D(Name+"_TauIso","TauIso",50,0.,25.,"Iso(#tau)/GeV");
 
-  TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,200.,"p_{T}(#tau_{sel})/GeV");
+  TauSelPt=HConfig.GetTH1D(Name+"_TauSelPt","TauSelPt",50,0.,100.,"p_{T}(#tau_{sel})/GeV");
   TauSelEta=HConfig.GetTH1D(Name+"_TauSelEta","TauSelEta",50,-2.5,2.5,"#eta(#tau_{sel})");
   TauSelPhi=HConfig.GetTH1D(Name+"_TauSelPhi","TauSelPhi",50,-3.14159,3.14159,"#phi(#tau_{sel})");
   TauSelDrHlt=HConfig.GetTH1D(Name+"_TauSelDrHlt","TauSelDrHLT",50,0.,1.,"#DeltaR(#tau_{sel},#tau_{HLT})");
@@ -388,8 +389,8 @@ void  HToTaumuTauh::Setup(){
 
   MuVetoDPtSelMuon=HConfig.GetTH1D(Name+"_MuVetoDPtSelMuon","MuVetoDPtSelMuon",100,-100.,100.,"#Deltap_{T}(#mu_{veto},#mu)/GeV");
   MuVetoInvM=HConfig.GetTH1D(Name+"_MuVetoInvM","MuVetoInvM",100,0.,200,"m_{inv}(#mu_{veto}^{1},#mu_{veto}^{2})/GeV");
-  MuVetoPtPositive=HConfig.GetTH1D(Name+"_MuVetoPtPositive","MuVetoPtPositive",50,0.,200.,"p_{T}(#mu_{veto}^{+})/GeV");
-  MuVetoPtNegative=HConfig.GetTH1D(Name+"_MuVetoPtNegative","MuVetoPtNegative",50,0.,200.,"p_{T}(#mu_{veto}^{-})/GeV");
+  MuVetoPtPositive=HConfig.GetTH1D(Name+"_MuVetoPtPositive","MuVetoPtPositive",50,0.,100.,"p_{T}(#mu_{veto}^{+})/GeV");
+  MuVetoPtNegative=HConfig.GetTH1D(Name+"_MuVetoPtNegative","MuVetoPtNegative",50,0.,100.,"p_{T}(#mu_{veto}^{-})/GeV");
   MuVetoDRTau=HConfig.GetTH1D(Name+"_MuVetoDRTau","MuVetoDRTau",50,0.,5.,"#DeltaR(#mu_{veto},#tau_{h})");
   MuVetoDeltaR=HConfig.GetTH1D(Name+"_MuVetoDeltaR","MuVetoDeltaR",50,0.,5.,"#DeltaR(#mu^{+}_{veto},#mu^{-}_{veto})");
 
@@ -404,7 +405,7 @@ void  HToTaumuTauh::Setup(){
   MuTauDEta=HConfig.GetTH1D(Name+"_MuTauDEta","MuTauDEta",100,-6.,6.,"#Delta#eta(#mu,#tau_{h})");
   MuTauDPt=HConfig.GetTH1D(Name+"_MuTauDPt","MuTauDPt",100,-100.,100.,"#Deltap_{T}(#mu,#tau_{h})/GeV");
   MuTauRelDPt=HConfig.GetTH1D(Name+"_MuTauRelDPt","MuTauRelDPt",100,-2.,2.,"#Deltap_{T}(#mu,#tau_{h})/p_{T}(#mu)");
-  MuPtVsTauPt=HConfig.GetTH2D(Name+"_MuPtVsTauPt","MuPtVsTauPt",50,0.,200.,50,0.,200.,"p_{T}(#mu)/GeV","p_{T}(#tau)/GeV");
+  MuPtVsTauPt=HConfig.GetTH2D(Name+"_MuPtVsTauPt","MuPtVsTauPt",50,0.,100.,50,0.,100.,"p_{T}(#mu)/GeV","p_{T}(#tau)/GeV");
 
   MetPt  = HConfig.GetTH1D(Name+"_MetPt","MetPt",50,0.,200.,"E_{T}^{miss}/GeV");
   MetPhi = HConfig.GetTH1D(Name+"_MetPhi","MetPhi",50,-3.14159,3.14159,"#phi(E_{T}^{miss})");
@@ -1031,7 +1032,7 @@ void  HToTaumuTauh::doEvent(){
 	  w *= Ntp->Embedding_SelEffWeight(); // todo: clearify if this should be applied
 	  // apply data trigger efficiency to embedding
 	  if (selMuon != -1) w *= RSF->HiggsTauTau_MuTau_Trigger_Mu_Eff_Data(Ntp->Muon_p4(selMuon));
-	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau_Eff_Data(Ntp->PFTau_p4(selMuon));
+	  if (selTau != -1)  w *= RSF->HiggsTauTau_MuTau_Trigger_Tau_Eff_Data(Ntp->PFTau_p4(selTau));
   }
 
   // define booleans for different stages of selection
@@ -1446,17 +1447,20 @@ void HToTaumuTauh::Finish() {
 				std::cout << "Embedding: Please add DY_mutau_embedded and DY_tautau to your Histo.txt. Abort." << std::endl;
 			}
 			else{
-				// MC DY: get yield of inclusive selection w/o mT and bJetVeto cut
+				// read in skimsummary
+				SkimConfig SC;
+				SC.ApplySkimEfficiency(types,Npassed,Npassed_noweight);
+
+				// yield_emb = N_MC(before mT)*eff with eff = N_emb(NCuts)/N_emb(before mT)
+				// scale factor = yield_emb / N_emb(NCuts) = N_MC(before mT)/N_emb(before mT)
+
+				// MC DY: get yield of inclusive selection w/o mT and bJetVeto cut [N_MC(before mT)]
 				double dyMCYield = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT);
 				dyMCYield *= CrossSectionandAcceptance.at(HConfig.GetType(DataMCType::DY_tautau))*Lumi/Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(0);
-				// Embedding DY: get same yield as above, but in embedding
-				double dyEmbYieldUnscaled = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT);
-				// Embedding DY: calculate efficiency (pass all cuts)/(pass all cuts until mT)
-				double effNumerator = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts);
-				double effDenomin   = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(MT);
-				double eff = effNumerator / effDenomin;
+				// Embedding DY: get yield before mT cut [N_emb(before mT)]
+				double dyEmbYield   = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(MT);
 
-				double dyEmbScale = dyMCYield * eff / dyEmbYieldUnscaled;
+				double dyEmbScale = dyMCYield / dyEmbYield;
 				// scale embedding sample to estimated yield
 				ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded), dyEmbScale);
 				// make sure that embedded is not scaled again by framework
@@ -1466,15 +1470,20 @@ void HToTaumuTauh::Finish() {
 					else
 						std::cout << "WARNING: Could not change cross section for DY_mutau_embedded" << std::endl;
 				}
-				// scale MC DY sample to 0
-				ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_tautau), 0.0);
+				// do not draw MC DY sample
+				suppressDrawingHistOfType(HConfig.GetType(DataMCType::DY_tautau));
 
 				printf("Using Embedding for DY background estimation:\n");
-				printf("\tNumber of selected events after mT cut: %.1f in DY MC and %.1f in DY embedding", dyMCYield, dyEmbYieldUnscaled);
-				printf("\tEfficiency for embedding events to pass mT+bJetVeto+Category cuts: %.1f / %.1f = %.5f", effNumerator, effDenomin, eff);
-				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
-				printf("\tMC DYtautau yield was set to %.1f",0.0);
+				printf("\tNumber of selected events before mT cut:\n    DY MC: %.1f\n    DY embedding: %.1f\n", dyMCYield, dyEmbYield);
+				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events\n", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
+				printf("\tMC DYtautau histograms will be suppressed in plots\n");
 			}
+		}
+	}
+	else{
+		if(HConfig.hasID(DataMCType::DY_mutau_embedded)){
+			ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded), 0.0);
+			printf("Not using embedding: DY_mutau_embedded sample is scaled to %.1f.", Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
 		}
 	}
 
@@ -1497,8 +1506,9 @@ void HToTaumuTauh::Finish() {
 bool HToTaumuTauh::selectMuon_Id(unsigned i, unsigned vertex){
 	if(	Ntp->isSelectedMuon(i,vertex,cMu_dxy,cMu_dz) &&
 		Ntp->Muon_RelIso(i) < cMu_relIso &&
-		Ntp->matchTrigger(Ntp->Muon_p4(i),cTriggerNames,"muon") < cMu_dRHltMatch
-			){
+		(Ntp->GetMCID() == DataMCType::DY_mutau_embedded || // no trigger matching for embedding
+				Ntp->matchTrigger(Ntp->Muon_p4(i),cTriggerNames,"muon") < cMu_dRHltMatch)
+		){
 		return true;
 	}
 	return false;
@@ -1595,8 +1605,10 @@ bool HToTaumuTauh::selectPFTau_Id(unsigned i, std::vector<int> muonCollection){
 	  }
 	}
 	// trigger matching
-	if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cMu_dRHltMatch) {
-		return false;
+	if (Ntp->GetMCID() != DataMCType::DY_mutau_embedded){
+		if (Ntp->matchTrigger(Ntp->PFTau_p4(i),cTriggerNames,"tau") > cMu_dRHltMatch) {
+			return false;
+		}
 	}
 
 	if ( 	selectPFTau_Id(i) ){

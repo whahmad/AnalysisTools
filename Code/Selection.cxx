@@ -438,6 +438,25 @@ void Selection::ScaleAllHistOfType(unsigned int t,float w){
   }
 }
 
+// avoid drawing of certain sample in histograms\
+// Npassed vector is NOT scaled, so tables should remain intact
+void Selection::suppressDrawingHistOfType(unsigned int t){
+  for(unsigned int i=0; i<Nminus1.size(); i++){
+	if(Nminus1.at(i).size()>t)Nminus1.at(i).at(t).Scale(0);
+	if(Nminus0.at(i).size()>t)Nminus0.at(i).at(t).Scale(0);
+	if(distindx.at(i)){
+	  if(Nminus1dist.at(i).size()>t)Nminus1dist.at(i).at(t).Scale(0);
+	  if(Accumdist.at(i).size()>t)Accumdist.at(i).at(t).Scale(0);
+	}
+  }
+  for(unsigned int k=0; k<Extradist1d.size();k++){
+	if(Extradist1d.at(k)->size()>t)Extradist1d.at(k)->at(t).Scale(0);
+  }
+  for(unsigned int k=0; k<Extradist2d.size();k++){
+	if(Extradist2d.at(k)->size()>t)Extradist2d.at(k)->at(t).Scale(0);
+  }
+}
+
 // Returns true, if all cuts except for those in vector 'indices' passed.
 // Elements of vector 'indices' are the indices i_cut of the vector cut
 bool Selection::passAllBut(std::vector<unsigned int> indices){
