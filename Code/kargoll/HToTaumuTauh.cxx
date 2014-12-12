@@ -97,7 +97,7 @@ HToTaumuTauh::~HToTaumuTauh(){
 	for(unsigned int j=0; j<Npassed.size(); j++){
 	std::cout << "HToTaumuTauh::~HToTaumuTauh Selection Summary before: "
 	 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
-	 << Npassed.at(j).GetBinContent(NCuts) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
+	 << Npassed.at(j).GetBinContent(NCuts+1) << " +/- " << Npassed.at(j).GetBinError(NCuts) << std::endl;
 	}
 	std::cout << "HToTaumuTauh::~HToTaumuTauh() done" << std::endl;
 }
@@ -1209,8 +1209,8 @@ void  HToTaumuTauh::doEvent(){
 	  Ntp->findCorrMVAMuTauSrcTau(selTau,metTau_idx, metTau_dR);
 	  MetLepMuDr.at(t).Fill( metMuon_dR, w);
 	  MetLepTauDr.at(t).Fill( metTau_dR, w);
-	  MetLepNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons() );
-	  MetLepNTau.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcTaus() );
+	  MetLepNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons(), w);
+	  MetLepNTau.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcTaus(), w);
 	  MetLepNMuMinusNMu.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcMuons() - selectedMuons.size(), w);
 	  MetLepNTauMinusNTau.at(t).Fill( Ntp->NMET_CorrMVAMuTau_srcTaus() - selectedTaus.size(), w);
 	  if(Ntp->NMET_CorrMVAMuTau_srcMuons() != selectedMuons.size()){
@@ -1398,7 +1398,7 @@ void HToTaumuTauh::Finish() {
 						std::cout << "WARNING: Could not change cross section for id " << id << std::endl;
 					printf("WJet process %i had xsec = %6.1f. Setting to %6.1f for data-driven WJet yield.\n", id, oldXSec, HConfig.GetCrossSection(id));
 				}
-				sumSelEvts += Npassed.at(type).GetBinContent(NCuts);
+				sumSelEvts += Npassed.at(type).GetBinContent(NCuts+1);
 			}
 
 			// second loop, now the total sum of all Wjets events is known, so we can scale
@@ -1406,11 +1406,11 @@ void HToTaumuTauh::Finish() {
 				if (!HConfig.hasID(id))
 					continue;
 				int type = HConfig.GetType(id);
-				double rawSelEvts = Npassed.at(type).GetBinContent(NCuts);
+				double rawSelEvts = Npassed.at(type).GetBinContent(NCuts+1);
 
 				// scale all WJet histograms to data-driven yield
 				ScaleAllHistOfType(type, wJetsYieldMap[categoryFlag] / sumSelEvts);
-				printf("WJet process %i was scaled from yield %f to yield %f \n", id, rawSelEvts, Npassed.at(type).GetBinContent(NCuts));
+				printf("WJet process %i was scaled from yield %f to yield %f \n", id, rawSelEvts, Npassed.at(type).GetBinContent(NCuts+1));
 			}
 		}
 		else
@@ -1428,10 +1428,10 @@ void HToTaumuTauh::Finish() {
 				std::cout << "QCD BG: Please add QCD to your Histo.txt. Abort." << std::endl;
 			}
 			else{
-				double rawQcdShapeEvents = Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts);
+				double rawQcdShapeEvents = Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts+1);
 				// scale QCD histograms to data-driven yields
 				ScaleAllHistOfType(HConfig.GetType(DataMCType::QCD), qcdYieldMap[categoryFlag] / rawQcdShapeEvents);
-				printf("QCD histogram was scaled from yield %f to yield %f \n", rawQcdShapeEvents, Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts));
+				printf("QCD histogram was scaled from yield %f to yield %f \n", rawQcdShapeEvents, Npassed.at(HConfig.GetType(DataMCType::QCD)).GetBinContent(NCuts+1));
 			}
 		}
 		else
@@ -1455,10 +1455,10 @@ void HToTaumuTauh::Finish() {
 				// scale factor = yield_emb / N_emb(NCuts) = N_MC(before mT)/N_emb(before mT)
 
 				// MC DY: get yield of inclusive selection w/o mT and bJetVeto cut [N_MC(before mT)]
-				double dyMCYield = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT);
+				double dyMCYield = Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(MT+1);
 				dyMCYield *= CrossSectionandAcceptance.at(HConfig.GetType(DataMCType::DY_tautau))*Lumi/Npassed.at(HConfig.GetType(DataMCType::DY_tautau)).GetBinContent(0);
 				// Embedding DY: get yield before mT cut [N_emb(before mT)]
-				double dyEmbYield   = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(MT);
+				double dyEmbYield   = Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(MT+1);
 
 				double dyEmbScale = dyMCYield / dyEmbYield;
 				// scale embedding sample to estimated yield
@@ -1475,7 +1475,7 @@ void HToTaumuTauh::Finish() {
 
 				printf("Using Embedding for DY background estimation:\n");
 				printf("\tNumber of selected events before mT cut:\n    DY MC: %.1f\n    DY embedding: %.1f\n", dyMCYield, dyEmbYield);
-				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events\n", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
+				printf("\tEmbedding yield was scaled by a factor %.5f to %.1f events\n", dyEmbScale, Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts+1));
 				printf("\tMC DYtautau histograms will be suppressed in plots\n");
 			}
 		}
@@ -1483,7 +1483,7 @@ void HToTaumuTauh::Finish() {
 	else{
 		if(HConfig.hasID(DataMCType::DY_mutau_embedded)){
 			ScaleAllHistOfType(HConfig.GetType(DataMCType::DY_mutau_embedded), 0.0);
-			printf("Not using embedding: DY_mutau_embedded sample is scaled to %.1f.", Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts));
+			printf("Not using embedding: DY_mutau_embedded sample is scaled to %.1f.", Npassed.at(HConfig.GetType(DataMCType::DY_mutau_embedded)).GetBinContent(NCuts+1));
 		}
 	}
 
