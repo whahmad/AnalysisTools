@@ -903,13 +903,13 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
 // Get tau four-vector
 //
 // Options:
-//  - "scalecorr": corrects the tau energy scale depending on the decay mode (only MC).
+//  - "scalecorr": corrects the tau energy scale depending on the decay mode (only MC and embedding).
 //
 
 TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));
 	if (corr == "default") corr = tauCorrection;
-	if(!isData()){
+	if(!isData() || GetMCID() == DataMCType::DY_mutau_embedded){
 		if(corr.Contains("scalecorr")){
 			if(PFTau_hpsDecayMode(i)>0 && PFTau_hpsDecayMode(i)<5){
 				vec *= 1.025+0.001*min(max(vec.Pt()-45.,0.),10.);
