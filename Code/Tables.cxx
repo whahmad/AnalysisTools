@@ -57,7 +57,7 @@ void Tables::MakeNEventsTable(std::vector<TH1D> histo, std::vector<TString> name
 			(output) << "} \\hline" << endl;
 			t = 0;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					TString id = histo.at(t).GetTitle();
 					id.ReplaceAll("N Passed ", "");
 					id.ReplaceAll("#", "\\");
@@ -71,7 +71,7 @@ void Tables::MakeNEventsTable(std::vector<TH1D> histo, std::vector<TString> name
 			t = 0;
 			(output) << " Before Skim";
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					(output) << " &  $" << histo.at(t).GetBinContent(0) << "$";
 				}
 				t++;
@@ -88,7 +88,7 @@ void Tables::MakeNEventsTable(std::vector<TH1D> histo, std::vector<TString> name
 				}
 
 				for (Int_t j = 0; j < nhist; j++) {
-					if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+					if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 						(output) << " &   " << histo.at(t).GetBinContent(i + 2);
 					}
 					t++;
@@ -140,7 +140,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			(output) << "} \\hline" << endl;
 			t = 0;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					TString id = histo.at(t).GetTitle();
 					id.ReplaceAll("N Passed ", "");
 					id.ReplaceAll("#", "\\");
@@ -155,7 +155,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			t = 0;
 			(output) << "Cross Section" << std::endl;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					(output) << " &  " << CrossSectionandAcceptance.at(j) << "$pb$";
 				}
 				t++;
@@ -165,7 +165,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			t = 0;
 			(output) << "Lumi" << std::endl;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					(output) << " &  " << Lumi << "$pb^{-1}$ ";
 				}
 				t++;
@@ -175,7 +175,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			t = 0;
 			(output) << " Before Skim";
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					//if(CrossSectionandAcceptance[j]>0)(output) << "  &  $" << Lumi*CrossSectionandAcceptance[j]  << "$";
 					//else
 					(output) << "  &  $" << histo.at(j).GetBinContent(0) << "$";
@@ -194,7 +194,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 				}
 
 				for (Int_t j = 0; j < nhist; j++) {
-					if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+					if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 						if (histo.at(t).GetBinContent(0) > 0) {
 							(output) << " &   " << histo.at(t).GetBinContent(i + 2);
 						} else {
@@ -244,7 +244,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			(output) << "} \\hline" << endl;
 			t = 0;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					TString id = histo.at(t).GetTitle();
 					id.ReplaceAll("N Passed ", "");
 					id.ReplaceAll("#", "\\");
@@ -264,7 +264,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 				(output) << title;
 
 				for (Int_t j = 0; j < nhist; j++) {
-					if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+					if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 						if (histo.at(t).GetBinContent(0) > 0) {
 							(output) << " &   " << histo.at(t).GetBinContent(i + 1) / histo.at(t).GetBinContent(0);
 						} else {
@@ -314,7 +314,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 			(output) << "} \\hline" << endl;
 			t = 0;
 			for (Int_t j = 0; j < nhist; j++) {
-				if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+				if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 					TString id = histo.at(t).GetTitle();
 					id.ReplaceAll("N Passed ", "");
 					id.ReplaceAll("#", "\\");
@@ -332,7 +332,7 @@ void Tables::MakeEffTable(std::vector<TH1D> histo, std::vector<TString> names, f
 				(output) << title;
 
 				for (Int_t j = 0; j < nhist; j++) {
-					if (k <= j && j < nhist && j < k + ncol && t < histo.size()) {
+					if (k <= j && j < nhist && j < k + ncol && t < (int)histo.size()) {
 						if (histo.at(t).GetBinContent(0) > 0) {
 							(output) << " &   " << histo.at(t).GetBinContent(i + 2) / histo.at(t).GetBinContent(i + 1);
 						} else {
@@ -386,8 +386,8 @@ void Tables::AddPlots(std::vector<TString> names) {
 			(output) << "\\clearpage \n\\section{Nminus-1 Plots}" << std::endl;
 		if (j == 1)
 			(output) << "\\clearpage \n\\section{Assorted Plots}" << std::endl;
-		for (int l = 0; l < names.size(); l++) {
-			for (int i = 0; i < files.size(); i++) {
+		for (unsigned int l = 0; l < names.size(); l++) {
+			for (unsigned int i = 0; i < files.size(); i++) {
 				if (files.at(i).Contains(".eps") && files.at(i).Contains(Name)) {
 					//cout << files[i] << endl;
 					TString index = "Data_index_";
@@ -420,7 +420,7 @@ void Tables::AddPlots(std::vector<TString> names) {
 						EPSName3Accum.ReplaceAll("Nminus1", "Accumdist");
 
 						bool is1(false), is2(false), is3(false), is4(false), is5(false), is6(false), is7(false), is2dist(false), is3Accum(false);
-						for (int k = 0; k < files.size(); k++) {
+						for (unsigned int k = 0; k < files.size(); k++) {
 							if (files.at(k).Contains(EPSName1))
 								is1 = true;
 							if (files.at(k).Contains(EPSName2))
@@ -581,7 +581,7 @@ void Tables::AddPlots(std::vector<TString> names) {
 						name.ReplaceAll("Data.eps", "");
 
 						bool f1(false), f2(false), f3(false), f4(false), f5(false), f6(false), f7(false), f8(false);
-						for (int i = 0; i < files.size(); i++) {
+						for (unsigned int i = 0; i < files.size(); i++) {
 							if (files.at(i).Contains(EPSName1))
 								f1 = true;
 							if (files.at(i).Contains(EPSName2))
