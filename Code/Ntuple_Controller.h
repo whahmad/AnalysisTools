@@ -612,6 +612,31 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    TLorentzVector     MET_CorrMVAMuTau_srcTau_p4(unsigned int i){return TLorentzVector(Ntp->MET_CorrMVAMuTau_srcTau_p4->at(i).at(1),Ntp->MET_CorrMVAMuTau_srcTau_p4->at(i).at(2),Ntp->MET_CorrMVAMuTau_srcTau_p4->at(i).at(3),Ntp->MET_CorrMVAMuTau_srcTau_p4->at(i).at(0));}
    bool				  findCorrMVAMuTauSrcTau(unsigned int tau_idx, int &mvaMuTauSrcTau_idx, float &dR );
 
+   float              MET_Type1CorrElectronUp_et(){ return Ntp->MET_Type1CorrElectronUp_et; }
+   float              MET_Type1CorrElectronDown_et(){ return Ntp->MET_Type1CorrElectronDown_et; }
+   float              MET_Type1CorrMuonUp_et(){ return Ntp->MET_Type1CorrMuonUp_et; }
+   float              MET_Type1CorrMuonDown_et(){ return Ntp->MET_Type1CorrMuonDown_et; }
+   float              MET_Type1CorrTauUp_et(){ return Ntp->MET_Type1CorrTauUp_et; }
+   float              MET_Type1CorrTauDown_et(){ return Ntp->MET_Type1CorrTauDown_et; }
+   float              MET_Type1CorrJetResUp_et(){ return Ntp->MET_Type1CorrJetResUp_et; }
+   float              MET_Type1CorrJetResDown_et(){ return Ntp->MET_Type1CorrJetResDown_et; }
+   float              MET_Type1CorrJetEnUp_et(){ return Ntp->MET_Type1CorrJetEnUp_et; }
+   float              MET_Type1CorrJetEnDown_et(){ return Ntp->MET_Type1CorrJetEnDown_et; }
+   float              MET_Type1CorrUnClusteredUp_et(){ return Ntp->MET_Type1CorrUnclusteredUp_et; }
+   float              MET_Type1CorrUnClusteredDown_et(){ return Ntp->MET_Type1CorrUnclusteredDown_et; }
+   float              MET_Type1p2CorrElectronUp_et(){ return Ntp->MET_Type1p2CorrElectronUp_et; }
+   float              MET_Type1p2CorrElectronDown_et(){ return Ntp->MET_Type1p2CorrElectronDown_et; }
+   float              MET_Type1p2CorrMuonUp_et(){ return Ntp->MET_Type1p2CorrMuonUp_et; }
+   float              MET_Type1p2CorrMuonDown_et(){ return Ntp->MET_Type1p2CorrMuonDown_et; }
+   float              MET_Type1p2CorrTauUp_et(){ return Ntp->MET_Type1p2CorrTauUp_et; }
+   float              MET_Type1p2CorrTauDown_et(){ return Ntp->MET_Type1p2CorrTauDown_et; }
+   float              MET_Type1p2CorrJetResUp_et(){ return Ntp->MET_Type1p2CorrJetResUp_et; }
+   float              MET_Type1p2CorrJetResDown_et(){ return Ntp->MET_Type1p2CorrJetResDown_et; }
+   float              MET_Type1p2CorrJetEnUp_et(){ return Ntp->MET_Type1p2CorrJetEnUp_et; }
+   float              MET_Type1p2CorrJetEnDown_et(){ return Ntp->MET_Type1p2CorrJetEnDown_et; }
+   float              MET_Type1p2CorrUnclusteredUp_et(){ return Ntp->MET_Type1p2CorrUnclusteredUp_et; }
+   float              MET_Type1p2CorrUnclusteredDown_et(){ return Ntp->MET_Type1p2CorrUnclusteredDown_et; }
+
    //Track Information
    unsigned int      NTracks(){return Ntp->Track_p4->size();}
    TLorentzVector    Track_p4(unsigned int i){return TLorentzVector(Ntp->Track_p4->at(i).at(1),Ntp->Track_p4->at(i).at(2),Ntp->Track_p4->at(i).at(3),Ntp->Track_p4->at(i).at(0));}

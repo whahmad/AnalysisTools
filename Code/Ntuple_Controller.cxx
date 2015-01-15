@@ -385,6 +385,10 @@ TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 		}else if(corr.Contains("res")){
 			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
 		}
+		if(corr.Contains("met")){
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.002);
+			else vec.SetPerp(vec.Perp() * 0.998);
+		}
 	}
 	return vec;
 }
@@ -459,6 +463,16 @@ TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 			}
 			else{
 				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
+			}
+		}
+		if(corr.Contains("met")){
+			if(fabs(Electron_supercluster_eta(i))<1.479){
+				if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.006);
+				else vec.SetPerp(vec.Perp() * 0.994);
+			}
+			else if(fabs(Electron_supercluster_eta(i))<2.5){
+				if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.015);
+				else vec.SetPerp(vec.Perp() * 0.985);
 			}
 		}
 	}
@@ -916,6 +930,10 @@ TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 			else if(PFTau_hpsDecayMode(i)>=10){
 				vec *= 1.012+0.001*min(max(vec.Pt()-32.,0.),18.);
 			}
+		}
+		if(corr.Contains("met")){
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.03);
+			else vec.SetPerp(vec.Perp() * 0.97);
 		}
 	}
 	return vec;

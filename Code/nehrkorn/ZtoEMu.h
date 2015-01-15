@@ -19,7 +19,7 @@ class ZtoEMu : public Selection {
   virtual void Finish();
 
   enum cuts {TriggerOk=0,
-	     PrimeVtx,
+	  	 PrimeVtx,
 		 NMu,
 		 NE,
 		 ptthreshold,
@@ -50,7 +50,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> mtE;
   std::vector<TH1D> etaMu;
   std::vector<TH1D> etaE;
-  std::vector<TH1D> jetsum;
   std::vector<TH1D> NJets;
   std::vector<TH1D> NJetsLoose;
   std::vector<TH1D> NJetsMedium;
@@ -61,8 +60,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> deltaphi;
   std::vector<TH1D> ptbal;
   std::vector<TH1D> chargesumsigned;
-  std::vector<TH1D> FirstJetPt;
-  std::vector<TH1D> SecondJetPt;
   
   std::vector<TH1D> invmass_zmass;
   std::vector<TH1D> invmass_ptbalance;
@@ -98,7 +95,6 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> NPV;
   std::vector<TH1D> NPV3d;
   std::vector<TH1D> NPVfine;
-  std::vector<TH1D> evtweight;
   
   std::vector<TH1D> met;
   std::vector<TH1D> met_uncorr;
@@ -119,40 +115,31 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> mtmu_nmu;
 
   // comparison of generators
-
   std::vector<TH1D> zpt;
-  std::vector<TH1D> zpt_weirdbins;
   std::vector<TH1D> zeta;
   std::vector<TH1D> zmass;
+  std::vector<TH1D> znjets;
+  std::vector<TH1D> zjetpt;
+  std::vector<TH1D> zmet;
+  std::vector<TH1D> zmtmu;
+  std::vector<TH1D> zmte;
+  std::vector<TH1D> znjets_rec;
+  std::vector<TH1D> zjetpt_rec;
+  std::vector<TH1D> zmet_rec;
+  std::vector<TH1D> zmtmu_rec;
+  std::vector<TH1D> zmte_rec;
 
-  std::vector<TH2D> eta_mu_e;
-  std::vector<TH2D> pt_vs_eta_mu;
-  std::vector<TH2D> pt_vs_eta_e;
+  std::vector<TH1D> sip;
+  std::vector<TH1D> sip_nm0;
+  std::vector<TH1D> ptbal_zoom;
   std::vector<TH1D> nfakes;
-  std::vector<TH2D> pt_vs_eta_mu_gen;
-  std::vector<TH2D> pt_vs_eta_e_gen;
-  std::vector<TH1D> higgs_mass;
   std::vector<TH1D> ht_pseudo;
   std::vector<TH1D> zmass_zoom;
-  std::vector<TH2D> mtmu_vs_ptbal;
-  std::vector<TH2D> met_vs_ptbal;
-  std::vector<TH2D> met_vs_mtmu;
   std::vector<TH1D> invmass_high;
   std::vector<TH1D> ptsum;
   std::vector<TH1D> ptsum_nm0;
   std::vector<TH1D> mvamet;
   std::vector<TH1D> mva_mtmu;
-  std::vector<TH1D> onejet_jecunc;
-  std::vector<TH1D> pt_diff;
-  std::vector<TH1D> pt_diff_nm1;
-  std::vector<TH1D> met_s;
-  std::vector<TH1D> mt_sum;
-  std::vector<TH1D> mt_diff;
-  std::vector<TH1D> met_parallel;
-  std::vector<TH1D> met_perpendicular;
-  std::vector<TH1D> met_poverp;
-  std::vector<TH1D> met_0jet;
-  std::vector<TH1D> met_jets;
   std::vector<TH1D> invmass_ptbalance_widerange;
 
   std::vector<TH1D> pdf_w0;
@@ -169,6 +156,7 @@ class ZtoEMu : public Selection {
   bool doMuonIdUncertainty,doMuonScaleUncertainty,doMuonResUncertainty;
   bool doJECUncertainty, doJERUncertainty;
   bool doFakeRateUncertainty;
+  bool doMetUncertainty;
   bool upwardUncertainty,systValid;
   TString mucorr, ecorr, jetcorr;
   
