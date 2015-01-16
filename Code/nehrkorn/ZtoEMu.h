@@ -141,6 +141,8 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> mvamet;
   std::vector<TH1D> mva_mtmu;
   std::vector<TH1D> invmass_ptbalance_widerange;
+  std::vector<TH1D> invmass_objectid_ss;
+  std::vector<TH1D> invmass_ptbal_ss;
 
   std::vector<TH1D> pdf_w0;
   std::vector<TH1D> pdf_w1;
@@ -173,11 +175,11 @@ class ZtoEMu : public Selection {
   double cosphi3d(TVector3 vec1, TVector3 vec2);
   int findBin(TGraphAsymmErrors* graph, double xval);
   
-  bool isFakeMuon(unsigned int idx, TString corr="");
-  bool isFakeMuon(unsigned int idx, unsigned int vtx, TString corr="");
-  bool isWWElectron(unsigned int idx, unsigned int vtx, TString corr="");
-  bool isFakeElectron(unsigned int idx, TString corr="");
-  bool isFakeElectron(unsigned int idx, unsigned int vtx, TString corr="");
+  bool isFakeMuon(unsigned int idx);
+  bool isFakeMuon(unsigned int idx, unsigned int vtx);
+  bool isWWElectron(unsigned int idx, unsigned int vtx);
+  bool isFakeElectron(unsigned int idx);
+  bool isFakeElectron(unsigned int idx, unsigned int vtx);
 
   double ZPtReweight(double zpt);
   double PowhegReweight(double zpt);

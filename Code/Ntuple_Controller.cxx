@@ -341,7 +341,7 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 void Ntuple_Controller::CorrectMuonP4(){
 	if(isInit){
 		for(unsigned int i=0;i<NMuons();i++){
-			TLorentzVector mup4 = Muon_p4(i);
+			TLorentzVector mup4 = Muon_p4(i,"");
 			int runopt = 0; // 0: no run-dependece
 			float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
 			if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
