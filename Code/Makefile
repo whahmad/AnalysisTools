@@ -86,7 +86,7 @@ ifndef USE_TauSpinner
 	SHAREDLIBFLAGS +=	-L./TauSpiner/lhapdf/lib -lLHAPDF
 	SHAREDCXXFLAGS +=	-I./TauSpiner/lhapdf/include/
 endif
-	TARGETS += PDFweights ZtoEMu ZtoEMu_Skim
+	TARGETS += PDFweights ZtoEMu Tvariable_Base Tvariable_EE Tvariable_MuMu Tvariable_EMu
 	DEFS += -DUSE_nehrkorn=1
 endif
 
@@ -94,7 +94,7 @@ ifdef USE_pistone
 	DEFS += -DUSE_pistone=1
 endif
 ifdef USE_zotz
-	TARGETS += ZToTaumuTauh HToTaumuTauh HToTaumuTauhSkim HToTaumuTauhBackgrounds MuTauSync OneJetBoost OneJetHigh OneJetLow VBFLoose VBFTight ZeroJetHigh ZeroJetLow Inclusive
+	TARGETS += ZToTaumuTauh
 	DEFS += -DUSE_zotz=1
 endif
 

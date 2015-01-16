@@ -17,14 +17,14 @@
 ///////////////////////////////////////////////////////////////////////
 Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
   copyTree(false)
-  ,ObjEvent(-1)
   ,verbose(false)
+  ,ObjEvent(-1)
   ,isInit(false)
 {
   // TChains the ROOTuple file
   TChain *chain = new TChain("t");
   std::cout << "Ntuple_Controller" << RootFiles.size() << std::endl;
-  for(int i=0; i<RootFiles.size(); i++){
+  for(unsigned int i=0; i<RootFiles.size(); i++){
     chain->Add(RootFiles[i]);
   }
   TTree *tree = (TTree*)chain;  
@@ -47,6 +47,11 @@ Ntuple_Controller::Ntuple_Controller(std::vector<TString> RootFiles):
 
   rmcor = new rochcor2012(); // For systematics use rmcor = new rochcor2012(seed!=1234);
 
+  // Set object correction flags to default values
+  tauCorrection = "";
+  muonCorrection = "";
+  elecCorrection = "";
+  jetCorrection = "";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +92,7 @@ Int_t Ntuple_Controller::Get_Entries(){
 ///////////////////////////////////////////////////////////////////////
 void Ntuple_Controller::Get_Event(int _jentry){
   jentry=_jentry;
-  Int_t ientry = Ntp->LoadTree(jentry);
+  Ntp->LoadTree(jentry);
   nb = Ntp->fChain->GetEntry(jentry);   nbytes += nb;
   isInit = false;
   InitEvent();
@@ -215,7 +220,7 @@ void Ntuple_Controller::doMET(){
 //Physics get Functions
 int Ntuple_Controller::GetMCID(){
   if((Ntp->DataMC_Type)==DataMCType::DY_ll_Signal && HistoC.hasID(DataMCType::DY_ll_Signal)){
-    for(int i=0;i<NMCSignalParticles();i++){
+    for(unsigned int i=0;i<NMCSignalParticles();i++){
       if(abs(MCSignalParticle_pdgid(i))==PDGInfo::Z0){
 	if(fabs(MCSignalParticle_p4(i).M()-PDG_Var::Z_mass())<3*PDG_Var::Z_width()){
 	  return DataMCType::Signal;
@@ -335,8 +340,8 @@ bool Ntuple_Controller::isGoodMuon_nooverlapremoval(unsigned int i){
 
 void Ntuple_Controller::CorrectMuonP4(){
 	if(isInit){
-		for(unsigned i=0;i<NMuons();i++){
-			TLorentzVector mup4 = Muon_p4(i);
+		for(unsigned int i=0;i<NMuons();i++){
+			TLorentzVector mup4 = Muon_p4(i,"");
 			int runopt = 0; // 0: no run-dependece
 			float qter = 1.0; // 1.0: don't care about muon momentum uncertainty
 			if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
@@ -368,6 +373,7 @@ void Ntuple_Controller::CorrectMuonP4(){
 
 TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Muon_p4->at(i).at(1),Ntp->Muon_p4->at(i).at(2),Ntp->Muon_p4->at(i).at(3),Ntp->Muon_p4->at(i).at(0));
+	if (corr == "default") corr = muonCorrection;
 	if(corr.Contains("roch")){
 		if(!Muon_isCorrected){
 			CorrectMuonP4();
@@ -384,6 +390,10 @@ TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 			else vec.SetPerp(vec.Perp()*0.998);
 		}else if(corr.Contains("res")){
 			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
+		}
+		if(corr.Contains("met")){
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.002);
+			else vec.SetPerp(vec.Perp() * 0.998);
 		}
 	}
 	return vec;
@@ -446,6 +456,7 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->Electron_p4->at(i).at(1),Ntp->Electron_p4->at(i).at(2),Ntp->Electron_p4->at(i).at(3),Ntp->Electron_p4->at(i).at(0));
 	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+		if (corr == "default") corr = elecCorrection;
 		if(corr.Contains("scale") && Electron_RegEnergy(i)!=0){
 			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * (1+Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
 			else vec.SetPerp(vec.Perp() * (1-Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
@@ -459,6 +470,16 @@ TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 			}
 			else{
 				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
+			}
+		}
+		if(corr.Contains("met")){
+			if(fabs(Electron_supercluster_eta(i))<1.479){
+				if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.006);
+				else vec.SetPerp(vec.Perp() * 0.994);
+			}
+			else if(fabs(Electron_supercluster_eta(i))<2.5){
+				if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.015);
+				else vec.SetPerp(vec.Perp() * 0.985);
 			}
 		}
 	}
@@ -747,6 +768,7 @@ double Ntuple_Controller::rundependentJetPtCorrection(double jeteta, int runnumb
 
 double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString corr){
 	double sf = jet.Pt();
+	if (corr == "default") corr = jetCorrection;
 	if(isData() || GetMCID()==DataMCType::DY_emu_embedded || GetMCID()==DataMCType::DY_mutau_embedded
 			|| jet.Pt()<=10
 			|| PFJet_matchGenJet(jet,dr)==TLorentzVector(0.,0.,0.,0.)
@@ -763,7 +785,7 @@ double Ntuple_Controller::JERCorrection(TLorentzVector jet, double dr, TString c
 
 TLorentzVector Ntuple_Controller::PFJet_matchGenJet(TLorentzVector jet, double dr){
 	TLorentzVector genjet(0.,0.,0.,0.);
-	for(unsigned i=0;i<PFJet_NGenJetsNoNu();i++){
+	for(unsigned int i=0;i<PFJet_NGenJetsNoNu();i++){
 		if(PFJet_GenJetNoNu_p4(i).Vect()!=TVector3(0.,0.,0.)
 				&& jet.DeltaR(PFJet_GenJetNoNu_p4(i))<dr
 				){
@@ -813,6 +835,7 @@ double Ntuple_Controller::JetEnergyResolutionCorrErr(double jeteta){
 
 TLorentzVector Ntuple_Controller::PFJet_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFJet_p4->at(i).at(1),Ntp->PFJet_p4->at(i).at(2),Ntp->PFJet_p4->at(i).at(3),Ntp->PFJet_p4->at(i).at(0));
+	if (corr == "default") corr = jetCorrection;
 	// apply run-dependent pT corrections
 	if (corr.Contains("run")){
 		vec.SetPerp(vec.Pt() * rundependentJetPtCorrection(vec.Eta(), RunNumber()));
@@ -908,7 +931,8 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
 
 TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 	TLorentzVector vec = TLorentzVector(Ntp->PFTau_p4->at(i).at(1),Ntp->PFTau_p4->at(i).at(2),Ntp->PFTau_p4->at(i).at(3),Ntp->PFTau_p4->at(i).at(0));
-	if(!isData() && GetMCID()!=DataMCType::DY_emu_embedded && GetMCID()!=DataMCType::DY_mutau_embedded){
+	if (corr == "default") corr = tauCorrection;
+	if(!isData()){
 		if(corr.Contains("scalecorr")){
 			if(PFTau_hpsDecayMode(i)>0 && PFTau_hpsDecayMode(i)<5){
 				vec *= 1.025+0.001*min(max(vec.Pt()-45.,0.),10.);
@@ -917,24 +941,28 @@ TLorentzVector Ntuple_Controller::PFTau_p4(unsigned int i, TString corr){
 				vec *= 1.012+0.001*min(max(vec.Pt()-32.,0.),18.);
 			}
 		}
+		if(corr.Contains("met")){
+			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.03);
+			else vec.SetPerp(vec.Perp() * 0.97);
+		}
 	}
 	return vec;
 }
 
 
 bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,TauDecay::JAK tau_jak, unsigned int &tau_idx){
-  for(int i=0; i<NMCSignalParticles();i++){
-    if(MCSignalParticle_pdgid(i)==parent_pdgid){
-      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
-	if(MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
+  for(unsigned int i=0; i<NMCSignalParticles();i++){
+    if(MCSignalParticle_pdgid(i)==(int)parent_pdgid){
+      for(unsigned int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+	if((int)MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
 	  std::cout << "Warning INVALID Tau index... Skipping event! MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << std::endl;
 	  return false;
 	}
       }
-      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+      for(unsigned int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
 	unsigned int tauidx=MCSignalParticle_Tauidx(i).at(j);
 	if(verbose)std::cout << "MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << " " << Ntp->MCTau_JAK->size() << " " << Ntp->MCTauandProd_pdgid->size() << std::endl;
-	if(MCTau_JAK(tauidx)==tau_jak){ tau_idx=tauidx;Boson_idx=i;return true;}
+	if((int)MCTau_JAK(tauidx)==tau_jak){ tau_idx=tauidx;Boson_idx=i;return true;}
       }
     }
   }
@@ -942,10 +970,10 @@ bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,u
 }
 
 bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,unsigned int &Boson_idx,unsigned int &tau1_idx, unsigned int &tau2_idx){
-  for(int i=0; i<NMCSignalParticles();i++){
+  for(unsigned int i=0; i<NMCSignalParticles();i++){
     if(MCSignalParticle_pdgid(i)==parent_pdgid){
-      for(int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
-        if(MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
+      for(unsigned int j=0; j<MCSignalParticle_Tauidx(i).size();j++){
+        if((int)MCSignalParticle_Tauidx(i).at(j)>=NMCTaus()){
 	  std::cout << "Warning INVALID Tau index... Skipping event! MCSignalParticle_Tauidx: " << MCSignalParticle_Tauidx(i).at(j) << " Number of MC Taus: " << NMCTaus() << std::endl;
           return false;
         }
@@ -961,11 +989,50 @@ bool Ntuple_Controller::hasSignalTauDecay(PDGInfo::PDGMCNumbering parent_pdgid,u
   return false;
 }
 
+// calculate flight length significance from primary and secondary vertex info
+double Ntuple_Controller::PFTau_FlightLenght_significance(TVector3 pv,TMatrixTSym<double> PVcov, TVector3 sv, TMatrixTSym<double> SVcov ){
+  TVector3 SVPV = sv - pv;
+  TVectorF FD;
+  FD.ResizeTo(3);
+  FD(0) = SVPV.X();
+  FD(1) = SVPV.Y();
+  FD(2) = SVPV.Z();
+
+  TMatrixT<double> PVcv;
+  PVcv.ResizeTo(3,3);
+  for(int nr =0; nr<PVcov.GetNrows(); nr++){
+    for(int nc =0; nc<PVcov.GetNcols(); nc++){
+      PVcv(nr,nc) = PVcov(nr,nc);
+    }
+  }
+  TMatrixT<double> SVcv;
+  SVcv.ResizeTo(3,3);
+  for(int nr =0; nr<SVcov.GetNrows(); nr++){
+    for(int nc =0; nc<SVcov.GetNcols(); nc++){
+      SVcv(nr,nc) = SVcov(nr,nc);
+    }
+  }
+
+  TMatrixT<double> SVPVMatrix(3,1);
+  for(int i=0; i<SVPVMatrix.GetNrows();i++){
+    SVPVMatrix(i,0)=FD(i);
+  }
+
+  TMatrixT<double> SVPVMatrixT=SVPVMatrix;
+  SVPVMatrixT.T();
+
+  TMatrixT<double> lambda2 = SVPVMatrixT*(SVcv + PVcv)*SVPVMatrix;
+  double sigmaabs = sqrt(lambda2(0,0))/SVPV.Mag();
+  double sign = SVPV.Mag()/sigmaabs;
+
+  return sign;
+}
+
 //// Generator Information
 int Ntuple_Controller::matchTruth(TLorentzVector tvector){
 	double testdr=0.3;
 	int pdgid = 0;
-	for(unsigned i=0;i<NMCParticles();i++){
+	for(unsigned int i=0;i<NMCParticles();i++){
 		if(MCParticle_p4(i).Pt()>0.){
 			if(tvector.DeltaR(MCParticle_p4(i))<testdr){
 				testdr = tvector.DeltaR(MCParticle_p4(i));
@@ -976,7 +1043,7 @@ int Ntuple_Controller::matchTruth(TLorentzVector tvector){
 	return pdgid;
 }
 bool Ntuple_Controller::matchTruth(TLorentzVector tvector, int pid, double dr){
-	for(unsigned i=0;i<NMCParticles();i++){
+	for(unsigned int i=0;i<NMCParticles();i++){
 		if(MCParticle_p4(i).Pt()>0.){
 			if(fabs(MCParticle_pdgid(i))==pid){
 				if(tvector.DeltaR(MCParticle_p4(i))<dr) return true;
@@ -1014,38 +1081,38 @@ bool Ntuple_Controller::GetTriggerIndex(TString n, unsigned int &i){
 }
 
 double Ntuple_Controller::matchTrigger(TLorentzVector obj, std::vector<TString> trigger, std::string objectType){
-	unsigned int id = 0;
-	TLorentzVector triggerObj(0.,0.,0.,0.);
-	if(objectType=="tau"){
-		id = 84;
+  unsigned int id = 0;
+  TLorentzVector triggerObj(0.,0.,0.,0.);
+  if(objectType=="tau"){
+    id = 84;
+  }
+  if(objectType=="muon"){
+    id = 83;
+  }
+  if(objectType=="electron"){
+    id = 82;
+  }
+  
+  double minDR = 100.;
+  for(unsigned int i_trig = 0; i_trig < trigger.size(); i_trig++){
+    for(int i=0;i<NHLTTrigger_objs();i++){
+      if(HLTTrigger_objs_trigger(i).find(trigger.at(i_trig)) != string::npos){
+	for(int j=0;j<NHLTTrigger_objs(i);j++){
+	  if(HLTTrigger_objs_Id(i,j)==(int)id){
+	    triggerObj.SetPtEtaPhiE(HLTTrigger_objs_Pt(i,j),
+				    HLTTrigger_objs_Eta(i,j),
+				    HLTTrigger_objs_Phi(i,j),
+				    HLTTrigger_objs_E(i,j));
+	  }
+	  if( triggerObj.Pt()>0. && obj.Pt()>0. ) {
+	    double dr = obj.DeltaR(triggerObj);
+	    if (dr < minDR) minDR = dr;
+	  }
 	}
-	if(objectType=="muon"){
-		id = 83;
-	}
-	if(objectType=="electron"){
-		id = 82;
-	}
-
-	double minDR = 100.;
-	for(unsigned i_trig = 0; i_trig < trigger.size(); i_trig++){
-		for(unsigned i=0;i<NHLTTrigger_objs();i++){
-			if(HLTTrigger_objs_trigger(i).find(trigger.at(i_trig)) != string::npos){
-				for(unsigned j=0;j<NHLTTrigger_objs(i);j++){
-					if(HLTTrigger_objs_Id(i,j)==id){
-						triggerObj.SetPtEtaPhiE(HLTTrigger_objs_Pt(i,j),
-								HLTTrigger_objs_Eta(i,j),
-								HLTTrigger_objs_Phi(i,j),
-								HLTTrigger_objs_E(i,j));
-					}
-					if( triggerObj.Pt()>0. && obj.Pt()>0. ) {
-						double dr = obj.DeltaR(triggerObj);
-						if (dr < minDR) minDR = dr;
-					}
-				}
-			}
-		}
-	}
-	return minDR;
+      }
+    }
+  }
+  return minDR;
 }
 bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, std::vector<TString> trigger, std::string objectType){
 	double dr = matchTrigger(obj, trigger, objectType);
@@ -1061,8 +1128,8 @@ bool Ntuple_Controller::matchTrigger(TLorentzVector obj, double dr_cut, TString 
 TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(unsigned int i){
   TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
   int l=0;
-  for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
-    for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
+  for(int j=0;j<LorentzVectorParticle::NVertex;j++){
+    for(int k=j;k<LorentzVectorParticle::NVertex;k++){
       //if(j==k) V_cov(i,j)=pow(0.0001,2.0);
       V_cov(j,k)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
       V_cov(k,j)=Ntp->PFTau_TIP_primaryVertex_cov->at(i).at(l);
@@ -1075,8 +1142,8 @@ TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(unsigned int 
 TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_secondaryVertex_cov(unsigned int i){
   TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
   int l=0;
-  for(unsigned int j=0;j<LorentzVectorParticle::NVertex;j++){
-    for(unsigned int k=j;k<LorentzVectorParticle::NVertex;k++){
+  for(int j=0;j<LorentzVectorParticle::NVertex;j++){
+    for(int k=j;k<LorentzVectorParticle::NVertex;k++){
       V_cov(j,k)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
       V_cov(k,j)=Ntp->PFTau_TIP_secondaryVertex_cov->at(i).at(l);
       l++;
@@ -1140,15 +1207,15 @@ TMatrixTSym<double> Ntuple_Controller::PF_Tau_FlightLegth3d_TauFrame_cov(unsigne
   Res(4,0)=f.Theta();
   TMatrixTSym<double> ResCov(5);
   TMatrixTSym<double> cov=PFTau_FlightLength3d_cov(i);
-  for(unsigned int s=0;s<LorentzVectorParticle::NVertex;s++){
-    for(unsigned int t=0;t<LorentzVectorParticle::NVertex;t++){
+  for(int s=0;s<LorentzVectorParticle::NVertex;s++){
+    for(int t=0;t<LorentzVectorParticle::NVertex;t++){
       ResCov(s,t)=cov(s,t);
     }
   }
   TMatrixT<double> Resp=MultiProngTauSolver::RotateToTauFrame(Res);
   TMatrixTSym<double> RespCov=ErrorMatrixPropagator::PropogateError(&MultiProngTauSolver::RotateToTauFrame,Res,ResCov);
-  for(unsigned int s=0;s<LorentzVectorParticle::NVertex;s++){
-    for(unsigned int t=0;t<LorentzVectorParticle::NVertex;t++){
+  for(int s=0;s<LorentzVectorParticle::NVertex;s++){
+    for(int t=0;t<LorentzVectorParticle::NVertex;t++){
       cov(s,t)=RespCov(s,t);
     }
   }
@@ -1200,7 +1267,7 @@ float Ntuple_Controller::vertexSignificance(TVector3 vec, unsigned int vertex){
 bool Ntuple_Controller::findCorrMVASrcMuon(unsigned int muon_idx, int &mvaSrcMuon_idx, float &dR ){
 	float minDr = 1000;
 	float dr = 1001;
-	for (unsigned i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcMuons(); i_mvaLep++){
+	for(unsigned int i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcMuons(); i_mvaLep++){
 		 dr = Tools::dr(Muon_p4(muon_idx),MET_CorrMVA_srcMuon_p4(i_mvaLep));
 		 if ((dr < 0.05) && (dr < minDr)) {
 			 minDr = dr;
@@ -1214,7 +1281,7 @@ bool Ntuple_Controller::findCorrMVASrcMuon(unsigned int muon_idx, int &mvaSrcMuo
 bool Ntuple_Controller::findCorrMVASrcElectron(unsigned int elec_idx, int &mvaSrcElectron_idx, float &dR ){
 	float minDr = 1000;
 	float dr = 1001;
-	for (unsigned i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcElectrons(); i_mvaLep++){
+	for (unsigned int i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcElectrons(); i_mvaLep++){
 		 dr = Tools::dr(Electron_p4(elec_idx),MET_CorrMVA_srcElectron_p4(i_mvaLep));
 		 if ((dr < 0.05) && (dr < minDr)) {
 			 minDr = dr;
@@ -1228,7 +1295,7 @@ bool Ntuple_Controller::findCorrMVASrcElectron(unsigned int elec_idx, int &mvaSr
 bool Ntuple_Controller::findCorrMVASrcTau(unsigned int tau_idx, int &mvaSrcTau_idx, float &dR ){
 	float minDr = 1000;
 	float dr = 1001;
-	for (unsigned i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcTaus(); i_mvaLep++){
+	for(unsigned int i_mvaLep = 0; i_mvaLep < NMET_CorrMVA_srcTaus(); i_mvaLep++){
 		 dr = Tools::dr(PFTau_p4(tau_idx),MET_CorrMVA_srcTau_p4(i_mvaLep));
 		 if ((dr < 0.05) && (dr < minDr)) {
 			 minDr = dr;
@@ -1242,7 +1309,7 @@ bool Ntuple_Controller::findCorrMVASrcTau(unsigned int tau_idx, int &mvaSrcTau_i
 bool Ntuple_Controller::findCorrMVAMuTauSrcMuon(unsigned int muon_idx, int &mvaMuTauSrcMuon_idx, float &dR ){
 	float minDr = 1000;
 	float dr = 1001;
-	for (unsigned i_mvaLep = 0; i_mvaLep < NMET_CorrMVAMuTau_srcMuons(); i_mvaLep++){
+	for (unsigned int i_mvaLep = 0; i_mvaLep < NMET_CorrMVAMuTau_srcMuons(); i_mvaLep++){
 		 dr = Tools::dr(Muon_p4(muon_idx),MET_CorrMVAMuTau_srcMuon_p4(i_mvaLep));
 		 if ((dr < 0.05) && (dr < minDr)) {
 			 minDr = dr;
@@ -1256,7 +1323,7 @@ bool Ntuple_Controller::findCorrMVAMuTauSrcMuon(unsigned int muon_idx, int &mvaM
 bool Ntuple_Controller::findCorrMVAMuTauSrcTau(unsigned int tau_idx, int &mvaMuTauSrcTau_idx, float &dR ){
 	float minDr = 1000;
 	float dr = 1001;
-	for (unsigned i_mvaLep = 0; i_mvaLep < NMET_CorrMVAMuTau_srcTaus(); i_mvaLep++){
+	for (unsigned int i_mvaLep = 0; i_mvaLep < NMET_CorrMVAMuTau_srcTaus(); i_mvaLep++){
 		 dr = Tools::dr(PFTau_p4(tau_idx),MET_CorrMVAMuTau_srcTau_p4(i_mvaLep));
 		 if ((dr < 0.05) && (dr < minDr)) {
 			 minDr = dr;
@@ -1276,14 +1343,14 @@ std::vector<int> Ntuple_Controller::sortObjects(std::vector<int> indices, std::v
 	}
 	// create vector of pairs to allow for sorting by value
 	std::vector< std::pair<int, double> > pairs;
-	for (unsigned i = 0; i<values.size(); i++ ){
+	for(unsigned int i = 0; i<values.size(); i++ ){
 		pairs.push_back( std::make_pair(indices.at(i),values.at(i)) );
 	}
 	// sort vector of pairs
 	std::sort(pairs.begin(), pairs.end(), sortIdxByValue());
 	// create vector of indices in correct order
 	std::vector<int> sortedIndices;
-	for (unsigned i = 0; i<pairs.size(); i++){
+	for(unsigned int i = 0; i<pairs.size(); i++){
 		sortedIndices.push_back(pairs.at(i).first);
 	}
 	return sortedIndices;
@@ -1293,32 +1360,32 @@ std::vector<int> Ntuple_Controller::sortDefaultObjectsByPt(TString objectType){
 	std::vector<int> indices;
 	std::vector<double> values;
 	if (objectType == "Jets" || objectType == "PFJets"){
-		for (unsigned i = 0; i<NPFJets(); i++ ){
-			indices.push_back(i);
-			values.push_back(PFJet_p4(i).Pt());
-		}
+	  for(unsigned int i = 0; i<NPFJets(); i++ ){
+	    indices.push_back(i);
+	    values.push_back(PFJet_p4(i).Pt());
+	  }
 	}
-	else if (objectType == "Taus" || objectType == "PFTaus"){
-		for (unsigned i = 0; i<NPFTaus(); i++ ){
-			indices.push_back(i);
-			values.push_back(PFTau_p4(i).Pt());
-		}
+	else if(objectType == "Taus" || objectType == "PFTaus"){
+	  for(unsigned int i = 0; i<NPFTaus(); i++ ){
+	    indices.push_back(i);
+	    values.push_back(PFTau_p4(i).Pt());
+	  }
 	}
-	else if (objectType == "Muons"){
-		for (unsigned i = 0; i<NMuons(); i++ ){
-			indices.push_back(i);
-			values.push_back(Muon_p4(i).Pt());
-		}
+	else if(objectType == "Muons"){
+	  for (unsigned int i = 0; i<NMuons(); i++ ){
+	    indices.push_back(i);
+	    values.push_back(Muon_p4(i).Pt());
+	  }
 	}
-	else if (objectType == "Electrons"){
-		for (unsigned i = 0; i<NElectrons(); i++ ){
-			indices.push_back(i);
-			values.push_back(Electron_p4(i).Pt());
-		}
+	else if(objectType == "Electrons"){
+	  for (unsigned int i = 0; i<NElectrons(); i++ ){
+	    indices.push_back(i);
+	    values.push_back(Electron_p4(i).Pt());
+	  }
 	}
 	else{
-		std::cout << "WARNING: sortDefaultObjectsByPt is only implemented for Jets, Taus, Muons and Electrons. Abort." << std::endl;
-		return std::vector<int>();
+	  std::cout << "WARNING: sortDefaultObjectsByPt is only implemented for Jets, Taus, Muons and Electrons. Abort." << std::endl;
+	  return std::vector<int>();
 	}
 	return sortObjects(indices, values);
 }
