@@ -4,7 +4,7 @@ Tvariable_EMu::Tvariable_EMu(TString Name_, TString id_):
 Tvariable_Base(Name_,id_)
 {
 	std::cout << "Setting up the class Tvariable_EMu" << std::endl;
-	// run ZtoEE category
+	// run ZtoEMu category
 	categoryFlag = "ZtoEMu";
 }
 

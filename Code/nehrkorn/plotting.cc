@@ -26,6 +26,7 @@ void plotting(){
 	// enter filename here
 	TString filename;
 	if(emb) filename = "/user/nehrkorn/analysis_emb_scaled.root";//dym50_jeteta52.root";
+	else if (generatorcomparison) filename = "/user/nehrkorn/analysis_gencomparison.root";
 	else filename = "/user/nehrkorn/analysis_dym50_jeteta52.root";
 	TFile* infile = new TFile(filename);
 	TFile* upfile = new TFile("/user/nehrkorn/jerjecup.root");
@@ -264,6 +265,19 @@ void plotting(){
 		}
 	}
 
+	if(generatorcomparison){
+		const int ncomp = 12;
+		TString cplot[ncomp] = {"zpt","zeta","zmass","znjets","zjetpt","zmet","zmtlead","zmttrail","znjets_rec","zjetpt_rec","zleadpt","ztrailpt"};
+		TString num[ncomp] = {"MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY"};
+		//TString denom[ncomp] = {"MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY","MC_ee_DY"};
+		TString denom[ncomp] = {"MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY","MC_mumu_DY"};
+		TString ctitle[ncomp] = {};
+		TString cunits[ncomp] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","","GeV","GeV","GeV"};
+		for(unsigned i=0;i<ncomp;i++){
+			DrawComparison(cplot[i]+num[i],cplot[i]+denom[i],1.,1.,0.,0.,infile,ctitle[i],cunits[i]);
+		}
+	}
+
 	TH1D* reddata = getHisto("invmass_ptbalance_widerangeData",1,1,infile);
 	std::vector<TH1D*> gethists = getHistos("invmass_ptbalance_m",names,mcscale,colors,infile,syst);
 	std::vector<TH1D*> redhists = produceReducedHistos(getHistos("invmass_ptbalance_widerange",names,mcscale,colors,infile,syst),histpositions,histnames,reducedColors);
@@ -276,18 +290,6 @@ void plotting(){
 		gethists.at(i)->Write();
 	}
 	outfile->Close();
-
-	if(generatorcomparison){
-		const int ncomp = 13;
-		TString cplot[ncomp] = {"zpt","zeta","zmass","znjets","zjetpt","zmet","zmtmu","zmte","znjets_rec","zjetpt_rec","zmet_rec","zmtmu_rec","zmte_rec"};
-		TString num[ncomp] = {"MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY","MC_emu_DY"};
-		TString denom[ncomp] = {"MC_tautau_DY","MC_DY","MC_DY","MC_DY","MC_DY","MC_DY","MC_DY","MC_DY","MC_tautau_DY","MC_tautau_DY","MC_tautau_DY","MC_tautau_DY","MC_tautau_DY"};
-		TString ctitle[ncomp] = {};
-		TString cunits[ncomp] = {"GeV","","GeV","","GeV","GeV","GeV","GeV","","GeV","GeV","GeV","GeV"};
-		for(unsigned i=0;i<ncomp;i++){
-			DrawComparison(cplot[i]+num[i],cplot[i]+denom[i],1.,1.,0.,0.,infile,ctitle[i],cunits[i]);
-		}
-	}
 
 	/*TH1D* onejetdata = getHisto("onejetData",1,1,infile);
 	std::vector<TH1D*> onejethists = getHistos("onejet",names,mcscale,colors,infile);

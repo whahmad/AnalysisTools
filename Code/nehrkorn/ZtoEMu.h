@@ -121,13 +121,12 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> znjets;
   std::vector<TH1D> zjetpt;
   std::vector<TH1D> zmet;
-  std::vector<TH1D> zmtmu;
-  std::vector<TH1D> zmte;
+  std::vector<TH1D> zmtlead;
+  std::vector<TH1D> zmttrail;
   std::vector<TH1D> znjets_rec;
   std::vector<TH1D> zjetpt_rec;
-  std::vector<TH1D> zmet_rec;
-  std::vector<TH1D> zmtmu_rec;
-  std::vector<TH1D> zmte_rec;
+  std::vector<TH1D> zleadpt;
+  std::vector<TH1D> ztrailpt;
 
   std::vector<TH1D> sip;
   std::vector<TH1D> sip_nm0;
@@ -147,11 +146,9 @@ class ZtoEMu : public Selection {
   std::vector<TH1D> pdf_w0;
   std::vector<TH1D> pdf_w1;
 
-  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,jet_pt,jet_eta,singlejet,zmin,zmax,mtmu,ptbalance,mmin;
+  double mu_ptlow,mu_pthigh,mu_eta,e_ptlow,e_pthigh,e_eta,mmin,mmax,jet_pt,jet_eta,singlejet,mtmu,ptbalance,zmin,zmax;
+  double csvl,csvm,csvt;
   double normunc_dy,normunc_tt,normunc_tw,normunc_diboson,normunc_qcd;
-  int n_mu,n_e;
-  bool doWWObjects;
-  bool useMadgraphZ;
   bool doPDFuncertainty;
   bool doTriggerUncertainty,doPileupUncertainty;
   bool doElectronIdUncertainty,doElectronScaleUncertainty,doElectronResUncertainty;
@@ -161,8 +158,6 @@ class ZtoEMu : public Selection {
   bool doMetUncertainty;
   bool upwardUncertainty,systValid;
   TString mucorr, ecorr, jetcorr;
-  
-  double csvl,csvm,csvt;
 
   TString pdfname1;
   TString pdfname2;
@@ -182,16 +177,15 @@ class ZtoEMu : public Selection {
   bool isFakeElectron(unsigned int idx, unsigned int vtx);
 
   double ZPtReweight(double zpt);
-  double PowhegReweight(double zpt);
   double ZPtRelUnc(double zpt);
   double ZPtMadgraphRelUnc(double zpt);
+
+  // Fake rate stuff
 
   double Fakerate(double pt, double eta, TH2D *fakeRateHist);
   double FakerateError(double pt, double eta, TH2D *fakeRateHist);
   
   TFile* FRFile;
-  TFile* ZptCorrFile;
-  TH1D* ZptCorrection;
   TH2D* ElectronFakeRate35;
   TH2D* ElectronFakeRate20;
   TH2D* ElectronFakeRate50;

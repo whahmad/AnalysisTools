@@ -4,7 +4,7 @@ Tvariable_MuMu::Tvariable_MuMu(TString Name_, TString id_):
 Tvariable_Base(Name_,id_)
 {
 	std::cout << "Setting up the class Tvariable_MuMu" << std::endl;
-	// run ZtoEE category
+	// run ZtoMuMu category
 	categoryFlag = "ZtoMuMu";
 }
 

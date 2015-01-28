@@ -975,7 +975,7 @@ void  Tvariable_Base::doEvent(){
   //
   if(verbose) std::cout << "Mt Mu cut" << std::endl;
   value.at(MET)=0.;
-  value.at(MET) = Ntp->MET_CorrT0pcT1_et();
+  value.at(MET) = Ntp->MET_CorrT0pcT1Txy_et();
   if(doMetUncertainty && !Ntp->isData() && Ntp->GetMCID() != DataMCType::DY_emu_embedded) value.at(MET) = Ntp->MET_Type1CorrUnClusteredUp_et();
   pass.at(MET)=(value.at(MET)<cut.at(MET));
 
@@ -1698,7 +1698,7 @@ double Tvariable_Base::FakerateError(double pt, double eta, TH2D *fakeRateHist){
 //
 
 void Tvariable_Base::Finish(){
-	if(mode==RECONSTRUCT){
+	/*if(mode==RECONSTRUCT){
 		double ndymc(0),ndyemb(0);
 		for(unsigned i=0;i<HConfig.GetNHisto();i++){
 			if(HConfig.GetID(i)==DataMCType::DY_tautau){
@@ -1717,9 +1717,9 @@ void Tvariable_Base::Finish(){
 			Selection::ScaleAllHistOfType(DataMCType::DY_emu_embedded,0);
 			std::cout << "Embedded histograms not scaled properly" << std::endl;
 		}
-	}
+	}*/
 	Selection::Finish();
-	double sumdata(0), sumbkg(0), sumsignal(0);
+	/*double sumdata(0), sumbkg(0), sumsignal(0);
 	double stddata(87),stdbkg(80.629),stdsignal(74.177);
 	double stdqcd(13.877),stdww(17.123),stdwz2l2q(0.000),stdwz3l1nu(0.249),stdzz4l(0.026),stdzz2l2q(0.000),stdzz2l2nu(0.009),stdtt(1.095),stdtw(0.592),stdtbarw(0.000),stddyll(7.213),stddytt(39.958);
 	double std(0);
@@ -1773,7 +1773,7 @@ void Tvariable_Base::Finish(){
 
 	printf("Difference in background events: %.3f%% and in signal events: %.3f%%\n",fabs(sumbkg/stdbkg-1)*100,fabs(sumsignal/stdsignal-1)*100);
 	if(!systValid) std::cout << "!!! WARNING: MORE THAN ONE SYSTEMATIC SET TO TRUE !!!" << std::endl;
-
+*/
 	if(doPDFuncertainty){
 		TString pdfname1_lower = pdfname1;
 		TString pdfname2_lower = pdfname2;

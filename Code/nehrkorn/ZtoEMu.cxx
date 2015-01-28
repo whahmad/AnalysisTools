@@ -19,18 +19,19 @@ ZtoEMu::ZtoEMu(TString Name_, TString id_):
   Selection(Name_,id_)
   ,mu_ptlow(10)
   ,mu_pthigh(20)
+  ,mu_eta(2.4)
   ,e_ptlow(10)
   ,e_pthigh(20)
-  ,mu_eta(2.4)
   ,e_eta(2.5)
-  ,mmin(20)
+  ,mmin(60)
+  ,mmax(120)
   ,jet_pt(18)
   ,jet_eta(5.2) // 2.5 in dileptonic top selection
   ,singlejet(40)
-  ,zmin(88)
-  ,zmax(94)
   ,mtmu(60)
   ,ptbalance(10)
+  ,zmin(88)
+  ,zmax(94)
   ,csvl(0.244)
   ,csvm(0.679)
   ,csvt(0.898)
@@ -41,10 +42,6 @@ ZtoEMu::ZtoEMu(TString Name_, TString id_):
   ,normunc_qcd(0.387)
 {
     //verbose=true;
-
-	doWWObjects = true;
-	useMadgraphZ = true;
-	if(useMadgraphZ) mmin = 50;
 
 	// corrections to be applied to particle candidates
 	mucorr = "roch";
@@ -70,7 +67,7 @@ ZtoEMu::ZtoEMu(TString Name_, TString id_):
 	doMetUncertainty = false;
 
 	systValid = true;
-	if((doPDFuncertainty+doTriggerUncertainty+doPileupUncertainty+doElectronIdUncertainty+doElectronScaleUncertainty+doElectronResUncertainty+doMuonIdUncertainty+doMuonScaleUncertainty+doMuonResUncertainty+doJECUncertainty+doJERUncertainty+doFakeRateUncertainty)>1){
+	if((doPDFuncertainty+doTriggerUncertainty+doPileupUncertainty+doElectronIdUncertainty+doElectronScaleUncertainty+doElectronResUncertainty+doMuonIdUncertainty+doMuonScaleUncertainty+doMuonResUncertainty+doJECUncertainty+doJERUncertainty+doFakeRateUncertainty+doMetUncertainty)>1){
 		systValid = false;
 	}
 
@@ -301,9 +298,6 @@ void  ZtoEMu::Configure(){
 	}
 	RSF = new ReferenceScaleFactors(runtype);
 	FRFile = new TFile(baseEff+"FakeRates_2012_19ifb_rereco.root");
-	ZptCorrFile = new TFile(baseEff+"zpt_correction_2012_roch.root");
-
-	ZptCorrection = (TH1D*)(ZptCorrFile->Get("zptratio"));
 
 	ElectronFakeRate35 = (TH2D*)(FRFile->Get("ElectronFakeRateHist_35"));
 	ElectronFakeRate20 = (TH2D*)(FRFile->Get("ElectronFakeRateHist_20"));
@@ -322,8 +316,8 @@ void  ZtoEMu::Configure(){
   EPt=HConfig.GetTH1D(Name+"_PtE","PtE",40,0.,100.,"p_{T}^{e} (GeV)");
   EEt=HConfig.GetTH1D(Name+"_EtE","EtE",40,0.,100.,"E_{T}^{e} (GeV)");
   MuPt=HConfig.GetTH1D(Name+"_PtMu","PtMu",40,0.,100.,"p_{T}^{#mu} (GeV)");
-  mtMu=HConfig.GetTH1D(Name+"_mtMu","mtMu",40,0.,200.,"m_{t}^{#mu} (GeV)");
-  mtE=HConfig.GetTH1D(Name+"_mtE","mtE",40,0.,200.,"m_{t}^{e} (GeV)");
+  mtMu=HConfig.GetTH1D(Name+"_mtMu","mtMu",40,0.,200.,"m_{T}^{#mu} (GeV)");
+  mtE=HConfig.GetTH1D(Name+"_mtE","mtE",40,0.,200.,"m_{T}^{e} (GeV)");
   NJets=HConfig.GetTH1D(Name+"_NJets","NJets",20,0,20,"number of jets");
   NJetsLoose=HConfig.GetTH1D(Name+"_NJetsLoose","NJetsLoose",20,0,20,"number of jets (loose wp)");
   NJetsMedium=HConfig.GetTH1D(Name+"_NJetsMedium","NJetsMedium",20,0,20,"number of jets (medium wp)");
@@ -360,12 +354,12 @@ void  ZtoEMu::Configure(){
   nm0_met=HConfig.GetTH1D(Name+"_nm0_met","nm0_met",30,0.,150.,"MET (GeV)");
   nm0_mvamet=HConfig.GetTH1D(Name+"_nm0_mvamet","nm0_mvamet",30,0.,150.,"MET (GeV)");
   nm0_onejet=HConfig.GetTH1D(Name+"_nm0_onejet","nm0_onejet",40,0.,200.,"p_{T}^{jet} (GeV)");
-  nm0_mtmu=HConfig.GetTH1D(Name+"_nm0_mtmu","nm0_mtmu",40,0.,160.,"m_{t}^{#mu} (GeV)");
+  nm0_mtmu=HConfig.GetTH1D(Name+"_nm0_mtmu","nm0_mtmu",40,0.,160.,"m_{T}^{#mu} (GeV)");
   nm0_ptbalance=HConfig.GetTH1D(Name+"_nm0_ptbalance","nm0_ptbalance",40,0.,200.,"p_{T}^{e#mu} (GeV)");
   nmm_met=HConfig.GetTH1D(Name+"_nmm_met","nmm_met",30,0.,150.,"MET (GeV)");
   nmm_mvamet=HConfig.GetTH1D(Name+"_nmm_mvamet","nmm_mvamet",30,0.,150.,"MET (GeV)");
   nmm_onejet=HConfig.GetTH1D(Name+"_nmm_onejet","nmm_onejet",40,0.,200.,"p_{T}^{jet} (GeV)");
-  nmm_mtmu=HConfig.GetTH1D(Name+"_nmm_mtmu","nmm_mtmu",40,0.,160.,"m_{t}^{#mu} (GeV)");
+  nmm_mtmu=HConfig.GetTH1D(Name+"_nmm_mtmu","nmm_mtmu",40,0.,160.,"m_{T}^{#mu} (GeV)");
   nmm_ptbalance=HConfig.GetTH1D(Name+"_nmm_ptbalance","nmm_ptbalance",40,0.,200.,"p_{T}^{e#mu} (GeV)");
   
   NPV=HConfig.GetTH1D(Name+"_NPV","NPV",60,0.,60.,"number of vertices");
@@ -387,13 +381,12 @@ void  ZtoEMu::Configure(){
   zjetpt=HConfig.GetTH1D(Name+"_zjetpt","zjetpt",40,0.,200.,"p_{T}^{jet} (GeV)");
   znjets=HConfig.GetTH1D(Name+"_znjets","znjets",10,0,10,"number of jets");
   zmet=HConfig.GetTH1D(Name+"_zmet","zmet",30,0.,150.,"MET (GeV)");
-  zmtmu=HConfig.GetTH1D(Name+"_zmtmu","zmtmu",40,0.,200.,"m_{T}^{#mu} (GeV)");
-  zmte=HConfig.GetTH1D(Name+"_zmte","zmte",40,0.,200.,"m_{T}^{e} (GeV)");
+  zmtlead=HConfig.GetTH1D(Name+"_zmtlead","zmtlead",40,0.,200.,"m_{T}^{#mu} (GeV)");
+  zmttrail=HConfig.GetTH1D(Name+"_zmttrail","zmttrail",40,0.,200.,"m_{T}^{e} (GeV)");
   zjetpt_rec=HConfig.GetTH1D(Name+"_zjetpt_rec","zjetpt_rec",40,0.,200.,"p_{T}^{jet} (GeV)");
   znjets_rec=HConfig.GetTH1D(Name+"_znjets_rec","znjets_rec",10,0,10,"number of jets");
-  zmet_rec=HConfig.GetTH1D(Name+"_zmet_rec","zmet_rec",30,0.,150.,"MET (GeV)");
-  zmtmu_rec=HConfig.GetTH1D(Name+"_zmtmu_rec","zmtmu_rec",40,0.,200.,"m_{T}^{#mu} (GeV)");
-  zmte_rec=HConfig.GetTH1D(Name+"_zmte_rec","zmte_rec",40,0.,200.,"m_{T}^{e} (GeV)");
+  zleadpt=HConfig.GetTH1D(Name+"_zleadpt","zleadpt",40,0.,100.,"p_{T}^{lead} (GeV)");
+  ztrailpt=HConfig.GetTH1D(Name+"_ztrailpt","ztrailpt",40,0.,100.,"p_{T}^{trail} (GeV)");
 
   sip=HConfig.GetTH1D(Name+"_sip","sip",10,0.,10.,"Significance of impact parameter (3D)");
   sip_nm0=HConfig.GetTH1D(Name+"_sip_nm0","sip_nm0",10,0.,10.,"Significance of impact parameter (3D)");
@@ -503,13 +496,12 @@ void  ZtoEMu::Store_ExtraDist(){
  Extradist1d.push_back(&zjetpt);
  Extradist1d.push_back(&znjets);
  Extradist1d.push_back(&zmet);
- Extradist1d.push_back(&zmtmu);
- Extradist1d.push_back(&zmte);
+ Extradist1d.push_back(&zmtlead);
+ Extradist1d.push_back(&zmttrail);
  Extradist1d.push_back(&zjetpt_rec);
  Extradist1d.push_back(&znjets_rec);
- Extradist1d.push_back(&zmet_rec);
- Extradist1d.push_back(&zmtmu_rec);
- Extradist1d.push_back(&zmte_rec);
+ Extradist1d.push_back(&zleadpt);
+ Extradist1d.push_back(&ztrailpt);
 
  Extradist1d.push_back(&sip);
  Extradist1d.push_back(&sip_nm0);
@@ -603,8 +595,7 @@ void  ZtoEMu::doEvent(){
 				  && Ntp->Muon_RelIso(i)<0.12
 				  ){
 			  GoodMuons.push_back(i);
-		  }else if(doWWObjects
-				  && isFakeMuon(i,vertex)
+		  }else if(isFakeMuon(i,vertex)
 				  && (Ntp->isData() || Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
 				  ){
 			  Fakemuons.push_back(i);
@@ -656,8 +647,7 @@ void  ZtoEMu::doEvent(){
 				  && Ntp->Electron_RelIsoDep04(i)<0.15
 				  ){
 			  GoodElectrons.push_back(i);
-		  }else if(doWWObjects
-				  && isFakeElectron(i,vertex)
+		  }else if(isFakeElectron(i,vertex)
 				  && (Ntp->isData() || Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
 				  ){
 			  Fakeelectrons.push_back(i);
@@ -713,13 +703,11 @@ void  ZtoEMu::doEvent(){
   // m(ll)
   //
   if(verbose) std::cout << "m(ll)" << std::endl;
-  //value.at(mll)=mmin+1;
-  value.at(mll)=61;
+  value.at(mll)=mmin+1;
   if(muidx!=999 && eidx!=999){
 	  value.at(mll)=(Ntp->Muon_p4(muidx)+Ntp->Electron_p4(eidx)).M();
   }
-  //pass.at(mll)=(value.at(mll)>cut.at(mll));
-  pass.at(mll)=(value.at(mll)>=60. && value.at(mll)<120.);
+  pass.at(mll)=(value.at(mll)>=mmin && value.at(mll)<mmax);
 
   ///////////////////////////////////////////////
   //
@@ -770,68 +758,65 @@ void  ZtoEMu::doEvent(){
   fakeRate = 1.;
   bool fakemu = false;
   bool fakee = false;
-  if(doWWObjects){
-	  for(unsigned i=0;i<Fakemuons.size();i++){
-		  if(Fakemuons.at(i)==muidx){
-			  fakemu=true;
-			  fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate15);
-			  if(doFakeRateUncertainty){
-				  if(upwardUncertainty) fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate30);
-				  else fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate5);
-			  }
-			  break;
+  for(unsigned i=0;i<Fakemuons.size();i++){
+	  if(Fakemuons.at(i)==muidx){
+		  fakemu=true;
+		  fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate15);
+		  if(doFakeRateUncertainty){
+			  if(upwardUncertainty) fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate30);
+			  else fakeRateMu = Fakerate(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Eta(),MuonFakeRate5);
 		  }
+		  break;
 	  }
-	  for(unsigned i=0;i<Fakeelectrons.size();i++){
-		  if(Fakeelectrons.at(i)==eidx){
-			  fakee=true;
-			  fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate35);
-			  if(doFakeRateUncertainty){
-				  if(upwardUncertainty) fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate50);
-				  else fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate20);
-			  }
-			  break;
-		  }
-	  }
-	  if(pass.at(charge)
-			  && (Ntp->isData() || Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
-			  ){
-		  if(fakemu || fakee) fakeRate = 0.;
-	  }
-	  if(!pass.at(charge)
-			  && Ntp->isData()
-			  ){
-		  if(fakemu && !fakee){
-			  fakeRate = fakeRateMu;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge)=true;
-		  }else if(fakee && !fakemu){
-			  fakeRate = fakeRateE;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge)=true;
-		  }else if(fakemu && fakee){
-			  fakeRate = fakeRateMu*fakeRateE;
-			  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
-			  pass.at(charge)=true;
-		  }
-	  }
-	  if(!pass.at(charge)
-			  && (Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
-			  ){
-		  if(fakemu && !fakee){
-			  fakeRate = -fakeRateMu;
-			  pass.at(charge)=true;
-		  }else if(fakee && !fakemu){
-			  fakeRate = -fakeRateE;
-			  pass.at(charge)=true;
-		  }else if(fakemu && fakee){
-			  fakeRate = -fakeRateMu*fakeRateE;
-			  pass.at(charge)=true;
-		  }
-	  }
-	  if(fabs(fakeRate)>0 && fabs(fakeRate)<1) fakeRate*=0.83;
   }
-
+  for(unsigned i=0;i<Fakeelectrons.size();i++){
+	  if(Fakeelectrons.at(i)==eidx){
+		  fakee=true;
+		  fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate35);
+		  if(doFakeRateUncertainty){
+			  if(upwardUncertainty) fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate50);
+			  else fakeRateE = Fakerate(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),ElectronFakeRate20);
+		  }
+		  break;
+	  }
+  }
+  if(pass.at(charge)
+		  && (Ntp->isData() || Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
+		  ){
+	  if(fakemu || fakee) fakeRate = 0.;
+  }
+  if(!pass.at(charge)
+		  && Ntp->isData()
+		  ){
+	  if(fakemu && !fakee){
+		  fakeRate = fakeRateMu;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge)=true;
+	  }else if(fakee && !fakemu){
+		  fakeRate = fakeRateE;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge)=true;
+	  }else if(fakemu && fakee){
+		  fakeRate = fakeRateMu*fakeRateE;
+		  if(!HConfig.GetHisto(!Ntp->isData(),DataMCType::QCD,t)){ std::cout << "failed to find id "<< DataMCType::QCD <<std::endl; return;}
+		  pass.at(charge)=true;
+	  }
+  }
+  if(!pass.at(charge)
+		  && (Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau || Ntp->GetMCID()==DataMCType::DY_ll || Ntp->GetMCID()==DataMCType::DY_emu_embedded)
+		  ){
+	  if(fakemu && !fakee){
+		  fakeRate = -fakeRateMu;
+		  pass.at(charge)=true;
+	  }else if(fakee && !fakemu){
+		  fakeRate = -fakeRateE;
+		  pass.at(charge)=true;
+	  }else if(fakemu && fakee){
+		  fakeRate = -fakeRateMu*fakeRateE;
+		  pass.at(charge)=true;
+	  }
+  }
+  if(fabs(fakeRate)>0 && fabs(fakeRate)<1) fakeRate*=0.83;
 
   ///////////////////////////////////////////////
   //
@@ -895,9 +880,9 @@ void  ZtoEMu::doEvent(){
   if(verbose) std::cout << "Mt Mu cut" << std::endl;
   value.at(MtMu)=0.;
   if(muidx!=999){
-	  value.at(MtMu)=Ntp->transverseMass(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi());
+	  value.at(MtMu)=Ntp->transverseMass(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Phi(),Ntp->MET_CorrT0pcT1Txy_et(),Ntp->MET_CorrT0pcT1Txy_phi());
 	  if(doMetUncertainty){
-		  if(!Ntp->isData() && Ntp->GetMCID()!=DataMCType::DY_emu_embedded) value.at(MtMu)=Ntp->transverseMass(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Phi(),Ntp->MET_Type1CorrUnClusteredUp_et(),Ntp->MET_CorrT0pcT1_phi());
+		  if(!Ntp->isData() && Ntp->GetMCID()!=DataMCType::DY_emu_embedded) value.at(MtMu)=Ntp->transverseMass(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Phi(),Ntp->MET_Type1CorrUnClusteredUp_et(),Ntp->MET_CorrT0pcT1Txy_phi());
 	  }
   }
   pass.at(MtMu)=(value.at(MtMu)<cut.at(MtMu));
@@ -998,12 +983,6 @@ void  ZtoEMu::doEvent(){
     	if(leadingmu) w*=(RSF->HiggsWW_EMu_Trigger(Ntp->Muon_p4(muidx),Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),"Mu17_Ele8")+trigunc);
     	else w*=(RSF->HiggsWW_EMu_Trigger(Ntp->Muon_p4(muidx),Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_supercluster_eta(eidx),"Mu8_Ele17")+trigunc);
     }
-    if(pass.at(NMu)
-    		&& pass.at(NE)
-    		&& !useMadgraphZ
-    		){
-    	//if(Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau)w*=PowhegReweight((Ntp->Muon_p4(muidx)+Ntp->Electron_p4(eidx)).Pt());
-    }
     if(verbose)std::cout << "void  ZtoEMu::doEvent() k" << w << " " << wobs << std::endl;
   }
   else{w=1*fakeRate;wobs=1;}
@@ -1017,7 +996,7 @@ void  ZtoEMu::doEvent(){
   //
   if(doPDFuncertainty){
 	  if(verbose) std::cout << "Calculating PDF weights" << std::endl;
-	  for(unsigned int member=0;member<nPDFmembers;++member){
+	  for(int member=0;member<nPDFmembers;++member){
 		  if(Ntp->isData() || Ntp->GetMCID()==DataMCType::QCD) break;
 		  double pdfWeight = w*pdf->weight(Ntp->GenEventInfoProduct_id1(),Ntp->GenEventInfoProduct_id2(),Ntp->GenEventInfoProduct_x1(),Ntp->GenEventInfoProduct_x2(),Ntp->GenEventInfoProduct_scalePDF(),member);
 		  pdf_w0.at(t).AddBinContent(member+1,pdfWeight);
@@ -1031,40 +1010,67 @@ void  ZtoEMu::doEvent(){
   //
   if(verbose) std::cout << "add plots" << std::endl;
 
+  //generator cross checks
   if(Ntp->GetMCID()==30 || Ntp->GetMCID()==31 || Ntp->GetMCID()==32 || Ntp->GetMCID()==33 || Ntp->GetMCID()==40){
 	  for(unsigned i=0;i<Ntp->NMCParticles();i++){
 		  if(Ntp->MCParticle_pdgid(i)==23){
-			  if(!useMadgraphZ && (Ntp->GetMCID()==DataMCType::DY_ee || Ntp->GetMCID()==DataMCType::DY_mumu || Ntp->GetMCID()==DataMCType::DY_tautau)){
-				  zpt.at(t).Fill(Ntp->MCParticle_p4(i).Pt())*PowhegReweight(Ntp->MCParticle_p4(i).Pt());
-			  }else{
-				  if(Ntp->MCParticle_p4(i).M()>=50.)zpt.at(t).Fill(Ntp->MCParticle_p4(i).Pt());
-			  }
+			  /*if(Ntp->MCParticle_p4(i).M()>=50.)*/zpt.at(t).Fill(Ntp->MCParticle_p4(i).Pt());
 			  zeta.at(t).Fill(Ntp->MCParticle_p4(i).Eta());
 			  zmass.at(t).Fill(Ntp->MCParticle_p4(i).M());
 		  }
 	  }
 	  if(Ntp->PFJet_NGenJetsNoNu()>0) zjetpt.at(t).Fill(Ntp->PFJet_GenJetNoNu_p4(0).Pt());
+	  if(Ntp->NPFJets()>0) zjetpt_rec.at(t).Fill(Ntp->PFJet_p4(0).Pt(),w);
 	  znjets.at(t).Fill(Ntp->PFJet_NGenJetsNoNu());
+	  znjets_rec.at(t).Fill(Ntp->NPFJets(),w);
 	  zmet.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
+	  unsigned int zmu1(999), zmu2(999), ze1(999), ze2(999);
+	  unsigned int zlead(999), ztrail(999);
 	  for(unsigned i=0; i<Ntp->NMCParticles(); i++){
-		  if(fabs(Ntp->MCParticle_pdgid(i))==11 && (fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==15 || fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==23)){
-			  zmte.at(t).Fill(Ntp->transverseMass(Ntp->MCParticle_p4(i).Pt(),Ntp->MCParticle_p4(i).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
-		  }else if(fabs(Ntp->MCParticle_pdgid(i))==13 && (fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==15 || fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==23)){
-			  zmtmu.at(t).Fill(Ntp->transverseMass(Ntp->MCParticle_p4(i).Pt(),Ntp->MCParticle_p4(i).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
+		  if(fabs(Ntp->MCParticle_pdgid(i))==11 && fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==23){
+			  if(ze1==999) ze1 = i;
+			  else if(ze2==999) ze2 = i;
+		  }else if(fabs(Ntp->MCParticle_pdgid(i))==13 && fabs(Ntp->MCParticle_pdgid(Ntp->MCParticle_midx(i)))==23){
+			  if(zmu1==999) zmu1 = i;
+			  else if(zmu2==999) zmu2 = i;
 		  }
 	  }
-  }
+	  if(Ntp->GetMCID()==30 || Ntp->GetMCID()==31 || Ntp->GetMCID()==32){
+		  if(ze1!=999 && ze2!=999 && (zmu1==999 || zmu2==999)){
+			  if(Ntp->MCParticle_p4(ze1).Pt()>Ntp->MCParticle_p4(ze2).Pt()){
+				  zlead = ze1;
+				  ztrail = ze2;
+			  }else{
+				  zlead = ze2;
+				  ztrail = ze1;
+			  }
+		  }else if(zmu1!=999 && zmu2!=999 && (ze1==999 || ze2==999)){
+			  if(Ntp->MCParticle_p4(zmu1).Pt()>Ntp->MCParticle_p4(zmu2).Pt()){
+				  zlead = zmu1;
+				  ztrail = zmu2;
+			  }else{
+				  zlead = zmu2;
+				  ztrail = zmu1;
+			  }
+		  }
 
-  //generator cross checks
-  if(pass.at(TriggerOk)
-		  && pass.at(PrimeVtx)
-		  )
-  if(Ntp->GetMCID()==30 || Ntp->GetMCID()==31 || Ntp->GetMCID()==32 || Ntp->GetMCID()==33 || Ntp->GetMCID()==40){
-	  znjets_rec.at(t).Fill(Ntp->NPFJets(),w);
-	  if(Ntp->NPFJets()>0) zjetpt_rec.at(t).Fill(Ntp->PFJet_p4(0).Pt(),w);
-	  zmet_rec.at(t).Fill(Ntp->MET_CorrT0pcT1_et(),w);
-	  if(pass.at(NMu)) zmtmu_rec.at(t).Fill(Ntp->transverseMass(Ntp->Muon_p4(muidx).Pt(),Ntp->Muon_p4(muidx).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
-	  if(pass.at(NE)) zmte_rec.at(t).Fill(Ntp->transverseMass(Ntp->Electron_p4(eidx).Pt(),Ntp->Electron_p4(eidx).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
+	  }else if(Ntp->GetMCID()==40 && zmu1!=999 && ze1!=999){
+		  if(Ntp->MCParticle_p4(zmu1).Pt()>Ntp->MCParticle_p4(ze1).Pt()){
+			  zlead = zmu1;
+			  ztrail = ze1;
+		  }else{
+			  zlead = ze1;
+			  ztrail = zmu1;
+		  }
+	  }
+	  if(zlead!=999){
+		  zleadpt.at(t).Fill(Ntp->MCParticle_p4(zlead).Pt());
+		  zmtlead.at(t).Fill(Ntp->transverseMass(Ntp->MCParticle_p4(zlead).Pt(),Ntp->MCParticle_p4(zlead).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
+	  }
+	  if(ztrail!=999){
+		  ztrailpt.at(t).Fill(Ntp->MCParticle_p4(ztrail).Pt());
+		  zmttrail.at(t).Fill(Ntp->transverseMass(Ntp->MCParticle_p4(ztrail).Pt(),Ntp->MCParticle_p4(ztrail).Phi(),Ntp->MET_CorrT0pcT1_et(),Ntp->MET_CorrT0pcT1_phi()),w);
+	  }
   }
 
   if(pass.at(TriggerOk)
@@ -1359,12 +1365,6 @@ double ZtoEMu::ZPtReweight(double zpt){
 	return weight;
 }
 
-double ZtoEMu::PowhegReweight(double zpt){
-	double weight = 1.;
-	weight = ZptCorrection->GetBinContent(ZptCorrection->FindFixBin(zpt));
-	return weight;
-}
-
 // relative uncertainties obtained from table 16 in AN-2012-225
 double ZtoEMu::ZPtRelUnc(double zpt){
 	double unc = 0.;
@@ -1465,7 +1465,7 @@ double ZtoEMu::cosphi3d(TVector3 vec1, TVector3 vec2){
 
 int ZtoEMu::findBin(TGraphAsymmErrors* graph, double xval){
 	int bin = -1;
-	for(unsigned i=0;i<graph->GetN()-1;i++){
+	for(int i=0;i<graph->GetN()-1;i++){
 		if(fabs(graph->GetX()[i]-xval)<fabs(graph->GetX()[i+1]-xval)) bin = i;
 		else if(fabs(graph->GetX()[i]-xval)>=fabs(graph->GetX()[i+1]-xval)) bin = i+1;
 	}
@@ -1606,7 +1606,7 @@ void ZtoEMu::Finish(){
 	double sumdata(0), sumbkg(0), sumsignal(0);
 	double stddata(87),stdbkg(80.629),stdsignal(74.177);
 	double stdqcd(13.877),stdww(17.123),stdwz2l2q(0.000),stdwz3l1nu(0.249),stdzz4l(0.026),stdzz2l2q(0.000),stdzz2l2nu(0.009),stdtt(1.095),stdtw(0.592),stdtbarw(0.000),stddyll(7.213),stddytt(39.958);
-	double std(0),stdunc(0);
+	double std(0);
 	double bkgunc(0),individualunc(0),statunc(0);
 	for(unsigned i=0;i<HConfig.GetNHisto();i++){
 		if(HConfig.GetID(i)==DataMCType::Data) sumdata = Npassed.at(i).GetBinContent(NCuts+1);
@@ -1675,12 +1675,12 @@ void ZtoEMu::Finish(){
 			double acc2 = 0;
 			double yield2 = 0;
 			if(pdfname2_lower.Contains("nnpdf")){
-				for(unsigned j=1;j<nPDFmembers;++j){
+				for(int j=1;j<nPDFmembers;++j){
 					acc2 += pow(pdf_w1.at(i).GetBinContent(j+1)/pdf_w0.at(i).GetBinContent(j+1)-acc,2);
 					yield2 += pow(pdf_w1.at(i).GetBinContent(j+1)-yield,2);
 				}
 			}else{
-				for(unsigned j=1;j<nPDFmembers;j+=2){
+				for(int	j=1;j<nPDFmembers;j+=2){
 					acc2 += pow(pdf_w1.at(i).GetBinContent(j+1)/pdf_w0.at(i).GetBinContent(j+1)-pdf_w1.at(i).GetBinContent(j+2)/pdf_w0.at(i).GetBinContent(j+2),2);
 					yield2 += pow(pdf_w1.at(i).GetBinContent(j+1)-pdf_w1.at(i).GetBinContent(j+2),2);
 				}

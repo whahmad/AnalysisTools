@@ -1234,25 +1234,25 @@ TVector3 Ntuple_Controller::PF_Tau_FlightLegth3d_TauFrame(unsigned int i){
   return TVector3(Resp(0,0),Resp(1,0),Resp(2,0));
 }
 
-float Ntuple_Controller::dxySigned(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double Ntuple_Controller::dxySigned(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return (-(poca.X()-vtx.X())*fourvector.Py()+(poca.Y()-vtx.Y())*fourvector.Px())/fourvector.Pt();
 }
-float Ntuple_Controller::dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double Ntuple_Controller::dxy(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return fabs(dxySigned(fourvector, poca, vtx));
 }
 
 
-float Ntuple_Controller::dzSigned(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double Ntuple_Controller::dzSigned(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return poca.Z()-vtx.Z()-((poca.X()-vtx.X())*fourvector.Px()+(poca.Y()-vtx.Y())*fourvector.Py())*fourvector.Pz()/pow(fourvector.Pt(),2);
 }
-float Ntuple_Controller::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
+double Ntuple_Controller::dz(TLorentzVector fourvector, TVector3 poca, TVector3 vtx){
 	return fabs(dzSigned(fourvector, poca, vtx));
 }
 
-float Ntuple_Controller::vertexSignificance(TVector3 vec, unsigned int vertex){
+double Ntuple_Controller::vertexSignificance(TVector3 vec, unsigned int vertex){
 	if(vertex>=0 && vertex<NVtx()){
-		const float elm[3] = {(vec.X()-Vtx(vertex).X()),(vec.Y()-Vtx(vertex).Y()),(vec.Z()-Vtx(vertex).Z())};
-		TVectorF diff(3,elm);
+		const double elm[3] = {(vec.X()-Vtx(vertex).X()),(vec.Y()-Vtx(vertex).Y()),(vec.Z()-Vtx(vertex).Z())};
+		TVectorD diff(3,elm);
 		TMatrixF M(Vtx_Cov(vertex));
 		if(M.IsValid()){
 			double mag = diff.Norm2Sqr();
