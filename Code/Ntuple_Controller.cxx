@@ -620,22 +620,22 @@ bool Ntuple_Controller::isTightElectron(unsigned int i, unsigned int j, TString 
 }
 
 float Ntuple_Controller::Electron_RelIso03(unsigned int i, TString corr){
-	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
+	return (Electron_chargedHadronIso(i)+std::max((double)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
-float Ntuple_Controller::Electron_RelIsoDep03(unsigned int i, TString corr){
-	return (Electron_isoDeposits_chargedHadronIso03(i)+std::max((float)0.,Electron_isoDeposits_neutralHadronIso03(i)+Electron_isoDeposits_photonIso03(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
+double Ntuple_Controller::Electron_RelIsoDep03(unsigned int i, TString corr){
+	return (Electron_isoDeposits_chargedHadronIso03(i)+std::max((double)0.,Electron_isoDeposits_neutralHadronIso03(i)+Electron_isoDeposits_photonIso03(i)-RhoIsolationAllInputTags()*Electron_Aeff_R03(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
 float Ntuple_Controller::Electron_RelIso04(unsigned int i, TString corr){
-	return (Electron_chargedHadronIso(i)+std::max((float)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
+	return (Electron_chargedHadronIso(i)+std::max((double)0.,Electron_neutralHadronIso(i)+Electron_photonIso(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
-float Ntuple_Controller::Electron_RelIsoDep04(unsigned int i, TString corr){
-	return (Electron_isoDeposits_chargedHadronIso04(i)+std::max((float)0.,Electron_isoDeposits_neutralHadronIso04(i)+Electron_isoDeposits_photonIso04(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
+double Ntuple_Controller::Electron_RelIsoDep04(unsigned int i, TString corr){
+	return (Electron_isoDeposits_chargedHadronIso04(i)+std::max((double)0.,Electron_isoDeposits_neutralHadronIso04(i)+Electron_isoDeposits_photonIso04(i)-RhoIsolationAllInputTags()*Electron_Aeff_R04(Electron_supercluster_eta(i))))/Electron_p4(i,corr).Pt();
 }
 
-float Ntuple_Controller::Electron_Aeff_R04(double Eta){
+double Ntuple_Controller::Electron_Aeff_R04(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.208;
 	else if(eta>=1. && eta<1.479) return 0.209;
@@ -647,7 +647,7 @@ float Ntuple_Controller::Electron_Aeff_R04(double Eta){
 	else {std::cout << "Electron eta out of range: " << Eta << std::endl; return -1;}
 }
 
-float Ntuple_Controller::Electron_Aeff_R03(double Eta){
+double Ntuple_Controller::Electron_Aeff_R03(double Eta){
 	double eta=fabs(Eta);
 	if(eta>=0. && eta<1.) return 0.13;
 	else if(eta>=1. && eta<1.479) return 0.14;

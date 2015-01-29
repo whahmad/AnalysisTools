@@ -827,11 +827,11 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
    bool isTightElectron(unsigned int i, TString corr = "default");
    bool isTightElectron(unsigned int i, unsigned int j, TString corr = "default");
    float Electron_RelIso03(unsigned int i, TString corr = "default");
-   float Electron_RelIsoDep03(unsigned int i, TString corr = "default");//todo: better name
+   double Electron_RelIsoDep03(unsigned int i, TString corr = "default");//todo: better name
    float Electron_RelIso04(unsigned int i, TString corr = "default");
-   float Electron_RelIsoDep04(unsigned int i, TString corr = "default");//todo: better name
-   float Electron_Aeff_R04(double Eta);
-   float Electron_Aeff_R03(double Eta);
+   double Electron_RelIsoDep04(unsigned int i, TString corr = "default");//todo: better name
+   double Electron_Aeff_R04(double Eta);
+   double Electron_Aeff_R03(double Eta);
    bool isSelectedElectron(unsigned int i, unsigned int j, double impact_xy, double impact_z, TString corr = "default");
 
    // Trigger
