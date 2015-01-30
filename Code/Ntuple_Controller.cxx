@@ -9,6 +9,7 @@
 
 // External code
 #include "TauDataFormat/TauNtuple/interface/DataMCType.h"
+#include "SimpleFits/FitSoftware/interface/PDGInfo.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -1052,6 +1053,44 @@ bool Ntuple_Controller::matchTruth(TLorentzVector tvector, int pid, double dr){
 	}
 	return false;
 }
+
+//// draw decay chain
+void Ntuple_Controller::printMCDecayChainOfEvent(bool printStatus, bool printPt, bool printEtaPhi, bool printQCD){
+	std::cout << "=== Draw MC decay chain of event ===" << std::endl;
+	for(unsigned int par = 0; par < NMCParticles(); par++){
+		if ( !MCParticle_hasMother(par) )
+			printMCDecayChainOfMother(par, printStatus, printPt, printEtaPhi, printQCD);
+	}
+}
+void Ntuple_Controller::printMCDecayChainOfMother(unsigned int par, bool printStatus, bool printPt, bool printEtaPhi, bool printQCD){
+	std::cout << "Draw decay chain for mother particle at index " << par << " :" << std::endl;
+	printMCDecayChain(par, 0, printStatus, printPt, printEtaPhi, printQCD);
+}
+void Ntuple_Controller::printMCDecayChain(unsigned int par, unsigned int level, bool printStatus, bool printPt, bool printEtaPhi, bool printQCD){
+	std::ostringstream out;
+	for(unsigned int l = 0; l < level; l++) out << "    ";
+	out << MCParticleToString(par, printStatus, printPt, printEtaPhi);
+	if (!printQCD && MCParticle_pdgid(par) == 92) {out << "    QCD stuff truncated ...\n"; std::cout << out.str(); return;}
+	out << "\n";
+	std::cout << out.str();
+	for (unsigned int i_dau = 0; i_dau < MCParticle_childidx(par).size(); i_dau++){
+		if (MCParticle_childidx(par).at(i_dau) != (int)par) // skip cases where particles are daughters of themselves
+			printMCDecayChain(MCParticle_childidx(par).at(i_dau), level+1, printStatus, printPt, printEtaPhi, printQCD);
+	}
+}
+
+std::string Ntuple_Controller::MCParticleToString(unsigned int par, bool printStatus, bool printPt, bool printEtaPhi){
+	std::ostringstream out;
+	out << "+-> ";
+	out << PDGInfo::pdgIdToName( MCParticle_pdgid(par) );
+	if (printStatus) out << " (status = " << MCParticle_status(par) << ", idx = " << par << ")";
+	if (printPt || printEtaPhi) out <<  " [";
+	if (printPt) out << "pT = " << MCParticle_p4(par).Pt() << "GeV";
+	if (printEtaPhi) out << " eta = " << MCParticle_p4(par).Eta() << " phi = " << MCParticle_p4(par).Phi();
+	if (printPt || printEtaPhi) out << "]";
+	return out.str();
+}
+
 
 //// Trigger Information
 bool Ntuple_Controller::TriggerAccept(TString n){

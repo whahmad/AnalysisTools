@@ -97,6 +97,9 @@ class Ntuple_Controller{
   void doMET();
   unsigned int ObjEvent;
 
+  // helper function for MC decay tree drawer
+  void printMCDecayChain(unsigned int par, unsigned int level = 0, bool printStatus = false, bool printPt = false, bool printEtaPhi = false, bool printQCD = false);
+
   // Object Variables
   std::vector<TLorentzVector> electrons_default;
   std::vector<TLorentzVector> photons_default;
@@ -188,8 +191,8 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
   void SetElecCorrections(TString elecCorr){elecCorrection = elecCorr;}
   void SetJetCorrections(TString jetCorr){jetCorrection = jetCorr;}
 
-  // Physics Varible Get Functions
-  // Event Varibles
+  // Physics Variable Get Functions
+  // Event Variables
   int GetMCID();
   unsigned int RunNumber(){return Ntp->Event_RunNumber;}
   unsigned int EventNumber(){ return Ntp->Event_EventNumber;}
@@ -693,22 +696,31 @@ TauSpinerInt.SetTauSignalCharge(signalcharge);
      return TrackParticle(track_par,track_cov,Ntp->Track_pdgid->at(i),Ntp->Track_M->at(i),Ntp->Track_charge->at(i),Ntp->Track_B->at(i));
    }
 
-   // MC Informaation
-   // Singal particles (Z0,W+/-,H0,H+/-)
+   // MC Information
+   // Signal particles (Z0,W+/-,H0,H+/-)
    unsigned int               NMCSignalParticles(){return Ntp->MCSignalParticle_p4->size();}
    TLorentzVector             MCSignalParticle_p4(unsigned int i){return TLorentzVector(Ntp->MCSignalParticle_p4->at(i).at(1),Ntp->MCSignalParticle_p4->at(i).at(2),Ntp->MCSignalParticle_p4->at(i).at(3),Ntp->MCSignalParticle_p4->at(i).at(0));}
    int                        MCSignalParticle_pdgid(unsigned int i){return Ntp->MCSignalParticle_pdgid->at(i);}
    int                        MCSignalParticle_charge(unsigned int i){return Ntp->MCSignalParticle_charge->at(i);}
    TVector3                   MCSignalParticle_Poca(unsigned int i){return TVector3(Ntp->MCSignalParticle_Poca->at(i).at(0),Ntp->MCSignalParticle_Poca->at(i).at(1),Ntp->MCSignalParticle_Poca->at(i).at(2));}
    std::vector<unsigned int>  MCSignalParticle_Tauidx(unsigned int i){return Ntp->MCSignalParticle_Tauidx->at(i);}
+   // full MC chain
    unsigned int               NMCParticles(){return Ntp->MC_p4->size();}
    TLorentzVector             MCParticle_p4(unsigned int i){return TLorentzVector(Ntp->MC_p4->at(i).at(1),Ntp->MC_p4->at(i).at(2),Ntp->MC_p4->at(i).at(3),Ntp->MC_p4->at(i).at(0));}
    int                        MCParticle_pdgid(unsigned int i){return Ntp->MC_pdgid->at(i);}
    int                        MCParticle_charge(unsigned int i){return Ntp->MC_charge->at(i);}
-   unsigned int               MCParticle_midx(unsigned int i){return Ntp->MC_midx->at(i);}
+   int               		  MCParticle_midx(unsigned int i){return Ntp->MC_midx->at(i);}
    std::vector<int>           MCParticle_childpdgid(unsigned int i){return Ntp->MC_childpdgid->at(i);}
+   std::vector<int>           MCParticle_childidx(unsigned int i){return Ntp->MC_childidx->at(i);}
+   int						  MCParticle_status(unsigned int i){return Ntp->MC_status->at(i);}
    int						  matchTruth(TLorentzVector tvector);
    bool						  matchTruth(TLorentzVector tvector, int pid, double dr);
+   // decay tree functionality
+   bool						  MCParticle_hasMother(unsigned int i){return Ntp->MC_midx->at(i) >= 0;}
+   void						  printMCDecayChainOfMother(unsigned int i, bool printStatus = false, bool printPt = false, bool printEtaPhi = false, bool printQCD = false); // decay chain of object i
+   void						  printMCDecayChainOfEvent(bool printStatus = false, bool printPt = false, bool printEtaPhi = false, bool printQCD = false); // full event decay chain
+   std::string				  MCParticleToString(unsigned int par, bool printStatus = false, bool printPt = false, bool printEtaPhi = false);
+
 
    // Tau decays (Tau is first element of vector)
    int NMCTaus(){return Ntp->MCTauandProd_p4->size();}
