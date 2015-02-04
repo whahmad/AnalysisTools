@@ -389,7 +389,7 @@ TLorentzVector Ntuple_Controller::Muon_p4(unsigned int i, TString corr){
 			if(!corr.Contains("down")) vec.SetPerp(vec.Perp()*1.002);
 			else vec.SetPerp(vec.Perp()*0.998);
 		}else if(corr.Contains("res")){
-			vec.SetPerp(gRandom->Gaus(vec.Perp(),1.006));
+			vec.SetPerp(gRandom->Gaus(vec.Perp(),vec.Perp()*0.006));
 		}
 		if(corr.Contains("met")){
 			if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.002);
@@ -451,6 +451,9 @@ bool Ntuple_Controller::isSelectedMuon(unsigned int i, unsigned int j, double im
 //
 // Options:
 //  - "res": use this to estimate the impact of the electron energy resolution on your result (only MC).
+//           resolution in barrel (endcaps) for 2012: 1.6% (4.1%). uncertainty on resolution: 10%
+//           RegEnergy corresponds to the electron energy after regression but before scale correction (data)
+//           or smearing (MC)
 //
 
 TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
@@ -462,14 +465,21 @@ TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 			else vec.SetPerp(vec.Perp() * (1-Electron_RegEnergyError(i)/Electron_RegEnergy(i)));
 		}
 		if(corr.Contains("res")){
-			if(fabs(Electron_supercluster_eta(i))<1.479){
-				vec.SetPerp(gRandom->Gaus(vec.Perp(),1.016));
-			}
-			else if(fabs(Electron_supercluster_eta(i))<2.5){
-				vec.SetPerp(gRandom->Gaus(vec.Perp(),1.041));
+			if(Electron_RegEnergy(i)>0){
+				if(fabs(Electron_supercluster_eta(i))<1.479){
+					if(corr.Contains("down")) vec.SetPerp(vec.Perp() * gRandom->Gaus(Electron_RegEnergy(i),Electron_RegEnergy(i)*0.0144) / Electron_RegEnergy(i));
+					else vec.SetPerp(gRandom->Gaus(vec.Perp() * Electron_RegEnergy(i),Electron_RegEnergy(i)*0.0176) / Electron_RegEnergy(i));
+				}
+				else if(fabs(Electron_supercluster_eta(i))<2.5){
+					if(corr.Contains("down")) vec.SetPerp(vec.Perp() * gRandom->Gaus(Electron_RegEnergy(i),Electron_RegEnergy(i)*0.0369) / Electron_RegEnergy(i));
+					else vec.SetPerp(gRandom->Gaus(vec.Perp() * Electron_RegEnergy(i),Electron_RegEnergy(i)*0.0451) / Electron_RegEnergy(i));
+				}
+				else{
+					std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o smearing for resolution uncertainties." << std::endl;
+				}
 			}
 			else{
-				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o corrections." << std::endl;
+				std::cout << "Energy <= 0: " << Electron_RegEnergy(i) << ". Returning fourvector w/o smearing for resolution uncertainties." << std::endl;
 			}
 		}
 		if(corr.Contains("met")){
@@ -480,6 +490,9 @@ TLorentzVector Ntuple_Controller::Electron_p4(unsigned int i, TString corr){
 			else if(fabs(Electron_supercluster_eta(i))<2.5){
 				if(!corr.Contains("down")) vec.SetPerp(vec.Perp() * 1.015);
 				else vec.SetPerp(vec.Perp() * 0.985);
+			}
+			else{
+				std::cout << "Eta out of range: " << Electron_supercluster_eta(i) << ". Returning fourvector w/o scale corrections for MET uncertainties." << std::endl;
 			}
 		}
 	}
