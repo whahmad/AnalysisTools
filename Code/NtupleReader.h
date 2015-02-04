@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Jan 26 16:57:54 2015 by ROOT version 5.34/25
+// Fri Jan 30 10:49:51 2015 by ROOT version 5.32/00
 // from TChain t/
 //////////////////////////////////////////////////////////
 
@@ -536,11 +536,12 @@ public :
    Double_t        GenEventInfoProduct_x1;
    Double_t        GenEventInfoProduct_x2;
    Double_t        GenEventInfoProduct_scalePDF;
-   vector<vector<double> > *MC_p4;
+   vector<vector<float> > *MC_p4;
    vector<int>     *MC_pdgid;
    vector<int>     *MC_charge;
-   vector<unsigned int> *MC_midx;
+   vector<int> *MC_midx;
    vector<vector<int> > *MC_childpdgid;
+   vector<vector<int> > *MC_childidx;
    vector<int>     *MC_status;
    vector<vector<double> > *MCSignalParticle_p4;
    vector<int>     *MCSignalParticle_pdgid;
@@ -1096,6 +1097,7 @@ public :
    TBranch        *b_MC_charge;   //!
    TBranch        *b_MC_midx;   //!
    TBranch        *b_MC_childpdgid;   //!
+   TBranch        *b_MC_childidx;   //!
    TBranch        *b_MC_status;   //!
    TBranch        *b_MCSignalParticle_p4;   //!
    TBranch        *b_MCSignalParticle_pdgid;   //!
@@ -1167,7 +1169,7 @@ NtupleReader::NtupleReader(TTree *tree) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("t","");
-      chain->Add("/net/scratch_cms/institut_3b/nehrkorn/TauNtupleTest/CMSSW_5_3_22_patch1/src/SkimProduction/CRAB/dy_tautau0/TauNtuple.root/t");
+      chain->Add("/net/scratch_cms/institut_3b/kargoll/TestPrecision/TauNtuple_5_3_22_patch1-Jan_28_2015/CMSSW_5_3_22_patch1/src/SkimProduction/CRAB/dy_tautau0/TauNtuple.root/t");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -1507,6 +1509,7 @@ void NtupleReader::Init(TTree *tree)
    MC_charge = 0;
    MC_midx = 0;
    MC_childpdgid = 0;
+   MC_childidx = 0;
    MC_status = 0;
    MCSignalParticle_p4 = 0;
    MCSignalParticle_pdgid = 0;
@@ -2066,6 +2069,7 @@ void NtupleReader::Init(TTree *tree)
    fChain->SetBranchAddress("MC_charge", &MC_charge, &b_MC_charge);
    fChain->SetBranchAddress("MC_midx", &MC_midx, &b_MC_midx);
    fChain->SetBranchAddress("MC_childpdgid", &MC_childpdgid, &b_MC_childpdgid);
+   fChain->SetBranchAddress("MC_childidx", &MC_childidx, &b_MC_childidx);
    fChain->SetBranchAddress("MC_status", &MC_status, &b_MC_status);
    fChain->SetBranchAddress("MCSignalParticle_p4", &MCSignalParticle_p4, &b_MCSignalParticle_p4);
    fChain->SetBranchAddress("MCSignalParticle_pdgid", &MCSignalParticle_pdgid, &b_MCSignalParticle_pdgid);
