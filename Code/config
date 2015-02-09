@@ -15,6 +15,7 @@ else
 
     echo "Configuring Environment...."
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/DataFormats/lib
     ## setup variables for make files
     export ROOTSYS=$PWD/../root/
     ROOT="$PWD/../root/"
@@ -139,7 +140,6 @@ else
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/pythia8/176/lib/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/lhapdf/lib/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/hepmc/install/lib/
-    
     
     echo "Environment Configured"
 fi

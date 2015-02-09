@@ -6,4 +6,5 @@ UncertType: default
 SkimInfo: InputData/SkimSummary.log
 Lumi: 19712
 PlotStyle: style2
-
+OutputAuxiliaryFile: /pnfs/physik.rwth-aachen.de/cms/store/user/inugent/MySVFIT{SET}.root 
+GRIDSite: grid-srm.physik.rwth-aachen.de

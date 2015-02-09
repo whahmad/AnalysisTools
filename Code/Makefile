@@ -14,8 +14,8 @@ SHELL = /bin/sh
 ###                              ###
 ####################################
 
-SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple 
-SHAREDCXXFLAGS =-I./CommonUtils 
+SHAREDLIBFLAGS =-L./CommonUtils/lib -lTauNtuple -L./DataFormats/lib -lDataFormats
+SHAREDCXXFLAGS =-I./CommonUtils -I./DataFormats
 SUBDIRS = CommonUtils/ 
 TAUSPINERFLAG = 
 
@@ -47,7 +47,11 @@ TARGETS       =	Ntuple_Controller \
 		TauSpinExample \
 		TauSpinerInterface \
 		ReferenceScaleFactors \
-		rochcor2012jan22
+		rochcor2012jan22 \
+		DataStorage \
+		SVFitStorage
+
+CINTTARGETS = SVFitObject
 
 # now include conditional options set by flags in make.inc
 ifdef USE_TauSpinner
@@ -135,24 +139,31 @@ vpath %.h CommonFiles
 $(OBJS): %.o : %.cxx
 	$(CXX) $(ALLCXXFLAGS) $(DEFS) $< -o i386_linux/$@ 
 
-.PHONY: clean cleanall all install sharedlib 
+.PHONY: clean cleanall cleandf all dataformats install sharedlib 
 
-install: Analysis.exe
+install: dataformats Analysis.exe
 
+
+dataformats: 
+	@cd DataFormats; gmake install; cd ../
 
 clean:
 	@rm i386_linux/*.o
 	@rm Analysis.exe
+
+cleandf:
+	@cd DataFormats; gmake clean; cd ../
 
 cleanall:
 	@for subdir in $(SUBDIRS); do \
 		echo "Making all in $$subdir"; \
 		cd $$subdir && $(MAKE) -f Makefile.standalone clean && cd ../../; \
 	done
+	@cd DataFormats; gmake clean; cd ../
 	@rm i386_linux/*.o
 	@rm Analysis.exe
 
-all: sharedlib install
+all: sharedlib dataformats install
 
 sharedlib:
 	@for subdir in $(SUBDIRS); do \
@@ -166,4 +177,6 @@ sharedlib:
 		fi \
 	done
 	$(install)
+
+
 
