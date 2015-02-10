@@ -16,6 +16,8 @@ else
     echo "Configuring Environment...."
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/CommonUtils/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/DataFormats/lib
+    export DATAFORMATS_LIB=$PWD/DataFormats/lib/libDataFormats.so
+    export codedir=$PWD
     ## setup variables for make files
     export ROOTSYS=$PWD/../root/
     ROOT="$PWD/../root/"

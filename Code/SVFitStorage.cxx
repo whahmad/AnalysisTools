@@ -14,7 +14,8 @@
 #include <iostream>
 
 SVFitStorage::SVFitStorage():intree_loaded(false){
-  gSystem->Load("libMy.so");
+  TString thelib= getenv ("DATAFORMATS_LIB");
+  gSystem->Load(thelib.Data());
 
   outtree_= new TTree("SVFitTree", "SVFitTree");
   outtree_->Branch("RunNumber", &RunNumber_);
@@ -26,15 +27,18 @@ SVFitStorage::SVFitStorage():intree_loaded(false){
 
 SVFitStorage::~SVFitStorage(){
   SaveTree();
-  if(intree_loaded) infile_->Close();
+  if(intree_loaded){ 
+    std::cout << "intree_loaded==true" << std::endl;
+    infile_->Close();
+  }
 }
 
 void SVFitStorage::LoadTree(){
   TString key="InputAuxiliaryFile:";
   TString InFile="SVFIT";
   int nfiles=GetFile(InFile,key);
-  if(nfiles>0){
-    std::cout << "Error: unble to load: " << key << std::endl;
+  if(nfiles==0){
+    std::cout << "Key not found: " << key << std::endl;
   }
   else{
     TDirectory *gdirectory_save= gDirectory;
@@ -66,9 +70,10 @@ void SVFitStorage::SaveTree(){
   TString File;
   Par.GetString("OutputAuxiliaryFile:",File);
   
+  TString theFile="MySVFIT.root";
   //Save output
   TDirectory *gdirectory_save= gDirectory;
-  TFile *outfile_=TFile::Open(File,"RECREATE");
+  TFile *outfile_=TFile::Open(theFile,"RECREATE");
   if (!outfile_) {
     std::cout << "ERROR:  " << File << " not saved" << std::endl;
     return;
@@ -78,9 +83,10 @@ void SVFitStorage::SaveTree(){
   outfile_->Close();
   gDirectory = gdirectory_save;
   gDirectory->cd();
-  
+  std::cout << "SVFit_Tree saved to " << theFile << std::endl;  
   //Store file on the grid
-  StoreFile(File);
+  StoreFile(theFile,File);
+  std::cout << theFile << " saved to the grid " << File <<std::endl;
 }
 
 void SVFitStorage::SaveEvent(Int_t RunNumber,Int_t EventNumber,SVFitObject svfit){

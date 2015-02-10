@@ -184,6 +184,8 @@ for($l=2;$l<$numArgs; $l++){
 
 }
 
+my $dir = getcwd;
+
 $time= strftime("%h_%d_%Y",localtime);
 $temp= $set . $time;
 $set=$temp;
@@ -306,7 +308,6 @@ if( $ARGV[0] eq "--TauNtuple"){
     printf("\n4) Setup the jobs and start production:./todo.pl --Submit HTL_Tau_Ntuple_cfg.py Input.dat --n -1\n");
     printf("\nIf you want to use this release in a new window: source Setup_$CMSSWRel-$time \n");
 }
-
 
 if( $ARGV[0] eq "--Local" ){
     # Print out input parameters
@@ -701,7 +702,6 @@ if( $ARGV[0] eq "--GRID" ){
 
     # Clean Directory in case workdir$set exists
     printf("Cleaning Directories \n");
-    my $dir = getcwd;
     system(sprintf("cd $OutputDir"));
     system(sprintf("if [ -d  $OutputDir/workdir$set/ ]; then \n rm -rf $OutputDir/workdir$set \n fi "));
     system(sprintf("mkdir $OutputDir/workdir$set ")); 

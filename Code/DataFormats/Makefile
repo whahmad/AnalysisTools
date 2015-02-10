@@ -15,7 +15,7 @@ SHELL = /bin/sh
 ####################################
 
 override CXXFLAGS += -I$(ROOTSYS)/include -I./ -c
-LDFLAGS       =  
+LDFLAGS       =  -fPIC
 ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lMinuit2 -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
 
 DEFS  	      = -DSTANDALONE=1
@@ -28,6 +28,17 @@ OBJS          = $(SRCS:.cxx=.o)
 
 LIB     = lib/libDataFormats.so
 
+OBJS          = MyDict.o
+
+SHAREDLIB     = lib/libDataFormats.so
+
+$(SHAREDLIB): $(OBJS)
+	@echo "======================================================="
+	@echo "Linking SharedLib: $(SHAREDLIB) ..."
+	@echo $(LD) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $(SHAREDLIB)
+	@$(LD) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $(SHAREDLIB)
+	@echo "Linking SharedLib: $(SHAREDLIB) Complete"
+	@echo "======================================================="
 
 ##########################################################
 ###                                                    ###
@@ -36,12 +47,12 @@ LIB     = lib/libDataFormats.so
 ROOTCINT: $(HDRS)  Linkdef.h
 	 rootcint -f MyDict.cxx -c  $^
 
-$(LIB): MyDict.cxx 
-	g++ -shared -o $@ `root-config --ldflags` $(CXXFLAGS) $(LDFLAGS) $(ROOTLIBS) $^
+$(OBJS): MyDict.cxx 
+	g++ -shared -rdynamic  -o $@ `root-config --ldflags` $(CXXFLAGS) $(LDFLAGS) $(ROOTLIBS) $^
 
 .PHONY: clean install 
 
-install: ROOTCINT $(LIB)
+install: ROOTCINT $(OBJS) $(SHAREDLIB)
 
 clean:
 	@rm MyDict.*

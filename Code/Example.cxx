@@ -122,7 +122,6 @@ void  Example::doEvent(){
 
 
 void  Example::Finish(){
-  svfitstorage.SaveTree();
   Selection::Finish();
 }
 
