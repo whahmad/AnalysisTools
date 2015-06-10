@@ -387,9 +387,17 @@ void  TPMMC::doEvent() {
       ////////   MET   ////////
       /////////////////////////
 
-      METX_gen= miss.Px(); 
-      METY_gen= miss.Py(); 
+      // METX_gen= miss.Px(); 
+      // METY_gen= miss.Py();
+      METX_gen = miss.E()*sin(miss.Theta())*cos(miss.Phi());
+      METY_gen = miss.E()*sin(miss.Theta())*sin(miss.Phi());
+
+
+// enrec=sqrt(pow(pxnrec,2.)+pow(pynrec,2.)+pow(pznrec,2.));
+
+      // METX_gen= miss.Px();
       // std::cout<<"METX_gen="<<METX_gen<<std::endl;      std::cout<<"METY_gen="<<METY_gen<<std::endl;
+
       //METX = Ntp->MET_Uncorr_ex(); //MET_CorrMVA_ex();      //METY = Ntp->MET_Uncorr_ey(); //MET_CorrMVA_ey();
       METX = Ntp->MET_CorrMVAMuTau_ex();
       METY = Ntp->MET_CorrMVAMuTau_ey();
@@ -614,8 +622,8 @@ void  TPMMC::doEvent() {
 		
 		    //		    std::cout<<"MMC_Check="<<std::endl;
 		    //cout<<"//////////////////// Begin New Event/////////////////////"<<endl;
-		    std::cout<<"Root values     = x[0] "<<p4miss11.P()<<" "<<p4miss12.P()<<"   x[1] ="<<setw(13)<<p4miss11.Theta()<<" "<<p4miss12.Theta()<<"   x[2] ="
-			     <<setw(13)<<p4miss21.P()<<" "<<p4miss22.P()<<"   x[3] ="<<setw(13)<<p4miss21.Theta()<<" "<<p4miss22.Theta()<<std::endl;
+		    // std::cout<<"Root values     = x[0] "<<p4miss11.P()<<" "<<p4miss12.P()<<"   x[1] ="<<setw(13)<<p4miss11.Theta()<<" "<<p4miss12.Theta()<<"   x[2] ="
+		    // 	     <<setw(13)<<p4miss21.P()<<" "<<p4miss22.P()<<"   x[3] ="<<setw(13)<<p4miss21.Theta()<<" "<<p4miss22.Theta()<<std::endl;
 		    //	std::cout<<"Actual values   = x[0] ="<<setw(13)<<p_miss1<<"   x[1] ="<< setw(13)<<theta_miss1<<"   x[2] ="<<setw(13)<<p_miss2<<"   x[3] ="
 		    //	 <<setw(13)<<theta_miss2<<std::endl;
 		
