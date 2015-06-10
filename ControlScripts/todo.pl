@@ -34,6 +34,10 @@ if($UserID eq "zotz"){
     $UserDir="--zotz";
 }
 
+if($UserID eq "ahmad"){    
+    $UserIDCern="ahmad";   
+    $UserDir="--ahmad";   }
+
 
 #Default vaules
 $InputDir="/net/scratch_cms/institut_3b/$UserID/Test";
@@ -47,8 +51,10 @@ $tag="03-00-12";
 $TauReco="5_2_3_patch3_Dec_08_2012";
 $BTag="NO";
 $Cleaning ="NO";
-$maxdata=100;
-$maxmc=100;
+#$maxdata=100;
+#$maxmc=100;
+$maxdata=20;
+$maxmc=20;
 $ARCH="slc6_amd64_gcc472";
 
 if($ARGV[0] eq "--help" || $ARGV[0] eq ""){
