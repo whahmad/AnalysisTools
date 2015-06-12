@@ -543,8 +543,10 @@ void  MissingMassCalc::doEvent() {
       GenNumtm = GenNum + GenNutm;       // sum of neutrinos from leptonic side.
       miss = GenNutp + GenNum + GenNutm; // sum of neutrinos from both sides lep & had.
       
-      METX_gen= miss.Px(); 
-      METY_gen= miss.Py(); 
+      // METX_gen= miss.Px(); METY_gen= miss.Py(); 
+      METX_gen = miss.E()*sin(miss.Theta())*cos(miss.Phi());                                                                                                                                
+      METY_gen = miss.E()*sin(miss.Theta())*sin(miss.Phi());
+      
       // std::cout<<"METX_gen="<<METX_gen<<std::endl;      std::cout<<"METY_gen="<<METY_gen<<std::endl;
       //METX = Ntp->MET_Uncorr_ex(); //MET_CorrMVA_ex();      //METY = Ntp->MET_Uncorr_ey(); //MET_CorrMVA_ey();
       METX = Ntp->MET_CorrMVAMuTau_ex();
